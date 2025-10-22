@@ -1,0 +1,126 @@
+export type Profile = {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string | null;
+  total_points: number;
+  current_streak: number;
+  last_pulse_check_date: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Class = {
+  id: string;
+  name: string;
+  description: string | null;
+  teacher_name: string;
+  teacher_id: string | null;
+  class_code: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ClassMember = {
+  id: string;
+  user_id: string;
+  class_id: string;
+  class_points: number;
+  joined_at: string;
+};
+
+export type PulseCheck = {
+  id: string;
+  user_id: string;
+  class_id: string;
+  emotion: string;
+  intensity: number;
+  notes: string | null;
+  created_at: string;
+  check_date: string;
+};
+
+export type ClassPulse = {
+  id: string;
+  class_id: string;
+  teacher_id: string;
+  question: string;
+  question_type: string;
+  answer_choices: string[] | null;
+  expires_at: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+export type ClassPulseResponse = {
+  id: string;
+  class_pulse_id: string;
+  user_id: string;
+  class_id: string;
+  response_text: string;
+  points_earned: number;
+  created_at: string;
+};
+
+export type HapiMoment = {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  class_id: string;
+  message: string;
+  sender_points: number;
+  recipient_points: number;
+  created_at: string;
+};
+
+export type Achievement = {
+  id: string;
+  user_id: string;
+  achievement_type: string;
+  title: string;
+  description: string | null;
+  icon_name: string | null;
+  unlocked_at: string;
+};
+
+export type SentimentHistory = {
+  id: string;
+  user_id: string | null;
+  class_id: string | null;
+  date: string;
+  emotion: string;
+  intensity: number;
+  is_aggregate: boolean;
+  created_at: string;
+};
+
+export type OfficeHour = {
+  id: string;
+  teacher_id: string;
+  class_id: string | null;
+  date: string;
+  start_time: string;
+  end_time: string;
+  meeting_link: string;
+  max_queue_size: number;
+  is_active: boolean;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type OfficeHoursQueue = {
+  id: string;
+  office_hour_id: string;
+  student_id: string;
+  status: 'waiting' | 'in_session' | 'completed' | 'cancelled';
+  reason: string | null;
+  joined_at: string;
+  started_at: string | null;
+  completed_at: string | null;
+  position: number | null;
+};
+
+export * from './pulseTypes';
+
+export const supabase = null as any;
