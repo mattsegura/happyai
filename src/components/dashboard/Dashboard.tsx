@@ -19,9 +19,10 @@ import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
 import { generateAnalyticsPrompt } from '../../lib/analyticsPrompts';
 import { getStaticAnalyticsData } from '../../lib/staticAnalyticsData';
-import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare } from 'lucide-react';
+import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare, GraduationCap } from 'lucide-react';
+import { AcademicsHub } from '../academics/AcademicsHub';
 
-type View = 'home' | 'leaderboard' | 'lab' | 'hapi' | 'classes' | 'profile';
+type View = 'home' | 'leaderboard' | 'lab' | 'hapi' | 'classes' | 'profile' | 'academics';
 
 export function Dashboard() {
   const { user } = useAuth();
@@ -227,6 +228,8 @@ export function Dashboard() {
           {currentView === 'classes' && <ClassesView />}
 
           {currentView === 'profile' && <ProfileView />}
+
+          {currentView === 'academics' && <AcademicsHub />}
         </div>
       </div>
 
@@ -276,9 +279,10 @@ export function Dashboard() {
           <div className="flex items-center justify-around py-2 sm:py-3">
             {[
               { id: 'home', icon: Home, label: 'Home', color: 'blue' },
+              { id: 'academics', icon: GraduationCap, label: 'Academics', color: 'purple' },
               { id: 'leaderboard', icon: Trophy, label: 'Ranks', color: 'blue' },
-              { id: 'lab', icon: Beaker, label: 'Hapi Labs', color: 'blue' },
-              { id: 'hapi', icon: MessageSquare, label: 'Hapi', color: 'blue' },
+              { id: 'lab', icon: Beaker, label: 'Labs', color: 'blue' },
+              { id: 'hapi', icon: MessageSquare, label: 'Chat', color: 'blue' },
               { id: 'classes', icon: Users, label: 'Classes', color: 'blue' },
               { id: 'profile', icon: User, label: 'Profile', color: 'blue' },
             ].map((item) => {
