@@ -115,6 +115,12 @@ export function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <a
+              href="mailto:hello@hapiai.example"
+              className="hidden rounded-2xl bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-700 md:block"
+            >
+              Contact us
+            </a>
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:border-primary-200 hover:text-primary-600 md:hidden"
