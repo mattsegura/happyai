@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
@@ -7,7 +6,6 @@ import { LandingPage } from './components/landing/LandingPage';
 
 function AppContent() {
   const { user, loading, role } = useAuth();
-  const [showLanding, setShowLanding] = useState(true);
 
   if (loading) {
     return (
@@ -20,12 +18,8 @@ function AppContent() {
     );
   }
 
-  if (showLanding && !user) {
-    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
-  }
-
   if (!user) {
-    return <AuthGate />;
+    return <LandingPage />;
   }
 
   return role === 'teacher' ? <TeacherDashboard /> : <Dashboard />;

@@ -13,10 +13,6 @@ import {
   X
 } from 'lucide-react';
 
-interface LandingPageProps {
-  onGetStarted: () => void;
-}
-
 const navigation = [
   { label: 'Platform', href: '#platform' },
   { label: 'Students', href: '#students' },
@@ -93,7 +89,7 @@ const principles = [
   },
 ];
 
-export function LandingPage({ onGetStarted }: LandingPageProps) {
+export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -120,18 +116,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={onGetStarted}
-              className="hidden rounded-2xl border border-primary-200 px-5 py-2 text-sm font-semibold text-primary-700 transition hover:border-primary-300 hover:bg-primary-50 sm:block"
-            >
-              Sign in
-            </button>
-            <button
-              onClick={onGetStarted}
-              className="hidden rounded-2xl bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-700 md:block"
-            >
-              Request a demo
-            </button>
-            <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:border-primary-200 hover:text-primary-600 md:hidden"
             >
@@ -153,15 +137,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                   {item.label}
                 </a>
               ))}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onGetStarted();
-                }}
-                className="w-full rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-primary-700"
-              >
-                Request a demo
-              </button>
             </div>
           </div>
         )}
@@ -182,18 +157,12 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={onGetStarted}
-                  className="inline-flex items-center justify-center rounded-2xl bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-primary-700"
-                >
-                  Launch the demo
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
                 <a
                   href="#students"
                   className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3 text-base font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-700"
                 >
                   Explore the platform
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </div>
               <dl className="grid gap-3 sm:grid-cols-3 text-sm text-slate-600">
@@ -441,24 +410,18 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
         </section>
 
-        <section className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
+        <section id="contact" className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-primary-200 bg-primary-50 px-8 py-16 shadow-2xl">
             <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Ready to champion whole-student success?</h2>
             <p className="mt-4 text-lg text-slate-600">
-              Explore the demo to see how Hapi AI pairs emotional intelligence with academic momentum for your district.
+              Get in touch with our team to learn how Hapi AI can transform emotional intelligence and academic momentum for your district.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <button
-                onClick={onGetStarted}
-                className="inline-flex items-center justify-center rounded-2xl bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-primary-700"
-              >
-                Start the demo
-              </button>
               <a
                 href="mailto:hello@hapiai.example"
-                className="inline-flex items-center justify-center rounded-2xl border border-primary-200 bg-white px-6 py-3 text-base font-semibold text-primary-700 transition hover:border-primary-300"
+                className="inline-flex items-center justify-center rounded-2xl bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-primary-700"
               >
-                Talk with our team
+                Contact us
               </a>
             </div>
           </div>

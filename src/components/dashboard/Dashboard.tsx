@@ -219,7 +219,7 @@ export function Dashboard() {
         </div>
       </aside>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-hidden">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-10 py-12">
           <header className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -250,37 +250,35 @@ export function Dashboard() {
 
             {currentView === 'home' && <StatsBar />}
 
-            <div className="space-y-5">
+            <div className="">
               {currentView === 'home' && (
-                <>
-                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <TodaysTasks
-                      onMorningPulseClick={handleMorningPulseClick}
-                      onClassPulseClick={handleClassPulseClick}
-                      onMeetingClick={handleMeetingClick}
-                      onHapiMomentClick={handleHapiMomentClick}
-                />
-              </div>
+                <div className="grid h-[calc(100vh-220px)] gap-5 lg:grid-cols-2">
+                  <div className="h-full overflow-hidden">
+                    <div className="h-full overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <TodaysTasks
+                        onMorningPulseClick={handleMorningPulseClick}
+                        onClassPulseClick={handleClassPulseClick}
+                        onMeetingClick={handleMeetingClick}
+                        onHapiMomentClick={handleHapiMomentClick}
+                      />
+                    </div>
+                  </div>
 
-              <div className="pt-4">
-                <h2 className="text-xl font-semibold text-slate-900">Your analytics</h2>
-                <p className="text-sm text-slate-500">Emotional trends and academic momentum stitched together.</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <HapiAiInsights analyticsData={analyticsData} onTalkMore={handleTalkMore} />
-              </div>
-
-              <div className="grid gap-6 lg:grid-cols-2">
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <PersonalSentimentChart />
+                  <div className="flex h-full flex-col gap-5 overflow-hidden">
+                    <div className="shrink-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <HapiAiInsights analyticsData={analyticsData} onTalkMore={handleTalkMore} />
+                    </div>
+                    <div className="grid h-full gap-5 md:grid-rows-2">
+                      <div className="overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <PersonalSentimentChart />
+                      </div>
+                      <div className="overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                        <ClassSentimentGauge />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <ClassSentimentGauge />
-                </div>
-              </div>
-            </>
-          )}
+              )}
 
           {showPopups && currentView === 'home' && (
             <PopupQueueManager
