@@ -27,7 +27,45 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
 }
 
+const SESSION_STORAGE_KEY = 'hapi_mock_session';
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+type PersistedSession = {
+  user: User;
+  profile: Profile;
+  role: 'student' | 'teacher';
+};
+
+const readPersistedSession = (): PersistedSession | null => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const stored = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as PersistedSession) : null;
+  } catch (error) {
+    console.warn('[AuthContext] Failed to parse persisted session', error);
+    return null;
+  }
+};
+
+const persistSession = (session: PersistedSession) => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  } catch (error) {
+    console.warn('[AuthContext] Failed to persist session', error);
+  }
+};
+
+const clearPersistedSession = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch (error) {
+    console.warn('[AuthContext] Failed to clear session', error);
+  }
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -37,29 +75,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<'student' | 'teacher'>('student');
 
   const refreshProfile = async () => {
-    setProfile(mockCurrentUser);
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    if (!user || !profile) return;
+
+    const updatedProfile = {
+      ...profile,
+      updated_at: new Date().toISOString(),
+    };
+
+    setProfile(updatedProfile);
+    persistSession({ user, profile: updatedProfile, role });
   };
 
   useEffect(() => {
-    const initAuth = async () => {
-      await new Promise(resolve => setTimeout(resolve, 500));
+    const hydrateSession = async () => {
+      const storedSession = readPersistedSession();
 
-      const mockUser: User = {
-        id: mockCurrentUser.id,
-        email: mockCurrentUser.email,
-      };
+      if (storedSession) {
+        setUser(storedSession.user);
+        setProfile(storedSession.profile);
+        setSession({ user: storedSession.user });
+        setRole(storedSession.role);
+      }
 
-      const mockSession: Session = {
-        user: mockUser,
-      };
-
-      setUser(mockUser);
-      setProfile(mockCurrentUser);
-      setSession(mockSession);
       setLoading(false);
     };
 
-    initAuth();
+    hydrateSession();
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string, userRole: 'student' | 'teacher') => {
@@ -68,17 +111,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const baseProfile = userRole === 'teacher' ? mockCurrentTeacher : mockCurrentUser;
     const mockUser: User = {
       id: baseProfile.id,
-      email: email,
+      email,
     };
 
-    const mockSession: Session = {
-      user: mockUser,
+    const profileData: Profile = {
+      ...baseProfile,
+      email,
+      full_name: fullName,
+      updated_at: new Date().toISOString(),
     };
 
     setUser(mockUser);
-    setProfile({ ...baseProfile, email, full_name: fullName });
-    setSession(mockSession);
+    setProfile(profileData);
+    setSession({ user: mockUser });
     setRole(userRole);
+    persistSession({ user: mockUser, profile: profileData, role: userRole });
 
     return { error: null };
   };
@@ -89,17 +136,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const baseProfile = userRole === 'teacher' ? mockCurrentTeacher : mockCurrentUser;
     const mockUser: User = {
       id: baseProfile.id,
-      email: email,
+      email,
     };
 
-    const mockSession: Session = {
-      user: mockUser,
+    const profileData: Profile = {
+      ...baseProfile,
+      email,
+      updated_at: new Date().toISOString(),
     };
 
     setUser(mockUser);
-    setProfile(baseProfile);
-    setSession(mockSession);
+    setProfile(profileData);
+    setSession({ user: mockUser });
     setRole(userRole);
+    persistSession({ user: mockUser, profile: profileData, role: userRole });
 
     return { error: null };
   };
@@ -110,6 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null);
     setSession(null);
     setRole('student');
+    clearPersistedSession();
   };
 
   const value = {

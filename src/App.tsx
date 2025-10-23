@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { AuthGate } from './components/auth/AuthGate';
+import { LandingPage } from './components/landing/LandingPage';
 
 function AppContent() {
   const { user, loading, role } = useAuth();
+  const [showLanding, setShowLanding] = useState(true);
 
   if (loading) {
     return (
@@ -15,6 +18,10 @@ function AppContent() {
         </div>
       </div>
     );
+  }
+
+  if (showLanding && !user) {
+    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
   }
 
   if (!user) {
