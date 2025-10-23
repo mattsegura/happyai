@@ -50,121 +50,97 @@ export function PersonalSentimentChart() {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 border-2 border-blue-200 shadow-lg">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
-            <TrendingUp className="w-5 h-5 text-white" />
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+            <TrendingUp className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-800">Your Sentiment Journey</h3>
-            <p className="text-xs text-gray-500">Track your emotional wellness over time</p>
+            <h3 className="text-lg font-semibold text-slate-900">Sentiment overview</h3>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Daily mood averages</p>
           </div>
         </div>
-
-        <div className="flex bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setTimeRange('week')}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-              timeRange === 'week'
-                ? 'bg-white text-blue-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Week
-          </button>
-          <button
-            onClick={() => setTimeRange('month')}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-              timeRange === 'month'
-                ? 'bg-white text-blue-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Month
-          </button>
-          <button
-            onClick={() => setShowCustomPicker(true)}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-              timeRange === 'custom'
-                ? 'bg-white text-blue-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Custom
-          </button>
+        <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1 text-sm font-semibold text-slate-500">
+          {[
+            { id: 'week', label: '7 days' },
+            { id: 'month', label: '30 days' },
+            { id: 'custom', label: 'Custom' },
+          ].map((option) => (
+            <button
+              key={option.id}
+              onClick={() => (option.id === 'custom' ? setShowCustomPicker(true) : setTimeRange(option.id as TimeRange))}
+              className={`rounded-full px-4 py-2 transition ${
+                timeRange === option.id ? 'bg-white text-primary-600 shadow-sm' : 'hover:text-primary-600'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="mb-4 flex items-center space-x-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-          <span className="text-sm text-gray-600">
-            Avg: <span className="font-bold text-gray-800">{average.toFixed(1)}/6.0</span>
-          </span>
-        </div>
-        <div className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-          trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-        }`}>
-          <TrendingUp className={`w-4 h-4 ${trend === 'down' ? 'rotate-180' : ''}`} />
-          <span className="text-xs font-semibold">{trend === 'up' ? 'Improving' : 'Declining'}</span>
-        </div>
+      <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-600">
+        <span className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-primary-700">
+          Avg sentiment: <strong className="text-primary-700">{average.toFixed(1)}/6</strong>
+        </span>
+        <span
+          className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+            trend === 'up'
+              ? 'border border-emerald-100 bg-emerald-50 text-emerald-700'
+              : 'border border-amber-100 bg-amber-50 text-amber-700'
+          }`}
+        >
+          <TrendingUp className={`h-4 w-4 ${trend === 'down' ? 'rotate-180' : ''}`} />
+          {trend === 'up' ? 'Trending upward' : 'Needs attention'}
+        </span>
       </div>
 
-      <div className="relative h-48 mb-2">
-        <div className="absolute inset-0 flex items-end justify-between gap-1">
-          {currentData.map((point, index) => {
-            const heightPixels = ((point.value - minValue) / (maxValue - minValue)) * 192;
-
-            return (
-              <div key={index} className="flex-1 group relative" style={{ height: '100%' }}>
-                <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center">
+      <div className="mt-6 grid gap-6 md:grid-cols-[auto,1fr]">
+        <div className="flex flex-col justify-between border-r border-slate-200 pr-4 text-xs text-slate-400 md:pr-6">
+          {[6, 5, 4, 3, 2, 1].map((value) => (
+            <span key={value}>{value}</span>
+          ))}
+        </div>
+        <div className="relative">
+          <div className="absolute inset-0 grid grid-rows-6 gap-0 text-slate-100">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="border-b border-slate-100" />
+            ))}
+          </div>
+          <div className="relative flex items-end justify-between gap-1">
+            {currentData.map((point, index) => {
+              const heightPixels = ((point.value - minValue) / (maxValue - minValue)) * 180;
+              return (
+                <div key={index} className="group relative flex-1">
                   <div
-                    className="w-full rounded-t-lg transition-all duration-500 cursor-pointer hover:opacity-80"
-                    style={{
-                      height: `${heightPixels}px`,
-                      backgroundColor: getBlueShade(point.value),
-                      minHeight: '12px'
-                    }}
+                    className="mx-auto w-full max-w-[18px] rounded-t-lg bg-primary-200 transition hover:bg-primary-300"
+                    style={{ height: `${Math.max(heightPixels, 12)}px` }}
                   >
-                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none">
-                      {point.emotion}: {point.value}/6
-                    </div>
+                    <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-slate-900 px-2 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
+                      {point.emotion} · {point.value.toFixed(1)}
+                    </span>
                   </div>
+                  <span className="mt-2 block text-center text-[10px] text-slate-500">
+                    {getDateLabel(point.date, index)}
+                  </span>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-gray-400 -ml-8">
-          <span>6</span>
-          <span>5</span>
-          <span>4</span>
-          <span>3</span>
-          <span>2</span>
-          <span>1</span>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-between text-xs text-gray-500 mt-2">
-        {currentData.map((point, index) => {
-          if (timeRange === 'week' || index % 5 === 0 || index === currentData.length - 1) {
-            return (
-              <span key={index} className="flex-1 text-center">
-                {getDateLabel(point.date, index)}
-              </span>
-            );
-          }
-          return <span key={index} className="flex-1"></span>;
-        })}
-      </div>
-
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <div className="flex items-center space-x-2 text-xs text-gray-500">
-          <Calendar className="w-4 h-4" />
-          <span>Last updated: Today</span>
-        </div>
+      <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4 text-xs text-slate-500">
+        <span className="inline-flex items-center gap-2">
+          <Calendar className="h-4 w-4" /> Updated today
+        </span>
+        <button
+          onClick={() => setShowCustomPicker(true)}
+          className="text-xs font-semibold text-primary-600 transition hover:text-primary-700"
+        >
+          Adjust dates
+        </button>
       </div>
 
       {showCustomPicker && (

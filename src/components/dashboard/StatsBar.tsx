@@ -5,44 +5,40 @@ export function StatsBar() {
   const { profile } = useAuth();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 sm:p-6 border-2 border-blue-200 shadow-lg transform hover:scale-105 transition-all duration-300">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs sm:text-sm font-semibold text-blue-800 mb-1">Current Streak</p>
-            <p className="text-3xl sm:text-4xl font-bold text-blue-600">{profile?.current_streak || 0}</p>
-            <p className="text-[10px] sm:text-xs text-blue-700 mt-1">days in a row</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
+            <Flame className="h-5 w-5" />
           </div>
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-            <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Current streak</p>
+            <p className="text-lg font-semibold text-slate-900">{profile?.current_streak || 0} days</p>
           </div>
         </div>
-      </div>
 
-      <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-4 sm:p-6 border-2 border-blue-300 shadow-lg transform hover:scale-105 transition-all duration-300">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs sm:text-sm font-semibold text-blue-800 mb-1">Total Points</p>
-            <p className="text-3xl sm:text-4xl font-bold text-blue-700">{profile?.total_points || 0}</p>
-            <p className="text-[10px] sm:text-xs text-blue-700 mt-1">earned so far</p>
+        <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
+            <Trophy className="h-5 w-5" />
           </div>
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Total points</p>
+            <p className="text-lg font-semibold text-slate-900">{profile?.total_points || 0}</p>
           </div>
         </div>
-      </div>
 
-      <div className="bg-gradient-to-br from-cyan-100 to-blue-100 rounded-2xl p-4 sm:p-6 border-2 border-cyan-300 shadow-lg transform hover:scale-105 transition-all duration-300">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
+            <Zap className="h-5 w-5" />
+          </div>
           <div>
-            <p className="text-xs sm:text-sm font-semibold text-cyan-800 mb-1">Level</p>
-            <p className="text-3xl sm:text-4xl font-bold text-cyan-600">{Math.floor((profile?.total_points || 0) / 100) + 1}</p>
-            <p className="text-[10px] sm:text-xs text-cyan-700 mt-1">
-              {((profile?.total_points || 0) % 100)}/100 to next
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Level</p>
+            <p className="text-lg font-semibold text-slate-900">
+              {Math.floor((profile?.total_points || 0) / 100) + 1}
+              <span className="ml-1 text-xs font-medium text-slate-500">
+                {((profile?.total_points || 0) % 100)}/100
+              </span>
             </p>
-          </div>
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
-            <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
         </div>
       </div>

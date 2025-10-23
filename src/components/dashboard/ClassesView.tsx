@@ -50,18 +50,17 @@ export function ClassesView() {
   if (classes.length === 0) {
     return (
       <>
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-12 border-2 border-blue-200 shadow-lg text-center">
-          <Users className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">No Classes Yet</h3>
-          <p className="text-gray-600 mb-6">
-            Get a class code from your teacher to join a class!
-          </p>
+        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-600">
+            <Users className="h-6 w-6" />
+          </div>
+          <h3 className="mt-4 text-xl font-semibold text-slate-900">You’re not in any classes yet</h3>
+          <p className="mt-2 text-sm text-slate-500">Ask your teacher for a class code to get started.</p>
           <button
             onClick={() => setShowJoinModal(true)}
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all flex items-center justify-center space-x-2 mx-auto"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-700"
           >
-            <Hash className="w-5 h-5" />
-            <span>Enter Class Code</span>
+            <Hash className="h-4 w-4" /> Enter class code
           </button>
         </div>
 
@@ -78,91 +77,76 @@ export function ClassesView() {
   return (
     <>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="relative">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent flex items-center">
-              <div className="relative mr-3">
-                <Users className="w-8 h-8 text-blue-600" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-              </div>
-              Your Classes
-            </h1>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold text-slate-900">Your classes</h1>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Wellness and progress snapshots</p>
+            </div>
           </div>
           <button
             onClick={() => setShowJoinModal(true)}
-            className="relative px-5 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center space-x-2 overflow-hidden group"
+            className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:border-primary-300 hover:bg-primary-50"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <Hash className="w-5 h-5 relative z-10" />
-            <span className="relative z-10">Enter Class Code</span>
-            <Sparkles className="w-4 h-4 relative z-10 opacity-70" />
+            <Hash className="h-4 w-4" /> Enter class code
           </button>
         </div>
 
-      <div className="grid gap-6">
-        {classes.map((classItem) => (
-          <div
-            key={classItem.id}
-            className="relative bg-gradient-to-br from-white via-white to-blue-50/30 rounded-2xl border-2 border-blue-100 shadow-[0_4px_20px_-4px_rgba(59,130,246,0.2)] overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/20 to-cyan-200/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
-
-            <div className="relative z-10 p-6">
-              <div className="flex gap-6">
-                <div className="flex-1">
-                  <div
+        <div className="grid gap-5">
+          {classes.map((classItem) => (
+            <article
+              key={classItem.id}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className="flex flex-col gap-6 lg:flex-row">
+                <div className="flex-1 space-y-4">
+                  <button
                     onClick={() => setSelectedClass(classItem)}
-                    className="flex items-center space-x-2 mb-3 cursor-pointer group"
+                    className="flex items-center gap-2 text-left"
                   >
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-                      <GraduationCap className="w-5 h-5 text-white" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                      <GraduationCap className="h-5 w-5" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 group-hover:text-blue-700 transition-colors flex items-center">
-                      {classItem.name}
-                      <ChevronRight className="w-5 h-5 ml-1 text-blue-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                    </h3>
-                  </div>
-                  <p className="text-gray-600 mb-3 leading-relaxed">{classItem.description}</p>
-                  <div className="inline-flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full mb-4">
-                    <span className="text-xs font-semibold text-blue-700">Teacher:</span>
-                    <span className="text-xs font-bold text-blue-800">{classItem.teacher_name}</span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900">{classItem.name}</h3>
+                      <p className="text-xs text-slate-500">Tap to open analytics</p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                  </button>
+
+                  <p className="text-sm leading-relaxed text-slate-600">{classItem.description}</p>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+                    Teacher <span className="text-slate-900">{classItem.teacher_name}</span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-blue-100/50 mb-4">
-                    <div className="flex items-center space-x-2 text-blue-600">
-                      <div className="p-1.5 bg-blue-100 rounded-lg">
-                        <Award className="w-4 h-4" />
-                      </div>
-                      <span className="font-semibold text-sm">Your Points</span>
+                  <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+                      <Award className="h-4 w-4 text-primary-500" /> Your points
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all">
-                        <TrendingUp className="w-5 h-5 text-white" />
-                        <span className="text-2xl font-black text-white">{classItem.class_points}</span>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform" />
-                    </div>
+                    <span className="text-2xl font-bold text-primary-600">{classItem.class_points}</span>
                   </div>
 
                   <ClassHapiInsightsSection classId={classItem.id} className={classItem.name} />
                 </div>
 
-                <div className="w-[400px] flex-shrink-0">
+                <div className="w-full max-w-md flex-shrink-0">
                   <ClassSentimentChart classId={classItem.id} className={classItem.name} />
                 </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
 
-    {showJoinModal && (
-      <JoinClassModal
-        onClose={() => setShowJoinModal(false)}
-        onClassJoined={handleClassJoined}
-      />
-    )}
-  </>
+      {showJoinModal && (
+        <JoinClassModal
+          onClose={() => setShowJoinModal(false)}
+          onClassJoined={handleClassJoined}
+        />
+      )}
+    </>
   );
 }

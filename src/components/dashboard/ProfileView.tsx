@@ -6,8 +6,8 @@ export function ProfileView() {
 
   if (!profile) {
     return (
-      <div className="bg-white rounded-3xl p-12 shadow-lg text-center">
-        <p className="text-gray-600">Loading profile...</p>
+      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <p className="text-sm text-slate-500">Loading profile…</p>
       </div>
     );
   }
@@ -19,102 +19,103 @@ export function ProfileView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent flex items-center">
-          <User className="w-8 h-8 mr-2 text-cyan-600" />
-          Your Profile
-        </h1>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+          <User className="h-5 w-5" />
+        </div>
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">Your profile</h1>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Personal milestones and settings</p>
+        </div>
       </div>
 
-      <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-3xl p-8 border-2 border-cyan-200 shadow-lg">
-        <div className="flex items-center space-x-6 mb-8">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-xl">
-            <User className="w-12 h-12 text-white" />
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-100 text-primary-600">
+            <User className="h-10 w-10" />
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-1">{profile.full_name}</h2>
-            <p className="text-gray-600 flex items-center">
-              <Mail className="w-4 h-4 mr-2" />
-              {profile.email}
+            <h2 className="text-2xl font-semibold text-slate-900">{profile.full_name}</h2>
+            <p className="mt-1 flex items-center gap-2 text-sm text-slate-500">
+              <Mail className="h-4 w-4" /> {profile.email}
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-cyan-100">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 font-medium">Total Points</span>
-              <Award className="w-6 h-6 text-cyan-500" />
-            </div>
-            <p className="text-3xl font-bold text-cyan-600">{profile.total_points}</p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-blue-100">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 font-medium">Current Streak</span>
-              <Flame className="w-6 h-6 text-blue-500" />
-            </div>
-            <p className="text-3xl font-bold text-blue-600">{profile.current_streak} days</p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-blue-100">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 font-medium">Member Since</span>
-              <Calendar className="w-6 h-6 text-blue-500" />
-            </div>
-            <p className="text-lg font-bold text-blue-600">{joinDate}</p>
-          </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[{
+            label: 'Total points',
+            value: `${profile.total_points}`,
+            icon: Award,
+          }, {
+            label: 'Current streak',
+            value: `${profile.current_streak} days`,
+            icon: Flame,
+          }, {
+            label: 'Member since',
+            value: joinDate,
+            icon: Calendar,
+          }].map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {item.label}
+                  <Icon className="h-4 w-4 text-primary-500" />
+                </div>
+                <p className="mt-2 text-xl font-semibold text-slate-900">{item.value}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg">
-        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <TrendingUp className="w-6 h-6 mr-2 text-teal-600" />
-          Your Progress
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+          <TrendingUp className="h-5 w-5 text-primary-500" /> Progress snapshot
         </h3>
-        <div className="space-y-4">
+        <div className="mt-4 space-y-4 text-sm text-slate-600">
           <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-600">Daily Check-ins</span>
-              <span className="font-semibold text-gray-800">{profile.current_streak} streak</span>
+            <div className="flex justify-between">
+              <span>Daily check-ins</span>
+              <span className="font-semibold text-slate-900">{profile.current_streak} day streak</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="mt-2 h-2 rounded-full bg-slate-200">
               <div
-                className="h-full bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full transition-all duration-500"
+                className="h-full rounded-full bg-primary-500"
                 style={{ width: `${Math.min((profile.current_streak / 30) * 100, 100)}%` }}
-              ></div>
+              />
             </div>
-            <p className="text-xs text-gray-500 mt-1">Keep going to reach 30 days!</p>
+            <p className="mt-1 text-xs text-slate-500">Aim for 30 consistent days to unlock a new badge.</p>
           </div>
 
           <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-600">Total Points Earned</span>
-              <span className="font-semibold text-gray-800">{profile.total_points} pts</span>
+            <div className="flex justify-between">
+              <span>Total points earned</span>
+              <span className="font-semibold text-slate-900">{profile.total_points} pts</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="mt-2 h-2 rounded-full bg-slate-200">
               <div
-                className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-500"
+                className="h-full rounded-full bg-primary-400"
                 style={{ width: `${Math.min((profile.total_points / 500) * 100, 100)}%` }}
-              ></div>
+              />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              {500 - profile.total_points > 0
-                ? `${500 - profile.total_points} more points to reach 500!`
-                : 'Amazing! You hit 500 points!'}
+            <p className="mt-1 text-xs text-slate-500">
+              {profile.total_points < 500
+                ? `${500 - profile.total_points} more points until your 500 badge!`
+                : 'Fantastic work! You’ve passed the 500 point milestone.'}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-lg">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">Account Settings</h3>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-semibold text-slate-900">Account settings</h3>
         <button
           onClick={signOut}
-          className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-2"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
         >
-          <LogOut className="w-5 h-5" />
-          <span>Logout</span>
+          <LogOut className="h-4 w-4" /> Sign out
         </button>
       </div>
     </div>

@@ -14,9 +14,9 @@ export function ClassSentimentGauge() {
   };
 
   const getSentimentIcon = (avg: number) => {
-    if (avg >= 4.5) return <Smile className="w-8 h-8 text-white" />;
-    if (avg >= 3) return <Meh className="w-8 h-8 text-white" />;
-    return <Frown className="w-8 h-8 text-white" />;
+    if (avg >= 4.5) return <Smile className="h-7 w-7" />;
+    if (avg >= 3) return <Meh className="h-7 w-7" />;
+    return <Frown className="h-7 w-7" />;
   };
 
   const emotionBreakdown = classmates.reduce((acc, c) => {
@@ -30,94 +30,78 @@ export function ClassSentimentGauge() {
     .map(([emotion, count]) => ({ emotion, count }));
 
   return (
-    <div className="bg-white rounded-2xl p-5 border-2 border-green-200 shadow-md h-full">
-      <div className="flex items-center space-x-2 mb-6">
-        <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
-          <Users className="w-5 h-5 text-white" />
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <Users className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">Class sentiment</h3>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Across all active courses</p>
+          </div>
         </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-gray-800">Class Sentiment</h3>
-          <p className="text-xs text-gray-600">How your classmates are feeling right now</p>
-        </div>
+        <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+          {totalStudents} check-ins
+        </span>
       </div>
 
-      <div className="flex items-stretch gap-6">
-        <div className="flex-1 flex flex-col justify-center space-y-6">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-sm pb-2 border-b border-gray-100">
-              <span className="text-gray-600 font-semibold">Students Checked In</span>
-              <span className="text-gray-800 font-bold text-lg">{totalStudents}</span>
-            </div>
-
-            <div>
-              <p className="text-xs font-semibold text-gray-600 mb-3">Top Emotions:</p>
-              <div className="space-y-3">
-                {topEmotions.map(({ emotion, count }) => (
-                  <div key={emotion} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500"></div>
-                      <span className="text-sm text-gray-700 capitalize">{emotion}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full transition-all duration-500"
-                          style={{ width: `${(count / totalStudents) * 100}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-gray-500 w-8 text-right">{count}</span>
-                    </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr,260px]">
+        <div className="space-y-5">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Top emotions today</p>
+            <div className="mt-4 space-y-3">
+              {topEmotions.map(({ emotion, count }) => (
+                <div key={emotion} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-primary-400" />
+                    <span className="text-sm font-medium capitalize text-slate-700">{emotion}</span>
                   </div>
-                ))}
-              </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-28 rounded-full bg-white">
+                      <div
+                        className="h-full rounded-full bg-primary-400"
+                        style={{ width: `${Math.round((count / totalStudents) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-slate-500">{count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-3 text-sm text-slate-600 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Average sentiment</p>
+              <p className="mt-2 text-2xl font-bold text-slate-900">{averageSentiment.toFixed(1)} / 6</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Class mood</p>
+              <p className="mt-2 text-lg font-semibold text-emerald-600">{getSentimentLabel(averageSentiment)}</p>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center">
-          <div className="relative w-64 h-64 mb-4">
-            <svg className="transform -rotate-90 w-64 h-64">
-              <circle
-                cx="128"
-                cy="128"
-                r="110"
-                stroke="#e5e7eb"
-                strokeWidth="20"
-                fill="none"
-              />
-              <circle
-                cx="128"
-                cy="128"
-                r="110"
-                stroke="#2563eb"
-                strokeWidth="20"
-                fill="none"
-                strokeDasharray={`${(sentimentPercent / 100) * 691} 691`}
-                strokeLinecap="round"
-                className="transition-all duration-1000"
-              />
-            </svg>
-
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className={`w-20 h-20 bg-gradient-to-br ${getSentimentColorGradient(averageSentiment)} rounded-full flex items-center justify-center shadow-lg mb-3`}>
-                {getSentimentIcon(averageSentiment)}
-              </div>
-              <span className="text-4xl font-bold text-gray-800">{averageSentiment.toFixed(1)}</span>
-              <span className="text-sm text-gray-500">out of 6.0</span>
-            </div>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+            {getSentimentIcon(averageSentiment)}
           </div>
-
-          <div className={`px-6 py-2 bg-gradient-to-r ${getSentimentColorGradient(averageSentiment)} rounded-full shadow-md`}>
-            <span className="text-white font-bold text-base">{getSentimentLabel(averageSentiment)}</span>
+          <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-slate-500">Class energy today</p>
+          <p className="mt-2 text-3xl font-bold text-slate-900">{averageSentiment.toFixed(1)}</p>
+          <p className="text-sm text-slate-500">out of 6</p>
+          <div className="mt-6 h-2 w-full rounded-full bg-white">
+            <div
+              className="h-full rounded-full bg-emerald-400"
+              style={{ width: `${Math.round(sentimentPercent)}%` }}
+            />
           </div>
         </div>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-gray-100">
-        <p className="text-xs text-gray-500 text-center">
-          Aggregate from all your classes
-        </p>
-      </div>
+      <p className="mt-6 border-t border-slate-200 pt-4 text-xs text-slate-500">
+        Insights combine sentiment pulses, Hapi moments, and class participation responses within the last 48 hours.
+      </p>
     </div>
   );
 }

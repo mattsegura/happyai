@@ -21,27 +21,27 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
   };
 
   const getSentimentIcon = (avg: number) => {
-    if (avg >= 4.5) return <Smile className="w-6 h-6 sm:w-8 sm:h-8 text-white" />;
-    if (avg >= 3) return <Meh className="w-6 h-6 sm:w-8 sm:h-8 text-white" />;
-    return <Frown className="w-6 h-6 sm:w-8 sm:h-8 text-white" />;
+    if (avg >= 4.5) return <Smile className="h-6 w-6" />;
+    if (avg >= 3) return <Meh className="h-6 w-6" />;
+    return <Frown className="h-6 w-6" />;
   };
 
   const checkedInCount = Math.floor(studentCount * 0.7);
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-green-200 shadow-md h-full">
-      <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
-          <Users className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+    <div className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-base font-semibold text-slate-900">{className}</h3>
+          <p className="text-xs text-slate-500">Real-time sentiment</p>
         </div>
-        <div className="flex-1">
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">{className}</h3>
-          <p className="text-[10px] sm:text-xs text-gray-600">Real-time class sentiment</p>
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <Users className="h-4 w-4" />
         </div>
       </div>
 
-      <div className="flex flex-col items-center mb-4 sm:mb-6">
-        <div className="relative w-36 h-36 sm:w-48 sm:h-48 mb-3 sm:mb-4">
+      <div className="mt-6 flex flex-col items-center">
+        <div className="relative mb-4 h-36 w-36 sm:h-44 sm:w-44">
           <svg className="transform -rotate-90 w-36 h-36 sm:w-48 sm:h-48">
             <circle
               cx="72"
@@ -56,7 +56,7 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
               cx="72"
               cy="72"
               r="60"
-              stroke="#2563eb"
+              stroke="#34d399"
               strokeWidth="12"
               fill="none"
               strokeDasharray={`${(sentimentPercent / 100) * 376.8} 376.8`}
@@ -76,7 +76,7 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
               cx="96"
               cy="96"
               r="80"
-              stroke="#2563eb"
+              stroke="#34d399"
               strokeWidth="16"
               fill="none"
               strokeDasharray={`${(sentimentPercent / 100) * 502.4} 502.4`}
@@ -86,42 +86,41 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
           </svg>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br ${getSentimentColorGradient(averageSentiment)} rounded-full flex items-center justify-center shadow-lg mb-1 sm:mb-2`}>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
               {getSentimentIcon(averageSentiment)}
             </div>
-            <span className="text-2xl sm:text-3xl font-bold text-gray-800">{averageSentiment.toFixed(1)}</span>
-            <span className="text-[10px] sm:text-xs text-gray-500">out of 6.0</span>
+            <span className="mt-2 text-2xl font-semibold text-slate-900">{averageSentiment.toFixed(1)}</span>
+            <span className="text-xs text-slate-500">out of 6</span>
           </div>
         </div>
-
-        <div className={`px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r ${getSentimentColorGradient(averageSentiment)} rounded-full shadow-md`}>
-          <span className="text-white font-bold text-xs sm:text-sm">{getSentimentLabel(averageSentiment)}</span>
-        </div>
+        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+          {getSentimentLabel(averageSentiment)}
+        </span>
       </div>
 
-      <div className="space-y-2 sm:space-y-3">
-        <div className="flex items-center justify-between text-xs sm:text-sm pb-2 border-b border-gray-100">
-          <span className="text-gray-600 font-semibold">Students Checked In</span>
-          <span className="text-gray-800 font-bold">{checkedInCount}</span>
+      <div className="mt-4 space-y-3 text-xs text-slate-600">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+          <span>Students checked in</span>
+          <span className="font-semibold text-slate-900">{checkedInCount}</span>
         </div>
 
         <div>
-          <p className="text-[10px] sm:text-xs font-semibold text-gray-600 mb-1.5 sm:mb-2">Top Emotions:</p>
-          <div className="space-y-1.5 sm:space-y-2">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">Top emotions</p>
+          <div className="space-y-2">
             {topEmotions.slice(0, 3).map(({ emotion, count }) => (
               <div key={emotion} className="flex items-center justify-between">
-                <div className="flex items-center space-x-1.5 sm:space-x-2">
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500"></div>
-                  <span className="text-xs sm:text-sm text-gray-700 capitalize">{emotion}</span>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-primary-400" />
+                  <span className="text-xs font-medium capitalize text-slate-700">{emotion}</span>
                 </div>
-                <div className="flex items-center space-x-1.5 sm:space-x-2">
-                  <div className="w-16 sm:w-24 h-1.5 sm:h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-20 rounded-full bg-slate-200">
                     <div
-                      className="h-full bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full transition-all duration-500"
+                      className="h-full rounded-full bg-primary-400"
                       style={{ width: `${(count / checkedInCount) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-[10px] sm:text-xs text-gray-500 w-6 sm:w-8 text-right">{count}</span>
+                  <span className="w-6 text-right text-[10px] font-semibold text-slate-500">{count}</span>
                 </div>
               </div>
             ))}

@@ -12,46 +12,33 @@ export function StudentHapiLab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent flex items-center">
-          <Beaker className="w-7 h-7 mr-2 text-cyan-600" />
-          Hapi Labs
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-900">
+          <Beaker className="h-5 w-5 text-primary-600" />
+          Hapi lab
         </h2>
       </div>
 
-      <div className="flex space-x-2 bg-white rounded-xl p-2 shadow-md overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('pulses')}
-          className={`flex-1 py-3 px-3 sm:px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap ${
-            activeTab === 'pulses'
-              ? 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <MessageSquare className="w-5 h-5" />
-          <span className="text-sm sm:text-base">Class Pulse</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('moments')}
-          className={`flex-1 py-3 px-3 sm:px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap ${
-            activeTab === 'moments'
-              ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <Heart className="w-5 h-5" />
-          <span className="text-sm sm:text-base">Hapi Moments</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('meetings')}
-          className={`flex-1 py-3 px-3 sm:px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap ${
-            activeTab === 'meetings'
-              ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <Video className="w-5 h-5" />
-          <span className="text-sm sm:text-base">Meetings</span>
-        </button>
+      <div className="flex overflow-x-auto rounded-full border border-slate-200 bg-white p-1 text-sm font-semibold text-slate-500">
+        {[
+          { id: 'pulses', label: 'Class pulse', icon: MessageSquare },
+          { id: 'moments', label: 'Hapi moments', icon: Heart },
+          { id: 'meetings', label: 'Meetings', icon: Video },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as Tab)}
+              className={`mr-1 flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 last:mr-0 transition ${
+                isActive ? 'bg-primary-600 text-white shadow-sm' : 'hover:text-primary-600'
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {activeTab === 'pulses' && (

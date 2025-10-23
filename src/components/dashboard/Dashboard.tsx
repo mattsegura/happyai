@@ -19,8 +19,9 @@ import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
 import { generateAnalyticsPrompt } from '../../lib/analyticsPrompts';
 import { getStaticAnalyticsData } from '../../lib/staticAnalyticsData';
-import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare, GraduationCap } from 'lucide-react';
+import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare, GraduationCap, ChevronLeft } from 'lucide-react';
 import { AcademicsHub } from '../academics/AcademicsHub';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 type View = 'home' | 'leaderboard' | 'lab' | 'hapi' | 'classes' | 'profile' | 'academics';
 
@@ -41,8 +42,19 @@ export function Dashboard() {
   const [selectedPulse, setSelectedPulse] = useState<any>(null);
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
   const [analyticsPrompt, setAnalyticsPrompt] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const analyticsData = getStaticAnalyticsData();
+
+  const navigationItems = [
+    { id: 'home', icon: Home, label: 'Overview' },
+    { id: 'academics', icon: GraduationCap, label: 'Academics' },
+    { id: 'leaderboard', icon: Trophy, label: 'Ranks' },
+    { id: 'lab', icon: Beaker, label: 'Hapi Lab' },
+    { id: 'hapi', icon: MessageSquare, label: 'Chat' },
+    { id: 'classes', icon: Users, label: 'Classes' },
+    { id: 'profile', icon: User, label: 'Profile' },
+  ] as const;
 
   useEffect(() => {
     if (user) {
@@ -155,52 +167,117 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50">
-      <header className="bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 shadow-xl border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Smile className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Hapi.ai
-              </h1>
-              <p className="text-gray-400 text-[10px] sm:text-xs font-medium">Your Emotional Wellness Companion</p>
-            </div>
+    <div className="flex min-h-screen bg-slate-100">
+      <aside
+        className={`hidden h-screen flex-col border-r border-slate-200 bg-white transition-all duration-300 md:flex ${
+          sidebarCollapsed ? 'w-20' : 'w-72'
+        }`}
+      >
+        <div className={`flex items-center gap-3 px-6 pt-8 ${sidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white">
+            <Smile className="h-5 w-5" />
           </div>
+          {!sidebarCollapsed && (
+            <div>
+              <p className="text-sm font-semibold text-slate-900">Hapi AI</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Student Companion</p>
+            </div>
+          )}
         </div>
-      </header>
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20 sm:pb-24">
 
-        {currentView === 'home' && <StatsBar />}
+        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-semibold text-slate-500">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentView === item.id;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3';
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentView(item.id as View)}
+                className={`flex w-full items-center rounded-xl py-2 transition ${
+                  isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'hover:bg-slate-100'
+                } ${spacingClasses}`}
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </button>
+            );
+          })}
+        </nav>
 
-        <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
-          {currentView === 'home' && (
-            <>
-              <div className="animate-in slide-in-from-top duration-500">
-                <TodaysTasks
-                  onMorningPulseClick={handleMorningPulseClick}
-                  onClassPulseClick={handleClassPulseClick}
-                  onMeetingClick={handleMeetingClick}
-                  onHapiMomentClick={handleHapiMomentClick}
+        <div className="space-y-2 px-4 pb-6">
+          <ThemeToggle />
+          <button
+            onClick={() => setSidebarCollapsed((prev) => !prev)}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition hover:border-primary-200 hover:text-primary-600"
+            aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
+          >
+            <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
+            {!sidebarCollapsed && <span>Collapse</span>}
+          </button>
+        </div>
+      </aside>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-10 py-12">
+          <header className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-xl font-semibold text-slate-900">Welcome back</h1>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Today’s wellbeing & academic overview</p>
+            </div>
+              <div className="md:hidden">
+                <div className="flex items-center gap-2 overflow-x-auto">
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = currentView === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setCurrentView(item.id as View)}
+                        className={`flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                          isActive ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </header>
+
+            {currentView === 'home' && <StatsBar />}
+
+            <div className="space-y-5">
+              {currentView === 'home' && (
+                <>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <TodaysTasks
+                      onMorningPulseClick={handleMorningPulseClick}
+                      onClassPulseClick={handleClassPulseClick}
+                      onMeetingClick={handleMeetingClick}
+                      onHapiMomentClick={handleHapiMomentClick}
                 />
               </div>
 
-              <div className="pt-6 border-t-2 border-gray-200">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 px-1">Your Analytics</h2>
+              <div className="pt-4">
+                <h2 className="text-xl font-semibold text-slate-900">Your analytics</h2>
+                <p className="text-sm text-slate-500">Emotional trends and academic momentum stitched together.</p>
               </div>
 
-              <div className="animate-in slide-in-from-top duration-500 delay-200">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <HapiAiInsights analyticsData={analyticsData} onTalkMore={handleTalkMore} />
               </div>
 
-              <div className="animate-in slide-in-from-top duration-500 delay-300">
-                <PersonalSentimentChart />
-              </div>
-
-              <div className="animate-in slide-in-from-top duration-500 delay-400">
-                <ClassSentimentGauge />
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <PersonalSentimentChart />
+                </div>
+                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <ClassSentimentGauge />
+                </div>
               </div>
             </>
           )}
@@ -212,24 +289,45 @@ export function Dashboard() {
             />
           )}
 
-          {currentView === 'leaderboard' && <ClassLeaderboard />}
-
-          {currentView === 'lab' && <StudentHapiLab />}
-
-          {currentView === 'hapi' && (
-            <div className="animate-in fade-in duration-300">
-              <StudentHapiChat
-                initialPrompt={analyticsPrompt}
-                onPromptUsed={handleAnalyticsPromptUsed}
-              />
+          {currentView === 'leaderboard' && (
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <ClassLeaderboard />
             </div>
           )}
 
-          {currentView === 'classes' && <ClassesView />}
+          {currentView === 'lab' && (
+            <div className="space-y-6">
+              <StudentHapiLab />
+            </div>
+          )}
 
-          {currentView === 'profile' && <ProfileView />}
+          {currentView === 'hapi' && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <StudentHapiChat
+                  initialPrompt={analyticsPrompt}
+                  onPromptUsed={handleAnalyticsPromptUsed}
+                />
+              </div>
+          )}
 
-          {currentView === 'academics' && <AcademicsHub />}
+          {currentView === 'classes' && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <ClassesView />
+              </div>
+            )}
+
+            {currentView === 'profile' && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <ProfileView />
+              </div>
+            )}
+
+            {currentView === 'academics' && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <AcademicsHub />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -273,42 +371,6 @@ export function Dashboard() {
           onComplete={handleHapiReferralComplete}
         />
       )}
-
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-2xl z-40">
-        <div className="max-w-7xl mx-auto px-1 sm:px-4">
-          <div className="flex items-center justify-around py-2 sm:py-3">
-            {[
-              { id: 'home', icon: Home, label: 'Home', color: 'blue' },
-              { id: 'academics', icon: GraduationCap, label: 'Academics', color: 'purple' },
-              { id: 'leaderboard', icon: Trophy, label: 'Ranks', color: 'blue' },
-              { id: 'lab', icon: Beaker, label: 'Labs', color: 'blue' },
-              { id: 'hapi', icon: MessageSquare, label: 'Chat', color: 'blue' },
-              { id: 'classes', icon: Users, label: 'Classes', color: 'blue' },
-              { id: 'profile', icon: User, label: 'Profile', color: 'blue' },
-            ].map((item) => {
-              const Icon = item.icon;
-              const isActive = currentView === item.id;
-
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentView(item.id as View)}
-                  className={`flex flex-col items-center space-y-0.5 sm:space-y-1 px-1.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 min-w-0 ${
-                    isActive
-                      ? `bg-${item.color}-100 text-${item.color}-600`
-                      : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                >
-                  <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${isActive ? `stroke-[2.5]` : ''}`} />
-                  <span className={`text-[10px] sm:text-xs font-semibold ${isActive ? '' : 'font-medium'} truncate max-w-[60px] sm:max-w-none`}>
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
     </div>
   );
 }

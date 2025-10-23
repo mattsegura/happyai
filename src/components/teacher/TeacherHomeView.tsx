@@ -159,46 +159,44 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
       </div>
 
       {atRiskStudents.length > 0 && (
-        <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-red-200 shadow-lg">
-          <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
-              <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+              <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-800">Students at Risk</h3>
-              <p className="text-xs sm:text-sm text-gray-600">These students may need your attention</p>
+              <h3 className="text-lg font-semibold text-slate-900">Students flagged for follow up</h3>
+              <p className="text-xs text-slate-500">Review recent patterns and consider outreach.</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
             {atRiskStudents.map(student => (
-              <div key={`${student.user_id}-${student.className}`} className="bg-white rounded-xl p-3 sm:p-4 border-2 border-orange-200 hover:shadow-md transition-all duration-300">
-                <div className="flex items-start justify-between mb-2 sm:mb-3">
+              <div key={`${student.user_id}-${student.className}`} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="text-sm sm:text-base font-bold text-gray-800">{student.full_name}</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">{student.className}</p>
+                    <h4 className="text-sm font-semibold text-slate-900">{student.full_name}</h4>
+                    <p className="text-xs text-slate-500">{student.className}</p>
                   </div>
-                  <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-red-100 text-red-700 rounded-full text-[10px] sm:text-xs font-semibold">
-                    At Risk
-                  </span>
+                  <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-600">At risk</span>
                 </div>
-                <div className="space-y-1.5 sm:space-y-2">
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-gray-600">Issue:</span>
-                    <span className="font-semibold text-gray-800 text-right text-[11px] sm:text-sm">{student.riskType}</span>
+                <dl className="mt-3 space-y-2 text-xs text-slate-600">
+                  <div className="flex items-center justify-between">
+                    <dt>Focus area</dt>
+                    <dd className="max-w-[60%] text-right font-semibold text-slate-800">{student.riskType}</dd>
                   </div>
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
-                    <span className="text-gray-600">Last Check:</span>
-                    <span className="font-semibold text-gray-800">
+                  <div className="flex items-center justify-between">
+                    <dt>Last pulse</dt>
+                    <dd className="font-semibold text-slate-800">
                       {student.last_pulse_check
                         ? Math.floor((Date.now() - new Date(student.last_pulse_check).getTime()) / (1000 * 60 * 60 * 24)) + 'd ago'
                         : 'Never'}
-                    </span>
+                    </dd>
                   </div>
-                  <button className="w-full mt-1 sm:mt-2 py-1.5 sm:py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300">
-                    Reach Out
-                  </button>
-                </div>
+                </dl>
+                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-600">
+                  Reach out
+                </button>
               </div>
             ))}
           </div>

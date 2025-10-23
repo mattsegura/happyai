@@ -1,611 +1,469 @@
 import { useState } from 'react';
 import {
-  Sparkles,
-  Heart,
-  Brain,
-  Trophy,
-  TrendingUp,
-  Users,
-  MessageSquare,
-  Zap,
-  Target,
-  BarChart3,
-  CheckCircle,
   ArrowRight,
-  Menu,
-  X,
-  GraduationCap,
+  BarChart3,
   BookOpen,
-  Flame,
-  Award,
-  Clock,
-  Smile
+  Brain,
+  CheckCircle2,
+  GraduationCap,
+  Menu,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  X
 } from 'lucide-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
 }
 
+const navigation = [
+  { label: 'Platform', href: '#platform' },
+  { label: 'Students', href: '#students' },
+  { label: 'Teachers', href: '#teachers' },
+  { label: 'Security', href: '#security' },
+];
+
+const studentHighlights = [
+  {
+    title: 'Daily mood pulse',
+    description: 'One-minute reflections help students recognise patterns and name the why behind their mood.',
+    icon: Sparkles,
+  },
+  {
+    title: 'Academic snapshot',
+    description: 'Assignments and Canvas grades surface alongside emotions so students can plan with context.',
+    icon: BookOpen,
+  },
+  {
+    title: 'Guided next steps',
+    description: 'Hapi Companion offers grounding prompts, study tips, and goal suggestions tailored to each check-in.',
+    icon: Brain,
+  },
+];
+
+const teacherHighlights = [
+  {
+    title: 'Pulse analytics',
+    description: 'Class sentiment, participation, and engagement trends update automatically from daily check-ins.',
+    icon: BarChart3,
+  },
+  {
+    title: 'Actionable briefs',
+    description: 'Weekly digests flag students who may need support and celebrate moments of progress.',
+    icon: Users,
+  },
+  {
+    title: 'Instructional signals',
+    description: 'Detect topics that correlate with stress or confidence, so teaching plans adapt in real time.',
+    icon: GraduationCap,
+  },
+];
+
+const workflowSteps = [
+  {
+    title: 'Collect meaningful signals',
+    description: 'Mood pulses, peer recognitions, Canvas performance, and calendar events flow into a unified hub.',
+  },
+  {
+    title: 'Synthesize for every role',
+    description: 'Student Companion, Teacher Analyst, and System Bridge prepare views tuned to individual needs.',
+  },
+  {
+    title: 'Deliver timely guidance',
+    description: 'AI-generated nudges, study plans, and alerts keep wellness and learning aligned day by day.',
+  },
+];
+
+const principles = [
+  {
+    title: 'Privacy by design',
+    description: 'Students own their reflections. Sensitive notes stay private unless a risk pattern is detected.',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Evidence over hype',
+    description: 'Every insight is grounded in real class data with transparent context for teachers and leaders.',
+    icon: CheckCircle2,
+  },
+  {
+    title: 'Built for schools',
+    description: 'FERPA-aligned architecture, secure Supabase storage, and clear data governance policies.',
+    icon: Users,
+  },
+];
+
 export function LandingPage({ onGetStarted }: LandingPageProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const features = [
-    {
-      icon: Sparkles,
-      title: "Morning Pulse Check",
-      description: "Start your day with a quick emotional check-in. Build streaks, earn 15 points, and track your wellness journey.",
-      color: "from-cyan-400 to-blue-500"
-    },
-    {
-      icon: MessageSquare,
-      title: "Class Pulse Questions",
-      description: "Teachers create engaging questions, students respond before midnight. Earn 20 points and share your thoughts.",
-      color: "from-blue-400 to-cyan-500"
-    },
-    {
-      icon: Heart,
-      title: "Hapi Moments",
-      description: "Recognize classmates for kindness and support. Both sender and recipient earn 5 points while building community.",
-      color: "from-pink-400 to-rose-500"
-    },
-    {
-      icon: Brain,
-      title: "AI-Powered Support",
-      description: "Chat with Hapi AI for emotional support, study tips, task planning, and personalized guidance anytime.",
-      color: "from-cyan-500 to-teal-500"
-    },
-    {
-      icon: Trophy,
-      title: "Class Leaderboards",
-      description: "Compete with classmates in a positive way. Track rankings, celebrate achievements, and stay motivated.",
-      color: "from-yellow-400 to-orange-500"
-    },
-    {
-      icon: BarChart3,
-      title: "Sentiment Analytics",
-      description: "Visualize your emotional journey with beautiful charts. Understand patterns and celebrate your growth.",
-      color: "from-blue-500 to-cyan-600"
-    },
-    {
-      icon: Zap,
-      title: "Points & Levels",
-      description: "Earn points for every action, level up every 100 points, and unlock achievements as you grow.",
-      color: "from-orange-400 to-yellow-500"
-    },
-    {
-      icon: Target,
-      title: "Daily Tasks Hub",
-      description: "See all your tasks in one place. Morning pulses, class questions, meetings, and moments organized perfectly.",
-      color: "from-teal-400 to-cyan-500"
-    }
-  ];
-
-  const studentBenefits = [
-    { icon: TrendingUp, text: "Track your emotional wellness journey with beautiful visualizations" },
-    { icon: Trophy, text: "Earn points, level up, and compete on class leaderboards" },
-    { icon: Heart, text: "Connect with classmates through Hapi Moments peer recognition" },
-    { icon: Brain, text: "Get AI-powered support for stress, studying, and task management" },
-    { icon: Flame, text: "Build healthy daily habits with streak tracking and rewards" },
-    { icon: CheckCircle, text: "Stay organized with a centralized daily tasks dashboard" }
-  ];
-
-  const teacherBenefits = [
-    { icon: BarChart3, text: "Monitor real-time class sentiment and emotional wellness trends" },
-    { icon: MessageSquare, text: "Create engaging pulse questions to check in with students" },
-    { icon: Users, text: "Foster supportive classroom communities and peer connections" },
-    { icon: Target, text: "Identify students who may need additional support or resources" },
-    { icon: Award, text: "Track class engagement with detailed analytics and insights" },
-    { icon: BookOpen, text: "Use AI-powered insights to inform teaching strategies" }
-  ];
-
-  const stats = [
-    { number: "10k+", label: "Daily Check-ins" },
-    { number: "95%", label: "Student Engagement" },
-    { number: "500+", label: "Active Classes" },
-    { number: "50k+", label: "Hapi Moments Sent" }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50">
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Smile className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                  Hapi.ai
-                </h1>
-                <p className="hidden sm:block text-xs text-gray-600 font-medium">Emotional Wellness Platform</p>
-              </div>
+    <div className="bg-slate-50 text-slate-900">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
+          <a href="#top" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg">
+              <Sparkles className="h-5 w-5" />
             </div>
+            <div>
+              <p className="text-lg font-semibold text-primary-700">Hapi AI</p>
+              <p className="hidden text-xs font-medium text-slate-500 sm:block">Emotional + Academic Intelligence</p>
+            </div>
+          </a>
 
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-cyan-600 font-semibold transition-colors">
-                Features
+          <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-600 md:flex">
+            {navigation.map((item) => (
+              <a key={item.href} href={item.href} className="transition hover:text-primary-600">
+                {item.label}
               </a>
-              <a href="#students" className="text-gray-600 hover:text-cyan-600 font-semibold transition-colors">
-                For Students
-              </a>
-              <a href="#teachers" className="text-gray-600 hover:text-cyan-600 font-semibold transition-colors">
-                For Teachers
-              </a>
-            </div>
+            ))}
+          </nav>
 
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={onGetStarted}
-                className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-sm sm:text-base"
-              >
-                Get Started
-              </button>
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-gray-600 hover:text-cyan-600 transition-colors"
-              >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onGetStarted}
+              className="hidden rounded-2xl border border-primary-200 px-5 py-2 text-sm font-semibold text-primary-700 transition hover:border-primary-300 hover:bg-primary-50 sm:block"
+            >
+              Sign in
+            </button>
+            <button
+              onClick={onGetStarted}
+              className="hidden rounded-2xl bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-700 md:block"
+            >
+              Request a demo
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:border-primary-200 hover:text-primary-600 md:hidden"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
-
-          {mobileMenuOpen && (
-            <div className="md:hidden pb-4 pt-2 space-y-2 animate-in slide-in-from-top duration-300">
-              <a
-                href="#features"
-                className="block px-4 py-2 text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg font-semibold transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Features
-              </a>
-              <a
-                href="#students"
-                className="block px-4 py-2 text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg font-semibold transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                For Students
-              </a>
-              <a
-                href="#teachers"
-                className="block px-4 py-2 text-gray-600 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg font-semibold transition-all"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                For Teachers
-              </a>
-            </div>
-          )}
         </div>
-      </nav>
 
-      <section className="relative overflow-hidden py-12 sm:py-20 lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/40 via-blue-100/40 to-teal-100/40"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-200/30 to-blue-300/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-teal-200/20 to-cyan-200/20 rounded-full blur-3xl"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center space-x-2 bg-cyan-100 px-4 py-2 rounded-full mb-6 sm:mb-8">
-              <Sparkles className="w-5 h-5 text-cyan-600" />
-              <span className="text-sm font-bold text-cyan-700">Transforming Student Wellness</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight">
-              <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">
-                Where Emotional Wellness
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                Meets Academic Success
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 sm:mb-12 leading-relaxed font-medium max-w-3xl mx-auto">
-              Hapi empowers students and teachers to build supportive communities through daily check-ins,
-              AI-powered guidance, and meaningful peer connections. Track emotions, earn rewards, and grow together.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12 sm:mb-16">
-              <button
-                onClick={onGetStarted}
-                className="w-full sm:w-auto group px-8 py-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-teal-600 text-white text-lg font-bold rounded-2xl shadow-2xl hover:shadow-cyan-500/50 transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2"
-              >
-                <span>Start Your Journey</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={onGetStarted}
-                className="w-full sm:w-auto px-8 py-4 bg-white text-cyan-600 text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl border-2 border-cyan-200 hover:border-cyan-400 transform hover:scale-105 transition-all duration-300"
-              >
-                Try Demo Account
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {stats.map((stat, index) => (
-                <div
-                  key={index}
-                  className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border-2 border-cyan-100 transform hover:scale-105 transition-all duration-300"
+        {mobileMenuOpen && (
+          <div className="border-t border-slate-200 bg-white md:hidden" data-hs-collapse>
+            <div className="space-y-2 px-4 py-4">
+              {navigation.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-primary-50 hover:text-primary-700"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-sm sm:text-base text-gray-600 font-semibold">{stat.label}</div>
-                </div>
+                  {item.label}
+                </a>
               ))}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onGetStarted();
+                }}
+                className="w-full rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-primary-700"
+              >
+                Request a demo
+              </button>
             </div>
           </div>
-        </div>
-      </section>
+        )}
+      </header>
 
-      <section id="features" className="py-12 sm:py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-4">
-              Everything You Need to Thrive
-            </h2>
-            <p className="text-lg sm:text-xl text-gray-600 font-medium max-w-3xl mx-auto">
-              A comprehensive platform designed to support emotional wellness, foster connections, and celebrate growth.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={index}
-                  className="group bg-white rounded-3xl p-6 sm:p-8 shadow-xl hover:shadow-2xl border-2 border-gray-100 hover:border-cyan-200 transform hover:scale-105 transition-all duration-300"
+      <main>
+        <section id="platform" className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-accent-50 to-white" aria-hidden />
+          <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:flex lg:items-center lg:gap-16 lg:px-8 lg:py-24">
+            <div className="max-w-3xl space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700 shadow-sm">
+                Designed for whole-student care
+              </div>
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+                One companion for wellbeing and learning momentum.
+              </h1>
+              <p className="max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+                Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity.
+              </p>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={onGetStarted}
+                  className="inline-flex items-center justify-center rounded-2xl bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-primary-700"
                 >
-                  <div className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
-                    <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3">{feature.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section id="students" className="relative overflow-hidden py-12 sm:py-20 lg:py-24 bg-gradient-to-br from-cyan-50 to-blue-50">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0YzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00em0wLTEwYzAtMi4yMSAxLjc5LTQgNC00czQgMS43OSA0IDQtMS43OSA0LTQgNC00LTEuNzktNC00eiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center space-x-2 bg-blue-100 px-4 py-2 rounded-full mb-6">
-                <GraduationCap className="w-5 h-5 text-blue-600" />
-                <span className="text-sm font-bold text-blue-700">For Students</span>
+                  Launch the demo
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+                <a
+                  href="#students"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3 text-base font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-700"
+                >
+                  Explore the platform
+                </a>
               </div>
+              <dl className="grid gap-3 sm:grid-cols-3 text-sm text-slate-600">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">AI guides</dt>
+                    <dd className="mt-1 font-semibold text-slate-900">Companion, Analyst, Bridge</dd>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <Users className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Go live</dt>
+                    <dd className="mt-1 font-semibold text-slate-900">Under two weeks</dd>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <ShieldCheck className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Privacy-first</dt>
+                    <dd className="mt-1 font-semibold text-slate-900">FERPA aligned access controls</dd>
+                  </div>
+                </div>
+              </dl>
+            </div>
+            <div className="mt-12 hidden flex-1 lg:block">
+              <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-2xl">
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Sample daily briefing</p>
+                <h2 className="mt-3 text-2xl font-bold text-slate-900">Tuesday at a glance</h2>
+                <ul className="mt-6 space-y-3 text-sm text-slate-600">
+                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-400" />
+                    <div>
+                      <p className="font-semibold text-slate-800">Student companion</p>
+                      <p>“Feeling overwhelmed about Biology? Try two 30-minute focus blocks. I’ll check in tomorrow.”</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-400" />
+                    <div>
+                      <p className="font-semibold text-slate-800">Teacher analyst</p>
+                      <p>82% of Biology II reported “steady” confidence; 3 students still owe today’s pulse.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-400" />
+                    <div>
+                      <p className="font-semibold text-slate-800">System bridge</p>
+                      <p>Campus mood dips before history midterms. Schedule a quick advisory tomorrow.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-6">
-                Your Personal Wellness Journey
-              </h2>
-              <p className="text-lg sm:text-xl text-gray-700 leading-relaxed mb-8 font-medium">
-                Take control of your emotional wellness while earning points, building streaks, and connecting with classmates
-                in meaningful ways. Hapi makes wellness engaging and rewarding.
+        <section id="students" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div className="space-y-6">
+              <p className="inline-flex items-center gap-2 rounded-full border border-accent-200 bg-accent-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-accent-700">
+                Student companion
               </p>
-
+              <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+                A private space for students to reflect, plan, and celebrate progress.
+              </h2>
+              <p className="text-lg leading-relaxed text-slate-600">
+                Students check in on their day, gather insights about study habits, and receive guidance that blends
+                empathy with action. Echo summaries recap every week so learners stay aware of their emotional journey.
+              </p>
               <div className="space-y-4">
-                {studentBenefits.map((benefit, index) => {
-                  const Icon = benefit.icon;
+                {studentHighlights.map((item) => {
+                  const Icon = item.icon;
                   return (
-                    <div
-                      key={index}
-                      className="flex items-start space-x-4 bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                    >
-                      <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                        <Icon className="w-5 h-5 text-white" />
+                    <div key={item.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                        <Icon className="h-5 w-5" />
                       </div>
-                      <p className="text-gray-700 font-medium leading-relaxed pt-1">{benefit.text}</p>
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
+                        <p className="text-sm text-slate-600">{item.description}</p>
+                      </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
-              <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-cyan-200">
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl p-6 text-white">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <div className="text-sm font-semibold opacity-90">Your Level</div>
-                        <div className="text-4xl font-black">12</div>
-                      </div>
-                      <Zap className="w-12 h-12 opacity-80" />
-                    </div>
-                    <div className="bg-white/20 rounded-full h-3 overflow-hidden">
-                      <div className="bg-white h-full rounded-full" style={{ width: '65%' }}></div>
-                    </div>
-                    <div className="text-xs font-semibold mt-2 opacity-90">65/100 points to next level</div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-2xl">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600">Student dashboard preview</h3>
+              <div className="mt-6 space-y-6">
+                <div className="rounded-2xl border border-slate-200 bg-primary-600/10 p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-primary-700">Daily pulse</p>
+                  <p className="mt-2 text-sm text-slate-600">
+                    Mood: “Inspired” · Trigger: “Biology lab planning” · Energy: “Balanced”
+                  </p>
+                  <p className="mt-3 text-sm font-semibold text-primary-700">
+                    Suggested action: “Outline the lab steps tonight and bring questions to tomorrow’s session.”
+                  </p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Assignments in focus</p>
+                    <p className="mt-2 text-sm text-slate-600">Economics essay draft · Due Thursday · Confidence 60%</p>
                   </div>
-
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 border-2 border-blue-200">
-                      <Flame className="w-8 h-8 text-blue-600 mb-2" />
-                      <div className="text-2xl font-black text-blue-600">14</div>
-                      <div className="text-xs text-blue-700 font-semibold">Day Streak</div>
-                    </div>
-                    <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-4 border-2 border-cyan-200">
-                      <Trophy className="w-8 h-8 text-cyan-600 mb-2" />
-                      <div className="text-2xl font-black text-cyan-600">1,165</div>
-                      <div className="text-xs text-cyan-700 font-semibold">Points</div>
-                    </div>
-                    <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-4 border-2 border-teal-200">
-                      <Heart className="w-8 h-8 text-teal-600 mb-2" />
-                      <div className="text-2xl font-black text-teal-600">23</div>
-                      <div className="text-xs text-teal-700 font-semibold">Moments</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-6 border-2 border-pink-200">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center">
-                        <Heart className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-gray-800">Sarah sent you a Hapi Moment!</div>
-                        <div className="text-xs text-gray-600 font-medium">Thanks for helping with homework</div>
-                      </div>
-                    </div>
-                    <div className="text-sm text-pink-700 font-semibold">+5 points earned</div>
+                  <div className="rounded-2xl border border-slate-200 p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Echo summary</p>
+                    <p className="mt-2 text-sm text-slate-600">“You felt most confident after collaborative study sessions.”</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="teachers" className="relative overflow-hidden py-12 sm:py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="order-2 lg:order-1 relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
-              <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-blue-200">
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-2xl p-6 text-white">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Users className="w-8 h-8" />
-                      <div>
-                        <div className="text-sm font-semibold opacity-90">Biology II</div>
-                        <div className="text-2xl font-black">Class Overview</div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3 text-center">
-                      <div>
-                        <div className="text-3xl font-black">28</div>
-                        <div className="text-xs opacity-90">Students</div>
-                      </div>
-                      <div>
-                        <div className="text-3xl font-black">95%</div>
-                        <div className="text-xs opacity-90">Response Rate</div>
+        <section id="teachers" className="bg-white py-20">
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8">
+            <div className="order-2 space-y-6 lg:order-1">
+              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700">
+                Teacher analyst
+              </p>
+              <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+                Clear class analytics so teachers can focus on relationships.
+              </h2>
+              <p className="text-lg leading-relaxed text-slate-600">
+                Classroom dashboards connect the dots between emotional tone, participation, and coursework progress.
+                Alerts are contextual and respectful, giving teachers insight without overwhelming them with noise.
+              </p>
+              <div className="space-y-4">
+                {teacherHighlights.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
+                        <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-3xl font-black">4.2</div>
-                        <div className="text-xs opacity-90">Avg Sentiment</div>
+                        <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
+                        <p className="text-sm text-slate-600">{item.description}</p>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-6 border-2 border-cyan-200">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-gray-800">Recent Pulse Question</h3>
-                      <Clock className="w-5 h-5 text-cyan-600" />
-                    </div>
-                    <p className="text-sm text-gray-700 font-medium mb-4">
-                      "How confident do you feel about tomorrow's quiz?"
-                    </p>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex-1 bg-cyan-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full" style={{ width: '85%' }}></div>
-                      </div>
-                      <span className="text-sm font-bold text-cyan-600">24/28</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border-2 border-green-200">
-                      <TrendingUp className="w-8 h-8 text-green-600 mb-2" />
-                      <div className="text-xl font-black text-green-600">Improving</div>
-                      <div className="text-xs text-green-700 font-semibold">Class Sentiment</div>
-                    </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-4 border-2 border-blue-200">
-                      <Award className="w-8 h-8 text-blue-600 mb-2" />
-                      <div className="text-xl font-black text-blue-600">High</div>
-                      <div className="text-xs text-blue-700 font-semibold">Engagement</div>
-                    </div>
-                  </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="order-1 rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-2xl lg:order-2">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600">Teacher briefing</h3>
+              <div className="mt-6 space-y-5 text-sm text-slate-600">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                  <p className="font-semibold text-slate-900">Class sentiment today</p>
+                  <p className="mt-1">
+                    Biology II students report steady confidence (4.1/5). Three reflections mention project scope—consider a
+                    quick clarification tomorrow.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                  <p className="font-semibold text-slate-900">Engagement signals</p>
+                  <p className="mt-1">
+                    Pulse participation remained above 90%. Office-hour slots for Thursday are full; send an encouragement
+                    reminder to join the waitlist.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                  <p className="font-semibold text-slate-900">Suggested next action</p>
+                  <p className="mt-1">
+                    Offer a collaborative planning station for the lab project. Students who flagged uncertainty will see a
+                    note to stop by.
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="order-1 lg:order-2">
-              <div className="inline-flex items-center space-x-2 bg-cyan-100 px-4 py-2 rounded-full mb-6">
-                <Users className="w-5 h-5 text-cyan-600" />
-                <span className="text-sm font-bold text-cyan-700">For Teachers</span>
+        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-2xl">
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              <div className="space-y-6">
+                <p className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                  System bridge
+                </p>
+                <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+                  Connect the dots across your campus without losing the human touch.
+                </h2>
+                <p className="text-lg leading-relaxed text-slate-600">
+                  Leadership heatmaps highlight the weeks that matter, anonymized reports surface burnout risks before
+                  they escalate, and engagement trends show exactly where support programs are working.
+                </p>
               </div>
+              <ol className="space-y-4">
+                {workflowSteps.map((step, index) => (
+                  <li key={step.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-sm font-semibold text-primary-700">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900">{step.title}</h3>
+                      <p className="text-sm text-slate-600">{step.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-6">
-                Understand and Support Every Student
-              </h2>
-              <p className="text-lg sm:text-xl text-gray-700 leading-relaxed mb-8 font-medium">
-                Get real-time insights into class sentiment, identify students who need support, and foster a positive
-                learning environment with data-driven emotional intelligence.
-              </p>
-
+        <section id="security" className="bg-slate-900 py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
+              <div className="space-y-6">
+                <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+                  Trust & safety
+                </p>
+                <h2 className="text-3xl font-bold text-white sm:text-4xl">
+                  Serious about privacy, accessibility, and responsible AI.
+                </h2>
+                <p className="text-lg leading-relaxed text-slate-200">
+                  Hapi AI respects student agency. Reflections stay private unless escalation thresholds are met, all
+                  analytics are role-based, and every recommendation provides transparent context and sources.
+                </p>
+              </div>
               <div className="space-y-4">
-                {teacherBenefits.map((benefit, index) => {
-                  const Icon = benefit.icon;
+                {principles.map((principle) => {
+                  const Icon = principle.icon;
                   return (
-                    <div
-                      key={index}
-                      className="flex items-start space-x-4 bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                    >
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                        <Icon className="w-5 h-5 text-white" />
+                    <div key={principle.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-white">
+                        <Icon className="h-5 w-5" />
                       </div>
-                      <p className="text-gray-700 font-medium leading-relaxed pt-1">{benefit.text}</p>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{principle.title}</h3>
+                        <p className="text-sm text-slate-200">{principle.description}</p>
+                      </div>
                     </div>
                   );
                 })}
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="relative overflow-hidden py-12 sm:py-20 lg:py-32 bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAtMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
-
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl">
-            <Sparkles className="w-10 h-10 text-white" />
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
-            Ready to Transform Your Classroom Experience?
-          </h2>
-          <p className="text-lg sm:text-xl text-cyan-50 mb-10 leading-relaxed font-medium">
-            Join thousands of students and teachers building healthier, more connected learning communities.
-            Start your journey today with a free demo account.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-            <button
-              onClick={onGetStarted}
-              className="w-full sm:w-auto group px-8 py-5 bg-white text-cyan-600 text-lg font-black rounded-2xl shadow-2xl hover:shadow-white/50 transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2"
-            >
-              <span>Create Demo Account</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={onGetStarted}
-              className="w-full sm:w-auto px-8 py-5 bg-transparent text-white text-lg font-black rounded-2xl border-3 border-white/40 hover:bg-white/10 hover:border-white transform hover:scale-105 transition-all duration-300 shadow-xl"
-            >
-              Sign In to Account
-            </button>
-          </div>
-
-          <p className="mt-8 text-cyan-100 text-sm font-medium">
-            No credit card required • Start using in 60 seconds • Full-featured demo with sample data
-          </p>
-        </div>
-      </section>
-
-      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <div>
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Smile className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                  Hapi.ai
-                </h3>
-              </div>
-              <p className="text-gray-400 font-medium leading-relaxed">
-                Empowering students and teachers to build supportive communities through emotional wellness.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-bold mb-4 text-cyan-400">Platform</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#features" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#students" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    For Students
-                  </a>
-                </li>
-                <li>
-                  <a href="#teachers" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    For Teachers
-                  </a>
-                </li>
-                <li>
-                  <button onClick={onGetStarted} className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Get Started
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-bold mb-4 text-cyan-400">Resources</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Community Guidelines
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Terms of Service
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-bold mb-4 text-cyan-400">Connect</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Support
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors font-medium">
-                    LinkedIn
-                  </a>
-                </li>
-              </ul>
+        <section className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-primary-200 bg-primary-50 px-8 py-16 shadow-2xl">
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Ready to champion whole-student success?</h2>
+            <p className="mt-4 text-lg text-slate-600">
+              Explore the demo to see how Hapi AI pairs emotional intelligence with academic momentum for your district.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <button
+                onClick={onGetStarted}
+                className="inline-flex items-center justify-center rounded-2xl bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-primary-700"
+              >
+                Start the demo
+              </button>
+              <a
+                href="mailto:hello@hapiai.example"
+                className="inline-flex items-center justify-center rounded-2xl border border-primary-200 bg-white px-6 py-3 text-base font-semibold text-primary-700 transition hover:border-primary-300"
+              >
+                Talk with our team
+              </a>
             </div>
           </div>
-
-          <div className="border-t border-gray-700 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <p className="text-gray-400 text-sm font-medium">
-                © 2025 Hapi.ai. All rights reserved. Built with care for student wellness.
-              </p>
-              <div className="flex items-center space-x-2">
-                <Heart className="w-4 h-4 text-pink-500" />
-                <span className="text-gray-400 text-sm font-medium">Made for educators and students</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+        </section>
+      </main>
     </div>
   );
 }

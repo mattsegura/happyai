@@ -202,43 +202,32 @@ export function StudentHapiChat({ initialPrompt, onPromptUsed }: StudentHapiChat
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50 rounded-3xl p-8 shadow-2xl border-2 border-cyan-200">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-200/40 to-blue-300/40 rounded-full blur-3xl -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-teal-200/30 to-cyan-200/30 rounded-full blur-3xl -ml-40 -mb-40"></div>
-
-        <div className="relative z-10">
-          <div className="flex items-center space-x-4 mb-2">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl blur-xl opacity-60 animate-pulse"></div>
-              <div className="relative p-4 bg-gradient-to-br from-cyan-400 via-blue-500 to-teal-600 rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
-                <Brain className="w-10 h-10 text-white drop-shadow-lg" />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-5xl font-black bg-gradient-to-r from-cyan-700 via-blue-600 to-teal-700 bg-clip-text text-transparent tracking-tight">
-                Hapi AI
-              </h1>
-              <p className="text-blue-700 font-semibold mt-1 text-lg">Your wellness and study companion</p>
-            </div>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+            <Brain className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold text-slate-900">Hapi AI companion</h1>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Personal guidance for wellbeing and study</p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col h-[calc(100vh-20rem)] max-h-[700px] bg-gradient-to-br from-white via-blue-50/30 to-cyan-50/30 rounded-3xl shadow-2xl border-2 border-blue-200 overflow-hidden">
-        <div className="relative overflow-hidden bg-gradient-to-r from-cyan-500 via-blue-600 to-teal-600 p-5">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCA0LTEuNzkgNC00em0wLTEwYzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDQgNC0xLjc5IDQtNHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-50"></div>
-          <div className="relative z-10 flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
-              <Brain className="w-6 h-6 text-white" />
+      <div className="flex flex-col h-[calc(100vh-20rem)] max-h-[680px] rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600">
+              <Brain className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white drop-shadow-md">Chat with Hapi</h2>
-              <p className="text-cyan-100 text-sm font-medium">Real-time support and guidance</p>
+              <h2 className="text-base font-semibold text-slate-900">Chat with Hapi</h2>
+              <p className="text-xs text-slate-500">Thoughtful responses grounded in your recent activity.</p>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-white/50 to-blue-50/30" style={{ scrollBehavior: 'smooth' }}>
+        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6 bg-slate-50" style={{ scrollBehavior: 'smooth' }}>
           {messages.map((message) => (
             <div
               key={message.id}
@@ -246,26 +235,23 @@ export function StudentHapiChat({ initialPrompt, onPromptUsed }: StudentHapiChat
             >
               <div className={`max-w-[80%] ${message.sender === 'user' ? 'order-2' : 'order-1'}`}>
                 <div
-                  className={`rounded-2xl px-5 py-4 shadow-lg border-2 ${
+                  className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow ${
                     message.sender === 'user'
-                      ? 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white border-blue-300'
-                      : 'bg-white text-gray-800 border-blue-100'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-white text-slate-800 border border-slate-200'
                   }`}
                 >
                   {message.sender === 'ai' && (
-                    <div className="flex items-center space-x-2 mb-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-md opacity-50"></div>
-                        <div className="relative w-7 h-7 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center shadow-md">
-                          <Brain className="w-4 h-4 text-white" />
-                        </div>
+                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary-600">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-50">
+                        <Brain className="h-3.5 w-3.5" />
                       </div>
-                      <span className="text-sm font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Hapi</span>
+                      Hapi
                     </div>
                   )}
                   <p className="text-base leading-relaxed whitespace-pre-line font-medium">{message.content}</p>
                 </div>
-                <span className={`text-xs text-gray-400 mt-1 block ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                <span className={`mt-1 block text-xs text-slate-400 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
                   {formatTime(message.timestamp)}
                 </span>
               </div>
@@ -275,20 +261,21 @@ export function StudentHapiChat({ initialPrompt, onPromptUsed }: StudentHapiChat
           {isTyping && (
             <div className="flex justify-start animate-in fade-in duration-300">
               <div className="max-w-[80%]">
-                <div className="bg-white rounded-2xl px-5 py-4 shadow-lg border-2 border-blue-100">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-md opacity-50 animate-pulse"></div>
-                      <div className="relative w-7 h-7 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center shadow-md">
-                        <Brain className="w-4 h-4 text-white" />
-                      </div>
+                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow">
+                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary-600">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-50">
+                      <Brain className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-sm font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Hapi</span>
+                    Hapi is typing
                   </div>
-                  <div className="flex space-x-2">
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-3 h-3 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="flex gap-1">
+                    {[0, 150, 300].map((delay) => (
+                      <span
+                        key={delay}
+                        className="h-2 w-2 animate-bounce rounded-full bg-primary-400"
+                        style={{ animationDelay: `${delay}ms` }}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -299,25 +286,23 @@ export function StudentHapiChat({ initialPrompt, onPromptUsed }: StudentHapiChat
         </div>
 
         {messages.length === 1 && (
-          <div className="px-6 pb-6">
-            <div className="mb-4 flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-cyan-600" />
-              <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">Quick Start</p>
+          <div className="border-t border-slate-200 bg-white px-6 py-5">
+            <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <Sparkles className="h-4 w-4 text-primary-500" /> Suggested prompts
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               {QUICK_PROMPTS.map((prompt, index) => {
                 const Icon = prompt.icon;
                 return (
                   <button
                     key={index}
                     onClick={() => handleQuickPrompt(prompt.text)}
-                    className={`relative overflow-hidden bg-gradient-to-br ${prompt.color} text-white rounded-2xl p-4 text-left shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 group border-2 border-white/20`}
+                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-600"
                   >
-                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300"></div>
-                    <div className="relative z-10">
-                      <Icon className="w-6 h-6 mb-3 drop-shadow-lg" />
-                      <p className="text-sm font-bold leading-tight drop-shadow-md">{prompt.text}</p>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                      <Icon className="h-4 w-4" />
                     </div>
+                    {prompt.text}
                   </button>
                 );
               })}
@@ -325,8 +310,8 @@ export function StudentHapiChat({ initialPrompt, onPromptUsed }: StudentHapiChat
           </div>
         )}
 
-        <div className="relative bg-gradient-to-r from-gray-50 to-blue-50 p-5 border-t-2 border-blue-200">
-          <div className="flex items-center space-x-3">
+        <div className="border-t border-slate-200 bg-white px-6 py-5">
+          <div className="flex items-center gap-3">
             <input
               ref={inputRef}
               type="text"
@@ -334,16 +319,15 @@ export function StudentHapiChat({ initialPrompt, onPromptUsed }: StudentHapiChat
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="flex-1 px-5 py-4 bg-white border-2 border-blue-200 rounded-2xl focus:outline-none focus:border-cyan-500 focus:ring-4 focus:ring-cyan-200/50 transition-all duration-300 text-gray-800 placeholder:text-gray-400 font-medium shadow-md"
+              className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
               disabled={isTyping}
             />
             <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isTyping}
-              className="relative w-14 h-14 bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-xl hover:shadow-2xl transform hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group"
+              className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-600 text-white transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-2xl transition-colors duration-300"></div>
-              <Send className="relative z-10 w-6 h-6 text-white drop-shadow-lg" />
+              <Send className="h-5 w-5" />
             </button>
           </div>
         </div>
