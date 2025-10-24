@@ -4,6 +4,7 @@ import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { AuthGate } from './components/auth/AuthGate';
 import { LandingPage } from './components/landing/LandingPage';
 import { ToastProvider } from './components/ui/Toast';
+import { TooltipProvider } from './components/ui/tooltip-radix';
 
 function AppContent() {
   const { user, loading, role } = useAuth();
@@ -36,11 +37,13 @@ function AppContent() {
 
 function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </ToastProvider>
+    <TooltipProvider delayDuration={200}>
+      <ToastProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ToastProvider>
+    </TooltipProvider>
   );
 }
 
