@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, User, Eye, EyeOff, GraduationCap, Users } from 'lucide-react';
 import { AuthLayout } from './common/AuthLayout';
+import { Input } from '../ui/Input';
+import { Button } from '../ui/Button';
+import { useToast } from '../ui/Toast';
 
 interface SignupPageProps {
   onToggleMode: () => void;
@@ -9,6 +12,7 @@ interface SignupPageProps {
 
 export function SignupPage({ onToggleMode }: SignupPageProps) {
   const { signUp } = useAuth();
+  const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -23,7 +27,9 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
     setLoading(true);
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      const errorMsg = 'Password must be at least 6 characters';
+      setError(errorMsg);
+      toast.error('Validation Error', errorMsg);
       setLoading(false);
       return;
     }
@@ -32,21 +38,26 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
 
     if (error) {
       setError(error.message);
+      toast.error('Signup failed', error.message);
       setLoading(false);
+    } else {
+      toast.success('Account created!', `Welcome to HapiAI, ${fullName}!`);
     }
   };
 
   return (
-    <AuthLayout title="Join Hapi.ai" subtitle="Start your emotional wellness journey">
-      <div className="flex bg-gray-100 rounded-xl p-1.5 mb-6">
+    <AuthLayout title="Join HapiAI" subtitle="Start your emotional wellness journey">
+      {/* Role Toggle */}
+      <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1.5 mb-6">
         <button
           type="button"
           onClick={() => setRole('student')}
-          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             role === 'student'
-              ? 'bg-white text-cyan-600 shadow-md'
-              : 'text-gray-600 hover:text-gray-800'
+              ? 'bg-white dark:bg-slate-700 text-accent-600 dark:text-accent-400 shadow-md'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300'
           }`}
+          aria-pressed={role === 'student'}
         >
           <GraduationCap className="w-5 h-5" />
           <span>Student</span>
@@ -54,11 +65,12 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
         <button
           type="button"
           onClick={() => setRole('teacher')}
-          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
+          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             role === 'teacher'
-              ? 'bg-white text-blue-600 shadow-md'
-              : 'text-gray-600 hover:text-gray-800'
+              ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-md'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300'
           }`}
+          aria-pressed={role === 'teacher'}
         >
           <Users className="w-5 h-5" />
           <span>Teacher</span>
@@ -66,87 +78,76 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="relative">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-            className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 text-gray-800 placeholder:text-gray-400"
-          />
-        </div>
+        <Input
+          type="text"
+          placeholder="Full Name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+          fullWidth
+          leftIcon={<User className="w-5 h-5" />}
+        />
 
-        <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all duration-300 text-gray-800 placeholder:text-gray-400"
-          />
-        </div>
+        <Input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          fullWidth
+          leftIcon={<Mail className="w-5 h-5" />}
+          error={error && error.includes('email') ? error : undefined}
+        />
 
-        <div className="relative">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Password (min 6 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full pl-12 pr-12 py-3 bg-gray-50 border-2 border-transparent rounded-xl focus:outline-none focus:border-pink-500 focus:bg-white transition-all duration-300 text-gray-800 placeholder:text-gray-400"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
-        </div>
+        <Input
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Password (min 6 characters)"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          fullWidth
+          leftIcon={<Lock className="w-5 h-5" />}
+          rightIcon={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          }
+          error={error && error.includes('password') ? error : undefined}
+          helperText="Must be at least 6 characters long"
+        />
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
-            {error}
-          </div>
-        )}
-
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          variant="primary"
+          size="lg"
+          fullWidth
+          isLoading={loading}
+          className="bg-gradient-to-r from-accent-500 to-primary-600 hover:from-accent-600 hover:to-primary-700"
         >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              Creating account...
-            </span>
-          ) : (
-            'Create Account'
-          )}
-        </button>
+          {loading ? 'Creating account...' : 'Create Account'}
+        </Button>
       </form>
 
       <div className="mt-6 text-center">
         <button
           onClick={onToggleMode}
-          className="text-sm text-gray-600 hover:text-blue-600 transition-colors font-medium"
+          className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium"
         >
-          Already have an account? <span className="text-blue-600 font-semibold">Sign in</span>
+          Already have an account?{' '}
+          <span className="text-primary-600 dark:text-primary-400 font-semibold">Sign in</span>
         </button>
       </div>
-       <div className="mt-4 text-center">
-          <p className="text-black/80 text-xs sm:text-sm">
-            Start earning points and building your emotional wellness journey
-          </p>
-        </div>
+
+      <div className="mt-6 text-center">
+        <p className="text-slate-500 dark:text-slate-400 text-sm">
+          Start earning points and building your emotional wellness journey
+        </p>
+      </div>
     </AuthLayout>
   );
 }

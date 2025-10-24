@@ -10,8 +10,10 @@ import {
   ShieldCheck,
   Sparkles,
   Users,
-  X
+  X,
+  LogIn
 } from 'lucide-react';
+import { AuthGate } from '../auth/AuthGate';
 
 const navigation = [
   { label: 'Platform', href: '#platform' },
@@ -91,6 +93,11 @@ const principles = [
 
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+
+  if (showAuth) {
+    return <AuthGate />;
+  }
 
   return (
     <div className="bg-slate-50 text-slate-900">
@@ -115,6 +122,13 @@ export function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowAuth(true)}
+              className="inline-flex items-center gap-2 rounded-2xl border border-primary-200 bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 hover:border-primary-300"
+            >
+              <LogIn className="h-4 w-4" />
+              <span className="hidden sm:inline">Sign In</span>
+            </button>
             <a
               href="mailto:hello@hapiai.example"
               className="hidden rounded-2xl bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-700 md:block"
@@ -163,12 +177,18 @@ export function LandingPage() {
                 Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() => setShowAuth(true)}
+                  className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary-600 to-accent-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:shadow-xl hover:scale-105 active:scale-95"
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </button>
                 <a
                   href="#students"
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-3 text-base font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-700"
+                  className="inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-700 hover:bg-slate-50"
                 >
                   Explore the platform
-                  <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
               </div>
               <dl className="grid gap-3 sm:grid-cols-3 text-sm text-slate-600">

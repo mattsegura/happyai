@@ -3,16 +3,25 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import { AuthGate } from './components/auth/AuthGate';
 import { LandingPage } from './components/landing/LandingPage';
+import { ToastProvider } from './components/ui/Toast';
 
 function AppContent() {
   const { user, loading, role } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-accent-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-primary-200 dark:border-primary-900 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
+            Loading HapiAI
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400">
+            Preparing your experience...
+          </p>
         </div>
       </div>
     );
@@ -27,9 +36,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 

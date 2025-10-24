@@ -48,23 +48,34 @@ export const EMOTIONS_BY_SENTIMENT: Record<SentimentValue, EmotionName[]> = {
 };
 
 export const EMOTION_CONFIGS: EmotionConfig[] = [
-  { name: 'Happy', sentimentValue: 6, icon: 'Smile', color: 'text-cyan-600', bgColor: 'bg-cyan-100', borderColor: 'border-cyan-400', category: 'Excellent' },
-  { name: 'Tired', sentimentValue: 3, icon: 'Moon', color: 'text-cyan-600', bgColor: 'bg-slate-100', borderColor: 'border-slate-400', category: 'Neutral' },
-  { name: 'Nervous', sentimentValue: 2, icon: 'TrendingDown', color: 'text-cyan-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-300', category: 'Negative' },
-  { name: 'Peaceful', sentimentValue: 4, icon: 'Cloud', color: 'text-cyan-600', bgColor: 'bg-sky-100', borderColor: 'border-sky-400', category: 'Positive' },
-  { name: 'Scared', sentimentValue: 1, icon: 'AlertTriangle', color: 'text-cyan-600', bgColor: 'bg-red-100', borderColor: 'border-red-400', category: 'Very Negative' },
-  { name: 'Excited', sentimentValue: 6, icon: 'Zap', color: 'text-cyan-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-400', category: 'Excellent' },
-  { name: 'Bored', sentimentValue: 3, icon: 'Meh', color: 'text-cyan-600', bgColor: 'bg-teal-100', borderColor: 'border-teal-400', category: 'Neutral' },
+  // Sentiment 6: Excellent - Vibrant Teal/Cyan
+  { name: 'Happy', sentimentValue: 6, icon: 'Smile', color: 'text-teal-600', bgColor: 'bg-teal-100', borderColor: 'border-teal-400', category: 'Excellent' },
+  { name: 'Excited', sentimentValue: 6, icon: 'Zap', color: 'text-cyan-600', bgColor: 'bg-cyan-100', borderColor: 'border-cyan-400', category: 'Excellent' },
+  { name: 'Inspired', sentimentValue: 6, icon: 'Sparkles', color: 'text-teal-700', bgColor: 'bg-teal-100', borderColor: 'border-teal-500', category: 'Excellent' },
+
+  // Sentiment 5: Very Positive - Cyan/Sky
   { name: 'Hopeful', sentimentValue: 5, icon: 'Sun', color: 'text-cyan-600', bgColor: 'bg-cyan-100', borderColor: 'border-cyan-400', category: 'Very Positive' },
-  { name: 'Sad', sentimentValue: 1, icon: 'Frown', color: 'text-cyan-600', bgColor: 'bg-slate-100', borderColor: 'border-slate-400', category: 'Very Negative' },
-  { name: 'Relieved', sentimentValue: 4, icon: 'CloudRain', color: 'text-cyan-600', bgColor: 'bg-indigo-100', borderColor: 'border-indigo-400', category: 'Positive' },
-  { name: 'Frustrated', sentimentValue: 2, icon: 'Frown', color: 'text-cyan-600', bgColor: 'bg-slate-100', borderColor: 'border-slate-400', category: 'Negative' },
-  { name: 'Inspired', sentimentValue: 6, icon: 'Sparkles', color: 'text-cyan-600', bgColor: 'bg-teal-100', borderColor: 'border-teal-400', category: 'Excellent' },
-  { name: 'Worried', sentimentValue: 2, icon: 'AlertCircle', color: 'text-cyan-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-400', category: 'Negative' },
-  { name: 'Content', sentimentValue: 4, icon: 'Coffee', color: 'text-cyan-600', bgColor: 'bg-sky-100', borderColor: 'border-sky-400', category: 'Positive' },
-  { name: 'Lonely', sentimentValue: 1, icon: 'UserX', color: 'text-cyan-600', bgColor: 'bg-gray-100', borderColor: 'border-gray-400', category: 'Very Negative' },
-  { name: 'Careless', sentimentValue: 3, icon: 'Wind', color: 'text-cyan-600', bgColor: 'bg-sky-100', borderColor: 'border-sky-400', category: 'Neutral' },
-  { name: 'Proud', sentimentValue: 5, icon: 'Award', color: 'text-cyan-600', bgColor: 'bg-indigo-100', borderColor: 'border-indigo-400', category: 'Very Positive' },
+  { name: 'Proud', sentimentValue: 5, icon: 'Award', color: 'text-sky-600', bgColor: 'bg-sky-100', borderColor: 'border-sky-400', category: 'Very Positive' },
+
+  // Sentiment 4: Positive - Blue/Indigo
+  { name: 'Peaceful', sentimentValue: 4, icon: 'Cloud', color: 'text-blue-600', bgColor: 'bg-blue-100', borderColor: 'border-blue-400', category: 'Positive' },
+  { name: 'Relieved', sentimentValue: 4, icon: 'CloudRain', color: 'text-indigo-600', bgColor: 'bg-indigo-100', borderColor: 'border-indigo-400', category: 'Positive' },
+  { name: 'Content', sentimentValue: 4, icon: 'Coffee', color: 'text-blue-700', bgColor: 'bg-blue-100', borderColor: 'border-blue-500', category: 'Positive' },
+
+  // Sentiment 3: Neutral - Gray/Slate
+  { name: 'Tired', sentimentValue: 3, icon: 'Moon', color: 'text-slate-600', bgColor: 'bg-slate-100', borderColor: 'border-slate-400', category: 'Neutral' },
+  { name: 'Bored', sentimentValue: 3, icon: 'Meh', color: 'text-gray-600', bgColor: 'bg-gray-100', borderColor: 'border-gray-400', category: 'Neutral' },
+  { name: 'Careless', sentimentValue: 3, icon: 'Wind', color: 'text-slate-500', bgColor: 'bg-slate-100', borderColor: 'border-slate-400', category: 'Neutral' },
+
+  // Sentiment 2: Negative - Orange/Amber
+  { name: 'Nervous', sentimentValue: 2, icon: 'TrendingDown', color: 'text-orange-600', bgColor: 'bg-orange-100', borderColor: 'border-orange-400', category: 'Negative' },
+  { name: 'Frustrated', sentimentValue: 2, icon: 'Frown', color: 'text-amber-600', bgColor: 'bg-amber-100', borderColor: 'border-amber-400', category: 'Negative' },
+  { name: 'Worried', sentimentValue: 2, icon: 'AlertCircle', color: 'text-orange-700', bgColor: 'bg-orange-100', borderColor: 'border-orange-500', category: 'Negative' },
+
+  // Sentiment 1: Very Negative - Red/Rose
+  { name: 'Scared', sentimentValue: 1, icon: 'AlertTriangle', color: 'text-red-600', bgColor: 'bg-red-100', borderColor: 'border-red-400', category: 'Very Negative' },
+  { name: 'Sad', sentimentValue: 1, icon: 'Frown', color: 'text-red-700', bgColor: 'bg-red-100', borderColor: 'border-red-500', category: 'Very Negative' },
+  { name: 'Lonely', sentimentValue: 1, icon: 'UserX', color: 'text-rose-600', bgColor: 'bg-rose-100', borderColor: 'border-rose-400', category: 'Very Negative' },
 ];
 
 export function getEmotionSentimentValue(emotion: string): SentimentValue {

@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockClassMembers, mockPulseCheckSets, mockOfficeHours, mockHapiMomentReferrals, mockClasses, MOCK_USER_ID } from '../../lib/mockData';
 import { Sunrise, MessageSquare, Video, Heart, Sparkles, Clock, ChevronRight } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
+import { Skeleton } from '../ui/Skeleton';
+import { EmptyState, EmptyStateIcons } from '../ui/EmptyState';
 
 interface Task {
   id: string;
@@ -160,70 +163,96 @@ export function TodaysTasks({
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Today’s Focus</h2>
-          <div className="flex items-center gap-1 animate-pulse">
-            <span className="h-1.5 w-1.5 rounded-full bg-slate-200" />
-            <span className="h-1.5 w-1.5 rounded-full bg-slate-200" />
-            <span className="h-1.5 w-1.5 rounded-full bg-slate-200" />
+      <Card padding="md">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Today's Focus</CardTitle>
+            <div className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-slate-200 animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-slate-200 animate-pulse delay-75" />
+              <span className="h-2 w-2 rounded-full bg-slate-200 animate-pulse delay-150" />
+            </div>
           </div>
-        </div>
-      </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (tasks.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-600">
-          <Sparkles className="h-6 w-6" />
-        </div>
-        <h3 className="mt-4 text-lg font-semibold text-slate-900">All caught up</h3>
-        <p className="mt-1 text-sm text-slate-500">You’ve completed every pulse, check-in, and task for today.</p>
-      </div>
+      <Card padding="md">
+        <EmptyState
+          icon={
+            <div className="relative">
+              {EmptyStateIcons.NoTasks}
+              <div className="absolute -top-2 -right-2">
+                <Sparkles className="h-8 w-8 text-primary-500 animate-pulse" />
+              </div>
+            </div>
+          }
+          title="All caught up!"
+          description="You've completed every pulse, check-in, and task for today. Great job!"
+        />
+      </Card>
     );
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4">
-      <header className="flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-semibold text-slate-900">Today’s focus</h2>
-          <p className="text-xs text-slate-500">Quick wins to keep you moving.</p>
+    <Card padding="md">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg">Today's Focus</CardTitle>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              Quick wins to keep you moving
+            </p>
+          </div>
+          <span className="inline-flex items-center rounded-full bg-primary-100 dark:bg-primary-900/30 px-3 py-1 text-xs font-semibold text-primary-700 dark:text-primary-300">
+            {tasks.length} pending
+          </span>
         </div>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600">
-          {tasks.length} pending
-        </span>
-      </header>
+      </CardHeader>
 
-      <ul className="mt-4 space-y-3">
-        {tasks.map((task) => {
-          const Icon = task.icon;
-          return (
-            <li key={task.id}>
-              <button
-                onClick={() => handleTaskClick(task)}
-                className="flex w-full items-center justify-between rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-left transition hover:border-primary-200 hover:bg-white"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-white ${task.accentColor}`}>
-                    <Icon className="h-5 w-5" />
+      <CardContent>
+        <ul className="space-y-2.5">
+          {tasks.map((task) => {
+            const Icon = task.icon;
+            return (
+              <li key={task.id}>
+                <button
+                  onClick={() => handleTaskClick(task)}
+                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3.5 text-left transition-all hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600 ${task.accentColor} group-hover:scale-105 transition-transform`}>
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                        {task.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                        {task.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-slate-900">{task.title}</h3>
-                    <p className="text-xs text-slate-500">{task.description}</p>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-primary-600 dark:text-primary-400 group-hover:gap-3 transition-all">
+                    {task.points > 0 ? `+${task.points} pts` : 'View'}
+                    <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                   </div>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-primary-600">
-                  {task.points > 0 ? `+${task.points} pts` : 'View'}
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </div>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }
