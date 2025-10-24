@@ -100,44 +100,44 @@ export function LandingPage() {
   }
 
   return (
-    <div className="bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+    <div className="bg-gradient-to-br from-slate-50 via-primary-50/20 to-accent-50/20 text-slate-900 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 dark:text-slate-100">
+      <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg">
+          <a href="#top" className="flex items-center gap-2 sm:gap-3">
+            <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-accent-600 text-white shadow-lg">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-primary-700">Hapi AI</p>
-              <p className="hidden text-xs font-medium text-slate-500 sm:block">Emotional + Academic Intelligence</p>
+              <p className="text-base sm:text-lg font-bold text-primary-700 dark:text-primary-400">Hapi AI</p>
+              <p className="hidden text-xs font-medium text-slate-500 dark:text-slate-400 sm:block">Emotional + Academic Intelligence</p>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-600 md:flex">
+          <nav className="hidden items-center gap-6 lg:gap-8 text-sm font-semibold text-slate-600 dark:text-slate-300 md:flex">
             {navigation.map((item) => (
-              <a key={item.href} href={item.href} className="transition hover:text-primary-600">
+              <a key={item.href} href={item.href} className="transition hover:text-primary-600 dark:hover:text-primary-400">
                 {item.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setShowAuth(true)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-primary-200 bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:bg-primary-50 hover:border-primary-300"
+              className="inline-flex items-center gap-2 rounded-xl sm:rounded-2xl border border-primary-200 dark:border-primary-700 bg-white dark:bg-slate-800 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-primary-700 dark:text-primary-400 transition hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-300 dark:hover:border-primary-600"
             >
               <LogIn className="h-4 w-4" />
               <span className="hidden sm:inline">Sign In</span>
             </button>
             <a
               href="mailto:hello@hapiai.example"
-              className="hidden rounded-2xl bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-700 md:block"
+              className="hidden rounded-2xl bg-gradient-to-r from-primary-600 to-accent-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl hover:scale-105 md:inline-flex"
             >
               Contact us
             </a>
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:border-primary-200 hover:text-primary-600 md:hidden"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 p-2 text-slate-600 dark:text-slate-300 transition hover:border-primary-200 dark:hover:border-primary-600 hover:text-primary-600 dark:hover:text-primary-400 md:hidden"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -145,105 +145,111 @@ export function LandingPage() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t border-slate-200 bg-white md:hidden" data-hs-collapse>
+          <div className="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 md:hidden animate-slide-in-up">
             <div className="space-y-2 px-4 py-4">
               {navigation.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-primary-50 hover:text-primary-700"
+                  className="block rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-700 dark:hover:text-primary-400"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.label}
                 </a>
               ))}
+              <a
+                href="mailto:hello@hapiai.example"
+                className="block rounded-xl bg-gradient-to-r from-primary-600 to-accent-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
+              >
+                Contact us
+              </a>
             </div>
           </div>
         )}
       </header>
 
       <main>
-        <section id="platform" className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-28">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-accent-50 to-white" aria-hidden />
-          <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:flex lg:items-center lg:gap-16 lg:px-8 lg:py-24">
-            <div className="max-w-3xl space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-white px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700 shadow-sm">
+        <section id="platform" className="relative overflow-hidden pt-12 sm:pt-16 lg:pt-24">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-100 via-accent-50 to-white dark:from-primary-900/20 dark:via-accent-900/10 dark:to-slate-900" aria-hidden />
+          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:flex lg:items-center lg:gap-16 lg:px-8 lg:py-24">
+            <div className="max-w-3xl space-y-6 sm:space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary-200 dark:border-primary-800 bg-white dark:bg-slate-800 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400 shadow-sm">
                 Designed for whole-student care
               </div>
-              <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl md:text-5xl lg:text-6xl">
                 One companion for wellbeing and learning momentum.
               </h1>
-              <p className="max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+              <p className="max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300 lg:text-xl">
                 Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity.
               </p>
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <button
                   onClick={() => setShowAuth(true)}
-                  className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary-600 to-accent-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:shadow-xl hover:scale-105 active:scale-95"
+                  className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary-600 to-accent-600 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-lg transition hover:shadow-xl hover:scale-105 active:scale-95"
                 >
                   Get Started Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-4 sm:h-5 w-4 sm:w-5" />
                 </button>
                 <a
                   href="#students"
-                  className="inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-700 transition hover:border-primary-200 hover:text-primary-700 hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-200 transition hover:border-primary-200 dark:hover:border-primary-600 hover:text-primary-700 dark:hover:text-primary-400 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   Explore the platform
                 </a>
               </div>
-              <dl className="grid gap-3 sm:grid-cols-3 text-sm text-slate-600">
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+              <dl className="grid gap-3 grid-cols-1 sm:grid-cols-3 text-sm text-slate-600 dark:text-slate-300">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-400">
                     <Sparkles className="h-4 w-4" />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">AI guides</dt>
-                    <dd className="mt-1 font-semibold text-slate-900">Companion, Analyst, Bridge</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">AI guides</dt>
+                    <dd className="mt-1 font-semibold text-slate-900 dark:text-slate-100">Companion, Analyst, Bridge</dd>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent-100 to-accent-200 dark:from-accent-900 dark:to-accent-800 text-accent-700 dark:text-accent-400">
                     <Users className="h-4 w-4" />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Go live</dt>
-                    <dd className="mt-1 font-semibold text-slate-900">Under two weeks</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Go live</dt>
+                    <dd className="mt-1 font-semibold text-slate-900 dark:text-slate-100">Under two weeks</dd>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 text-green-700 dark:text-green-400">
                     <ShieldCheck className="h-4 w-4" />
                   </div>
                   <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Privacy-first</dt>
-                    <dd className="mt-1 font-semibold text-slate-900">FERPA aligned access controls</dd>
+                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Privacy-first</dt>
+                    <dd className="mt-1 font-semibold text-slate-900 dark:text-slate-100">FERPA aligned access controls</dd>
                   </div>
                 </div>
               </dl>
             </div>
             <div className="mt-12 hidden flex-1 lg:block">
-              <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-2xl">
-                <p className="text-sm font-semibold uppercase tracking-wide text-primary-600">Sample daily briefing</p>
-                <h2 className="mt-3 text-2xl font-bold text-slate-900">Tuesday at a glance</h2>
-                <ul className="mt-6 space-y-3 text-sm text-slate-600">
-                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-400" />
+              <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-8 shadow-2xl">
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Sample daily briefing</p>
+                <h2 className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">Tuesday at a glance</h2>
+                <ul className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-500 dark:bg-primary-400" />
                     <div>
-                      <p className="font-semibold text-slate-800">Student companion</p>
-                      <p>“Feeling overwhelmed about Biology? Try two 30-minute focus blocks. I’ll check in tomorrow.”</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Student companion</p>
+                      <p>"Feeling overwhelmed about Biology? Try two 30-minute focus blocks. I'll check in tomorrow."</p>
                     </div>
                   </li>
-                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-400" />
+                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-accent-500 dark:bg-accent-400" />
                     <div>
-                      <p className="font-semibold text-slate-800">Teacher analyst</p>
-                      <p>82% of Biology II reported “steady” confidence; 3 students still owe today’s pulse.</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Teacher analyst</p>
+                      <p>82% of Biology II reported "steady" confidence; 3 students still owe today's pulse.</p>
                     </div>
                   </li>
-                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-400" />
+                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-3">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-purple-500 dark:bg-purple-400" />
                     <div>
-                      <p className="font-semibold text-slate-800">System bridge</p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">System bridge</p>
                       <p>Campus mood dips before history midterms. Schedule a quick advisory tomorrow.</p>
                     </div>
                   </li>
@@ -253,37 +259,37 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="students" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="space-y-6">
-              <p className="inline-flex items-center gap-2 rounded-full border border-accent-200 bg-accent-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-accent-700">
+        <section id="students" className="mx-auto max-w-7xl px-4 py-16 sm:py-20 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:gap-12 lg:grid-cols-2 lg:items-center">
+            <div className="space-y-4 sm:space-y-6">
+              <p className="inline-flex items-center gap-2 rounded-full border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent-700 dark:text-accent-400">
                 Student companion
               </p>
-              <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 lg:text-4xl">
                 A private space for students to reflect, plan, and celebrate progress.
               </h2>
-              <p className="text-lg leading-relaxed text-slate-600">
+              <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
                 Students check in on their day, gather insights about study habits, and receive guidance that blends
                 empathy with action. Echo summaries recap every week so learners stay aware of their emotional journey.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {studentHighlights.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <div key={item.title} className="flex gap-3 sm:gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 sm:p-5 shadow-md hover:shadow-lg transition">
+                      <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-400">
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
-                        <p className="text-sm text-slate-600">{item.description}</p>
+                        <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">{item.title}</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{item.description}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-2xl">
+            <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 sm:p-8 shadow-2xl">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600">Student dashboard preview</h3>
               <div className="mt-6 space-y-6">
                 <div className="rounded-2xl border border-slate-200 bg-primary-600/10 p-5">

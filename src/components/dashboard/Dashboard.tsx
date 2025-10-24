@@ -167,35 +167,37 @@ export function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-primary-50/30 to-accent-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <aside
-        className={`hidden h-screen flex-col border-r border-slate-200 bg-white transition-all duration-300 md:flex ${
+        className={`hidden h-screen flex-col border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-all duration-300 md:flex ${
           sidebarCollapsed ? 'w-20' : 'w-72'
         }`}
       >
         <div className={`flex items-center gap-3 px-6 pt-8 ${sidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white">
-            <Smile className="h-5 w-5" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-accent-600 text-white shadow-lg">
+            <Smile className="h-6 w-6" />
           </div>
           {!sidebarCollapsed && (
             <div>
-              <p className="text-sm font-semibold text-slate-900">Hapi AI</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Student Companion</p>
+              <p className="text-base font-bold text-slate-900 dark:text-slate-100">Hapi AI</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Student Companion</p>
             </div>
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-semibold text-slate-500">
+        <nav className="mt-10 flex-1 space-y-2 px-3 text-sm font-semibold text-slate-600 dark:text-slate-400">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
-            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3';
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
               <button
                 key={item.id}
                 onClick={() => setCurrentView(item.id as View)}
-                className={`flex w-full items-center rounded-xl py-2 transition ${
-                  isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'hover:bg-slate-100'
+                className={`flex w-full items-center rounded-xl py-3 transition-all duration-200 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900 scale-105'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-102'
                 } ${spacingClasses}`}
                 aria-label={item.label}
               >
@@ -210,7 +212,7 @@ export function Dashboard() {
           <ThemeToggle />
           <button
             onClick={() => setSidebarCollapsed((prev) => !prev)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition hover:border-primary-200 hover:text-primary-600"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 transition hover:border-primary-200 dark:hover:border-primary-700 hover:text-primary-600 dark:hover:text-primary-400"
             aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
           >
             <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
@@ -220,14 +222,14 @@ export function Dashboard() {
       </aside>
 
       <div className="flex-1 overflow-hidden">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-10 py-12">
-          <header className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:px-10 py-6 sm:py-8 lg:py-12">
+          <header className="flex flex-col gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm px-5 py-5 shadow-xl sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-xl font-semibold text-slate-900">Welcome back</h1>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Today’s wellbeing & academic overview</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">Welcome back</h1>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Today's wellbeing & academic overview</p>
             </div>
               <div className="md:hidden">
-                <div className="flex items-center gap-2 overflow-x-auto">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                   {navigationItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = currentView === item.id;
@@ -235,8 +237,10 @@ export function Dashboard() {
                       <button
                         key={item.id}
                         onClick={() => setCurrentView(item.id as View)}
-                        className={`flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                          isActive ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                        className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap ${
+                          isActive
+                            ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-lg'
+                            : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                         }`}
                       >
                         <Icon className="h-4 w-4" />
@@ -252,9 +256,9 @@ export function Dashboard() {
 
             <div className="">
               {currentView === 'home' && (
-                <div className="grid h-[calc(100vh-220px)] gap-5 lg:grid-cols-2">
+                <div className="grid gap-6 lg:grid-cols-2 lg:h-[calc(100vh-280px)]">
                   <div className="h-full overflow-hidden">
-                    <div className="h-full overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="h-full overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                       <TodaysTasks
                         onMorningPulseClick={handleMorningPulseClick}
                         onClassPulseClick={handleClassPulseClick}
@@ -264,15 +268,15 @@ export function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="flex h-full flex-col gap-5 overflow-hidden">
-                    <div className="shrink-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex h-full flex-col gap-6 overflow-hidden">
+                    <div className="shrink-0 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                       <HapiAiInsights analyticsData={analyticsData} onTalkMore={handleTalkMore} />
                     </div>
-                    <div className="grid h-full gap-5 md:grid-rows-2">
-                      <div className="overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="grid h-full gap-6 lg:grid-rows-2">
+                      <div className="overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                         <PersonalSentimentChart />
                       </div>
-                      <div className="overflow-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <div className="overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                         <ClassSentimentGauge />
                       </div>
                     </div>
@@ -288,7 +292,7 @@ export function Dashboard() {
           )}
 
           {currentView === 'leaderboard' && (
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
               <ClassLeaderboard />
             </div>
           )}
@@ -300,7 +304,7 @@ export function Dashboard() {
           )}
 
           {currentView === 'hapi' && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                 <StudentHapiChat
                   initialPrompt={analyticsPrompt}
                   onPromptUsed={handleAnalyticsPromptUsed}
@@ -309,19 +313,19 @@ export function Dashboard() {
           )}
 
           {currentView === 'classes' && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                 <ClassesView />
               </div>
             )}
 
             {currentView === 'profile' && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                 <ProfileView />
               </div>
             )}
 
             {currentView === 'academics' && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
                 <AcademicsHub />
               </div>
             )}
