@@ -51,15 +51,17 @@ export function ClassAnalyticsDetail({ classId, className, teacherName, descript
   const maxValue = 6;
   const minValue = 1;
 
+  // Use Tailwind color values that work with dark mode
   const getBlueShade = (value: number): string => {
-    if (value >= 5) return '#1e3a8a';
-    if (value >= 4.5) return '#1e40af';
-    if (value >= 4) return '#2563eb';
-    if (value >= 3.5) return '#3b82f6';
-    if (value >= 3) return '#60a5fa';
-    if (value >= 2.5) return '#93c5fd';
-    if (value >= 2) return '#bfdbfe';
-    return '#dbeafe';
+    // Returns RGB values that can be used with opacity
+    if (value >= 5) return 'rgb(30 58 138)'; // blue-900
+    if (value >= 4.5) return 'rgb(30 64 175)'; // blue-800
+    if (value >= 4) return 'rgb(37 99 235)'; // blue-600
+    if (value >= 3.5) return 'rgb(59 130 246)'; // blue-500
+    if (value >= 3) return 'rgb(96 165 250)'; // blue-400
+    if (value >= 2.5) return 'rgb(147 197 253)'; // blue-300
+    if (value >= 2) return 'rgb(191 219 254)'; // blue-200
+    return 'rgb(219 234 254)'; // blue-100
   };
 
   const getDateLabel = (dateStr: string, index: number) => {

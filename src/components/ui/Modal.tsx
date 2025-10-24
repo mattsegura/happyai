@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { Z_INDEX } from '../../lib/constants';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -56,7 +58,8 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: Z_INDEX.modal }}
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -64,9 +67,10 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Backdrop */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300',
+          'fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200',
           isOpen ? 'opacity-100' : 'opacity-0'
         )}
+        style={{ zIndex: Z_INDEX.modalBackdrop }}
         onClick={closeOnBackdrop ? onClose : undefined}
         aria-hidden="true"
       />
@@ -74,10 +78,12 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-2xl transition-all duration-300 max-h-[90vh] flex flex-col',
+          'relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-2xl transition-all duration-200 max-h-[90vh] flex flex-col',
+          'border border-slate-200 dark:border-slate-700',
           sizeStyles[size],
           isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         )}
+        style={{ zIndex: Z_INDEX.modal }}
       >
         {/* Header */}
         {(title || showCloseButton) && (
@@ -100,17 +106,10 @@ export const Modal: React.FC<ModalProps> = ({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="ml-4 p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 dark:hover:text-slate-300 transition-colors"
+                className="ml-4 p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
                 aria-label="Close modal"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X className="w-5 h-5" />
               </button>
             )}
           </div>

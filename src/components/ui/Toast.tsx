@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { cn } from '../../lib/utils';
+import { Z_INDEX } from '../../lib/constants';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -97,9 +98,14 @@ const ToastContainer: React.FC<{
   onRemove: (id: string) => void;
 }> = ({ toasts, onRemove }) => {
   return (
-    <div className="fixed top-4 right-4 z-[10000] flex flex-col gap-2 max-w-md">
+    <div
+      className="fixed top-4 right-4 flex flex-col gap-2 max-w-md pointer-events-none"
+      style={{ zIndex: Z_INDEX.toast }}
+    >
       {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
+        <div key={toast.id} className="pointer-events-auto">
+          <ToastItem toast={toast} onRemove={onRemove} />
+        </div>
       ))}
     </div>
   );
