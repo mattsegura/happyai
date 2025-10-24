@@ -106,12 +106,12 @@ export function ClassLeaderboard() {
 
       {classes.length > 1 && (
         <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-2 shadow-xl border-2 border-border">
-          <div className="flex space-x-2 overflow-x-auto">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             {classes.map((cls) => (
               <button
                 key={cls.id}
                 onClick={() => setSelectedClass(cls.id)}
-                className={`px-6 py-3 rounded-xl text-base font-bold transition-all duration-300 whitespace-nowrap transform ${
+                className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-bold transition-all duration-300 whitespace-nowrap transform ${
                   selectedClass === cls.id
                     ? 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white shadow-xl scale-105 ring-4 ring-blue-200 dark:ring-blue-800'
                     : 'text-foreground hover:bg-muted hover:scale-105 hover:shadow-md'
@@ -124,24 +124,24 @@ export function ClassLeaderboard() {
         </div>
       )}
 
-      <div className="relative overflow-hidden bg-gradient-to-br from-card via-blue-50/30 dark:via-blue-950/30 to-cyan-50/30 dark:to-cyan-950/30 rounded-3xl p-6 shadow-2xl border-2 border-blue-200 dark:border-blue-800">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/40 dark:from-blue-900/20 to-cyan-100/40 dark:to-cyan-900/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
+      <div className="relative overflow-hidden bg-gradient-to-br from-card via-blue-50/30 dark:via-blue-950/30 to-cyan-50/30 dark:to-cyan-950/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl border-2 border-blue-200 dark:border-blue-800">
+        <div className="absolute top-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-gradient-to-br from-blue-100/40 dark:from-blue-900/20 to-cyan-100/40 dark:to-cyan-900/20 rounded-full blur-3xl -mr-24 sm:-mr-32 -mt-24 sm:-mt-32"></div>
 
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-black bg-gradient-to-r from-blue-700 dark:from-blue-400 to-cyan-600 dark:to-cyan-400 bg-clip-text text-transparent">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="min-w-0">
+              <h2 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-blue-700 dark:from-blue-400 to-cyan-600 dark:to-cyan-400 bg-clip-text text-transparent truncate">
                 {selectedClassName}
               </h2>
-              <p className="text-muted-foreground font-semibold mt-1">Class Rankings</p>
+              <p className="text-muted-foreground font-semibold mt-1 text-sm sm:text-base">Class Rankings</p>
             </div>
-            <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-100 dark:from-blue-900/40 to-cyan-100 dark:to-cyan-900/40 rounded-xl border-2 border-blue-200 dark:border-blue-800 shadow-md">
-              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span className="font-bold text-blue-800 dark:text-blue-300">{leaderboardData.length} Students</span>
+            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-100 dark:from-blue-900/40 to-cyan-100 dark:to-cyan-900/40 rounded-xl border-2 border-blue-200 dark:border-blue-800 shadow-md shrink-0">
+              <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-blue-600 dark:text-blue-400" />
+              <span className="font-bold text-blue-800 dark:text-blue-300 text-sm sm:text-base">{leaderboardData.length} Students</span>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {leaderboardData.map((entry, index) => {
               const isCurrentUser = entry.user_id === MOCK_CURRENT_USER_ID;
               const isTopThree = entry.rank <= 3;
@@ -150,85 +150,86 @@ export function ClassLeaderboard() {
                 <div
                   key={entry.user_id}
                   onClick={() => setSelectedStudent(entry)}
-                  className={`relative group cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${
+                  className={`relative group cursor-pointer transform transition-all duration-300 hover:scale-[1.01] hover:shadow-xl ${
                     isCurrentUser
                       ? 'bg-gradient-to-r from-blue-100 dark:from-blue-900/40 via-cyan-100 dark:via-cyan-900/40 to-teal-100 dark:to-teal-900/40 border-2 border-blue-500 dark:border-blue-600 shadow-xl'
                       : isTopThree
                       ? 'bg-gradient-to-r from-card to-muted/50 border-2 border-border hover:border-blue-400 dark:hover:border-blue-600'
                       : 'bg-card border-2 border-border hover:border-blue-300 dark:hover:border-blue-700'
-                  } rounded-2xl p-5 overflow-hidden`}
+                  } rounded-xl sm:rounded-2xl p-3 sm:p-5 overflow-hidden`}
                   style={{
                     animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
                   }}
                 >
                   {isTopThree && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-100/20 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-100/20 via-transparent to-transparent dark:from-yellow-600/10 pointer-events-none"></div>
                   )}
 
-                  <div className="relative z-10 flex items-center justify-between">
-                    <div className="flex items-center space-x-4 flex-1">
-                      <div className={`relative ${isTopThree ? 'transform hover:scale-110 transition-transform' : ''}`}>
-                        {isTopThree && (
-                          <div className={`absolute inset-0 bg-gradient-to-br ${getRankBadgeColor(entry.rank)} rounded-2xl blur-md opacity-60 animate-pulse`}></div>
+                  <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                    {/* Rank Badge */}
+                    <div className={`relative shrink-0 ${isTopThree ? 'transform hover:scale-110 transition-transform' : ''}`}>
+                      {isTopThree && (
+                        <div className={`absolute inset-0 bg-gradient-to-br ${getRankBadgeColor(entry.rank)} rounded-xl sm:rounded-2xl blur-md opacity-60 animate-pulse`}></div>
+                      )}
+                      <div className={`relative bg-gradient-to-br ${getRankBadgeColor(entry.rank)} p-2 sm:p-3 rounded-xl sm:rounded-2xl shadow-lg`}>
+                        {getRankIcon(entry.rank)}
+                      </div>
+                    </div>
+
+                    {/* User Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-2">
+                        <h3 className={`text-base sm:text-xl font-black truncate ${
+                          isCurrentUser ? 'text-blue-900 dark:text-blue-200' : 'text-foreground'
+                        }`}>
+                          {entry.full_name}
+                        </h3>
+                        {isCurrentUser && (
+                          <span className="px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-md shrink-0">
+                            YOU
+                          </span>
                         )}
-                        <div className={`relative bg-gradient-to-br ${getRankBadgeColor(entry.rank)} p-3 rounded-2xl shadow-lg`}>
-                          {getRankIcon(entry.rank)}
-                        </div>
+                        {isTopThree && !isCurrentUser && (
+                          <span className={`px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-white rounded-full shadow-md shrink-0 ${
+                            entry.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
+                            entry.rank === 2 ? 'bg-gradient-to-r from-gray-400 to-gray-600' :
+                            'bg-gradient-to-r from-orange-400 to-red-500'
+                          }`}>
+                            {entry.rank === 1 ? '🏆 CHAMPION' : entry.rank === 2 ? '🥈 RUNNER-UP' : '🥉 TOP 3'}
+                          </span>
+                        )}
                       </div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className={`text-xl font-black truncate ${
-                            isCurrentUser ? 'text-blue-900 dark:text-blue-200' : 'text-foreground'
-                          }`}>
-                            {entry.full_name}
-                          </h3>
-                          {isCurrentUser && (
-                            <span className="px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-md">
-                              YOU
-                            </span>
-                          )}
-                          {isTopThree && !isCurrentUser && (
-                            <span className={`px-3 py-1 text-xs font-bold text-white rounded-full shadow-md ${
-                              entry.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500' :
-                              entry.rank === 2 ? 'bg-gradient-to-r from-gray-400 to-gray-600' :
-                              'bg-gradient-to-r from-orange-400 to-red-500'
-                            }`}>
-                              {entry.rank === 1 ? '🏆 CHAMPION' : entry.rank === 2 ? '🥈 RUNNER-UP' : '🥉 TOP 3'}
-                            </span>
-                          )}
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm">
+                        <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-lg border border-orange-200 dark:border-orange-800">
+                          <Flame className="w-3 h-3 sm:w-4 sm:h-4 text-orange-600 dark:text-orange-400 shrink-0" />
+                          <span className="font-bold text-orange-800 dark:text-orange-200">{entry.current_streak}</span>
+                          <span className="text-orange-600 dark:text-orange-400 hidden sm:inline">day streak</span>
                         </div>
-
-                        <div className="flex flex-wrap items-center gap-3 text-sm">
-                          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-orange-100 to-red-100 rounded-lg border border-orange-200">
-                            <Flame className="w-4 h-4 text-orange-600" />
-                            <span className="font-bold text-orange-800">{entry.current_streak}</span>
-                            <span className="text-orange-600 text-xs">day streak</span>
-                          </div>
-                          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-pink-100 to-rose-100 rounded-lg border border-pink-200">
-                            <Heart className="w-4 h-4 text-pink-600" />
-                            <span className="font-bold text-pink-800">{entry.hapi_moments_sent}</span>
-                            <span className="text-pink-600 text-xs">moments</span>
-                          </div>
-                          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg border border-green-200">
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                            <span className="font-bold text-green-800">{entry.pulse_responses_completed}</span>
-                            <span className="text-green-600 text-xs">pulses</span>
-                          </div>
+                        <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 rounded-lg border border-pink-200 dark:border-pink-800">
+                          <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-pink-600 dark:text-pink-400 shrink-0" />
+                          <span className="font-bold text-pink-800 dark:text-pink-200">{entry.hapi_moments_sent}</span>
+                          <span className="text-pink-600 dark:text-pink-400 hidden sm:inline">moments</span>
+                        </div>
+                        <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg border border-green-200 dark:border-green-800">
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400 shrink-0" />
+                          <span className="font-bold text-green-800 dark:text-green-200">{entry.pulse_responses_completed}</span>
+                          <span className="text-green-600 dark:text-green-400 hidden sm:inline">pulses</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-right ml-6">
+                    {/* Points */}
+                    <div className="text-right shrink-0">
                       <div className={`relative ${isTopThree ? 'transform hover:scale-110 transition-transform' : ''}`}>
-                        <div className={`text-4xl font-black ${
+                        <div className={`text-2xl sm:text-4xl font-black ${
                           isCurrentUser ? 'bg-gradient-to-r from-blue-600 dark:from-blue-400 to-cyan-600 dark:to-cyan-400 bg-clip-text text-transparent' :
                           isTopThree ? 'bg-gradient-to-r from-yellow-600 dark:from-yellow-400 to-orange-600 dark:to-orange-400 bg-clip-text text-transparent' :
                           'text-foreground'
                         }`}>
                           {entry.class_points}
                         </div>
-                        <div className={`text-xs font-bold uppercase tracking-wider ${
+                        <div className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
                           isCurrentUser ? 'text-blue-600 dark:text-blue-400' :
                           isTopThree ? 'text-orange-600 dark:text-orange-400' :
                           'text-muted-foreground'
@@ -241,7 +242,7 @@ export function ClassLeaderboard() {
                 </div>
               );
             })}
-        </div>
+          </div>
 
           {leaderboardData.length === 0 && (
             <div className="text-center py-16">
