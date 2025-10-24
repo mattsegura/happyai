@@ -1,6 +1,7 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { Flame, Trophy, Zap, TrendingUp } from 'lucide-react';
 import { Card } from '../ui/Card';
+import { InfoTooltip } from '../ui/InfoTooltip';
 
 export function StatsBar() {
   const { profile } = useAuth();
@@ -18,8 +19,9 @@ export function StatsBar() {
               <Flame className="h-6 w-6" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-400 flex items-center gap-1">
                 Current Streak
+                <InfoTooltip content="Days in a row you've completed your morning pulse check" />
               </p>
               <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {profile?.current_streak || 0}
@@ -37,8 +39,9 @@ export function StatsBar() {
               <Trophy className="h-6 w-6" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 flex items-center gap-1">
                 Total Points
+                <InfoTooltip content="Earned through pulse checks, class participation, and Hapi Moments. 15pts per morning pulse, varies per class pulse." />
               </p>
               <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-baseline gap-1">
                 {profile?.total_points || 0}
@@ -56,8 +59,9 @@ export function StatsBar() {
               <Zap className="h-6 w-6" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400 flex items-center gap-1">
                 Level
+                <InfoTooltip content="Levels up every 100 points. Higher levels unlock special features and recognition." />
               </p>
               <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {currentLevel}

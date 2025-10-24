@@ -23,3 +23,7 @@ export { ToastProvider, useToast } from './Toast';
 export type { Toast, ToastType } from './Toast';
 
 export { EmptyState, EmptyStateIcons } from './EmptyState';
+
+export { Tooltip } from './Tooltip';
+
+export { InfoTooltip } from './InfoTooltip';
