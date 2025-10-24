@@ -14,6 +14,7 @@ import {
   LogIn
 } from 'lucide-react';
 import { AuthGate } from '../auth/AuthGate';
+import { Button } from '../ui/button';
 
 const navigation = [
   { label: 'Platform', href: '#platform' },
@@ -100,44 +101,55 @@ export function LandingPage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-primary-50/20 to-accent-50/20 text-slate-900 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 dark:text-slate-100">
-      <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl">
+    <div className="bg-gradient-to-br from-background via-primary/12 to-accent/12 text-foreground dark:from-background dark:via-background dark:to-background">
+      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
           <a href="#top" className="flex items-center gap-2 sm:gap-3">
-            <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-accent-600 text-white shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg sm:h-11 sm:w-11">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-base sm:text-lg font-bold text-primary-700 dark:text-primary-400">Hapi AI</p>
-              <p className="hidden text-xs font-medium text-slate-500 dark:text-slate-400 sm:block">Emotional + Academic Intelligence</p>
+              <p className="text-base font-bold text-primary sm:text-lg">Hapi AI</p>
+              <p className="hidden text-xs font-medium text-muted-foreground sm:block">
+                Emotional + Academic Intelligence
+              </p>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-6 lg:gap-8 text-sm font-semibold text-slate-600 dark:text-slate-300 md:flex">
+          <nav className="hidden items-center gap-6 text-sm font-semibold text-muted-foreground transition md:flex lg:gap-8">
             {navigation.map((item) => (
-              <a key={item.href} href={item.href} className="transition hover:text-primary-600 dark:hover:text-primary-400">
+              <a
+                key={item.href}
+                href={item.href}
+                className="transition hover:text-primary"
+              >
                 {item.label}
               </a>
             ))}
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <button
+            <Button
               onClick={() => setShowAuth(true)}
-              className="inline-flex items-center gap-2 rounded-xl sm:rounded-2xl border border-primary-200 dark:border-primary-700 bg-white dark:bg-slate-800 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-primary-700 dark:text-primary-400 transition hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-300 dark:hover:border-primary-600"
+              variant="outline"
+              size="sm"
+              leftIcon={<LogIn className="h-4 w-4" />}
+              aria-label="Sign in"
+              className="inline-flex rounded-xl border-primary/40 bg-background/80 px-3 py-2 text-xs font-semibold text-primary transition hover:bg-primary/10 sm:rounded-2xl sm:px-4 sm:text-sm"
             >
-              <LogIn className="h-4 w-4" />
               <span className="hidden sm:inline">Sign In</span>
-            </button>
-            <a
-              href="mailto:hello@hapiai.example"
-              className="hidden rounded-2xl bg-gradient-to-r from-primary-600 to-accent-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:shadow-xl hover:scale-105 md:inline-flex"
+            </Button>
+            <Button
+              asChild
+              variant="accent"
+              size="sm"
+              className="hidden rounded-2xl px-5 py-2 text-sm font-semibold shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl md:inline-flex"
             >
-              Contact us
-            </a>
+              <a href="mailto:hello@hapiai.example">Contact us</a>
+            </Button>
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 p-2 text-slate-600 dark:text-slate-300 transition hover:border-primary-200 dark:hover:border-primary-600 hover:text-primary-600 dark:hover:text-primary-400 md:hidden"
+              className="inline-flex items-center justify-center rounded-xl border border-border/60 p-2 text-muted-foreground transition hover:border-primary/40 hover:text-primary md:hidden"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -145,13 +157,13 @@ export function LandingPage() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 md:hidden animate-slide-in-up">
+          <div className="animate-slide-in-up border-t border-border/60 bg-background md:hidden">
             <div className="space-y-2 px-4 py-4">
               {navigation.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  className="block rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-700 dark:hover:text-primary-400"
+                  className="block rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition hover:bg-primary/10 hover:text-primary"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.label}
@@ -173,31 +185,37 @@ export function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary-100 via-accent-50 to-white dark:from-primary-900/20 dark:via-accent-900/10 dark:to-slate-900" aria-hidden />
           <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:flex lg:items-center lg:gap-16 lg:px-8 lg:py-24">
             <div className="max-w-3xl space-y-6 sm:space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary-200 dark:border-primary-800 bg-white dark:bg-slate-800 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400 shadow-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-background/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary shadow-sm">
                 Designed for whole-student care
               </div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
                 One companion for wellbeing and learning momentum.
               </h1>
-              <p className="max-w-2xl text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300 lg:text-xl">
+              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
                 Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <button
+                <Button
                   onClick={() => setShowAuth(true)}
-                  className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary-600 to-accent-600 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-lg transition hover:shadow-xl hover:scale-105 active:scale-95"
+                  variant="accent"
+                  size="lg"
+                  rightIcon={<ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />}
+                  className="rounded-2xl px-6 py-3 text-sm font-semibold shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
                 >
                   Get Started Free
-                  <ArrowRight className="ml-2 h-4 sm:h-5 w-4 sm:w-5" />
-                </button>
-                <a
-                  href="#students"
-                  className="inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-200 transition hover:border-primary-200 dark:hover:border-primary-600 hover:text-primary-700 dark:hover:text-primary-400 hover:bg-slate-50 dark:hover:bg-slate-700"
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="rounded-2xl border-primary/40 text-foreground transition hover:border-primary/60 hover:text-primary"
                 >
-                  Explore the platform
-                </a>
+                  <a href="#students">
+                    Explore the platform
+                  </a>
+                </Button>
               </div>
-              <dl className="grid gap-3 grid-cols-1 sm:grid-cols-3 text-sm text-slate-600 dark:text-slate-300">
+              <dl className="grid grid-cols-1 gap-3 text-sm text-muted-foreground sm:grid-cols-3">
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-400">
                     <Sparkles className="h-4 w-4" />

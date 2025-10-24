@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, GraduationCap, Users, Sparkles } from 'lucide-react';
 import { AuthLayout } from './common/AuthLayout';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { useToast } from '../ui/Toast';
 
 interface LoginPageProps {
@@ -39,14 +39,14 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
   return (
     <AuthLayout title="Welcome to HapiAI" subtitle="Connect with your emotions and classmates">
       {/* Role Toggle */}
-      <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1.5 mb-6">
+      <div className="mb-6 flex rounded-2xl bg-muted/60 p-1.5 backdrop-blur-sm dark:bg-muted/40">
         <button
           type="button"
           onClick={() => setRole('student')}
-          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             role === 'student'
-              ? 'bg-white dark:bg-slate-700 text-accent-600 dark:text-accent-400 shadow-md'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-background text-accent shadow ring-1 ring-accent/30 dark:bg-background/80'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
           aria-pressed={role === 'student'}
         >
@@ -56,10 +56,10 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
         <button
           type="button"
           onClick={() => setRole('teacher')}
-          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             role === 'teacher'
-              ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-md'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-background text-primary shadow ring-1 ring-primary/30 dark:bg-background/80'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
           aria-pressed={role === 'teacher'}
         >
@@ -92,7 +92,7 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -103,7 +103,7 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
 
         <Button
           type="submit"
-          variant="primary"
+          variant="default"
           size="lg"
           fullWidth
           isLoading={loading}
@@ -116,25 +116,25 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
       <div className="mt-6 text-center">
         <button
           onClick={onToggleMode}
-          className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
         >
           Don't have an account?{' '}
-          <span className="text-primary-600 dark:text-primary-400 font-semibold">Sign up</span>
+          <span className="font-semibold text-primary">Sign up</span>
         </button>
       </div>
 
       <div className="mt-6 space-y-3">
-        <div className="bg-sky-50/90 dark:bg-sky-900/20 backdrop-blur-sm rounded-2xl p-4 border-2 border-sky-300/60 dark:border-sky-700/60 shadow-lg">
-          <p className="text-sm font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center">
+        <div className="rounded-2xl border border-accent/40 bg-accent/10 p-4 backdrop-blur-sm shadow-lg dark:border-accent/30 dark:bg-accent/15">
+          <p className="mb-2 flex items-center text-sm font-semibold text-accent">
             <Sparkles className="w-4 h-4 mr-2" />
             Try the Demo!
           </p>
-          <p className="text-sm text-blue-700 dark:text-blue-400">
+          <p className="text-sm text-muted-foreground">
             Select {role === 'student' ? 'Student' : 'Teacher'} role and click "Sign up" to create a
             demo account with sample data!
           </p>
         </div>
-        <p className="text-slate-500 dark:text-slate-400 text-sm text-center">
+        <p className="text-center text-sm text-muted-foreground">
           Join your classmates in creating a supportive community
         </p>
       </div>

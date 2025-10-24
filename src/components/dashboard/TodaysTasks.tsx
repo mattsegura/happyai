@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockClassMembers, mockPulseCheckSets, mockOfficeHours, mockHapiMomentReferrals, mockClasses, MOCK_USER_ID } from '../../lib/mockData';
 import { Sunrise, MessageSquare, Video, Heart, Sparkles, Clock, ChevronRight } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Skeleton } from '../ui/Skeleton';
 import { EmptyState, EmptyStateIcons } from '../ui/EmptyState';
 
@@ -205,23 +205,23 @@ export function TodaysTasks({
   }
 
   return (
-    <Card padding="md">
-      <CardHeader>
+    <Card padding="none" className="overflow-hidden shadow-xl">
+      <CardHeader className="p-5 sm:p-6 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg">Today's Focus</CardTitle>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            <CardTitle className="text-xl sm:text-2xl font-black">Today's Focus</CardTitle>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">
               Quick wins to keep you moving
             </p>
           </div>
-          <span className="inline-flex items-center rounded-full bg-primary-100 dark:bg-primary-900/30 px-3 py-1 text-xs font-semibold text-primary-700 dark:text-primary-300">
+          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30 border border-primary-200 dark:border-primary-800 px-3 sm:px-4 py-1.5 text-xs font-black text-primary-700 dark:text-primary-300 shadow-md">
             {tasks.length} pending
           </span>
         </div>
       </CardHeader>
 
-      <CardContent>
-        <ul className="space-y-2.5">
+      <CardContent className="p-3 sm:p-5">
+        <ul className="space-y-3">
           {tasks.map((task) => {
             const Icon = task.icon;
             return (

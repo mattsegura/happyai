@@ -1,5 +1,5 @@
-export { Button } from './Button';
-export type { ButtonVariant, ButtonSize } from './Button';
+export { Button, buttonVariants } from './button';
+export type { ButtonProps } from './button';
 
 export {
   Card,
@@ -7,12 +7,13 @@ export {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter
-} from './Card';
-export type { CardVariant, CardPadding } from './Card';
+  CardFooter,
+  cardVariants
+} from './card';
+export type { CardProps, CardTitleProps } from './card';
 
-export { Input, Textarea } from './Input';
-export type { InputProps, TextareaProps } from './Input';
+export { Input, Textarea } from './input';
+export type { InputProps, TextareaProps } from './input';
 
 export { Modal } from './Modal';
 export type { ModalProps } from './Modal';

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, User, Eye, EyeOff, GraduationCap, Users } from 'lucide-react';
 import { AuthLayout } from './common/AuthLayout';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { useToast } from '../ui/Toast';
 
 interface SignupPageProps {
@@ -48,14 +48,14 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
   return (
     <AuthLayout title="Join HapiAI" subtitle="Start your emotional wellness journey">
       {/* Role Toggle */}
-      <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1.5 mb-6">
+      <div className="mb-6 flex rounded-2xl bg-muted/60 p-1.5 backdrop-blur-sm dark:bg-muted/40">
         <button
           type="button"
           onClick={() => setRole('student')}
-          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             role === 'student'
-              ? 'bg-white dark:bg-slate-700 text-accent-600 dark:text-accent-400 shadow-md'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-background text-accent shadow ring-1 ring-accent/30 dark:bg-background/80'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
           aria-pressed={role === 'student'}
         >
@@ -65,10 +65,10 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
         <button
           type="button"
           onClick={() => setRole('teacher')}
-          className={`flex-1 py-2.5 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             role === 'teacher'
-              ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-md'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300'
+              ? 'bg-background text-primary shadow ring-1 ring-primary/30 dark:bg-background/80'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
           aria-pressed={role === 'teacher'}
         >
@@ -111,7 +111,7 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -123,7 +123,7 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
 
         <Button
           type="submit"
-          variant="primary"
+          variant="default"
           size="lg"
           fullWidth
           isLoading={loading}
@@ -136,15 +136,15 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
       <div className="mt-6 text-center">
         <button
           onClick={onToggleMode}
-          className="text-sm text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
         >
           Already have an account?{' '}
-          <span className="text-primary-600 dark:text-primary-400 font-semibold">Sign in</span>
+          <span className="font-semibold text-primary">Sign in</span>
         </button>
       </div>
 
       <div className="mt-6 text-center">
-        <p className="text-slate-500 dark:text-slate-400 text-sm">
+        <p className="text-sm text-muted-foreground">
           Start earning points and building your emotional wellness journey
         </p>
       </div>

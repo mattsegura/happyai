@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockPulseCheckSets, MOCK_USER_ID } from '../../lib/mockData';
+import { mockPulseCheckSets } from '../../lib/mockData';
 import { PersonalSentimentChart } from './PersonalSentimentChart';
 import { ClassSentimentGauge } from './ClassSentimentGauge';
 import { HapiAiInsights } from './HapiAiInsights';
@@ -22,8 +22,11 @@ import { getStaticAnalyticsData } from '../../lib/staticAnalyticsData';
 import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare, GraduationCap, ChevronLeft } from 'lucide-react';
 import { AcademicsHub } from '../academics/AcademicsHub';
 import { ThemeToggle } from '../common/ThemeToggle';
+import { cn } from '../../lib/utils';
 
 type View = 'home' | 'leaderboard' | 'lab' | 'hapi' | 'classes' | 'profile' | 'academics';
+
+const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
 export function Dashboard() {
   const { user } = useAuth();
@@ -167,25 +170,32 @@ export function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-primary-50/30 to-accent-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+    <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
       <aside
-        className={`hidden h-screen flex-col border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 transition-all duration-300 md:flex ${
+        className={`hidden h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
           sidebarCollapsed ? 'w-20' : 'w-72'
         }`}
       >
-        <div className={`flex items-center gap-3 px-6 pt-8 ${sidebarCollapsed ? 'justify-center' : 'justify-start'}`}>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-600 to-accent-600 text-white shadow-lg">
+        <div
+          className={cn(
+            'flex items-center gap-3 px-6 pt-8',
+            sidebarCollapsed ? 'justify-center' : 'justify-start'
+          )}
+        >
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
             <Smile className="h-6 w-6" />
           </div>
           {!sidebarCollapsed && (
             <div>
-              <p className="text-base font-bold text-slate-900 dark:text-slate-100">Hapi AI</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Student Companion</p>
+              <p className="text-base font-semibold text-foreground">Hapi AI</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Student Companion
+              </p>
             </div>
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-2 px-3 text-sm font-semibold text-slate-600 dark:text-slate-400">
+        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
@@ -194,11 +204,13 @@ export function Dashboard() {
               <button
                 key={item.id}
                 onClick={() => setCurrentView(item.id as View)}
-                className={`flex w-full items-center rounded-xl py-3 transition-all duration-200 ${
+                className={cn(
+                  'flex w-full items-center rounded-xl py-3 transition-all duration-200',
                   isActive
-                    ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-lg shadow-primary-200 dark:shadow-primary-900 scale-105'
-                    : 'hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-102'
-                } ${spacingClasses}`}
+                    ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                    : 'hover:bg-muted/70 hover:text-foreground',
+                  spacingClasses
+                )}
                 aria-label={item.label}
               >
                 <Icon className="h-5 w-5" />
@@ -208,11 +220,11 @@ export function Dashboard() {
           })}
         </nav>
 
-        <div className="space-y-2 px-4 pb-6">
+        <div className="space-y-3 px-4 pb-6">
           <ThemeToggle />
           <button
             onClick={() => setSidebarCollapsed((prev) => !prev)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 transition hover:border-primary-200 dark:hover:border-primary-700 hover:text-primary-600 dark:hover:text-primary-400"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-primary/40 hover:text-primary"
             aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
           >
             <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
@@ -222,43 +234,51 @@ export function Dashboard() {
       </aside>
 
       <div className="flex-1 overflow-hidden">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:px-10 py-6 sm:py-8 lg:py-12">
-          <header className="flex flex-col gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm px-5 py-5 shadow-xl sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          <header
+            className={cn(
+              SURFACE_BASE,
+              'flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between'
+            )}
+          >
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">Welcome back</h1>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Today's wellbeing & academic overview</p>
+              <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Welcome back</h1>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Today's wellbeing & academic overview
+              </p>
             </div>
-              <div className="md:hidden">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {navigationItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = currentView === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => setCurrentView(item.id as View)}
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap ${
-                          isActive
-                            ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-lg'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {item.label}
-                      </button>
-                    );
-                  })}
-                </div>
+            <div className="md:hidden">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                {navigationItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = currentView === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setCurrentView(item.id as View)}
+                      className={cn(
+                        'flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap',
+                        isActive
+                          ? 'bg-primary text-primary-foreground shadow'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </button>
+                  );
+                })}
               </div>
-            </header>
+            </div>
+          </header>
 
             {currentView === 'home' && <StatsBar />}
 
-            <div className="">
+            <div>
               {currentView === 'home' && (
-                <div className="grid gap-6 lg:grid-cols-2 lg:h-[calc(100vh-280px)]">
+                <div className="grid gap-6 lg:grid-cols-2">
                   <div className="h-full overflow-hidden">
-                    <div className="h-full overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
+                    <div className={cn(SURFACE_BASE, 'h-full overflow-auto p-6')}>
                       <TodaysTasks
                         onMorningPulseClick={handleMorningPulseClick}
                         onClassPulseClick={handleClassPulseClick}
@@ -269,14 +289,14 @@ export function Dashboard() {
                   </div>
 
                   <div className="flex h-full flex-col gap-6 overflow-hidden">
-                    <div className="shrink-0 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
+                    <div className={cn(SURFACE_BASE, 'shrink-0 p-6')}>
                       <HapiAiInsights analyticsData={analyticsData} onTalkMore={handleTalkMore} />
                     </div>
                     <div className="grid h-full gap-6 lg:grid-rows-2">
-                      <div className="overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
+                      <div className={cn(SURFACE_BASE, 'overflow-auto p-6')}>
                         <PersonalSentimentChart />
                       </div>
-                      <div className="overflow-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
+                      <div className={cn(SURFACE_BASE, 'overflow-auto p-6')}>
                         <ClassSentimentGauge />
                       </div>
                     </div>
@@ -292,7 +312,7 @@ export function Dashboard() {
           )}
 
           {currentView === 'leaderboard' && (
-            <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
+            <div className={cn(SURFACE_BASE, 'p-6')}>
               <ClassLeaderboard />
             </div>
           )}
@@ -304,31 +324,31 @@ export function Dashboard() {
           )}
 
           {currentView === 'hapi' && (
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
-                <StudentHapiChat
-                  initialPrompt={analyticsPrompt}
-                  onPromptUsed={handleAnalyticsPromptUsed}
-                />
-              </div>
+            <div className={cn(SURFACE_BASE, 'p-6')}>
+              <StudentHapiChat
+                initialPrompt={analyticsPrompt}
+                onPromptUsed={handleAnalyticsPromptUsed}
+              />
+            </div>
           )}
 
           {currentView === 'classes' && (
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
-                <ClassesView />
-              </div>
-            )}
+            <div className={cn(SURFACE_BASE, 'p-6')}>
+              <ClassesView />
+            </div>
+          )}
 
-            {currentView === 'profile' && (
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
-                <ProfileView />
-              </div>
-            )}
+          {currentView === 'profile' && (
+            <div className={cn(SURFACE_BASE, 'p-6')}>
+              <ProfileView />
+            </div>
+          )}
 
-            {currentView === 'academics' && (
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 shadow-xl">
-                <AcademicsHub />
-              </div>
-            )}
+          {currentView === 'academics' && (
+            <div className={cn(SURFACE_BASE, 'p-6')}>
+              <AcademicsHub />
+            </div>
+          )}
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
-import { Button } from './Button';
+import { Button } from './button';
 
 interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -41,7 +41,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         </p>
       )}
       {action && (
-        <Button onClick={action.onClick} variant="primary">
+        <Button onClick={action.onClick} variant="default">
           {action.label}
         </Button>
       )}

@@ -10,25 +10,32 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-200 to-indigo-300 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6bTAtMTBjMC0yLjIxIDEuNzktNCA0LTRzNCAxLjc5IDQgNC0xLjc5IDQtNCA0LTQtMS43OS00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-primary/15 via-background to-accent/15 px-4 py-10 dark:from-primary/20 dark:to-accent/20">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay dark:opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 20% 20%, rgba(37,99,235,0.25), transparent 55%), radial-gradient(circle at 80% 0%, rgba(14,165,233,0.25), transparent 55%), radial-gradient(circle at 50% 100%, rgba(59,130,246,0.18), transparent 60%)",
+        }}
+      />
 
-      <div className="w-full max-w-md relative">
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/20">
-          <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
-              <Sparkles className="w-7 h-7 text-white" />
+      <div className="relative w-full max-w-md">
+        <div className="rounded-3xl border border-border/60 bg-card/95 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+          <div className="mb-6 flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/40 transition-transform duration-300 hover:scale-105">
+              <Sparkles className="h-7 w-7" />
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-            {title}
+          <h1 className="mb-3 text-center text-3xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary/80 bg-clip-text text-transparent">
+              {title}
+            </span>
           </h1>
-          <p className="text-center text-sm text-gray-600 mb-6">
-            {subtitle}
-          </p>
+          <p className="mb-8 text-center text-sm text-muted-foreground">{subtitle}</p>
 
-          {children}
+          <div className="space-y-6">{children}</div>
         </div>
       </div>
     </div>

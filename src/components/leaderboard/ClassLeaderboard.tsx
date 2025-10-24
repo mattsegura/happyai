@@ -81,24 +81,24 @@ export function ClassLeaderboard() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="relative overflow-hidden bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 rounded-3xl p-8 shadow-2xl border-2 border-yellow-200">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-yellow-200/40 to-orange-300/40 rounded-full blur-3xl -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-amber-200/30 to-yellow-200/30 rounded-full blur-3xl -ml-40 -mb-40"></div>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="relative overflow-hidden bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-amber-900/20 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl border-2 border-yellow-200 dark:border-yellow-800">
+        <div className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-gradient-to-br from-yellow-200/40 to-orange-300/40 dark:from-yellow-600/20 dark:to-orange-600/20 rounded-full blur-3xl -mr-32 sm:-mr-48 -mt-32 sm:-mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-56 sm:w-80 h-56 sm:h-80 bg-gradient-to-tr from-amber-200/30 to-yellow-200/30 dark:from-amber-600/10 dark:to-yellow-600/10 rounded-full blur-3xl -ml-28 sm:-ml-40 -mb-28 sm:-mb-40"></div>
 
         <div className="relative z-10">
-          <div className="flex items-center space-x-4 mb-2">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl blur-xl opacity-60 animate-pulse"></div>
-              <div className="relative p-4 bg-gradient-to-br from-yellow-400 via-orange-500 to-amber-600 rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
-                <Trophy className="w-10 h-10 text-white drop-shadow-lg" />
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl sm:rounded-2xl blur-xl opacity-60 animate-pulse"></div>
+              <div className="relative p-3 sm:p-4 bg-gradient-to-br from-yellow-400 via-orange-500 to-amber-600 rounded-xl sm:rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
+                <Trophy className="w-7 h-7 sm:w-10 sm:h-10 text-white drop-shadow-lg" />
               </div>
             </div>
-            <div>
-              <h1 className="text-5xl font-black bg-gradient-to-r from-yellow-700 via-orange-600 to-amber-700 bg-clip-text text-transparent tracking-tight">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-r from-yellow-700 via-orange-600 to-amber-700 dark:from-yellow-400 dark:via-orange-400 dark:to-amber-400 bg-clip-text text-transparent tracking-tight truncate">
                 Leaderboard
               </h1>
-              <p className="text-orange-700 font-semibold mt-1 text-lg">Compete, achieve, and rise to the top</p>
+              <p className="text-orange-700 dark:text-orange-400 font-semibold mt-1 text-sm sm:text-base lg:text-lg truncate">Compete, achieve, and rise to the top</p>
             </div>
           </div>
         </div>
