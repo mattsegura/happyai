@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { logAdminAction } from '../../lib/auditLog';
 import {
   Dialog,
   DialogContent,
@@ -65,16 +66,32 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
     setError(null);
 
     try {
-      const { error: insertError } = await supabase
+      const { data: newClass, error: insertError } = await supabase
         .from('classes')
         .insert({
           name: formData.name,
           subject: formData.subject,
           description: formData.description || null,
           teacher_id: formData.teacher_id,
-        });
+        })
+        .select()
+        .single();
 
       if (insertError) throw insertError;
+
+      // Log the action for audit trail
+      if (newClass) {
+        await logAdminAction({
+          action: 'create_class',
+          targetType: 'class',
+          targetId: newClass.id,
+          details: {
+            name: formData.name,
+            subject: formData.subject,
+            teacher_id: formData.teacher_id,
+          },
+        });
+      }
 
       // Reset form and close modal
       setFormData({ name: '', subject: '', description: '', teacher_id: '' });

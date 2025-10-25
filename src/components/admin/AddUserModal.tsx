@@ -34,32 +34,48 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
     setError(null);
 
     try {
-      // Create user in Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: formData.email,
-        password: formData.password,
-        email_confirm: true,
-      });
+      // Get session token explicitly
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (authError) throw authError;
+      if (!session?.access_token) {
+        throw new Error('Not authenticated - please login again');
+      }
 
-      // Create profile for the user
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          email: formData.email,
-          full_name: formData.fullName,
-          role: formData.role,
-        });
+      // Call Edge Function with explicit auth header
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-create-user`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            fullName: formData.fullName,
+            role: formData.role,
+          }),
+        }
+      );
 
-      if (profileError) throw profileError;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`);
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
       // Reset form and close modal
       setFormData({ email: '', fullName: '', password: '', role: 'student' });
       onUserAdded();
       onOpenChange(false);
     } catch (err: any) {
+      console.error('Error creating user:', err);
       setError(err.message || 'Failed to create user');
     } finally {
       setLoading(false);

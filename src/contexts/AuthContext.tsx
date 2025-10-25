@@ -28,7 +28,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState<UserRole>('student');
+
+  // Initialize role from localStorage to prevent role flickering
+  const [role, setRole] = useState<UserRole>(() => {
+    const cachedRole = localStorage.getItem('user_role');
+    return (cachedRole as UserRole) || 'student';
+  });
+
+  // Update role with caching to prevent role loss
+  const updateRole = (newRole: UserRole) => {
+    setRole(newRole);
+    localStorage.setItem('user_role', newRole);
+  };
+
+  // Clear cached role
+  const clearRole = () => {
+    setRole('student');
+    localStorage.removeItem('user_role');
+  };
 
   // Fetch user profile from Supabase
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
@@ -72,7 +89,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const profileData = await fetchProfile(user.id);
     if (profileData) {
       setProfile(profileData);
-      setRole(profileData.role as UserRole);
+      if (profileData.role) {
+        updateRole(profileData.role as UserRole);
+      }
     }
   };
 
@@ -108,19 +127,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const profileData = await fetchProfile(currentSession.user.id);
             if (mounted) {
               setProfile(profileData);
-              setRole((profileData?.role as UserRole) || 'student');
+              if (profileData?.role) {
+                // Successfully fetched role - update and cache it
+                updateRole(profileData.role as UserRole);
+              }
+              // If profile fetch fails, keep existing cached role
+              // Don't reset to 'student' - prevents role flickering
             }
           } catch (err) {
             console.error('[Auth] Error fetching profile:', err);
+            // Keep existing role on error - don't reset to 'student'
+            // This prevents admin users from seeing student UI on network issues
             if (mounted) {
               setProfile(null);
-              setRole('student');
             }
           }
         } else {
+          // User logged out - clear everything
           if (mounted) {
             setProfile(null);
-            setRole('student');
+            clearRole();
           }
         }
 
@@ -146,19 +172,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const profileData = await fetchProfile(currentSession.user.id);
             if (mounted) {
               setProfile(profileData);
-              setRole((profileData?.role as UserRole) || 'student');
+              if (profileData?.role) {
+                // Successfully fetched role - update and cache it
+                updateRole(profileData.role as UserRole);
+              }
+              // If profile fetch fails, keep existing cached role
             }
           } catch (err) {
             console.error('[Auth] Error in auth state change profile fetch:', err);
+            // Keep existing role on error - prevents role flickering
             if (mounted) {
               setProfile(null);
-              setRole('student');
             }
           }
         } else {
+          // User logged out - clear everything
           if (mounted) {
             setProfile(null);
-            setRole('student');
+            clearRole();
           }
         }
       }
