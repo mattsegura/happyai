@@ -111,14 +111,14 @@ export function MorningPulseCard({ onComplete, isCollapsed = false }: MorningPul
 
   if (hasCheckedIn || isCollapsed) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 sm:p-5 border-2 border-blue-300 shadow-md transition-all duration-400 hover:shadow-lg">
+      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-2xl p-4 sm:p-5 border-2 border-blue-300 dark:border-blue-700 shadow-md transition-all duration-400 hover:shadow-lg">
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
             <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="text-base sm:text-lg font-bold text-gray-800">Morning Check-In Complete!</h3>
-            <p className="text-xs sm:text-sm text-gray-600">Great job checking in today. See you tomorrow!</p>
+            <h3 className="text-base sm:text-lg font-bold text-foreground">Morning Check-In Complete!</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">Great job checking in today. See you tomorrow!</p>
           </div>
         </div>
       </div>
@@ -126,14 +126,14 @@ export function MorningPulseCard({ onComplete, isCollapsed = false }: MorningPul
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-blue-100 shadow-md h-full">
+    <div className="bg-card rounded-2xl p-4 sm:p-5 border-2 border-blue-100 dark:border-blue-800 shadow-md h-full">
       <div className="flex items-center space-x-2 mb-3 sm:mb-4">
         <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
           <Sunrise className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">Morning Pulse Check</h3>
-          <p className="text-[10px] sm:text-xs text-gray-600">How are you feeling today?</p>
+          <h3 className="text-base sm:text-lg font-bold text-foreground">Morning Pulse Check</h3>
+          <p className="text-[10px] sm:text-xs text-muted-foreground">How are you feeling today?</p>
         </div>
       </div>
 

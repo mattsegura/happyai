@@ -142,7 +142,7 @@ export function CourseTutorMode() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading course content...</p>
+          <p className="mt-4 text-muted-foreground">Loading course content...</p>
         </div>
       </div>
     );
@@ -185,10 +185,10 @@ export function CourseTutorMode() {
 
       {/* AI Tutor Chat */}
       {showAITutor && (
-        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border-2 border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-800">
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-bold text-gray-900">Ask AI Tutor Anything</h3>
+            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="text-lg font-bold text-foreground">Ask AI Tutor Anything</h3>
           </div>
           <div className="flex gap-2">
             <input
@@ -197,19 +197,19 @@ export function CourseTutorMode() {
               onChange={(e) => setAiQuestion(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleAskAI()}
               placeholder="e.g., Can you explain cellular respiration in simple terms?"
-              className="flex-1 px-4 py-3 rounded-lg border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-3 rounded-lg border border-blue-300 dark:border-blue-700 bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
             />
             <button
               onClick={handleAskAI}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+              className="px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2 font-medium"
             >
               <MessageSquare className="w-5 h-5" />
               Ask
             </button>
           </div>
-          <div className="mt-4 p-4 bg-white rounded-lg border border-blue-200">
-            <p className="text-sm text-gray-600">
-              <strong>Tip:</strong> Ask questions about course content, request explanations, get study tips, or practice problems!
+          <div className="mt-4 p-4 bg-card rounded-lg border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-muted-foreground">
+              <strong className="text-foreground">Tip:</strong> Ask questions about course content, request explanations, get study tips, or practice problems!
             </p>
           </div>
         </div>
@@ -220,8 +220,8 @@ export function CourseTutorMode() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Modules Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Course Modules</h3>
+            <div className="bg-card rounded-xl shadow-lg border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">Course Modules</h3>
               <div className="space-y-2">
                 {courseContent.modules.map((module) => {
                   const progress = getModuleProgress(module);
@@ -235,41 +235,41 @@ export function CourseTutorMode() {
                       disabled={isLocked}
                       className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                         isActive
-                          ? 'bg-blue-50 border-blue-300'
+                          ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-800'
                           : isLocked
-                          ? 'bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed'
-                          : 'bg-white border-gray-200 hover:border-blue-200 hover:shadow-md'
+                          ? 'bg-muted/30 border-border opacity-50 cursor-not-allowed'
+                          : 'bg-card border-border hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-md'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             {isLocked ? (
-                              <Lock className="w-4 h-4 text-gray-400" />
+                              <Lock className="w-4 h-4 text-muted-foreground" />
                             ) : module.state === 'completed' ? (
-                              <CheckCircle className="w-4 h-4 text-green-500" />
+                              <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
                             ) : (
-                              <Circle className="w-4 h-4 text-blue-500" />
+                              <Circle className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                             )}
-                            <span className="font-semibold text-sm text-gray-900">{module.name}</span>
+                            <span className="font-semibold text-sm text-foreground">{module.name}</span>
                           </div>
 
                           {/* Progress Bar */}
-                          <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div className="w-full bg-muted rounded-full h-2">
                             <div
                               className={`h-2 rounded-full transition-all ${
-                                progress === 100 ? 'bg-green-500' : 'bg-blue-500'
+                                progress === 100 ? 'bg-green-500 dark:bg-green-600' : 'bg-blue-500 dark:bg-blue-600'
                               }`}
                               style={{ width: `${progress}%` }}
                             />
                           </div>
 
-                          <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                          <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
                             <span>{module.items_count} items</span>
                             <span>{progress}%</span>
                           </div>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-gray-400" />
+                        <ChevronRight className="w-5 h-5 text-muted-foreground" />
                       </div>
                     </button>
                   );
@@ -280,12 +280,12 @@ export function CourseTutorMode() {
 
           {/* Module Content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="bg-card rounded-xl shadow-lg border border-border p-6">
               {courseContent.currentModule ? (
                 <>
                   <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{courseContent.currentModule.name}</h3>
-                    <p className="text-gray-600">
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{courseContent.currentModule.name}</h3>
+                    <p className="text-muted-foreground">
                       {courseContent.moduleItems.length} learning materials
                     </p>
                   </div>
@@ -300,19 +300,19 @@ export function CourseTutorMode() {
                           key={item.id}
                           className={`p-4 rounded-lg border-2 hover:shadow-md transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-blue-50 border-blue-300'
+                              ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-800'
                               : isCompleted
-                              ? 'bg-green-50 border-green-200'
-                              : 'bg-white border-gray-200 hover:border-blue-200'
+                              ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+                              : 'bg-card border-border hover:border-blue-200 dark:hover:border-blue-800'
                           }`}
                           onClick={() => setSelectedItem(item)}
                         >
                           <div className="flex items-start gap-4">
                             <div className="flex items-center gap-3">
-                              <span className="text-sm font-bold text-gray-400">
+                              <span className="text-sm font-bold text-muted-foreground">
                                 {index + 1}
                               </span>
-                              <div className={`p-2 rounded-lg ${isCompleted ? 'bg-green-100' : 'bg-blue-100'}`}>
+                              <div className={`p-2 rounded-lg ${isCompleted ? 'bg-green-100 dark:bg-green-950/50' : 'bg-blue-100 dark:bg-blue-950/50'}`}>
                                 {getItemIcon(item.type)}
                               </div>
                             </div>
@@ -320,15 +320,15 @@ export function CourseTutorMode() {
                             <div className="flex-1">
                               <div className="flex items-start justify-between gap-4">
                                 <div>
-                                  <h4 className="font-semibold text-gray-900 mb-1">{item.title}</h4>
-                                  <div className="flex items-center gap-3 text-sm text-gray-500">
+                                  <h4 className="font-semibold text-foreground mb-1">{item.title}</h4>
+                                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                     <span className="capitalize">{item.type.replace(/([A-Z])/g, ' $1').trim()}</span>
                                     {item.completion_requirement && (
                                       <span className="flex items-center gap-1">
                                         {isCompleted ? (
-                                          <CheckCircle className="w-4 h-4 text-green-500" />
+                                          <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
                                         ) : (
-                                          <Circle className="w-4 h-4 text-gray-400" />
+                                          <Circle className="w-4 h-4 text-muted-foreground" />
                                         )}
                                         {item.completion_requirement.type.replace(/_/g, ' ')}
                                       </span>
@@ -341,7 +341,7 @@ export function CourseTutorMode() {
                                     href={item.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium"
+                                    className="px-3 py-1.5 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2 text-sm font-medium"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     {item.type === 'File' ? (
@@ -367,15 +367,15 @@ export function CourseTutorMode() {
                           </div>
 
                           {isSelected && item.type === 'Page' && (
-                            <div className="mt-4 pt-4 border-t border-gray-200">
+                            <div className="mt-4 pt-4 border-t border-border">
                               <div className="prose prose-sm max-w-none">
-                                <h5 className="font-semibold text-gray-900 mb-2">Content Preview</h5>
-                                <p className="text-gray-600">
+                                <h5 className="font-semibold text-foreground mb-2">Content Preview</h5>
+                                <p className="text-muted-foreground">
                                   This section covers the fundamentals of {item.title.toLowerCase()}.
                                   The content includes detailed explanations, diagrams, and interactive examples
                                   to help you understand the key concepts.
                                 </p>
-                                <button className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 text-sm font-medium">
+                                <button className="mt-3 px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors flex items-center gap-2 text-sm font-medium">
                                   <CheckCircle className="w-4 h-4" />
                                   Mark as Complete
                                 </button>
@@ -389,8 +389,8 @@ export function CourseTutorMode() {
                 </>
               ) : (
                 <div className="text-center py-12">
-                  <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">Select a module to view its content</p>
+                  <BookOpen className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+                  <p className="text-muted-foreground">Select a module to view its content</p>
                 </div>
               )}
             </div>

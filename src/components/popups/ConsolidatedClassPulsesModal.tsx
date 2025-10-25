@@ -186,13 +186,13 @@ export function ConsolidatedClassPulsesModal({ pulses, onComplete, onDismiss }: 
       <>
         <div className={`fixed inset-0 bg-black/60 z-[9998] ${getBackdropAnimation(!isExiting)}`} />
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className={`bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 border-2 border-green-300 shadow-2xl max-w-md w-full ${getModalAnimation(!isExiting)}`}>
+          <div className={`bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-3xl p-8 border-2 border-green-300 dark:border-green-700 shadow-2xl max-w-md w-full ${getModalAnimation(!isExiting)}`}>
             <div className="text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-bounce-in">
                 <Award className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-800 mb-2">All Done!</h3>
-              <p className="text-gray-600 mb-4">You completed all your class pulses</p>
+              <h3 className="text-3xl font-bold text-foreground mb-2">All Done!</h3>
+              <p className="text-muted-foreground mb-4">You completed all your class pulses</p>
               <div className="flex items-center justify-center space-x-2 text-2xl font-bold text-green-600">
                 <Sparkles className="w-6 h-6" />
                 <span>+{completedCount * 10} points</span>
@@ -214,23 +214,23 @@ export function ConsolidatedClassPulsesModal({ pulses, onComplete, onDismiss }: 
 
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
         <div
-          className={`bg-white rounded-3xl p-6 border-2 border-blue-200 shadow-2xl max-w-2xl w-full relative my-8 ${getModalAnimation(!isExiting)}`}
+          className={`bg-card rounded-3xl p-6 border-2 border-blue-200 dark:border-blue-800 shadow-2xl max-w-2xl w-full relative my-8 ${getModalAnimation(!isExiting)}`}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition-all duration-200 hover:scale-110 z-10"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 shadow-md transition-all duration-200 hover:scale-110 z-10"
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
 
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <MessageSquare className="w-6 h-6 text-blue-600" />
-                <h2 className="text-2xl font-bold text-gray-800">Class Pulses</h2>
+                <h2 className="text-2xl font-bold text-foreground">Class Pulses</h2>
               </div>
-              <div className="text-sm font-semibold text-gray-600">
+              <div className="text-sm font-semibold text-muted-foreground">
                 {currentStep + 1} of {totalPulses}
               </div>
             </div>
@@ -244,7 +244,7 @@ export function ConsolidatedClassPulsesModal({ pulses, onComplete, onDismiss }: 
                       ? 'bg-green-500'
                       : index === currentStep
                       ? 'bg-blue-500'
-                      : 'bg-gray-200'
+                      : 'bg-muted'
                   }`}
                 />
               ))}
@@ -262,24 +262,24 @@ export function ConsolidatedClassPulsesModal({ pulses, onComplete, onDismiss }: 
               </div>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-800">{currentPulse?.question}</h3>
+            <h3 className="text-xl font-bold text-foreground">{currentPulse?.question}</h3>
 
             <textarea
               value={currentResponse}
               onChange={(e) => setCurrentResponse(e.target.value)}
               placeholder="Type your answer here..."
               rows={5}
-              className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300 text-gray-800 placeholder:text-gray-400 resize-none"
+              className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
               maxLength={500}
             />
-            <div className="text-xs text-gray-500 text-right">{currentResponse.length}/500</div>
+            <div className="text-xs text-muted-foreground text-right">{currentResponse.length}/500</div>
           </div>
 
           <div className="flex items-center justify-between mt-6 space-x-3">
             <button
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-4 py-2 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous</span>
@@ -287,7 +287,7 @@ export function ConsolidatedClassPulsesModal({ pulses, onComplete, onDismiss }: 
 
             <button
               onClick={handleSkip}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-semibold transition-all duration-300"
+              className="px-4 py-2 text-muted-foreground hover:text-foreground font-semibold transition-all duration-300"
             >
               Skip
             </button>
@@ -310,7 +310,7 @@ export function ConsolidatedClassPulsesModal({ pulses, onComplete, onDismiss }: 
               <button
                 onClick={handleNext}
                 disabled={currentStep === totalPulses - 1}
-                className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="px-6 py-2 bg-muted text-foreground rounded-lg font-semibold hover:bg-muted/80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 <span>Next</span>
                 <ChevronRight className="w-4 h-4" />

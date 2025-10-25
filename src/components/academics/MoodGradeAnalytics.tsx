@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  TrendingUp,
-  TrendingDown,
   Brain,
   Heart,
   Award,
@@ -12,7 +10,6 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { generateMoodGradeCorrelation, canvasApi, type CanvasAnalytics } from '../../lib/canvasApiMock';
-import { mockSentimentHistory } from '../../lib/mockData';
 
 type InsightType = 'positive' | 'warning' | 'neutral';
 
@@ -25,10 +22,9 @@ type Insight = {
 };
 
 export function MoodGradeAnalytics() {
-  const [correlationData, setCorrelationData] = useState(generateMoodGradeCorrelation());
+  const [correlationData] = useState(generateMoodGradeCorrelation());
   const [analytics, setAnalytics] = useState<Record<string, CanvasAnalytics>>({});
   const [insights, setInsights] = useState<Insight[]>([]);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'semester'>('week');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -127,22 +123,22 @@ export function MoodGradeAnalytics() {
   const getInsightIcon = (type: InsightType) => {
     switch (type) {
       case 'positive':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />;
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-orange-600" />;
+        return <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400" />;
       default:
-        return <Lightbulb className="w-5 h-5 text-blue-600" />;
+        return <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
     }
   };
 
   const getInsightColor = (type: InsightType) => {
     switch (type) {
       case 'positive':
-        return 'bg-green-50 border-green-200';
+        return 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800';
       case 'warning':
-        return 'bg-orange-50 border-orange-200';
+        return 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800';
       default:
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800';
     }
   };
 
@@ -177,7 +173,7 @@ export function MoodGradeAnalytics() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Analyzing your data...</p>
+          <p className="mt-4 text-muted-foreground">Analyzing your data...</p>
         </div>
       </div>
     );
@@ -242,15 +238,15 @@ export function MoodGradeAnalytics() {
       </div>
 
       {/* AI Insights */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+      <div className="bg-card rounded-xl shadow-lg border border-border p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Brain className="w-6 h-6 text-purple-600" />
-          <h3 className="text-xl font-bold text-gray-900">AI-Powered Insights</h3>
+          <Brain className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <h3 className="text-xl font-bold text-foreground">AI-Powered Insights</h3>
         </div>
 
         <div className="space-y-3">
           {insights.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No insights available yet. Keep tracking your mood and grades!</p>
+            <p className="text-muted-foreground text-center py-8">No insights available yet. Keep tracking your mood and grades!</p>
           ) : (
             insights.map((insight) => (
               <div
@@ -260,10 +256,10 @@ export function MoodGradeAnalytics() {
                 <div className="flex items-start gap-3">
                   {getInsightIcon(insight.type)}
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 mb-1">{insight.title}</h4>
-                    <p className="text-sm text-gray-600 mb-2">{insight.description}</p>
+                    <h4 className="font-semibold text-foreground mb-1">{insight.title}</h4>
+                    <p className="text-sm text-muted-foreground mb-2">{insight.description}</p>
                     {insight.action && (
-                      <button className="text-sm font-medium text-purple-600 hover:text-purple-700">
+                      <button className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
                         → {insight.action}
                       </button>
                     )}
@@ -276,20 +272,20 @@ export function MoodGradeAnalytics() {
       </div>
 
       {/* Mood vs Grade Visualization */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Performance Data</h3>
+      <div className="bg-card rounded-xl shadow-lg border border-border p-6">
+        <h3 className="text-xl font-bold text-foreground mb-4">Recent Performance Data</h3>
 
         <div className="space-y-3">
           {correlationData.map((data, index) => (
-            <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div key={index} className="p-4 bg-muted/30 rounded-lg border border-border">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h4 className="font-semibold text-gray-900">{data.assignment_name}</h4>
-                  <p className="text-sm text-gray-500">{data.course_name} • {data.date}</p>
+                  <h4 className="font-semibold text-foreground">{data.assignment_name}</h4>
+                  <p className="text-sm text-muted-foreground">{data.course_name} • {data.date}</p>
                 </div>
                 {data.grade_score && (
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600">{data.grade_score}%</div>
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{data.grade_score}%</div>
                   </div>
                 )}
               </div>
@@ -297,12 +293,12 @@ export function MoodGradeAnalytics() {
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-600">Mood: {data.mood_emotion}</span>
-                    <span className="text-sm text-gray-500">{data.mood_intensity}/7</span>
+                    <span className="text-sm font-medium text-muted-foreground">Mood: {data.mood_emotion}</span>
+                    <span className="text-sm text-muted-foreground">{data.mood_intensity}/7</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-muted rounded-full h-2">
                     <div
-                      className="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full"
+                      className="bg-gradient-to-r from-pink-500 to-purple-500 dark:from-pink-600 dark:to-purple-600 h-2 rounded-full"
                       style={{ width: `${(data.mood_intensity / 7) * 100}%` }}
                     />
                   </div>
@@ -311,19 +307,19 @@ export function MoodGradeAnalytics() {
                 {data.grade_score && (
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-600">Grade</span>
-                      <span className="text-sm text-gray-500">{data.grade_score}%</span>
+                      <span className="text-sm font-medium text-muted-foreground">Grade</span>
+                      <span className="text-sm text-muted-foreground">{data.grade_score}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2">
                       <div
                         className={`h-2 rounded-full ${
                           data.grade_score >= 90
-                            ? 'bg-green-500'
+                            ? 'bg-green-500 dark:bg-green-600'
                             : data.grade_score >= 80
-                            ? 'bg-blue-500'
+                            ? 'bg-blue-500 dark:bg-blue-600'
                             : data.grade_score >= 70
-                            ? 'bg-yellow-500'
-                            : 'bg-red-500'
+                            ? 'bg-yellow-500 dark:bg-yellow-600'
+                            : 'bg-red-500 dark:bg-red-600'
                         }`}
                         style={{ width: `${data.grade_score}%` }}
                       />
@@ -339,18 +335,18 @@ export function MoodGradeAnalytics() {
       {/* Learning Behavior Analytics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.entries(analytics).slice(0, 2).map(([courseId, data]) => (
-          <div key={courseId} className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Course Engagement</h3>
+          <div key={courseId} className="bg-card rounded-xl shadow-lg border border-border p-6">
+            <h3 className="text-lg font-bold text-foreground mb-4">Course Engagement</h3>
 
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Page Views</span>
-                  <span className="text-sm font-bold text-gray-900">{data.page_views.level}%</span>
+                  <span className="text-sm font-medium text-muted-foreground">Page Views</span>
+                  <span className="text-sm font-bold text-foreground">{data.page_views.level}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div
-                    className="bg-blue-500 h-2 rounded-full"
+                    className="bg-blue-500 dark:bg-blue-600 h-2 rounded-full"
                     style={{ width: `${data.page_views.level}%` }}
                   />
                 </div>
@@ -358,27 +354,27 @@ export function MoodGradeAnalytics() {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Participation</span>
-                  <span className="text-sm font-bold text-gray-900">{data.participations.level}%</span>
+                  <span className="text-sm font-medium text-muted-foreground">Participation</span>
+                  <span className="text-sm font-bold text-foreground">{data.participations.level}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div
-                    className="bg-green-500 h-2 rounded-full"
+                    className="bg-green-500 dark:bg-green-600 h-2 rounded-full"
                     style={{ width: `${data.participations.level}%` }}
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200">
-                <h4 className="text-sm font-semibold text-gray-900 mb-3">Assignment Timeliness</h4>
+              <div className="pt-4 border-t border-border">
+                <h4 className="text-sm font-semibold text-foreground mb-3">Assignment Timeliness</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="p-2 bg-green-50 rounded-lg text-center">
-                    <div className="text-xl font-bold text-green-600">{data.tardiness_breakdown.on_time}</div>
-                    <div className="text-xs text-gray-600">On Time</div>
+                  <div className="p-2 bg-green-50 dark:bg-green-950/30 rounded-lg text-center">
+                    <div className="text-xl font-bold text-green-600 dark:text-green-400">{data.tardiness_breakdown.on_time}</div>
+                    <div className="text-xs text-muted-foreground">On Time</div>
                   </div>
-                  <div className="p-2 bg-yellow-50 rounded-lg text-center">
-                    <div className="text-xl font-bold text-yellow-600">{data.tardiness_breakdown.late}</div>
-                    <div className="text-xs text-gray-600">Late</div>
+                  <div className="p-2 bg-yellow-50 dark:bg-yellow-950/30 rounded-lg text-center">
+                    <div className="text-xl font-bold text-yellow-600 dark:text-yellow-400">{data.tardiness_breakdown.late}</div>
+                    <div className="text-xs text-muted-foreground">Late</div>
                   </div>
                 </div>
               </div>

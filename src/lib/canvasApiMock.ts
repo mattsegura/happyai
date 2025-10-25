@@ -648,7 +648,7 @@ export const canvasApi = {
     return mockCanvasSubmissions.filter((s) => s.assignment_id === assignmentId);
   },
 
-  getCalendarEvents: async (startDate?: Date, endDate?: Date): Promise<CanvasCalendarEvent[]> => {
+  getCalendarEvents: async (): Promise<CanvasCalendarEvent[]> => {
     await new Promise((resolve) => setTimeout(resolve, 300));
     return mockCanvasCalendarEvents;
   },

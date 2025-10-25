@@ -4,16 +4,14 @@ import {
   Clock,
   BookOpen,
   Brain,
-  TrendingUp,
   Plus,
   Check,
-  AlertCircle,
   Sparkles,
   Video,
   MapPin,
   ExternalLink,
 } from 'lucide-react';
-import { canvasApi, type CanvasCalendarEvent } from '../../lib/canvasApiMock';
+import { canvasApi } from '../../lib/canvasApiMock';
 
 type StudySession = {
   id: string;
@@ -38,10 +36,9 @@ type AIStudySuggestion = {
 };
 
 export function StudyPlanner() {
-  const [events, setEvents] = useState<CanvasCalendarEvent[]>([]);
   const [studySessions, setStudySessions] = useState<StudySession[]>([]);
   const [aiSuggestions, setAiSuggestions] = useState<AIStudySuggestion[]>([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +50,6 @@ export function StudyPlanner() {
     setLoading(true);
     try {
       const calendarEvents = await canvasApi.getCalendarEvents();
-      setEvents(calendarEvents);
 
       // Convert Canvas events to study sessions
       const sessions: StudySession[] = calendarEvents.map((event) => ({
@@ -81,7 +77,7 @@ export function StudyPlanner() {
     }
   };
 
-  const generateAISuggestions = (sessions: StudySession[]) => {
+  const generateAISuggestions = (_sessions: StudySession[]) => {
     // AI-powered study suggestions based on workload
     const suggestions: AIStudySuggestion[] = [
       {
@@ -175,11 +171,11 @@ export function StudyPlanner() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 border-red-300 text-red-700';
+        return 'bg-red-100 dark:bg-red-950/30 border-red-300 dark:border-red-800 text-red-700 dark:text-red-400';
       case 'medium':
-        return 'bg-yellow-100 border-yellow-300 text-yellow-700';
+        return 'bg-yellow-100 dark:bg-yellow-950/30 border-yellow-300 dark:border-yellow-800 text-yellow-700 dark:text-yellow-400';
       default:
-        return 'bg-blue-100 border-blue-300 text-blue-700';
+        return 'bg-blue-100 dark:bg-blue-950/30 border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-400';
     }
   };
 
@@ -201,7 +197,7 @@ export function StudyPlanner() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your study plan...</p>
+          <p className="mt-4 text-muted-foreground">Loading your study plan...</p>
         </div>
       </div>
     );
@@ -259,28 +255,28 @@ export function StudyPlanner() {
 
       {/* AI Suggestions */}
       {aiSuggestions.length > 0 && (
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-800">
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-bold text-gray-900">AI Study Suggestions</h3>
+            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="text-lg font-bold text-foreground">AI Study Suggestions</h3>
           </div>
           <div className="space-y-3">
             {aiSuggestions.map((suggestion) => (
               <div
                 key={suggestion.id}
-                className="bg-white rounded-lg p-4 border border-blue-200 hover:shadow-md transition-shadow"
+                className="bg-card rounded-lg p-4 border border-blue-200 dark:border-blue-800 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Brain className="w-4 h-4 text-blue-600" />
-                      <h4 className="font-semibold text-gray-900">{suggestion.suggestion}</h4>
+                      <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <h4 className="font-semibold text-foreground">{suggestion.suggestion}</h4>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(suggestion.priority)}`}>
                         {suggestion.priority}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{suggestion.reasoning}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <p className="text-sm text-muted-foreground mb-2">{suggestion.reasoning}</p>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {suggestion.estimated_time} min
@@ -289,7 +285,7 @@ export function StudyPlanner() {
                   </div>
                   <button
                     onClick={() => addSuggestionToCalendar(suggestion)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm font-medium"
+                    className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2 text-sm font-medium"
                   >
                     <Plus className="w-4 h-4" />
                     Add to Plan
@@ -303,7 +299,7 @@ export function StudyPlanner() {
 
       {/* Calendar View */}
       {viewMode === 'week' && (
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+        <div className="bg-card rounded-xl shadow-lg border border-border p-6">
           <div className="grid grid-cols-7 gap-2">
             {getWeekDays().map((day, index) => {
               const dayEvents = getDayEvents(day);
@@ -316,14 +312,14 @@ export function StudyPlanner() {
                 <div
                   key={index}
                   className={`p-3 rounded-lg border-2 ${
-                    isToday ? 'bg-blue-50 border-blue-300' : 'bg-gray-50 border-gray-200'
+                    isToday ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-800' : 'bg-muted/30 border-border'
                   }`}
                 >
                   <div className="text-center mb-2">
-                    <div className="text-xs font-medium text-gray-500">
+                    <div className="text-xs font-medium text-muted-foreground">
                       {day.toLocaleDateString('en-US', { weekday: 'short' })}
                     </div>
-                    <div className={`text-lg font-bold ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                    <div className={`text-lg font-bold ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-foreground'}`}>
                       {day.getDate()}
                     </div>
                   </div>
@@ -337,7 +333,7 @@ export function StudyPlanner() {
                       </div>
                     ))}
                     {dayEvents.length > 3 && (
-                      <div className="text-xs text-gray-500 text-center">+{dayEvents.length - 3} more</div>
+                      <div className="text-xs text-muted-foreground text-center">+{dayEvents.length - 3} more</div>
                     )}
                   </div>
                 </div>
@@ -348,16 +344,16 @@ export function StudyPlanner() {
       )}
 
       {/* Day View - Today's Schedule */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">
+      <div className="bg-card rounded-xl shadow-lg border border-border p-6">
+        <h3 className="text-xl font-bold text-foreground mb-4">
           {selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
         </h3>
 
         {todayEvents.length === 0 ? (
           <div className="text-center py-12">
-            <CalendarIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No events scheduled for this day</p>
-            <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <CalendarIcon className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+            <p className="text-muted-foreground">No events scheduled for this day</p>
+            <button className="mt-4 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors">
               Add Study Session
             </button>
           </div>
@@ -369,7 +365,7 @@ export function StudyPlanner() {
                 <div
                   key={session.id}
                   className={`p-4 rounded-lg border-2 hover:shadow-md transition-all ${
-                    session.is_completed ? 'bg-gray-50 border-gray-300 opacity-60' : getPriorityColor(session.priority)
+                    session.is_completed ? 'bg-muted/30 border-border opacity-60' : getPriorityColor(session.priority)
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -378,8 +374,8 @@ export function StudyPlanner() {
                         onClick={() => toggleSessionComplete(session.id)}
                         className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                           session.is_completed
-                            ? 'bg-green-500 border-green-500'
-                            : 'border-gray-300 hover:border-green-500'
+                            ? 'bg-green-500 dark:bg-green-600 border-green-500 dark:border-green-600'
+                            : 'border-border hover:border-green-500 dark:hover:border-green-600'
                         }`}
                       >
                         {session.is_completed && <Check className="w-3 h-3 text-white" />}
@@ -388,14 +384,14 @@ export function StudyPlanner() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {getTypeIcon(session.type)}
-                          <h4 className={`font-semibold ${session.is_completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                          <h4 className={`font-semibold ${session.is_completed ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                             {session.title}
                           </h4>
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-2">{session.course_name}</p>
+                        <p className="text-sm text-muted-foreground mb-2">{session.course_name}</p>
 
-                        <div className="flex items-center gap-4 text-xs text-gray-600">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {new Date(session.start_time).toLocaleTimeString('en-US', {
@@ -422,7 +418,7 @@ export function StudyPlanner() {
                             href={session.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            className="inline-flex items-center gap-1 mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                           >
                             <ExternalLink className="w-3 h-3" />
                             View Details

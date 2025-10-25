@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Video, Calendar, Clock, Users, ExternalLink, UserPlus, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Video, Calendar, Clock, ExternalLink, UserPlus, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -85,14 +85,14 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
 
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
         <div
-          className="bg-white rounded-3xl p-6 border-2 border-green-200 shadow-2xl max-w-2xl w-full relative my-8 animate-in zoom-in duration-300"
+          className="bg-card rounded-3xl p-6 border-2 border-green-200 dark:border-green-700 shadow-2xl max-w-2xl w-full relative my-8 animate-in zoom-in duration-300"
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition-all duration-200 hover:scale-110 z-10"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 shadow-md transition-all duration-200 hover:scale-110 z-10"
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
 
           <div className="mb-6">
@@ -101,8 +101,8 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
                 <Video className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">Today's Meetings</h2>
-                <p className="text-sm text-gray-600">{meetings.length} office hour{meetings.length !== 1 ? 's' : ''} scheduled</p>
+                <h2 className="text-2xl font-bold text-foreground">Today's Meetings</h2>
+                <p className="text-sm text-muted-foreground">{meetings.length} office hour{meetings.length !== 1 ? 's' : ''} scheduled</p>
               </div>
             </div>
           </div>
@@ -134,15 +134,15 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
                   key={meeting.id}
                   className={`rounded-xl p-5 border-2 shadow-md transition-all duration-300 ${
                     meeting.is_active
-                      ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300'
-                      : 'bg-white border-gray-200'
+                      ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-300 dark:border-green-700'
+                      : 'bg-card border-border'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
                         <Calendar className="w-4 h-4 text-green-600" />
-                        <span className="font-semibold text-gray-800 text-sm">Today</span>
+                        <span className="font-semibold text-foreground text-sm">Today</span>
                         {meeting.is_active && (
                           <span className="px-2 py-1 bg-green-500 text-white rounded-full text-xs font-bold animate-pulse">
                             LIVE NOW
@@ -154,20 +154,20 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
                           </span>
                         )}
                       </div>
-                      <h4 className="text-lg font-bold text-gray-800 mb-1">
+                      <h4 className="text-lg font-bold text-foreground mb-1">
                         {meeting.teacher_name || meeting.profiles?.full_name || 'Teacher'}
                       </h4>
                       {(meeting.class_name || meeting.classes?.name) && (
-                        <p className="text-sm text-gray-600 mb-2">{meeting.class_name || meeting.classes?.name}</p>
+                        <p className="text-sm text-muted-foreground mb-2">{meeting.class_name || meeting.classes?.name}</p>
                       )}
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                         <span className="flex items-center space-x-1">
                           <Clock className="w-4 h-4" />
                           <span>{formatTime(meeting.start_time)} - {formatTime(meeting.end_time)}</span>
                         </span>
                       </div>
                       {meeting.notes && (
-                        <p className="text-sm text-gray-600 mt-2 italic">{meeting.notes}</p>
+                        <p className="text-sm text-muted-foreground mt-2 italic">{meeting.notes}</p>
                       )}
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
@@ -206,7 +206,7 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
 
       {joinModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[10000] animate-in fade-in duration-300">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full border-2 border-green-200 animate-in zoom-in duration-300">
+          <div className="bg-card rounded-3xl shadow-2xl max-w-md w-full border-2 border-green-200 dark:border-green-700 animate-in zoom-in duration-300">
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-6 flex items-center justify-between rounded-t-3xl">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-white/30 rounded-xl flex items-center justify-center">
@@ -229,16 +229,16 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
             </div>
 
             <div className="p-6 space-y-4">
-              <div className="bg-green-50 rounded-xl p-4 border-2 border-green-200">
-                <p className="text-sm text-gray-600 mb-1">Meeting with:</p>
-                <p className="text-lg font-bold text-gray-800">{joinModal.teacherName}</p>
+              <div className="bg-green-50 dark:bg-green-950/30 rounded-xl p-4 border-2 border-green-200 dark:border-green-700">
+                <p className="text-sm text-muted-foreground mb-1">Meeting with:</p>
+                <p className="text-lg font-bold text-foreground">{joinModal.teacherName}</p>
                 {joinModal.className && (
-                  <p className="text-sm text-gray-600">{joinModal.className}</p>
+                  <p className="text-sm text-muted-foreground">{joinModal.className}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Reason for visit (optional)
                 </label>
                 <textarea
@@ -246,10 +246,10 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="e.g., Questions about homework, need help with concept..."
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-400 transition-all duration-300 text-gray-800 placeholder:text-gray-400 resize-none"
+                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-green-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
                   maxLength={200}
                 />
-                <p className="text-xs text-gray-500 mt-1 text-right">{reason.length}/200</p>
+                <p className="text-xs text-muted-foreground mt-1 text-right">{reason.length}/200</p>
               </div>
 
               <div className="flex space-x-3 pt-2">
@@ -258,7 +258,7 @@ export function MeetingDetailsModal({ meetings, isOpen, onClose }: MeetingDetail
                     setJoinModal(null);
                     setReason('');
                   }}
-                  className="flex-1 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300"
+                  className="flex-1 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 transition-all duration-300"
                 >
                   Cancel
                 </button>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Users, GraduationCap, Award, TrendingUp, ChevronRight, Hash, Sparkles } from 'lucide-react';
+import { Users, GraduationCap, Award, ChevronRight, Hash } from 'lucide-react';
 import { ClassAnalyticsDetail } from './ClassAnalyticsDetail';
 import { JoinClassModal } from './JoinClassModal';
 import { ClassSentimentChart } from './ClassSentimentChart';
@@ -50,15 +50,15 @@ export function ClassesView() {
   if (classes.length === 0) {
     return (
       <>
-        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-600">
+        <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
             <Users className="h-6 w-6" />
           </div>
-          <h3 className="mt-4 text-xl font-semibold text-slate-900">You’re not in any classes yet</h3>
-          <p className="mt-2 text-sm text-slate-500">Ask your teacher for a class code to get started.</p>
+          <h3 className="mt-4 text-xl font-semibold text-foreground">You're not in any classes yet</h3>
+          <p className="mt-2 text-sm text-muted-foreground">Ask your teacher for a class code to get started.</p>
           <button
             onClick={() => setShowJoinModal(true)}
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-700"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
           >
             <Hash className="h-4 w-4" /> Enter class code
           </button>
@@ -79,17 +79,17 @@ export function ClassesView() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 text-primary">
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-slate-900">Your classes</h1>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Wellness and progress snapshots</p>
+              <h1 className="text-xl font-semibold text-foreground">Your classes</h1>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Wellness and progress snapshots</p>
             </div>
           </div>
           <button
             onClick={() => setShowJoinModal(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-4 py-2 text-sm font-semibold text-primary-700 transition hover:border-primary-300 hover:bg-primary-50"
+            className="inline-flex items-center gap-2 rounded-xl border border-primary bg-card px-4 py-2 text-sm font-semibold text-primary transition hover:bg-primary/10 dark:hover:bg-primary/20"
           >
             <Hash className="h-4 w-4" /> Enter class code
           </button>
@@ -99,7 +99,7 @@ export function ClassesView() {
           {classes.map((classItem) => (
             <article
               key={classItem.id}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+              className="rounded-2xl border border-border bg-card p-6 shadow-sm"
             >
               <div className="flex flex-col gap-6 lg:flex-row">
                 <div className="flex-1 space-y-4">
@@ -107,26 +107,26 @@ export function ClassesView() {
                     onClick={() => setSelectedClass(classItem)}
                     className="flex items-center gap-2 text-left"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 text-primary">
                       <GraduationCap className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-900">{classItem.name}</h3>
-                      <p className="text-xs text-slate-500">Tap to open analytics</p>
+                      <h3 className="text-lg font-semibold text-foreground">{classItem.name}</h3>
+                      <p className="text-xs text-muted-foreground">Tap to open analytics</p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </button>
 
-                  <p className="text-sm leading-relaxed text-slate-600">{classItem.description}</p>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-                    Teacher <span className="text-slate-900">{classItem.teacher_name}</span>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{classItem.description}</p>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/30 px-3 py-1 text-xs font-semibold text-muted-foreground">
+                    Teacher <span className="text-foreground">{classItem.teacher_name}</span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
-                      <Award className="h-4 w-4 text-primary-500" /> Your points
+                  <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-muted/30 px-4 py-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                      <Award className="h-4 w-4 text-primary" /> Your points
                     </div>
-                    <span className="text-2xl font-bold text-primary-600">{classItem.class_points}</span>
+                    <span className="text-2xl font-bold text-primary">{classItem.class_points}</span>
                   </div>
 
                   <ClassHapiInsightsSection classId={classItem.id} className={classItem.name} />

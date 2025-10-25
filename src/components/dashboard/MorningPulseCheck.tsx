@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { EmotionSelector } from './EmotionSelector';
 import { getSentimentLabel, getSentimentColor } from '../../lib/emotionConfig';
 import { Sunrise, Sparkles } from 'lucide-react';

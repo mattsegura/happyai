@@ -34,14 +34,13 @@ export function Dashboard() {
   const [showPopups, setShowPopups] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [popupResetTrigger, setPopupResetTrigger] = useState(0);
-  const [hasMorningPulse, setHasMorningPulse] = useState(false);
   const [showMorningPulseModal, setShowMorningPulseModal] = useState(false);
   const [showClassPulseModal, setShowClassPulseModal] = useState(false);
   const [showClassPulseDetailModal, setShowClassPulseDetailModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [showHapiReferralModal, setShowHapiReferralModal] = useState(false);
   const [meetingData, setMeetingData] = useState<any>(null);
-  const [classPulses, setClassPulses] = useState<any[]>([]);
+  const [classPulses] = useState<any[]>([]);
   const [selectedPulse, setSelectedPulse] = useState<any>(null);
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
   const [analyticsPrompt, setAnalyticsPrompt] = useState<string | null>(null);
@@ -86,11 +85,6 @@ export function Dashboard() {
   const checkMorningPulse = async () => {
     if (!user) return;
     await new Promise(resolve => setTimeout(resolve, 300));
-    setHasMorningPulse(false);
-  };
-
-  const handlePulseComplete = () => {
-    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleAllPopupsComplete = () => {

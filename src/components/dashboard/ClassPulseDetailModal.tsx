@@ -64,13 +64,13 @@ export function ClassPulseDetailModal({ pulse, isOpen, onClose, onComplete }: Cl
       <>
         <div className={`fixed inset-0 bg-black/60 z-[9998] ${getBackdropAnimation(!isExiting)}`} />
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className={`bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl p-8 border-2 border-green-300 shadow-2xl max-w-md w-full ${getModalAnimation(!isExiting)}`}>
+          <div className={`bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-3xl p-8 border-2 border-green-300 dark:border-green-700 shadow-2xl max-w-md w-full ${getModalAnimation(!isExiting)}`}>
             <div className="text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-bounce-in">
                 <Award className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-800 mb-2">Submitted!</h3>
-              <p className="text-gray-600 mb-4">Your response has been recorded</p>
+              <h3 className="text-3xl font-bold text-foreground mb-2">Submitted!</h3>
+              <p className="text-muted-foreground mb-4">Your response has been recorded</p>
               <div className="flex items-center justify-center space-x-2 text-2xl font-bold text-green-600">
                 <Sparkles className="w-6 h-6" />
                 <span>+{pointValue} points</span>
@@ -92,14 +92,14 @@ export function ClassPulseDetailModal({ pulse, isOpen, onClose, onComplete }: Cl
 
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
         <div
-          className={`bg-white rounded-3xl p-6 sm:p-8 border-2 border-blue-200 shadow-2xl max-w-lg w-full relative ${getModalAnimation(!isExiting)}`}
+          className={`bg-card rounded-3xl p-6 sm:p-8 border-2 border-blue-200 dark:border-blue-800 shadow-2xl max-w-lg w-full relative ${getModalAnimation(!isExiting)}`}
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition-all duration-200 hover:scale-110"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 shadow-md transition-all duration-200 hover:scale-110"
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
 
           <div className="flex items-center justify-center mb-6">
@@ -114,23 +114,23 @@ export function ClassPulseDetailModal({ pulse, isOpen, onClose, onComplete }: Cl
             </span>
             <div className="flex items-center space-x-2 bg-gradient-to-r from-yellow-100 to-orange-100 px-4 py-2 rounded-full">
               <Sparkles className="w-4 h-4 text-yellow-600" />
-              <span className="text-sm font-bold text-gray-700">{pointValue} pts</span>
+              <span className="text-sm font-bold text-foreground">{pointValue} pts</span>
             </div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-800 leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-foreground leading-tight">
             {pulse.question}
           </h2>
 
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-semibold text-gray-500">Not Ready</span>
+              <span className="text-sm font-semibold text-muted-foreground">Not Ready</span>
               <div className="flex-1 flex items-center justify-center">
                 <div className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-2xl shadow-lg">
                   <span className="text-4xl font-bold">{sliderValue}</span>
                 </div>
               </div>
-              <span className="text-sm font-semibold text-gray-500">Very Ready</span>
+              <span className="text-sm font-semibold text-muted-foreground">Very Ready</span>
             </div>
 
             <div className="relative">
@@ -155,7 +155,7 @@ export function ClassPulseDetailModal({ pulse, isOpen, onClose, onComplete }: Cl
                     className={`text-xs font-semibold transition-all duration-300 ${
                       num === sliderValue
                         ? 'text-blue-600 scale-125'
-                        : 'text-gray-400'
+                        : 'text-muted-foreground'
                     }`}
                   >
                     {num}

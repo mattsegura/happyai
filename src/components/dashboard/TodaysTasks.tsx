@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockClassMembers, mockPulseCheckSets, mockOfficeHours, mockHapiMomentReferrals, mockClasses, MOCK_USER_ID } from '../../lib/mockData';
-import { Sunrise, MessageSquare, Video, Heart, Sparkles, Clock, ChevronRight } from 'lucide-react';
+import { mockClassMembers, mockPulseCheckSets, mockOfficeHours, mockHapiMomentReferrals, mockClasses } from '../../lib/mockData';
+import { Sunrise, MessageSquare, Video, Heart, Sparkles, ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Skeleton } from '../ui/Skeleton';
 import { EmptyState, EmptyStateIcons } from '../ui/EmptyState';
@@ -168,9 +168,9 @@ export function TodaysTasks({
           <div className="flex items-center justify-between">
             <CardTitle>Today's Focus</CardTitle>
             <div className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-slate-200 animate-pulse" />
-              <span className="h-2 w-2 rounded-full bg-slate-200 animate-pulse delay-75" />
-              <span className="h-2 w-2 rounded-full bg-slate-200 animate-pulse delay-150" />
+              <span className="h-2 w-2 rounded-full bg-muted animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-muted animate-pulse delay-75" />
+              <span className="h-2 w-2 rounded-full bg-muted animate-pulse delay-150" />
             </div>
           </div>
         </CardHeader>
@@ -206,11 +206,11 @@ export function TodaysTasks({
 
   return (
     <Card padding="none" className="overflow-hidden shadow-xl">
-      <CardHeader className="p-5 sm:p-6 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50">
+      <CardHeader className="p-5 sm:p-6 bg-gradient-to-br from-card to-muted/50">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-xl sm:text-2xl font-black">Today's Focus</CardTitle>
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm font-semibold text-muted-foreground mt-1">
               Quick wins to keep you moving
             </p>
           </div>
@@ -228,17 +228,17 @@ export function TodaysTasks({
               <li key={task.id}>
                 <button
                   onClick={() => handleTaskClick(task)}
-                  className="group flex w-full items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3.5 text-left transition-all hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-sm"
+                  className="group flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-all hover:border-primary-300 dark:hover:border-primary-600 hover:shadow-sm"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600 ${task.accentColor} group-hover:scale-105 transition-transform`}>
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-muted to-card border border-border ${task.accentColor} group-hover:scale-105 transition-transform`}>
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
+                      <h3 className="text-sm font-semibold text-foreground truncate">
                         {task.title}
                       </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {task.description}
                       </p>
                     </div>

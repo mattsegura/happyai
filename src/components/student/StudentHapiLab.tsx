@@ -12,13 +12,13 @@ export function StudentHapiLab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-900">
-          <Beaker className="h-5 w-5 text-primary-600" />
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-foreground">
+          <Beaker className="h-5 w-5 text-primary" />
           Hapi lab
         </h2>
       </div>
 
-      <div className="flex overflow-x-auto rounded-full border border-slate-200 bg-white p-1 text-sm font-semibold text-slate-500">
+      <div className="flex overflow-x-auto rounded-full border border-border bg-card p-1 text-sm font-semibold">
         {[
           { id: 'pulses', label: 'Class pulse', icon: MessageSquare },
           { id: 'moments', label: 'Hapi moments', icon: Heart },
@@ -31,7 +31,7 @@ export function StudentHapiLab() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as Tab)}
               className={`mr-1 flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 last:mr-0 transition ${
-                isActive ? 'bg-primary-600 text-white shadow-sm' : 'hover:text-primary-600'
+                isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-primary'
               }`}
             >
               <Icon className="h-4 w-4" />

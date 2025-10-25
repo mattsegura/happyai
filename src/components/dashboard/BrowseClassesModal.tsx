@@ -5,7 +5,7 @@ import { mockAvailableClasses } from '../../lib/mockData';
 type AvailableClass = {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   teacher_name: string;
   class_code: string;
 };
@@ -83,7 +83,7 @@ export function BrowseClassesModal({ onClose, onClassJoined }: BrowseClassesModa
                         <GraduationCap className="w-6 h-6 text-blue-600" />
                         <h3 className="text-xl font-bold text-gray-800">{classItem.name}</h3>
                       </div>
-                      <p className="text-gray-600 mb-2">{classItem.description}</p>
+                      <p className="text-gray-600 mb-2">{classItem.description || 'No description available'}</p>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <span>Teacher: {classItem.teacher_name}</span>
                         <span>Code: {classItem.class_code}</span>

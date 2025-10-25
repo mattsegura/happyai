@@ -59,16 +59,16 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="bg-card rounded-3xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
             Join with Class Code
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            className="p-2 hover:bg-muted rounded-xl transition-colors"
           >
-            <X className="w-6 h-6 text-gray-500" />
+            <X className="w-6 h-6 text-muted-foreground" />
           </button>
         </div>
 
@@ -77,19 +77,19 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
             <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Check className="w-10 h-10 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Successfully Joined!</h3>
-            <p className="text-gray-600">Welcome to your new class</p>
+            <h3 className="text-2xl font-bold text-foreground mb-2">Successfully Joined!</h3>
+            <p className="text-muted-foreground">Welcome to your new class</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-6">
               <div className="flex items-start space-x-4">
                 <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Hash className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-gray-800 mb-2">Enter Class Code</h3>
-                  <p className="text-gray-600 text-sm">
+                  <h3 className="font-bold text-lg text-foreground mb-2">Enter Class Code</h3>
+                  <p className="text-muted-foreground text-sm">
                     Ask your teacher for the unique class code and enter it below to join.
                   </p>
                 </div>
@@ -106,7 +106,7 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
                   setError('');
                 }}
                 required
-                className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300 text-gray-800 placeholder:text-gray-400 text-center text-xl font-semibold tracking-wider"
+                className="w-full px-6 py-4 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground text-center text-xl font-semibold tracking-wider"
                 maxLength={12}
               />
               {error && (
@@ -121,7 +121,7 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300"
+                className="flex-1 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 transition-all duration-300"
               >
                 Cancel
               </button>

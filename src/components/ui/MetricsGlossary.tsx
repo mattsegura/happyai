@@ -1,4 +1,4 @@
-import { HelpCircle, X } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 import { Modal } from './Modal';
 import { Button } from './button';

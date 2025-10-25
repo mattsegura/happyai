@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   BookOpen,
   TrendingUp,
-  TrendingDown,
   Clock,
   CheckCircle2,
   AlertCircle,
@@ -86,45 +85,45 @@ export function GradesView() {
   };
 
   const getGradeColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 80) return 'text-blue-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return 'text-green-600 dark:text-green-400';
+    if (score >= 80) return 'text-blue-600 dark:text-blue-400';
+    if (score >= 70) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   const getGradeBgColor = (score: number) => {
-    if (score >= 90) return 'bg-green-50 border-green-200';
-    if (score >= 80) return 'bg-blue-50 border-blue-200';
-    if (score >= 70) return 'bg-yellow-50 border-yellow-200';
-    return 'bg-red-50 border-red-200';
+    if (score >= 90) return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
+    if (score >= 80) return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
+    if (score >= 70) return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
+    return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
   };
 
   const getStatusBadge = (assignment: AssignmentWithSubmission) => {
     switch (assignment.status) {
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
             <CheckCircle2 className="w-3 h-3" />
             Completed
           </span>
         );
       case 'overdue':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-medium">
             <AlertCircle className="w-3 h-3" />
             Overdue
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-xs font-medium">
             <Clock className="w-3 h-3" />
             Due Soon
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-muted text-muted-foreground rounded-full text-xs font-medium">
             <Calendar className="w-3 h-3" />
             Upcoming
           </span>
@@ -146,8 +145,8 @@ export function GradesView() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your grades...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading your grades...</p>
         </div>
       </div>
     );
@@ -205,7 +204,7 @@ export function GradesView() {
 
       {/* Course Cards */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-gray-800">Your Courses</h3>
+        <h3 className="text-xl font-bold text-foreground">Your Courses</h3>
         {courses.map((course) => {
           const courseAssignments = assignments.filter((a) => a.course_id === course.id);
           const isExpanded = expandedCourse === course.id;
@@ -213,10 +212,10 @@ export function GradesView() {
           const currentGrade = course.enrollments[0]?.current_grade || 'N/A';
 
           return (
-            <div key={course.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div key={course.id} className="bg-card rounded-xl shadow-lg border border-border overflow-hidden">
               <button
                 onClick={() => setExpandedCourse(isExpanded ? null : course.id)}
-                className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full p-6 flex items-center justify-between hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center gap-4 flex-1">
                   <div className={`w-12 h-12 rounded-xl ${getGradeBgColor(currentScore)} border flex items-center justify-center`}>
@@ -224,42 +223,42 @@ export function GradesView() {
                   </div>
 
                   <div className="flex-1 text-left">
-                    <h4 className="text-lg font-bold text-gray-900">{course.name}</h4>
-                    <p className="text-sm text-gray-500">{course.course_code} • {course.term}</p>
+                    <h4 className="text-lg font-bold text-foreground">{course.name}</h4>
+                    <p className="text-sm text-muted-foreground">{course.course_code} • {course.term}</p>
                   </div>
 
                   <div className="text-right">
                     <div className={`text-2xl font-bold ${getGradeColor(currentScore)}`}>{currentGrade}</div>
-                    <div className="text-sm text-gray-500">{currentScore.toFixed(1)}%</div>
+                    <div className="text-sm text-muted-foreground">{currentScore.toFixed(1)}%</div>
                   </div>
 
                   {isExpanded ? (
-                    <ChevronDown className="w-6 h-6 text-gray-400" />
+                    <ChevronDown className="w-6 h-6 text-muted-foreground" />
                   ) : (
-                    <ChevronRight className="w-6 h-6 text-gray-400" />
+                    <ChevronRight className="w-6 h-6 text-muted-foreground" />
                   )}
                 </div>
               </button>
 
               {isExpanded && (
-                <div className="border-t border-gray-200 bg-gray-50 p-6">
-                  <h5 className="font-semibold text-gray-900 mb-4">Assignments</h5>
+                <div className="border-t border-border bg-muted/30 p-6">
+                  <h5 className="font-semibold text-foreground mb-4">Assignments</h5>
                   <div className="space-y-3">
                     {courseAssignments.length === 0 ? (
-                      <p className="text-gray-500 text-sm">No assignments yet</p>
+                      <p className="text-muted-foreground text-sm">No assignments yet</p>
                     ) : (
                       courseAssignments.map((assignment) => (
                         <div
                           key={assignment.id}
-                          className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+                          className="bg-card p-4 rounded-lg border border-border hover:shadow-md transition-shadow"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex items-start gap-3 flex-1">
-                              <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
+                              <FileText className="w-5 h-5 text-muted-foreground mt-0.5" />
                               <div className="flex-1">
-                                <h6 className="font-semibold text-gray-900">{assignment.name}</h6>
+                                <h6 className="font-semibold text-foreground">{assignment.name}</h6>
                                 {assignment.due_at && (
-                                  <p className="text-sm text-gray-500 mt-1">
+                                  <p className="text-sm text-muted-foreground mt-1">
                                     Due: {new Date(assignment.due_at).toLocaleDateString('en-US', {
                                       month: 'short',
                                       day: 'numeric',
@@ -268,14 +267,14 @@ export function GradesView() {
                                       minute: '2-digit',
                                     })}
                                     {assignment.daysUntilDue !== undefined && assignment.daysUntilDue >= 0 && (
-                                      <span className="ml-2 text-gray-400">
+                                      <span className="ml-2 text-muted-foreground/70">
                                         ({assignment.daysUntilDue} {assignment.daysUntilDue === 1 ? 'day' : 'days'} left)
                                       </span>
                                     )}
                                   </p>
                                 )}
                                 {assignment.submission?.score !== null && assignment.submission?.score !== undefined && (
-                                  <p className="text-sm font-medium text-green-600 mt-1">
+                                  <p className="text-sm font-medium text-green-600 dark:text-green-400 mt-1">
                                     Score: {assignment.submission.score}/{assignment.points_possible} (
                                     {((assignment.submission.score / assignment.points_possible) * 100).toFixed(1)}%)
                                   </p>
@@ -284,7 +283,7 @@ export function GradesView() {
                             </div>
                             <div className="flex flex-col items-end gap-2">
                               {getStatusBadge(assignment)}
-                              <span className="text-sm text-gray-500">{assignment.points_possible} pts</span>
+                              <span className="text-sm text-muted-foreground">{assignment.points_possible} pts</span>
                             </div>
                           </div>
                         </div>
@@ -299,9 +298,9 @@ export function GradesView() {
       </div>
 
       {/* Upcoming Assignments */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+      <div className="bg-card rounded-xl shadow-lg border border-border p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-800">All Assignments</h3>
+          <h3 className="text-xl font-bold text-foreground">All Assignments</h3>
           <div className="flex gap-2">
             {(['all', 'pending', 'overdue', 'completed'] as const).map((status) => (
               <button
@@ -309,8 +308,8 @@ export function GradesView() {
                 onClick={() => setFilterStatus(status)}
                 className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                   filterStatus === status
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -321,7 +320,7 @@ export function GradesView() {
 
         <div className="space-y-3">
           {filteredAssignments.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No assignments found</p>
+            <p className="text-muted-foreground text-center py-8">No assignments found</p>
           ) : (
             filteredAssignments
               .sort((a, b) => {
@@ -332,16 +331,16 @@ export function GradesView() {
               .map((assignment) => (
                 <div
                   key={assignment.id}
-                  className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+                  className="bg-muted/30 p-4 rounded-lg border border-border hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 flex-1">
-                      <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
+                      <FileText className="w-5 h-5 text-muted-foreground mt-0.5" />
                       <div className="flex-1">
-                        <h6 className="font-semibold text-gray-900">{assignment.name}</h6>
-                        <p className="text-sm text-gray-600 mt-1">{assignment.course_name}</p>
+                        <h6 className="font-semibold text-foreground">{assignment.name}</h6>
+                        <p className="text-sm text-muted-foreground mt-1">{assignment.course_name}</p>
                         {assignment.due_at && (
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-muted-foreground mt-1">
                             Due: {new Date(assignment.due_at).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -355,7 +354,7 @@ export function GradesView() {
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       {getStatusBadge(assignment)}
-                      <span className="text-sm text-gray-500">{assignment.points_possible} pts</span>
+                      <span className="text-sm text-muted-foreground">{assignment.points_possible} pts</span>
                     </div>
                   </div>
                 </div>

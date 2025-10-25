@@ -20,8 +20,8 @@ export function HapiAiInsights({ analyticsData, onTalkMore }: HapiAiInsightsProp
               <Brain className="h-6 w-6 sm:h-7 sm:w-7" />
             </div>
             <div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100">Hapi Insight</h3>
-              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-1">
+              <h3 className="text-xl sm:text-2xl font-black text-foreground">Hapi Insight</h3>
+              <p className="text-xs font-bold text-muted-foreground flex items-center gap-1.5 mt-1">
                 <span className="inline-block h-2 w-2 rounded-full bg-green-500 animate-pulse shadow-lg shadow-green-500/50"></span>
                 Refreshed moments ago
               </p>
@@ -34,7 +34,7 @@ export function HapiAiInsights({ analyticsData, onTalkMore }: HapiAiInsightsProp
       <CardContent className="px-5 sm:px-6 py-4">
         <div className="relative">
           <div className="absolute -left-2 top-0 h-full w-1.5 bg-gradient-to-b from-primary-500 to-accent-600 rounded-full shadow-lg"></div>
-          <p className="pl-5 text-base sm:text-lg leading-relaxed font-medium text-slate-700 dark:text-slate-200">
+          <p className="pl-5 text-base sm:text-lg leading-relaxed font-medium text-foreground">
             {insight}
           </p>
         </div>

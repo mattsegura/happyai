@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { mockClassPulses, mockPulseCheckSets, mockClassMembers, mockPulseResponses, mockClasses, MOCK_USER_ID } from '../../lib/mockData';
+import { mockPulseCheckSets, mockClassMembers, mockPulseResponses, mockClasses } from '../../lib/mockData';
 import { MessageSquare, Clock, CheckCircle, Sparkles } from 'lucide-react';
 import { ClassPulseAnswerModal } from './ClassPulseAnswerModal';
 import { useAuth } from '../../contexts/AuthContext';
@@ -22,7 +22,7 @@ interface ClassPulsesFeedProps {
 export function ClassPulsesFeed({ refreshTrigger, maxVisible = 8 }: ClassPulsesFeedProps = {}) {
   const { user } = useAuth();
   const [selectedPulse, setSelectedPulse] = useState<ClassPulseWithClass | null>(null);
-  const [respondedPulses, setRespondedPulses] = useState<Set<string>>(new Set());
+  const [, setRespondedPulses] = useState<Set<string>>(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pulses, setPulses] = useState<ClassPulseWithClass[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,10 +138,10 @@ export function ClassPulsesFeed({ refreshTrigger, maxVisible = 8 }: ClassPulsesF
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-blue-200 shadow-lg">
+      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-blue-200 dark:border-blue-800 shadow-lg">
         <div className="text-center">
           <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4 animate-pulse" />
-          <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">Loading Class Pulses...</h3>
+          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">Loading Class Pulses...</h3>
         </div>
       </div>
     );
@@ -149,11 +149,11 @@ export function ClassPulsesFeed({ refreshTrigger, maxVisible = 8 }: ClassPulsesF
 
   if (pulses.length === 0) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-blue-200 shadow-lg">
+      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border-2 border-blue-200 dark:border-blue-800 shadow-lg">
         <div className="text-center">
           <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-4" />
-          <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">No Active Class Pulses</h3>
-          <p className="text-sm sm:text-base text-gray-600">Your teachers haven't posted any questions yet today.</p>
+          <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">No Active Class Pulses</h3>
+          <p className="text-sm sm:text-base text-muted-foreground">Your teachers haven't posted any questions yet today.</p>
         </div>
       </div>
     );
@@ -166,16 +166,16 @@ export function ClassPulsesFeed({ refreshTrigger, maxVisible = 8 }: ClassPulsesF
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center">
-          <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 mr-2 text-blue-600" />
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center">
+          <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 mr-2 text-blue-600 dark:text-blue-400" />
           Class Pulses
         </h2>
         <div className="flex items-center space-x-2">
-          <span className="text-sm sm:text-base font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+          <span className="text-sm sm:text-base font-semibold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full">
             {activeCount} active
           </span>
           {overflowCount > 0 && (
-            <span className="text-xs sm:text-sm font-semibold text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
+            <span className="text-xs sm:text-sm font-semibold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-full">
               +{overflowCount} in Hapi Labs
             </span>
           )}
@@ -186,24 +186,24 @@ export function ClassPulsesFeed({ refreshTrigger, maxVisible = 8 }: ClassPulsesF
         {visiblePulses.map((pulse) => (
           <div
             key={pulse.id}
-            className={`relative bg-white rounded-xl p-4 border-2 shadow-md transition-all duration-300 flex flex-col ${
+            className={`relative bg-card rounded-xl p-4 border-2 shadow-md transition-all duration-300 flex flex-col ${
               pulse.hasResponded
-                ? 'border-green-300 bg-green-50/30'
-                : 'border-blue-300 hover:shadow-lg hover:border-blue-400 cursor-pointer'
+                ? 'border-green-300 dark:border-green-700 bg-green-50/30 dark:bg-green-900/20'
+                : 'border-blue-300 dark:border-blue-700 hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-600 cursor-pointer'
             }`}
             onClick={() => !pulse.hasResponded && handleOpenModal(pulse)}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold truncate max-w-[70%]">
+              <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold truncate max-w-[70%]">
                 {pulse.classes.name}
               </span>
-              <div className="flex items-center space-x-1 text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
+              <div className="flex items-center space-x-1 text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-full">
                 <Clock className="w-3 h-3" />
                 <span className="text-xs font-semibold">{getTimeRemaining(pulse.expires_at)}</span>
               </div>
             </div>
 
-            <h3 className="text-sm font-bold text-gray-800 leading-tight mb-3 line-clamp-2 flex-grow">
+            <h3 className="text-sm font-bold text-foreground leading-tight mb-3 line-clamp-2 flex-grow">
               {pulse.question}
             </h3>
 
@@ -220,7 +220,7 @@ export function ClassPulsesFeed({ refreshTrigger, maxVisible = 8 }: ClassPulsesF
                 <span className="bg-white/30 px-2 py-0.5 rounded text-xs">+10</span>
               </button>
             ) : (
-              <div className="flex items-center justify-center py-2.5 bg-green-100 text-green-700 font-bold rounded-lg text-sm">
+              <div className="flex items-center justify-center py-2.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-bold rounded-lg text-sm">
                 <CheckCircle className="w-4 h-4 mr-1.5" />
                 Completed
               </div>

@@ -133,15 +133,15 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl my-8 flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="bg-card rounded-3xl shadow-2xl w-full max-w-6xl my-8 flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-3xl font-bold text-gray-800">
+            <h2 className="text-3xl font-bold text-foreground">
               {currentStep === 'metadata' && 'Create Pulse Check'}
               {currentStep === 'questions' && 'Add Questions'}
               {currentStep === 'preview' && 'Preview & Publish'}
             </h2>
-            <p className="text-gray-600 mt-1">
+            <p className="text-muted-foreground mt-1">
               {currentStep === 'metadata' && 'Set up your pulse check details'}
               {currentStep === 'questions' && `${questions.length} ${questions.length === 1 ? 'question' : 'questions'} added • ${totalPoints} points total`}
               {currentStep === 'preview' && 'Review your pulse check before publishing'}
@@ -149,39 +149,39 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            className="p-2 hover:bg-muted rounded-xl transition-colors"
           >
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-6 h-6 text-muted-foreground" />
           </button>
         </div>
 
-        <div className="flex items-center justify-center py-4 px-6 bg-gray-50 border-b border-gray-200">
+        <div className="flex items-center justify-center py-4 px-6 bg-muted/30 dark:bg-muted/20 border-b border-border">
           <div className="flex items-center space-x-2">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-              currentStep === 'metadata' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'
+              currentStep === 'metadata' ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-green-500 dark:bg-green-600 text-white'
             }`}>
               {currentStep === 'metadata' ? '1' : '✓'}
             </div>
-            <span className={`font-semibold ${currentStep === 'metadata' ? 'text-blue-600' : 'text-gray-600'}`}>
+            <span className={`font-semibold ${currentStep === 'metadata' ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
               Details
             </span>
-            <div className="w-12 h-0.5 bg-gray-300 mx-2" />
+            <div className="w-12 h-0.5 bg-border mx-2" />
             <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-              currentStep === 'questions' ? 'bg-blue-500 text-white' :
-              currentStep === 'preview' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-500'
+              currentStep === 'questions' ? 'bg-blue-500 dark:bg-blue-600 text-white' :
+              currentStep === 'preview' ? 'bg-green-500 dark:bg-green-600 text-white' : 'bg-muted dark:bg-muted/50 text-muted-foreground'
             }`}>
               {currentStep === 'preview' ? '✓' : '2'}
             </div>
-            <span className={`font-semibold ${currentStep === 'questions' ? 'text-blue-600' : 'text-gray-600'}`}>
+            <span className={`font-semibold ${currentStep === 'questions' ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
               Questions
             </span>
-            <div className="w-12 h-0.5 bg-gray-300 mx-2" />
+            <div className="w-12 h-0.5 bg-border mx-2" />
             <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-              currentStep === 'preview' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
+              currentStep === 'preview' ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-muted dark:bg-muted/50 text-muted-foreground'
             }`}>
               3
             </div>
-            <span className={`font-semibold ${currentStep === 'preview' ? 'text-blue-600' : 'text-gray-600'}`}>
+            <span className={`font-semibold ${currentStep === 'preview' ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
               Review
             </span>
           </div>
@@ -223,7 +223,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
                   />
                   <button
                     onClick={() => setShowQuestionTypeSelector(true)}
-                    className="w-full py-4 border-2 border-dashed border-blue-300 rounded-xl text-blue-600 font-semibold hover:bg-blue-50 hover:border-blue-400 transition-all duration-300"
+                    className="w-full py-4 border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-xl text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-300"
                   >
                     + Add Question
                   </button>
@@ -232,14 +232,14 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
 
               {showQuestionTypeSelector && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                  <div className="bg-white rounded-3xl p-8 max-w-4xl w-full shadow-2xl max-h-[80vh] overflow-y-auto">
+                  <div className="bg-card rounded-3xl p-8 max-w-4xl w-full shadow-2xl max-h-[80vh] overflow-y-auto">
                     <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-2xl font-bold text-gray-800">Choose Question Type</h3>
+                      <h3 className="text-2xl font-bold text-foreground">Choose Question Type</h3>
                       <button
                         onClick={() => setShowQuestionTypeSelector(false)}
-                        className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                        className="p-2 hover:bg-muted rounded-xl transition-colors"
                       >
-                        <X className="w-6 h-6 text-gray-600" />
+                        <X className="w-6 h-6 text-muted-foreground" />
                       </button>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -247,9 +247,9 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
                         <button
                           key={typeDef.value}
                           onClick={() => handleAddQuestion(typeDef.value)}
-                          className={`p-6 border-2 rounded-2xl text-left hover:shadow-lg transition-all duration-300 hover:scale-105 bg-${typeDef.color}-50 border-${typeDef.color}-200 hover:border-${typeDef.color}-400`}
+                          className={`p-6 border-2 rounded-2xl text-left hover:shadow-lg transition-all duration-300 hover:scale-105 bg-${typeDef.color}-50 dark:bg-${typeDef.color}-950/30 border-${typeDef.color}-200 dark:border-${typeDef.color}-800 hover:border-${typeDef.color}-400 dark:hover:border-${typeDef.color}-600`}
                         >
-                          <div className={`w-12 h-12 rounded-xl bg-${typeDef.color}-500 text-white flex items-center justify-center mb-3 text-2xl`}>
+                          <div className={`w-12 h-12 rounded-xl bg-${typeDef.color}-500 dark:bg-${typeDef.color}-600 text-white flex items-center justify-center mb-3 text-2xl`}>
                             {typeDef.icon === 'BarChart3' && '📊'}
                             {typeDef.icon === 'CircleDot' && '⭕'}
                             {typeDef.icon === 'CheckSquare' && '☑️'}
@@ -262,8 +262,8 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
                             {typeDef.icon === 'HelpCircle' && '❓'}
                             {typeDef.icon === 'List' && '📋'}
                           </div>
-                          <h4 className="font-bold text-gray-800 mb-1">{typeDef.label}</h4>
-                          <p className="text-sm text-gray-600">{typeDef.description}</p>
+                          <h4 className="font-bold text-foreground mb-1">{typeDef.label}</h4>
+                          <p className="text-sm text-muted-foreground">{typeDef.description}</p>
                         </button>
                       ))}
                     </div>
@@ -285,12 +285,12 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
           )}
         </div>
 
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t border-border bg-muted/30 dark:bg-muted/20">
           <div className="flex space-x-3">
             <button
               onClick={handleSaveDraft}
               disabled={saving || !canProceedToQuestions}
-              className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+              className="px-6 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
             >
               <Save className="w-5 h-5" />
               <span>{saving ? 'Saving...' : 'Save Draft'}</span>
@@ -299,7 +299,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
             <button
               onClick={() => setShowSaveTemplateModal(true)}
               disabled={!canSaveAsTemplate}
-              className="px-6 py-3 bg-blue-100 text-blue-700 font-semibold rounded-xl hover:bg-blue-200 disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+              className="px-6 py-3 bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 font-semibold rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
             >
               <BookTemplate className="w-5 h-5" />
               <span>Save as Template</span>
@@ -313,7 +313,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
                   if (currentStep === 'questions') setCurrentStep('metadata');
                   if (currentStep === 'preview') setCurrentStep('questions');
                 }}
-                className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-6 py-3 bg-card border-2 border-border text-foreground font-semibold rounded-xl hover:bg-muted/50 transition-all duration-300 flex items-center space-x-2"
               >
                 <ChevronLeft className="w-5 h-5" />
                 <span>Back</span>
@@ -324,7 +324,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
               <button
                 onClick={() => setCurrentStep('questions')}
                 disabled={!canProceedToQuestions}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
               >
                 <span>Next: Add Questions</span>
                 <ChevronRight className="w-5 h-5" />
@@ -335,7 +335,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
               <button
                 onClick={() => setCurrentStep('preview')}
                 disabled={!canProceedToPreview}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
               >
                 <Eye className="w-5 h-5" />
                 <span>Preview</span>
@@ -346,7 +346,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
               <button
                 onClick={handlePublish}
                 disabled={saving}
-                className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:shadow-xl disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white font-bold rounded-xl hover:shadow-xl disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
               >
                 <Send className="w-5 h-5" />
                 <span>{saving ? 'Publishing...' : 'Publish Pulse'}</span>
@@ -386,34 +386,34 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-      <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
+      <div className="bg-card rounded-3xl p-8 max-w-lg w-full shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-gray-800">Save as Template</h3>
+          <h3 className="text-2xl font-bold text-foreground">Save as Template</h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            className="p-2 hover:bg-muted rounded-xl transition-colors"
           >
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-6 h-6 text-muted-foreground" />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Template Name <span className="text-red-500">*</span>
+            <label className="block text-sm font-semibold text-foreground mb-2">
+              Template Name <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <input
               type="text"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
               placeholder="e.g., Weekly Check-In Template"
-              className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300"
+              className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 text-foreground placeholder:text-muted-foreground"
               maxLength={100}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Description (Optional)
             </label>
             <textarea
@@ -421,17 +421,17 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
               onChange={(e) => setTemplateDescription(e.target.value)}
               placeholder="Describe when to use this template..."
               rows={3}
-              className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300 resize-none"
+              className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 resize-none text-foreground placeholder:text-muted-foreground"
               maxLength={300}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+            <label className="block text-sm font-semibold text-foreground mb-2">Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300"
+              className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 text-foreground"
             >
               <option value="general">General</option>
               <option value="check-in">Check-In</option>
@@ -442,8 +442,8 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
             </select>
           </div>
 
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-            <p className="text-sm text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
               💡 Templates save your questions and structure. You can reuse them later and customize
               them for different classes and topics.
             </p>
@@ -453,14 +453,14 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
             <button
               onClick={onClose}
               disabled={saving}
-              className="flex-1 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 disabled:opacity-50 transition-all duration-300"
+              className="flex-1 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 disabled:opacity-50 transition-all duration-300"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!templateName.trim() || saving}
-              className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300"
+              className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300"
             >
               {saving ? 'Saving...' : 'Save Template'}
             </button>

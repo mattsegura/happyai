@@ -25,14 +25,14 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
     setError('');
     setLoading(true);
 
-    const { error } = await signIn(email, password, role);
+    const { error } = await signIn(email, password);
 
     if (error) {
       setError(error.message);
       toast.error('Login failed', error.message);
       setLoading(false);
     } else {
-      toast.success('Welcome back!', `Logged in as ${role}`);
+      toast.success('Welcome back!', 'Successfully logged in');
     }
   };
 

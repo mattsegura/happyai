@@ -56,7 +56,7 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
         return;
       }
 
-      const classIds = classMemberships.map(m => m.class_id);
+      const classIds = classMemberships.map((m: { class_id: string }) => m.class_id);
 
       const { data: pulseSets } = await supabase
         .from('pulse_check_sets')
@@ -77,7 +77,7 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
         return;
       }
 
-      const pulseSetIds = pulseSets.map(p => p.id);
+      const pulseSetIds = pulseSets.map((p: { id: string }) => p.id);
 
       const { data: responses } = await supabase
         .from('pulse_responses')
@@ -92,7 +92,7 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
         .in('pulse_set_id', pulseSetIds);
 
       const responseMap = new Map(
-        responses?.map(r => [
+        responses?.map((r: any) => [
           r.pulse_set_id,
           {
             hasResponded: r.is_completed,
@@ -103,8 +103,13 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
         ]) || []
       );
 
-      const formattedPulses: ClassPulseWithDetails[] = pulseSets.map(pulse => {
-        const responseInfo = responseMap.get(pulse.id);
+      const formattedPulses: ClassPulseWithDetails[] = pulseSets.map((pulse: any) => {
+        const responseInfo = responseMap.get(pulse.id) as {
+          hasResponded: boolean;
+          response?: string;
+          points_earned?: number;
+          answered_at?: string;
+        } | undefined;
         return {
           id: pulse.id,
           class_id: pulse.class_id,
@@ -285,29 +290,29 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
   return (
     <div className="space-y-6">
       {showOverflowOnly && overflowActivePulses.length > 0 && (
-        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-4 border-2 border-orange-200 shadow-md">
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/50 dark:to-yellow-950/50 rounded-xl p-4 border-2 border-orange-200 dark:border-orange-800 shadow-md">
           <div className="flex items-center space-x-2 mb-2">
-            <MessageSquare className="w-5 h-5 text-orange-600" />
-            <h3 className="text-lg font-bold text-gray-800">Active Overflow Pulses</h3>
+            <MessageSquare className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <h3 className="text-lg font-bold text-foreground">Active Overflow Pulses</h3>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             These {overflowActivePulses.length} active pulse{overflowActivePulses.length !== 1 ? 's' : ''} didn't fit on the dashboard.
           </p>
         </div>
       )}
 
-      <div className="bg-white rounded-xl p-4 shadow-md border-2 border-gray-200">
+      <div className="bg-card rounded-xl p-4 shadow-md border-2 border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
           <div className="flex items-center space-x-2">
-            <Filter className="w-5 h-5 text-gray-600" />
-            <span className="text-sm font-semibold text-gray-700">Filters:</span>
+            <Filter className="w-5 h-5 text-muted-foreground" />
+            <span className="text-sm font-semibold text-foreground">Filters:</span>
           </div>
 
           <div className="flex flex-wrap gap-2">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="px-3 py-2 bg-gray-50 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 focus:outline-none focus:border-blue-400 transition-all"
+              className="px-3 py-2 bg-muted border-2 border-border rounded-lg text-sm font-semibold text-foreground focus:outline-none focus:border-blue-400 dark:focus:border-blue-500 transition-all"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -318,7 +323,7 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
             <select
               value={filterClass}
               onChange={(e) => setFilterClass(e.target.value)}
-              className="px-3 py-2 bg-gray-50 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 focus:outline-none focus:border-blue-400 transition-all"
+              className="px-3 py-2 bg-muted border-2 border-border rounded-lg text-sm font-semibold text-foreground focus:outline-none focus:border-blue-400 dark:focus:border-blue-500 transition-all"
             >
               <option value="all">All Classes</option>
               {uniqueClasses.map(classId => (
@@ -333,10 +338,10 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
 
       <div className="space-y-4">
         {filteredPulses.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center border-2 border-gray-200">
-            <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-600 font-semibold">No pulses found</p>
-            <p className="text-sm text-gray-500 mt-1">Try adjusting your filters</p>
+          <div className="bg-card rounded-xl p-8 text-center border-2 border-border">
+            <MessageSquare className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+            <p className="text-foreground font-semibold">No pulses found</p>
+            <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters</p>
           </div>
         ) : (
           filteredPulses.map(pulse => {
@@ -346,48 +351,48 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
             return (
               <div
                 key={pulse.id}
-                className={`bg-white rounded-xl p-5 border-2 shadow-md transition-all duration-300 ${
-                  status === 'completed' ? 'border-green-300 bg-green-50/30' :
-                  status === 'expired' ? 'border-gray-300 bg-gray-50/30' :
-                  'border-blue-300'
+                className={`bg-card rounded-xl p-5 border-2 shadow-md transition-all duration-300 ${
+                  status === 'completed' ? 'border-green-300 dark:border-green-700 bg-green-50/30 dark:bg-green-950/30' :
+                  status === 'expired' ? 'border-border bg-muted/30' :
+                  'border-blue-300 dark:border-blue-700'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold">
                         {pulse.classes.name}
                       </span>
                       {status === 'completed' && (
-                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center">
+                        <span className="px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold flex items-center">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Completed
                         </span>
                       )}
                       {status === 'expired' && (
-                        <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold flex items-center">
+                        <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs font-semibold flex items-center">
                           <Clock className="w-3 h-3 mr-1" />
                           Expired
                         </span>
                       )}
                       {status === 'active' && (
-                        <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold flex items-center">
+                        <span className="px-3 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 rounded-full text-xs font-semibold flex items-center">
                           <Clock className="w-3 h-3 mr-1" />
                           Active
                         </span>
                       )}
                     </div>
-                    <h3 className="text-base font-bold text-gray-800 leading-snug">
+                    <h3 className="text-base font-bold text-foreground leading-snug">
                       {pulse.question}
                     </h3>
                   </div>
                   <div className="ml-4 text-right">
-                    <div className="flex items-center space-x-1 text-orange-600 text-xs font-semibold">
+                    <div className="flex items-center space-x-1 text-orange-600 dark:text-orange-400 text-xs font-semibold">
                       <Clock className="w-3 h-3" />
                       <span>{getTimeInfo(pulse)}</span>
                     </div>
                     {pulse.answered_at && (
-                      <div className="flex items-center space-x-1 text-gray-500 text-xs mt-1">
+                      <div className="flex items-center space-x-1 text-muted-foreground text-xs mt-1">
                         <Calendar className="w-3 h-3" />
                         <span>{new Date(pulse.answered_at).toLocaleDateString()}</span>
                       </div>
@@ -399,18 +404,18 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
                   <div className="mt-3">
                     <button
                       onClick={() => toggleExpand(pulse.id)}
-                      className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold text-sm transition-colors"
+                      className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-sm transition-colors"
                     >
                       <span>{isExpanded ? 'Hide' : 'View'} Your Response</span>
                       <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isExpanded && (
-                      <div className="mt-3 p-4 bg-blue-50 rounded-lg border border-blue-200 animate-in slide-in-from-top duration-200">
-                        <p className="text-sm text-gray-700 leading-relaxed">{pulse.response}</p>
+                      <div className="mt-3 p-4 bg-blue-50 dark:bg-blue-950/50 rounded-lg border border-blue-200 dark:border-blue-800 animate-in slide-in-from-top duration-200">
+                        <p className="text-sm text-foreground leading-relaxed">{pulse.response}</p>
                         {pulse.points_earned && (
                           <div className="mt-3 flex items-center justify-end space-x-2">
-                            <span className="text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                            <span className="text-xs font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-3 py-1 rounded-full">
                               +{pulse.points_earned} pts earned
                             </span>
                           </div>
@@ -421,16 +426,16 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
                 )}
 
                 {!pulse.hasResponded && status === 'expired' && (
-                  <div className="mt-3 p-3 bg-gray-100 rounded-lg">
-                    <p className="text-sm text-gray-600 italic">You did not respond to this pulse</p>
+                  <div className="mt-3 p-3 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground italic">You did not respond to this pulse</p>
                   </div>
                 )}
 
                 {!pulse.hasResponded && status === 'active' && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="mt-4 pt-4 border-t border-border">
                     <button
                       onClick={() => handleAnswerClick(pulse)}
-                      className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-bold rounded-xl hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-2"
+                      className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-bold rounded-xl hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-2"
                     >
                       <Send className="w-5 h-5" />
                       <span>Answer Pulse</span>

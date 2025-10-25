@@ -307,26 +307,26 @@ export function LandingPage() {
                 })}
               </div>
             </div>
-            <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-6 sm:p-8 shadow-2xl">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600">Student dashboard preview</h3>
+            <div className="rounded-3xl border border-border bg-card backdrop-blur-sm p-6 sm:p-8 shadow-2xl">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Student dashboard preview</h3>
               <div className="mt-6 space-y-6">
-                <div className="rounded-2xl border border-slate-200 bg-primary-600/10 p-5">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-primary-700">Daily pulse</p>
-                  <p className="mt-2 text-sm text-slate-600">
-                    Mood: “Inspired” · Trigger: “Biology lab planning” · Energy: “Balanced”
+                <div className="rounded-2xl border border-border bg-primary/10 dark:bg-primary/20 p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400">Daily pulse</p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Mood: "Inspired" · Trigger: "Biology lab planning" · Energy: "Balanced"
                   </p>
-                  <p className="mt-3 text-sm font-semibold text-primary-700">
-                    Suggested action: “Outline the lab steps tonight and bring questions to tomorrow’s session.”
+                  <p className="mt-3 text-sm font-semibold text-primary-700 dark:text-primary-400">
+                    Suggested action: "Outline the lab steps tonight and bring questions to tomorrow's session."
                   </p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-200 p-5">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Assignments in focus</p>
-                    <p className="mt-2 text-sm text-slate-600">Economics essay draft · Due Thursday · Confidence 60%</p>
+                  <div className="rounded-2xl border border-border bg-card p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Assignments in focus</p>
+                    <p className="mt-2 text-sm text-muted-foreground">Economics essay draft · Due Thursday · Confidence 60%</p>
                   </div>
-                  <div className="rounded-2xl border border-slate-200 p-5">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Echo summary</p>
-                    <p className="mt-2 text-sm text-slate-600">“You felt most confident after collaborative study sessions.”</p>
+                  <div className="rounded-2xl border border-border bg-card p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Echo summary</p>
+                    <p className="mt-2 text-sm text-muted-foreground">"You felt most confident after collaborative study sessions."</p>
                   </div>
                 </div>
               </div>
@@ -334,16 +334,16 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="teachers" className="bg-white py-20">
+        <section id="teachers" className="bg-background py-20">
           <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8">
             <div className="order-2 space-y-6 lg:order-1">
-              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200 bg-primary-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700">
+              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400">
                 Teacher analyst
               </p>
-              <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+              <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
                 Clear class analytics so teachers can focus on relationships.
               </h2>
-              <p className="text-lg leading-relaxed text-slate-600">
+              <p className="text-lg leading-relaxed text-muted-foreground">
                 Classroom dashboards connect the dots between emotional tone, participation, and coursework progress.
                 Alerts are contextual and respectful, giving teachers insight without overwhelming them with noise.
               </p>
@@ -351,38 +351,38 @@ export function LandingPage() {
                 {teacherHighlights.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-50 text-accent-600">
+                    <div key={item.title} className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-50 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400">
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
-                        <p className="text-sm text-slate-600">{item.description}</p>
+                        <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-            <div className="order-1 rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-2xl lg:order-2">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600">Teacher briefing</h3>
-              <div className="mt-6 space-y-5 text-sm text-slate-600">
-                <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                  <p className="font-semibold text-slate-900">Class sentiment today</p>
+            <div className="order-1 rounded-3xl border border-border bg-muted/50 p-8 shadow-2xl lg:order-2">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Teacher briefing</h3>
+              <div className="mt-6 space-y-5 text-sm text-muted-foreground">
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <p className="font-semibold text-foreground">Class sentiment today</p>
                   <p className="mt-1">
                     Biology II students report steady confidence (4.1/5). Three reflections mention project scope—consider a
                     quick clarification tomorrow.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                  <p className="font-semibold text-slate-900">Engagement signals</p>
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <p className="font-semibold text-foreground">Engagement signals</p>
                   <p className="mt-1">
                     Pulse participation remained above 90%. Office-hour slots for Thursday are full; send an encouragement
                     reminder to join the waitlist.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                  <p className="font-semibold text-slate-900">Suggested next action</p>
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <p className="font-semibold text-foreground">Suggested next action</p>
                   <p className="mt-1">
                     Offer a collaborative planning station for the lab project. Students who flagged uncertainty will see a
                     note to stop by.
@@ -394,29 +394,29 @@ export function LandingPage() {
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-2xl">
+          <div className="rounded-3xl border border-border bg-card p-10 shadow-2xl">
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
               <div className="space-y-6">
-                <p className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                <p className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   System bridge
                 </p>
-                <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
                   Connect the dots across your campus without losing the human touch.
                 </h2>
-                <p className="text-lg leading-relaxed text-slate-600">
+                <p className="text-lg leading-relaxed text-muted-foreground">
                   Leadership heatmaps highlight the weeks that matter, anonymized reports surface burnout risks before
                   they escalate, and engagement trends show exactly where support programs are working.
                 </p>
               </div>
               <ol className="space-y-4">
                 {workflowSteps.map((step, index) => (
-                  <li key={step.title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-sm font-semibold text-primary-700">
+                  <li key={step.title} className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-sm font-semibold text-primary">
                       {index + 1}
                     </span>
                     <div>
-                      <h3 className="text-lg font-semibold text-slate-900">{step.title}</h3>
-                      <p className="text-sm text-slate-600">{step.description}</p>
+                      <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
                     </div>
                   </li>
                 ))}
@@ -461,15 +461,15 @@ export function LandingPage() {
         </section>
 
         <section id="contact" className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-primary-200 bg-primary-50 px-8 py-16 shadow-2xl">
-            <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Ready to champion whole-student success?</h2>
-            <p className="mt-4 text-lg text-slate-600">
+          <div className="rounded-3xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20 px-8 py-16 shadow-2xl">
+            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">Ready to champion whole-student success?</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
               Get in touch with our team to learn how Hapi AI can transform emotional intelligence and academic momentum for your district.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
                 href="mailto:hello@hapiai.example"
-                className="inline-flex items-center justify-center rounded-2xl bg-primary-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-primary-700"
+                className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
               >
                 Contact us
               </a>

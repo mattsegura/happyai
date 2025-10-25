@@ -57,13 +57,13 @@ export function ClassLeaderboard() {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Trophy className="w-6 h-6 text-yellow-500" />;
+        return <Trophy className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />;
       case 2:
-        return <Medal className="w-6 h-6 text-gray-400" />;
+        return <Medal className="w-6 h-6 text-gray-400 dark:text-gray-500" />;
       case 3:
-        return <Award className="w-6 h-6 text-orange-600" />;
+        return <Award className="w-6 h-6 text-orange-600 dark:text-orange-400" />;
       default:
-        return <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-600">{rank}</div>;
+        return <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground">{rank}</div>;
     }
   };
 
@@ -105,7 +105,7 @@ export function ClassLeaderboard() {
       </div>
 
       {classes.length > 1 && (
-        <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-2 shadow-xl border-2 border-gray-200">
+        <div className="bg-card/90 backdrop-blur-xl rounded-2xl p-2 shadow-xl border-2 border-border">
           <div className="flex space-x-2 overflow-x-auto">
             {classes.map((cls) => (
               <button
@@ -113,8 +113,8 @@ export function ClassLeaderboard() {
                 onClick={() => setSelectedClass(cls.id)}
                 className={`px-6 py-3 rounded-xl text-base font-bold transition-all duration-300 whitespace-nowrap transform ${
                   selectedClass === cls.id
-                    ? 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white shadow-xl scale-105 ring-4 ring-blue-200'
-                    : 'text-gray-700 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-50 hover:scale-105 hover:shadow-md'
+                    ? 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white shadow-xl scale-105 ring-4 ring-blue-200 dark:ring-blue-800'
+                    : 'text-foreground hover:bg-muted hover:scale-105 hover:shadow-md'
                 }`}
               >
                 {cls.name}
@@ -124,20 +124,20 @@ export function ClassLeaderboard() {
         </div>
       )}
 
-      <div className="relative overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-cyan-50/30 rounded-3xl p-6 shadow-2xl border-2 border-blue-200">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/40 to-cyan-100/40 rounded-full blur-3xl -mr-32 -mt-32"></div>
+      <div className="relative overflow-hidden bg-gradient-to-br from-card via-blue-50/30 dark:via-blue-950/30 to-cyan-50/30 dark:to-cyan-950/30 rounded-3xl p-6 shadow-2xl border-2 border-blue-200 dark:border-blue-800">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/40 dark:from-blue-900/20 to-cyan-100/40 dark:to-cyan-900/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
 
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-black bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-black bg-gradient-to-r from-blue-700 dark:from-blue-400 to-cyan-600 dark:to-cyan-400 bg-clip-text text-transparent">
                 {selectedClassName}
               </h2>
-              <p className="text-gray-600 font-semibold mt-1">Class Rankings</p>
+              <p className="text-muted-foreground font-semibold mt-1">Class Rankings</p>
             </div>
-            <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl border-2 border-blue-200 shadow-md">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              <span className="font-bold text-blue-800">{leaderboardData.length} Students</span>
+            <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-100 dark:from-blue-900/40 to-cyan-100 dark:to-cyan-900/40 rounded-xl border-2 border-blue-200 dark:border-blue-800 shadow-md">
+              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span className="font-bold text-blue-800 dark:text-blue-300">{leaderboardData.length} Students</span>
             </div>
           </div>
 
@@ -152,10 +152,10 @@ export function ClassLeaderboard() {
                   onClick={() => setSelectedStudent(entry)}
                   className={`relative group cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${
                     isCurrentUser
-                      ? 'bg-gradient-to-r from-blue-100 via-cyan-100 to-teal-100 border-2 border-blue-500 shadow-xl'
+                      ? 'bg-gradient-to-r from-blue-100 dark:from-blue-900/40 via-cyan-100 dark:via-cyan-900/40 to-teal-100 dark:to-teal-900/40 border-2 border-blue-500 dark:border-blue-600 shadow-xl'
                       : isTopThree
-                      ? 'bg-gradient-to-r from-white to-gray-50 border-2 border-gray-300 hover:border-blue-400'
-                      : 'bg-white border-2 border-gray-200 hover:border-blue-300'
+                      ? 'bg-gradient-to-r from-card to-muted/50 border-2 border-border hover:border-blue-400 dark:hover:border-blue-600'
+                      : 'bg-card border-2 border-border hover:border-blue-300 dark:hover:border-blue-700'
                   } rounded-2xl p-5 overflow-hidden`}
                   style={{
                     animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
@@ -179,7 +179,7 @@ export function ClassLeaderboard() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-2">
                           <h3 className={`text-xl font-black truncate ${
-                            isCurrentUser ? 'text-blue-900' : 'text-gray-900'
+                            isCurrentUser ? 'text-blue-900 dark:text-blue-200' : 'text-foreground'
                           }`}>
                             {entry.full_name}
                           </h3>
@@ -222,16 +222,16 @@ export function ClassLeaderboard() {
                     <div className="text-right ml-6">
                       <div className={`relative ${isTopThree ? 'transform hover:scale-110 transition-transform' : ''}`}>
                         <div className={`text-4xl font-black ${
-                          isCurrentUser ? 'bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent' :
-                          isTopThree ? 'bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent' :
-                          'text-gray-800'
+                          isCurrentUser ? 'bg-gradient-to-r from-blue-600 dark:from-blue-400 to-cyan-600 dark:to-cyan-400 bg-clip-text text-transparent' :
+                          isTopThree ? 'bg-gradient-to-r from-yellow-600 dark:from-yellow-400 to-orange-600 dark:to-orange-400 bg-clip-text text-transparent' :
+                          'text-foreground'
                         }`}>
                           {entry.class_points}
                         </div>
                         <div className={`text-xs font-bold uppercase tracking-wider ${
-                          isCurrentUser ? 'text-blue-600' :
-                          isTopThree ? 'text-orange-600' :
-                          'text-gray-500'
+                          isCurrentUser ? 'text-blue-600 dark:text-blue-400' :
+                          isTopThree ? 'text-orange-600 dark:text-orange-400' :
+                          'text-muted-foreground'
                         }`}>
                           points
                         </div>
@@ -247,10 +247,10 @@ export function ClassLeaderboard() {
             <div className="text-center py-16">
               <div className="relative inline-block mb-6">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                <Trophy className="relative w-24 h-24 text-gray-400" />
+                <Trophy className="relative w-24 h-24 text-muted-foreground" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">No Rankings Yet</h3>
-              <p className="text-gray-600 font-medium">Complete pulse checks to earn points and climb the leaderboard!</p>
+              <h3 className="text-2xl font-bold text-foreground mb-2">No Rankings Yet</h3>
+              <p className="text-muted-foreground font-medium">Complete pulse checks to earn points and climb the leaderboard!</p>
             </div>
           )}
         </div>
@@ -258,7 +258,7 @@ export function ClassLeaderboard() {
 
       {selectedStudent && (
         <UserProfileModal
-          student={selectedStudent}
+          user={selectedStudent}
           onClose={() => setSelectedStudent(null)}
         />
       )}

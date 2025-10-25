@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, TrendingUp, Users, Calendar, Clock, Video, Activity, Smile, Frown, Meh, Target, Award, X } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Users, Calendar, Clock, Video, Activity, Smile, Target, X } from 'lucide-react';
 import {
   getClassSpecific2WeekData,
   getClassSpecificWeekData,
@@ -8,7 +8,6 @@ import {
   getClassAnalyticsData,
   ClassAnalyticsData
 } from '../../lib/classAnalyticsData';
-import { getSentimentLabel, getSentimentColor } from '../../lib/emotionConfig';
 import { mockOfficeHours } from '../../lib/mockData';
 
 type ClassAnalyticsDetailProps = {
@@ -51,9 +50,7 @@ export function ClassAnalyticsDetail({ classId, className, teacherName, descript
   const maxValue = 6;
   const minValue = 1;
 
-  // Use Tailwind color values that work with dark mode
   const getBlueShade = (value: number): string => {
-    // Returns RGB values that can be used with opacity
     if (value >= 5) return 'rgb(30 58 138)'; // blue-900
     if (value >= 4.5) return 'rgb(30 64 175)'; // blue-800
     if (value >= 4) return 'rgb(37 99 235)'; // blue-600
@@ -75,12 +72,6 @@ export function ClassAnalyticsDetail({ classId, className, teacherName, descript
 
   const average = currentData.reduce((sum, d) => sum + d.avgSentiment, 0) / currentData.length;
   const trend = currentData[currentData.length - 1].avgSentiment > currentData[0].avgSentiment ? 'up' : 'down';
-
-  const getSentimentIcon = (avg: number) => {
-    if (avg >= 4.5) return <Smile className="w-12 h-12 text-white" />;
-    if (avg >= 3) return <Meh className="w-12 h-12 text-white" />;
-    return <Frown className="w-12 h-12 text-white" />;
-  };
 
   return (
     <div className="space-y-6">
@@ -348,7 +339,7 @@ export function ClassAnalyticsDetail({ classId, className, teacherName, descript
           </div>
 
           <div className="space-y-3">
-            {analyticsData.topEmotions.map((emotion, index) => (
+            {analyticsData.topEmotions.map((emotion) => (
               <div key={emotion.emotion}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-semibold text-gray-700 capitalize">{emotion.emotion}</span>

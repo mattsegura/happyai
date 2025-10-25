@@ -147,8 +147,8 @@ export function StudentMeetingsView() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-cyan-200 border-t-cyan-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-semibold">Loading office hours...</p>
+          <div className="w-16 h-16 border-4 border-cyan-200 dark:border-cyan-800 border-t-cyan-600 dark:border-t-cyan-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground font-semibold">Loading office hours...</p>
         </div>
       </div>
     );
@@ -174,14 +174,14 @@ export function StudentMeetingsView() {
       )}
 
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold text-gray-800">Office Hours Schedule</h3>
+        <h3 className="text-xl font-bold text-foreground">Office Hours Schedule</h3>
       </div>
 
       {officeHours.length === 0 ? (
-        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-3xl p-12 border-2 border-cyan-200 shadow-lg text-center">
+        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/50 dark:to-blue-950/50 rounded-3xl p-12 border-2 border-cyan-200 dark:border-cyan-800 shadow-lg text-center">
           <Video className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">No Office Hours Scheduled</h3>
-          <p className="text-gray-600">
+          <h3 className="text-2xl font-bold text-foreground mb-2">No Office Hours Scheduled</h3>
+          <p className="text-muted-foreground">
             Check back later for scheduled office hours from your teachers.
           </p>
         </div>
@@ -196,15 +196,15 @@ export function StudentMeetingsView() {
                 key={oh.id}
                 className={`rounded-2xl p-6 border-2 shadow-lg transition-all duration-300 hover:shadow-xl ${
                   oh.is_active
-                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-300'
-                    : 'bg-white border-cyan-100'
+                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border-green-300 dark:border-green-700'
+                    : 'bg-card border-cyan-100 dark:border-cyan-800'
                 }`}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Calendar className="w-5 h-5 text-cyan-600" />
-                      <span className="font-semibold text-gray-800">
+                      <Calendar className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                      <span className="font-semibold text-foreground">
                         {formatDate(oh.date)}
                       </span>
                       {oh.is_active && (
@@ -218,11 +218,11 @@ export function StudentMeetingsView() {
                         </span>
                       )}
                     </div>
-                    <h4 className="text-lg font-bold text-gray-800 mb-1">{oh.teacher_name}</h4>
+                    <h4 className="text-lg font-bold text-foreground mb-1">{oh.teacher_name}</h4>
                     {oh.class_name && (
-                      <p className="text-sm text-gray-600 mb-2">{oh.class_name}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{oh.class_name}</p>
                     )}
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <span className="flex items-center space-x-1">
                         <Clock className="w-4 h-4" />
                         <span>{formatTime(oh.start_time)} - {formatTime(oh.end_time)}</span>
@@ -233,7 +233,7 @@ export function StudentMeetingsView() {
                       </span>
                     </div>
                     {oh.notes && (
-                      <p className="text-sm text-gray-600 mt-2 italic">{oh.notes}</p>
+                      <p className="text-sm text-muted-foreground mt-2 italic">{oh.notes}</p>
                     )}
                   </div>
                   <div className="flex items-center space-x-3">
@@ -260,8 +260,8 @@ export function StudentMeetingsView() {
                         disabled={isFull}
                         className={`px-6 py-2 font-semibold rounded-lg transition-all duration-300 flex items-center space-x-2 ${
                           isFull
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:shadow-lg transform hover:scale-105'
+                            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                            : 'bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-600 dark:to-blue-700 text-white hover:shadow-lg transform hover:scale-105'
                         }`}
                       >
                         <UserPlus className="w-4 h-4" />
@@ -272,20 +272,20 @@ export function StudentMeetingsView() {
                 </div>
 
                 {oh.is_in_queue && (
-                  <div className="pt-4 border-t border-gray-200">
+                  <div className="pt-4 border-t border-border">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
                           #{oh.queue_position}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-800">You're in the queue</p>
-                          <p className="text-xs text-gray-500">Est. wait: {waitTime} min</p>
+                          <p className="text-sm font-semibold text-foreground">You're in the queue</p>
+                          <p className="text-xs text-muted-foreground">Est. wait: {waitTime} min</p>
                         </div>
                       </div>
                       <button
                         onClick={() => handleLeaveQueue(oh.id)}
-                        className="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-all duration-300 text-sm"
+                        className="px-4 py-2 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 font-semibold rounded-lg hover:bg-red-200 dark:hover:bg-red-900/70 transition-all duration-300 text-sm"
                       >
                         Leave Queue
                       </button>
@@ -300,15 +300,15 @@ export function StudentMeetingsView() {
 
       {joinModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full border-2 border-cyan-200 animate-in zoom-in duration-300">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-6 flex items-center justify-between rounded-t-3xl">
+          <div className="bg-card rounded-3xl shadow-2xl max-w-md w-full border-2 border-cyan-200 dark:border-cyan-800 animate-in zoom-in duration-300">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-600 dark:to-blue-700 p-6 flex items-center justify-between rounded-t-3xl">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-white/30 rounded-xl flex items-center justify-center">
                   <UserPlus className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white">Join Queue</h3>
-                  <p className="text-cyan-100 text-sm">Get in line for office hours</p>
+                  <p className="text-cyan-100 dark:text-cyan-200 text-sm">Get in line for office hours</p>
                 </div>
               </div>
               <button
@@ -323,16 +323,16 @@ export function StudentMeetingsView() {
             </div>
 
             <div className="p-6 space-y-4">
-              <div className="bg-cyan-50 rounded-xl p-4 border-2 border-cyan-200">
-                <p className="text-sm text-gray-600 mb-1">Meeting with:</p>
-                <p className="text-lg font-bold text-gray-800">{joinModal.teacherName}</p>
+              <div className="bg-cyan-50 dark:bg-cyan-950/50 rounded-xl p-4 border-2 border-cyan-200 dark:border-cyan-800">
+                <p className="text-sm text-muted-foreground mb-1">Meeting with:</p>
+                <p className="text-lg font-bold text-foreground">{joinModal.teacherName}</p>
                 {joinModal.className && (
-                  <p className="text-sm text-gray-600">{joinModal.className}</p>
+                  <p className="text-sm text-muted-foreground">{joinModal.className}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Reason for visit (optional)
                 </label>
                 <textarea
@@ -340,10 +340,10 @@ export function StudentMeetingsView() {
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="e.g., Questions about homework, need help with concept..."
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-cyan-400 transition-all duration-300 text-gray-800 placeholder:text-gray-400 resize-none"
+                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-cyan-400 dark:focus:border-cyan-500 transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
                   maxLength={200}
                 />
-                <p className="text-xs text-gray-500 mt-1 text-right">{reason.length}/200</p>
+                <p className="text-xs text-muted-foreground mt-1 text-right">{reason.length}/200</p>
               </div>
 
               <div className="flex space-x-3 pt-2">
@@ -352,14 +352,14 @@ export function StudentMeetingsView() {
                     setJoinModal(null);
                     setReason('');
                   }}
-                  className="flex-1 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300"
+                  className="flex-1 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 transition-all duration-300"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleJoinQueue}
                   disabled={submitting}
-                  className="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                  className="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-600 dark:to-blue-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                 >
                   {submitting ? 'Joining...' : 'Join Queue'}
                 </button>

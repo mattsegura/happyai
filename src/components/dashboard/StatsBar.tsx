@@ -17,13 +17,13 @@ export function StatsBar() {
               <Flame className="h-7 w-7 sm:h-8 sm:w-8" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 flex items-center gap-1.5 mb-1">
+              <div className="text-xs font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 flex items-center gap-1.5 mb-1">
                 Current Streak
                 <InfoTooltip content="Days in a row you've completed your morning pulse check" />
-              </p>
-              <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-slate-100">
+              </div>
+              <p className="text-3xl sm:text-4xl font-black text-foreground">
                 {profile?.current_streak || 0}
-                <span className="text-base font-semibold text-slate-600 dark:text-slate-400 ml-2">days</span>
+                <span className="text-base font-semibold text-muted-foreground ml-2">days</span>
               </p>
             </div>
           </div>
@@ -37,11 +37,11 @@ export function StatsBar() {
               <Trophy className="h-7 w-7 sm:h-8 sm:w-8" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5 mb-1">
+              <div className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5 mb-1">
                 Total Points
                 <InfoTooltip content="Earned through pulse checks, class participation, and Hapi Moments. 15pts per morning pulse, varies per class pulse." />
-              </p>
-              <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-slate-100 flex items-baseline gap-2">
+              </div>
+              <p className="text-3xl sm:text-4xl font-black text-foreground flex items-baseline gap-2">
                 {profile?.total_points || 0}
                 <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
               </p>
@@ -57,23 +57,23 @@ export function StatsBar() {
               <Zap className="h-7 w-7 sm:h-8 sm:w-8" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 flex items-center gap-1.5 mb-1">
+              <div className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 flex items-center gap-1.5 mb-1">
                 Level
                 <InfoTooltip content="Levels up every 100 points. Higher levels unlock special features and recognition." />
-              </p>
-              <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-slate-100">
+              </div>
+              <p className="text-3xl sm:text-4xl font-black text-foreground">
                 {currentLevel}
               </p>
             </div>
           </div>
           {/* Progress bar */}
-          <div className="relative h-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
+          <div className="relative h-3 w-full bg-muted rounded-full overflow-hidden shadow-inner">
             <div
               className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full transition-all duration-500 shadow-lg"
               style={{ width: `${levelPercentage}%` }}
             />
           </div>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 text-right font-bold">
+          <p className="text-xs text-muted-foreground mt-2 text-right font-bold">
             {levelProgress}/100 to Level {currentLevel + 1}
           </p>
           <div className="absolute -bottom-2 -right-2 h-20 w-20 rounded-full bg-blue-400/20 blur-2xl"></div>

@@ -4,19 +4,6 @@ import { getStaticPersonalWeekData, getStaticPersonalMonthData, getStaticPersona
 
 type TimeRange = 'week' | 'month' | 'custom';
 
-// Use Tailwind color values that work with dark mode
-const getBlueShade = (value: number): string => {
-  // Returns RGB values that can be used with opacity
-  if (value >= 5) return 'rgb(30 58 138)'; // blue-900
-  if (value >= 4.5) return 'rgb(30 64 175)'; // blue-800
-  if (value >= 4) return 'rgb(37 99 235)'; // blue-600
-  if (value >= 3.5) return 'rgb(59 130 246)'; // blue-500
-  if (value >= 3) return 'rgb(96 165 250)'; // blue-400
-  if (value >= 2.5) return 'rgb(147 197 253)'; // blue-300
-  if (value >= 2) return 'rgb(191 219 254)'; // blue-200
-  return 'rgb(219 234 254)'; // blue-100
-};
-
 export function PersonalSentimentChart() {
   const [timeRange, setTimeRange] = useState<TimeRange>('week');
   const [showCustomPicker, setShowCustomPicker] = useState(false);
@@ -52,18 +39,18 @@ export function PersonalSentimentChart() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400">
             <TrendingUp className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">Sentiment overview</h3>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Daily mood averages</p>
+            <h3 className="text-lg font-semibold text-foreground">Sentiment overview</h3>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Daily mood averages</p>
           </div>
         </div>
-        <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1 text-sm font-semibold text-slate-500">
+        <div className="inline-flex rounded-full border border-border bg-muted/30 p-1 text-sm font-semibold text-muted-foreground">
           {[
             { id: 'week', label: '7 days' },
             { id: 'month', label: '30 days' },
@@ -73,7 +60,7 @@ export function PersonalSentimentChart() {
               key={option.id}
               onClick={() => (option.id === 'custom' ? setShowCustomPicker(true) : setTimeRange(option.id as TimeRange))}
               className={`rounded-full px-4 py-2 transition ${
-                timeRange === option.id ? 'bg-white text-primary-600 shadow-sm' : 'hover:text-primary-600'
+                timeRange === option.id ? 'bg-card text-primary-600 dark:text-primary-400 shadow-sm' : 'hover:text-primary-600 dark:hover:text-primary-400'
               }`}
             >
               {option.label}
@@ -82,9 +69,9 @@ export function PersonalSentimentChart() {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-600">
-        <span className="inline-flex items-center gap-2 rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-primary-700">
-          Avg sentiment: <strong className="text-primary-700">{average.toFixed(1)}/6</strong>
+      <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        <span className="inline-flex items-center gap-2 rounded-full border border-primary-100 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-primary-700 dark:text-primary-300">
+          Avg sentiment: <strong className="text-primary-700 dark:text-primary-300">{average.toFixed(1)}/6</strong>
         </span>
         <span
           className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
@@ -99,15 +86,15 @@ export function PersonalSentimentChart() {
       </div>
 
       <div className="mt-6 grid gap-6 md:grid-cols-[auto,1fr]">
-        <div className="flex flex-col justify-between border-r border-slate-200 pr-4 text-xs text-slate-400 md:pr-6">
+        <div className="flex flex-col justify-between border-r border-border pr-4 text-xs text-muted-foreground md:pr-6">
           {[6, 5, 4, 3, 2, 1].map((value) => (
             <span key={value}>{value}</span>
           ))}
         </div>
         <div className="relative">
-          <div className="absolute inset-0 grid grid-rows-6 gap-0 text-slate-100">
+          <div className="absolute inset-0 grid grid-rows-6 gap-0">
             {[...Array(6)].map((_, index) => (
-              <div key={index} className="border-b border-slate-100" />
+              <div key={index} className="border-b border-border/30" />
             ))}
           </div>
           <div className="relative flex items-end justify-between gap-1">
@@ -116,14 +103,14 @@ export function PersonalSentimentChart() {
               return (
                 <div key={index} className="group relative flex-1">
                   <div
-                    className="mx-auto w-full max-w-[18px] rounded-t-lg bg-primary-200 transition hover:bg-primary-300"
+                    className="mx-auto w-full max-w-[18px] rounded-t-lg bg-primary-200 dark:bg-primary-700 transition hover:bg-primary-300 dark:hover:bg-primary-600"
                     style={{ height: `${Math.max(heightPixels, 12)}px` }}
                   >
-                    <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-slate-900 px-2 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
+                    <span className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 rounded bg-foreground px-2 py-1 text-[10px] font-semibold text-background opacity-0 transition-opacity group-hover:opacity-100">
                       {point.emotion} · {point.value.toFixed(1)}
                     </span>
                   </div>
-                  <span className="mt-2 block text-center text-[10px] text-slate-500">
+                  <span className="mt-2 block text-center text-[10px] text-muted-foreground">
                     {getDateLabel(point.date, index)}
                   </span>
                 </div>
@@ -133,13 +120,13 @@ export function PersonalSentimentChart() {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4 text-xs text-slate-500">
+      <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-2">
           <Calendar className="h-4 w-4" /> Updated today
         </span>
         <button
           onClick={() => setShowCustomPicker(true)}
-          className="text-xs font-semibold text-primary-600 transition hover:text-primary-700"
+          className="text-xs font-semibold text-primary-600 dark:text-primary-400 transition hover:text-primary-700 dark:hover:text-primary-300"
         >
           Adjust dates
         </button>
@@ -147,7 +134,7 @@ export function PersonalSentimentChart() {
 
       {showCustomPicker && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
             <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-6 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div>
@@ -165,19 +152,19 @@ export function PersonalSentimentChart() {
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Start Date
                 </label>
                 <input
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 text-gray-800"
+                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 focus:bg-card transition-all duration-300 text-foreground"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   End Date
                 </label>
                 <input
@@ -185,15 +172,15 @@ export function PersonalSentimentChart() {
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
                   min={customStartDate}
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 focus:bg-white transition-all duration-300 text-gray-800"
+                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 focus:bg-card transition-all duration-300 text-foreground"
                 />
               </div>
             </div>
 
-            <div className="border-t border-gray-200 p-6 flex justify-end space-x-3">
+            <div className="border-t border-border p-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowCustomPicker(false)}
-                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300"
+                className="px-6 py-3 bg-muted text-muted-foreground rounded-xl font-semibold hover:bg-muted/80 transition-all duration-300"
               >
                 Cancel
               </button>

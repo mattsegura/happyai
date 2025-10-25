@@ -2,6 +2,7 @@ export type Profile = {
   id: string;
   email: string;
   full_name: string;
+  role: 'student' | 'teacher' | 'admin';
   avatar_url: string | null;
   total_points: number;
   current_streak: number;
@@ -123,4 +124,14 @@ export type OfficeHoursQueue = {
 
 export * from './pulseTypes';
 
-export const supabase = null as any;
+// Initialize Supabase client
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

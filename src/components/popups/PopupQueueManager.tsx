@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockClassMembers, mockClassPulses, MOCK_USER_ID } from '../../lib/mockData';
+import { mockClassMembers, mockClassPulses } from '../../lib/mockData';
 import { MorningPulseModal } from './MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from './ConsolidatedClassPulsesModal';
 import { PopupDebugPanel } from './PopupDebugPanel';

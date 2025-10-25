@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { Heart, X, Search, Sparkles } from 'lucide-react';
 
 type ClassMate = {
@@ -41,7 +40,7 @@ export function CreateHapiMoment({ onClose, onCreated }: CreateHapiMomentProps) 
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-      <div className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border-2 border-pink-200 animate-in zoom-in duration-300">
+      <div className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 dark:from-pink-950/50 dark:via-orange-950/50 dark:to-yellow-950/50 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border-2 border-pink-200 dark:border-pink-700 animate-in zoom-in duration-300">
         <div className="bg-gradient-to-r from-pink-500 to-orange-600 p-6 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/30 rounded-xl flex items-center justify-center">
@@ -70,13 +69,13 @@ export function CreateHapiMoment({ onClose, onCreated }: CreateHapiMomentProps) 
                   placeholder="Search for a classmate..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-400 transition-all duration-300 text-gray-800 placeholder:text-gray-400"
+                  className="w-full pl-12 pr-4 py-4 bg-card border-2 border-pink-200 dark:border-pink-700 rounded-xl focus:outline-none focus:border-pink-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {filteredClassmates.length === 0 ? (
-                  <div className="text-center py-8 text-gray-600">
+                  <div className="text-center py-8 text-muted-foreground">
                     <p>No classmates found.</p>
                   </div>
                 ) : (
@@ -87,12 +86,12 @@ export function CreateHapiMoment({ onClose, onCreated }: CreateHapiMomentProps) 
                         setSelectedRecipient(classmate);
                         setStep('write');
                       }}
-                      className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-pink-400 hover:shadow-lg transition-all duration-300 text-left transform hover:scale-[1.02]"
+                      className="w-full p-4 bg-card rounded-xl border-2 border-border hover:border-pink-400 hover:shadow-lg transition-all duration-300 text-left transform hover:scale-[1.02]"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-semibold text-gray-800">{classmate.full_name}</p>
-                          <p className="text-sm text-gray-500">{classmate.class_name}</p>
+                          <p className="font-semibold text-foreground">{classmate.full_name}</p>
+                          <p className="text-sm text-muted-foreground">{classmate.class_name}</p>
                         </div>
                         <Heart className="w-6 h-6 text-pink-400" />
                       </div>
@@ -107,19 +106,19 @@ export function CreateHapiMoment({ onClose, onCreated }: CreateHapiMomentProps) 
             <div className="space-y-4 animate-in slide-in-from-right duration-300">
               <button
                 onClick={() => setStep('select')}
-                className="text-sm text-gray-600 hover:text-gray-800 font-semibold"
+                className="text-sm text-muted-foreground hover:text-foreground font-semibold"
               >
                 ← Change recipient
               </button>
 
-              <div className="bg-white rounded-xl p-4 border-2 border-pink-200">
-                <p className="text-sm text-gray-600 mb-1">Sending to:</p>
-                <p className="text-lg font-bold text-gray-800">{selectedRecipient.full_name}</p>
-                <p className="text-sm text-gray-500">{selectedRecipient.class_name}</p>
+              <div className="bg-card rounded-xl p-4 border-2 border-pink-200 dark:border-pink-700">
+                <p className="text-sm text-muted-foreground mb-1">Sending to:</p>
+                <p className="text-lg font-bold text-foreground">{selectedRecipient.full_name}</p>
+                <p className="text-sm text-muted-foreground">{selectedRecipient.class_name}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Your message
                 </label>
                 <textarea
@@ -127,10 +126,10 @@ export function CreateHapiMoment({ onClose, onCreated }: CreateHapiMomentProps) 
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Write something positive about this person... What did they do that made your day better?"
                   rows={6}
-                  className="w-full px-4 py-3 bg-white border-2 border-pink-200 rounded-xl focus:outline-none focus:border-pink-400 transition-all duration-300 text-gray-800 placeholder:text-gray-400 resize-none"
+                  className="w-full px-4 py-3 bg-card border-2 border-pink-200 dark:border-pink-700 rounded-xl focus:outline-none focus:border-pink-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
                   maxLength={300}
                 />
-                <p className="text-xs text-gray-500 mt-1 text-right">{message.length}/300</p>
+                <p className="text-xs text-muted-foreground mt-1 text-right">{message.length}/300</p>
               </div>
 
               <div className="bg-gradient-to-r from-yellow-100 to-amber-100 rounded-xl p-4 border-2 border-yellow-300">

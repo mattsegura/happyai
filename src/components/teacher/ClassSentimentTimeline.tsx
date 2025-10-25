@@ -77,25 +77,25 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-lg">
+    <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">Class Sentiment Trends</h3>
-            <p className="text-sm text-gray-500">Daily average sentiment across all classes</p>
+            <h3 className="text-xl font-bold text-foreground">Class Sentiment Trends</h3>
+            <p className="text-sm text-muted-foreground">Daily average sentiment across all classes</p>
           </div>
         </div>
 
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        <div className="flex bg-muted dark:bg-muted/50 rounded-lg p-1">
           <button
             onClick={() => setTimeRange('week')}
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
               timeRange === 'week'
-                ? 'bg-white text-blue-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'bg-background text-blue-600 shadow-md dark:bg-card'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Week
@@ -104,8 +104,8 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
             onClick={() => setTimeRange('month')}
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
               timeRange === 'month'
-                ? 'bg-white text-blue-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'bg-background text-blue-600 shadow-md dark:bg-card'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Month
@@ -114,8 +114,8 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
             onClick={() => setTimeRange('3months')}
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
               timeRange === '3months'
-                ? 'bg-white text-blue-600 shadow-md'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'bg-background text-blue-600 shadow-md dark:bg-card'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             3 Months
@@ -130,7 +130,7 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: cls.color }}
             ></div>
-            <span className="text-sm font-medium text-gray-700">{cls.className}</span>
+            <span className="text-sm font-medium text-foreground">{cls.className}</span>
           </div>
         ))}
       </div>
@@ -159,8 +159,9 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
               y1={getYPosition(value)}
               x2={chartWidth}
               y2={getYPosition(value)}
-              stroke="#f3f4f6"
+              stroke="currentColor"
               strokeWidth="1"
+              className="text-border"
             />
           ))}
 
@@ -186,10 +187,10 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
                       cx={getXPosition(i, filteredData.length)}
                       cy={getYPosition(value)}
                       r="2.5"
-                      fill="white"
+                      fill="currentColor"
                       stroke={cls.color}
                       strokeWidth="1.5"
-                      className="transition-all duration-500 hover:r-4 cursor-pointer"
+                      className="transition-all duration-500 hover:r-4 cursor-pointer text-background dark:text-card"
                     >
                       <title>{`${cls.className}: ${value.toFixed(1)} on ${d.date}`}</title>
                     </circle>
@@ -200,13 +201,13 @@ export function ClassSentimentTimeline({ classes, data }: ClassSentimentTimeline
           })}
         </svg>
 
-        <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-gray-500 font-medium">
+        <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs text-muted-foreground font-medium">
           {[5, 4, 3, 2, 1].map(value => (
             <span key={value}>{value.toFixed(1)}</span>
           ))}
         </div>
 
-        <div className="absolute bottom-0 left-10 right-5 flex justify-between text-xs text-gray-500">
+        <div className="absolute bottom-0 left-10 right-5 flex justify-between text-xs text-muted-foreground">
           {filteredData.map((d, i) => {
             const label = getDateLabel(d.date, i, filteredData.length);
             return label ? (

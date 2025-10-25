@@ -36,14 +36,14 @@ export function ClassSentimentChart({ className }: ClassSentimentChartProps) {
     .slice(0, 3);
 
   return (
-    <div className="bg-white rounded-2xl p-5 border-2 border-green-200 shadow-md h-full">
+    <div className="bg-card rounded-2xl p-5 border-2 border-green-200 dark:border-green-800 shadow-md h-full">
       <div className="flex items-center space-x-2 mb-4">
         <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
           <Users className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-bold text-gray-800">Class Sentiment</h3>
-          <p className="text-xs text-gray-600">How your classmates are feeling right now</p>
+          <h3 className="text-lg font-bold text-foreground">Class Sentiment</h3>
+          <p className="text-xs text-muted-foreground">How your classmates are feeling right now</p>
         </div>
       </div>
 
@@ -54,20 +54,21 @@ export function ClassSentimentChart({ className }: ClassSentimentChartProps) {
               cx="96"
               cy="96"
               r="80"
-              stroke="#e5e7eb"
+              stroke="currentColor"
               strokeWidth="16"
               fill="none"
+              className="text-muted"
             />
             <circle
               cx="96"
               cy="96"
               r="80"
-              stroke="#2563eb"
+              stroke="currentColor"
               strokeWidth="16"
               fill="none"
               strokeDasharray={`${(sentimentPercent / 100) * 502.4} 502.4`}
               strokeLinecap="round"
-              className="transition-all duration-1000"
+              className="text-primary transition-all duration-1000"
             />
           </svg>
 
@@ -75,8 +76,8 @@ export function ClassSentimentChart({ className }: ClassSentimentChartProps) {
             <div className={`w-16 h-16 bg-gradient-to-br ${getSentimentColorGradient(averageSentiment)} rounded-full flex items-center justify-center shadow-lg mb-2`}>
               {getSentimentIcon(averageSentiment)}
             </div>
-            <span className="text-3xl font-bold text-gray-800">{averageSentiment.toFixed(1)}</span>
-            <span className="text-xs text-gray-500">out of 6.0</span>
+            <span className="text-3xl font-bold text-foreground">{averageSentiment.toFixed(1)}</span>
+            <span className="text-xs text-muted-foreground">out of 6.0</span>
           </div>
         </div>
 
@@ -86,28 +87,28 @@ export function ClassSentimentChart({ className }: ClassSentimentChartProps) {
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center justify-between text-sm pb-2 border-b border-gray-100">
-          <span className="text-gray-600 font-semibold">Students Checked In</span>
-          <span className="text-gray-800 font-bold">{totalStudents}</span>
+        <div className="flex items-center justify-between text-sm pb-2 border-b border-border">
+          <span className="text-muted-foreground font-semibold">Students Checked In</span>
+          <span className="text-foreground font-bold">{totalStudents}</span>
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-gray-600 mb-2">Top Emotions:</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-2">Top Emotions:</p>
           <div className="space-y-2">
             {topEmotions.map(([emotion, count]) => (
               <div key={emotion} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500"></div>
-                  <span className="text-sm text-gray-700 capitalize">{emotion}</span>
+                  <span className="text-sm text-foreground capitalize">{emotion}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full transition-all duration-500"
                       style={{ width: `${(count / totalStudents) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-xs text-gray-500 w-8 text-right">{count}</span>
+                  <span className="text-xs text-muted-foreground w-8 text-right">{count}</span>
                 </div>
               </div>
             ))}
@@ -115,8 +116,8 @@ export function ClassSentimentChart({ className }: ClassSentimentChartProps) {
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="mt-4 pt-4 border-t border-border">
+        <p className="text-xs text-muted-foreground text-center">
           {className || 'Class'} sentiment data
         </p>
       </div>
