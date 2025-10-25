@@ -7,6 +7,7 @@ import { TooltipProvider } from './components/ui/tooltip-radix';
 // Lazy load dashboards for code splitting
 const Dashboard = lazy(() => import('./components/dashboard/Dashboard').then(module => ({ default: module.Dashboard })));
 const TeacherDashboard = lazy(() => import('./components/teacher/TeacherDashboard').then(module => ({ default: module.TeacherDashboard })));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
 
 function AppContent() {
   const { user, loading, role } = useAuth();
@@ -49,7 +50,7 @@ function AppContent() {
 
   return (
     <Suspense fallback={DashboardLoadingFallback}>
-      {role === 'teacher' ? <TeacherDashboard /> : <Dashboard />}
+      {role === 'admin' ? <AdminDashboard /> : role === 'teacher' ? <TeacherDashboard /> : <Dashboard />}
     </Suspense>
   );
 }
