@@ -1,5 +1,8 @@
 import { supabase } from './supabase';
 
+// Only log in development mode
+const DEBUG = import.meta.env.DEV;
+
 /**
  * Audit Log Utility
  * Tracks all admin actions for compliance and debugging
@@ -41,13 +44,13 @@ export async function logAdminAction(options: LogOptions): Promise<void> {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      console.warn('[Audit] No user session - skipping audit log');
+      if (DEBUG) console.warn('[Audit] No user session - skipping audit log');
       return;
     }
 
     // Insert audit log
     const { error } = await supabase.from('admin_audit_logs').insert({
-      admin_id: user.id,
+      user_id: user.id,
       action,
       target_type: targetType,
       target_id: targetId || null,
@@ -55,12 +58,15 @@ export async function logAdminAction(options: LogOptions): Promise<void> {
     });
 
     if (error) {
-      console.error('[Audit] Failed to log action:', error);
-    } else {
-      console.log('[Audit] Logged action:', action, targetType, targetId);
+      // Audit failures are critical - throw error instead of silent failure
+      throw new Error(`Audit log failed: ${error.message}`);
     }
+
+    if (DEBUG) console.log('[Audit] Logged action:', action, targetType, targetId);
   } catch (err) {
-    console.error('[Audit] Exception logging action:', err);
+    if (DEBUG) console.error('[Audit] Exception logging action:', err);
+    // Re-throw to ensure audit failures are visible
+    throw err;
   }
 }
 
@@ -80,26 +86,26 @@ export async function getAuditLogs(adminId?: string, limit: number = 100) {
         target_id,
         details,
         created_at,
-        profiles!admin_audit_logs_admin_id_fkey(full_name, email)
+        profiles!admin_audit_logs_user_id_fkey(full_name, email)
       `
       )
       .order('created_at', { ascending: false })
       .limit(limit);
 
     if (adminId) {
-      query = query.eq('admin_id', adminId);
+      query = query.eq('user_id', adminId);
     }
 
     const { data, error } = await query;
 
     if (error) {
-      console.error('[Audit] Error fetching logs:', error);
+      if (DEBUG) console.error('[Audit] Error fetching logs:', error);
       return [];
     }
 
     return data || [];
   } catch (err) {
-    console.error('[Audit] Exception fetching logs:', err);
+    if (DEBUG) console.error('[Audit] Exception fetching logs:', err);
     return [];
   }
 }
@@ -117,7 +123,7 @@ export async function getTargetAuditLogs(targetType: TargetType, targetId: strin
         action,
         details,
         created_at,
-        profiles!admin_audit_logs_admin_id_fkey(full_name, email)
+        profiles!admin_audit_logs_user_id_fkey(full_name, email)
       `
       )
       .eq('target_type', targetType)
@@ -125,13 +131,13 @@ export async function getTargetAuditLogs(targetType: TargetType, targetId: strin
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('[Audit] Error fetching target logs:', error);
+      if (DEBUG) console.error('[Audit] Error fetching target logs:', error);
       return [];
     }
 
     return data || [];
   } catch (err) {
-    console.error('[Audit] Exception fetching target logs:', err);
+    if (DEBUG) console.error('[Audit] Exception fetching target logs:', err);
     return [];
   }
 }

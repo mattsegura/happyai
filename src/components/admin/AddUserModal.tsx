@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,7 @@ import {
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Shield } from 'lucide-react';
 
 interface AddUserModalProps {
   open: boolean;
@@ -19,6 +20,7 @@ interface AddUserModalProps {
 }
 
 export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalProps) {
+  const { role } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -28,12 +30,42 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
     role: 'student' as 'student' | 'teacher' | 'admin',
   });
 
+  // Client-side admin role check for UX
+  const isAdmin = role === 'admin';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
+      // Validate input before submission
+      const trimmedEmail = formData.email.trim().toLowerCase();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+        throw new Error('Valid email address is required');
+      }
+
+      const trimmedName = formData.fullName.trim();
+      if (!trimmedName || trimmedName.length === 0) {
+        throw new Error('Full name is required');
+      }
+      if (trimmedName.length > 255) {
+        throw new Error('Full name must be 255 characters or less');
+      }
+
+      if (!formData.password || formData.password.length < 8) {
+        throw new Error('Password must be at least 8 characters long');
+      }
+      if (formData.password.length > 72) {
+        throw new Error('Password must be 72 characters or less');
+      }
+
+      const validRoles = ['student', 'teacher', 'admin'];
+      if (!validRoles.includes(formData.role)) {
+        throw new Error('Invalid role selected');
+      }
+
       // Get session token explicitly
       const { data: { session } } = await supabase.auth.getSession();
 
@@ -52,9 +84,9 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
             'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
           },
           body: JSON.stringify({
-            email: formData.email,
+            email: trimmedEmail,
             password: formData.password,
-            fullName: formData.fullName,
+            fullName: trimmedName,
             role: formData.role,
           }),
         }
@@ -75,7 +107,6 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
       onUserAdded();
       onOpenChange(false);
     } catch (err: any) {
-      console.error('Error creating user:', err);
       setError(err.message || 'Failed to create user');
     } finally {
       setLoading(false);
@@ -92,7 +123,31 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {!isAdmin ? (
+          <div className="space-y-4 py-8">
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/30">
+                <Shield className="h-8 w-8 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-foreground">Access Denied</h3>
+                <p className="text-sm text-muted-foreground">
+                  Only administrators can create new users.
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-foreground">
               Email Address
@@ -184,6 +239,7 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
             </Button>
           </DialogFooter>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );

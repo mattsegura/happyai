@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,7 @@ import {
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Shield } from 'lucide-react';
 
 interface EditUserModalProps {
   open: boolean;
@@ -31,12 +32,16 @@ export function EditUserModal({
   userId,
   initialData,
 }: EditUserModalProps) {
+  const { role } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: initialData.fullName,
     role: initialData.role,
   });
+
+  // Client-side admin role check for UX
+  const isAdmin = role === 'admin';
 
   // Update form when initialData changes
   useEffect(() => {
@@ -52,11 +57,25 @@ export function EditUserModal({
     setError(null);
 
     try {
+      // Validate input before submission
+      const trimmedName = formData.fullName.trim();
+      if (!trimmedName || trimmedName.length === 0) {
+        throw new Error('Full name is required');
+      }
+      if (trimmedName.length > 255) {
+        throw new Error('Full name must be 255 characters or less');
+      }
+
+      const validRoles = ['student', 'teacher', 'admin'];
+      if (!validRoles.includes(formData.role)) {
+        throw new Error('Invalid role selected');
+      }
+
       // Update profile
       const { error: updateError } = await supabase
         .from('profiles')
         .update({
-          full_name: formData.fullName,
+          full_name: trimmedName,
           role: formData.role,
         })
         .eq('id', userId);
@@ -67,7 +86,6 @@ export function EditUserModal({
       onUserUpdated();
       onOpenChange(false);
     } catch (err: any) {
-      console.error('Error updating user:', err);
       setError(err.message || 'Failed to update user');
     } finally {
       setLoading(false);
@@ -84,7 +102,31 @@ export function EditUserModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {!isAdmin ? (
+          <div className="space-y-4 py-8">
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/30">
+                <Shield className="h-8 w-8 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-foreground">Access Denied</h3>
+                <p className="text-sm text-muted-foreground">
+                  Only administrators can edit users.
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-muted-foreground">
               Email Address (cannot be changed)
@@ -160,6 +202,7 @@ export function EditUserModal({
             </Button>
           </DialogFooter>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );

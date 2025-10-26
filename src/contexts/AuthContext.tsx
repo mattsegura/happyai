@@ -1,7 +1,12 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
+import { setUserContext, clearUserContext } from '../lib/errorHandler';
+import { AUTH_CONFIG } from '../lib/config';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Profile } from '../lib/supabase';
+
+// Only log in development mode
+const DEBUG = import.meta.env.DEV;
 
 type UserRole = 'student' | 'teacher' | 'admin';
 
@@ -49,35 +54,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Fetch user profile from Supabase
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
-    console.log('[Auth] Fetching profile for userId:', userId);
+    if (DEBUG) console.log('[Auth] Fetching profile for userId:', userId);
 
     try {
-      // Reduced timeout to 3 seconds
-      const timeoutPromise = new Promise<null>((resolve) => {
-        setTimeout(() => {
-          console.warn('[Auth] Profile fetch timeout after 3 seconds');
-          resolve(null);
-        }, 3000);
-      });
-
-      const fetchPromise = supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
-        .then(({ data, error }) => {
-          if (error) {
-            console.error('[Auth] Error fetching profile:', error);
-            return null;
-          }
-          console.log('[Auth] Profile fetched successfully:', data);
-          return data as Profile;
-        });
+        .single();
 
-      const result = await Promise.race([fetchPromise, timeoutPromise]);
-      return result;
+      if (error) {
+        if (DEBUG) console.error('[Auth] Error fetching profile:', error);
+        return null;
+      }
+
+      if (DEBUG) console.log('[Auth] Profile fetched successfully:', data);
+      return data as Profile;
     } catch (err) {
-      console.error('[Auth] Exception fetching profile:', err);
+      if (DEBUG) console.error('[Auth] Exception fetching profile:', err);
       return null;
     }
   };
@@ -92,6 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (profileData.role) {
         updateRole(profileData.role as UserRole);
       }
+      // Set user context for error tracking
+      setUserContext(profileData.id, profileData.email, profileData.role);
     }
   };
 
@@ -100,13 +96,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
     let authStateInitialized = false;
 
-    // Reduced safety timeout - force loading to false after 5 seconds
+    // Safety timeout - force loading to false as last resort
+    // Configurable via VITE_AUTH_TIMEOUT environment variable
     const safetyTimeout = setTimeout(() => {
       if (!authStateInitialized && mounted) {
-        console.error('[Auth] SAFETY TIMEOUT: Forcing loading to false after 5 seconds');
+        if (DEBUG) console.error(`[Auth] SAFETY TIMEOUT: Forcing loading to false after ${AUTH_CONFIG.SAFETY_TIMEOUT}ms`);
         setLoading(false);
+        authStateInitialized = true; // Prevent further timeouts
       }
-    }, 5000);
+    }, AUTH_CONFIG.SAFETY_TIMEOUT);
 
     // Listen for auth changes
     const {
@@ -114,11 +112,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (_event: any, currentSession: any) => {
       if (!mounted) return;
 
-      console.log('[Auth] Auth state changed:', _event, 'Session:', currentSession ? 'exists' : 'null');
+      if (DEBUG) console.log('[Auth] Auth state changed:', _event, 'Session:', currentSession ? 'exists' : 'null');
 
       // Handle INITIAL_SESSION to complete loading
       if (_event === 'INITIAL_SESSION') {
-        console.log('[Auth] Initial session event received');
+        if (DEBUG) console.log('[Auth] Initial session event received');
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
@@ -130,12 +128,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (profileData?.role) {
                 // Successfully fetched role - update and cache it
                 updateRole(profileData.role as UserRole);
+                // Set user context for error tracking
+                setUserContext(profileData.id, profileData.email, profileData.role);
               }
               // If profile fetch fails, keep existing cached role
               // Don't reset to 'student' - prevents role flickering
             }
           } catch (err) {
-            console.error('[Auth] Error fetching profile:', err);
+            if (DEBUG) console.error('[Auth] Error fetching profile:', err);
             // Keep existing role on error - don't reset to 'student'
             // This prevents admin users from seeing student UI on network issues
             if (mounted) {
@@ -147,12 +147,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (mounted) {
             setProfile(null);
             clearRole();
+            clearUserContext(); // Clear error tracking context
           }
         }
 
         // Mark auth as initialized and stop loading
         if (mounted && !authStateInitialized) {
-          console.log('[Auth] Initial session processed, setting loading to false');
+          if (DEBUG) console.log('[Auth] Initial session processed, setting loading to false');
           authStateInitialized = true;
           setLoading(false);
           clearTimeout(safetyTimeout);
@@ -160,7 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       // Ignore SIGNED_IN during initialization (it fires before INITIAL_SESSION and causes issues)
       else if (_event === 'SIGNED_IN' && !authStateInitialized) {
-        console.log('[Auth] Ignoring SIGNED_IN during initialization, waiting for INITIAL_SESSION');
+        if (DEBUG) console.log('[Auth] Ignoring SIGNED_IN during initialization, waiting for INITIAL_SESSION');
       }
       // Handle other auth events after initialization (SIGNED_IN, SIGNED_OUT, etc.)
       else if (authStateInitialized) {
@@ -175,11 +176,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (profileData?.role) {
                 // Successfully fetched role - update and cache it
                 updateRole(profileData.role as UserRole);
+                // Set user context for error tracking
+                setUserContext(profileData.id, profileData.email, profileData.role);
               }
               // If profile fetch fails, keep existing cached role
             }
           } catch (err) {
-            console.error('[Auth] Error in auth state change profile fetch:', err);
+            if (DEBUG) console.error('[Auth] Error in auth state change profile fetch:', err);
             // Keep existing role on error - prevents role flickering
             if (mounted) {
               setProfile(null);
@@ -190,6 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (mounted) {
             setProfile(null);
             clearRole();
+            clearUserContext(); // Clear error tracking context
           }
         }
       }
@@ -267,6 +271,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null);
     setSession(null);
     setRole('student');
+    clearUserContext(); // Clear error tracking context
   };
 
   const value = {

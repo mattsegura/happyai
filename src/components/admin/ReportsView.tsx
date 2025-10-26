@@ -19,9 +19,12 @@ import {
   generateDailyCheckInsReport,
   generatePlatformAnalyticsReport,
 } from '../../lib/reportGenerator';
+import { handleError } from '../../lib/errorHandler';
 
 export function ReportsView() {
   const [generating, setGenerating] = useState<string | null>(null);
+  // Rate limiting: track last generation time per report type
+  const [lastGeneratedTime, setLastGeneratedTime] = useState<Record<string, number>>({});
   const reportTypes = [
     {
       id: 'user-activity',
@@ -68,6 +71,25 @@ export function ReportsView() {
   ];
 
   const handleGenerateReport = async (reportId: string, format: 'csv' | 'json' = 'csv') => {
+    // Rate limiting: 1 report per 10 seconds per report type
+    const now = Date.now();
+    const lastTime = lastGeneratedTime[reportId] || 0;
+    const timeSinceLastGeneration = (now - lastTime) / 1000; // in seconds
+    const RATE_LIMIT_SECONDS = 10;
+
+    if (timeSinceLastGeneration < RATE_LIMIT_SECONDS) {
+      const remainingSeconds = Math.ceil(RATE_LIMIT_SECONDS - timeSinceLastGeneration);
+      handleError(
+        new Error(`Please wait ${remainingSeconds}s before generating this report again`),
+        {
+          action: 'rate_limit_report',
+          component: 'ReportsView',
+          metadata: { reportId, remainingSeconds },
+        }
+      );
+      return;
+    }
+
     setGenerating(reportId);
     try {
       switch (reportId) {
@@ -87,11 +109,21 @@ export function ReportsView() {
           await generatePlatformAnalyticsReport(format);
           break;
         default:
-          console.log(`Report type ${reportId} not implemented yet`);
+          // Report type not implemented
+          break;
       }
+
+      // Update last generated time on success
+      setLastGeneratedTime(prev => ({
+        ...prev,
+        [reportId]: now
+      }));
     } catch (error) {
-      console.error('Error generating report:', error);
-      alert('Failed to generate report. Please try again.');
+      handleError(error as Error, {
+        action: 'generate_report',
+        component: 'ReportsView',
+        metadata: { reportId, format },
+      });
     } finally {
       setGenerating(null);
     }

@@ -113,10 +113,11 @@ export function AdminHomeView() {
         .select('*', { count: 'exact', head: true })
         .eq('role', 'admin');
 
-      // Get total classes
+      // Get total classes (only active, non-deleted)
       const { count: totalClasses } = await supabase
         .from('classes')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true);
 
       // Get total check-ins
       const { count: totalCheckIns } = await supabase
@@ -142,7 +143,7 @@ export function AdminHomeView() {
         platformHealth: 98.5,
       });
     } catch (error) {
-      console.error('Error loading system stats:', error);
+      // Error loading system stats - silent in production
     } finally {
       setLoading(false);
     }
@@ -159,7 +160,7 @@ export function AdminHomeView() {
 
       setRecentActivity(recentUsers || []);
     } catch (error) {
-      console.error('Error loading recent activity:', error);
+      // Error loading recent activity - silent in production
     }
   };
 

@@ -67,7 +67,8 @@ export const clearPopupSessionStorage = (userId: string) => {
   }
 };
 
-if (typeof window !== 'undefined') {
+// Debug utility: only available in development mode
+if (import.meta.env.DEV && typeof window !== 'undefined') {
   (window as any).clearPopupCache = (userId?: string) => {
     if (!userId) {
       console.log('[PopupQueue] Usage: clearPopupCache(userId)');

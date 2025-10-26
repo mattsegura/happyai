@@ -72,7 +72,7 @@ export function EditClassModal({
       if (error) throw error;
       setTeachers(data || []);
     } catch (err) {
-      console.error('Error loading teachers:', err);
+      // Error loading teachers - silent in production
     } finally {
       setLoadingTeachers(false);
     }

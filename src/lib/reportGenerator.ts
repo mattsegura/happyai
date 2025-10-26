@@ -1,5 +1,8 @@
 import { supabase } from './supabase';
 
+// Only log in development mode
+const DEBUG = import.meta.env.DEV;
+
 interface ReportData {
   headers: string[];
   rows: any[][];
@@ -97,7 +100,7 @@ export async function generateUserActivityReport(format: 'csv' | 'json' = 'csv')
     const csv = generateCSV(reportData);
     downloadCSV(`user-activity-${new Date().toISOString().split('T')[0]}.csv`, csv);
   } catch (error) {
-    console.error('Error generating user activity report:', error);
+    if (DEBUG) console.error('Error generating user activity report:', error);
     throw error;
   }
 }
@@ -137,7 +140,7 @@ export async function generateSentimentReport(format: 'csv' | 'json' = 'csv') {
     const csv = generateCSV(reportData);
     downloadCSV(`sentiment-trends-${new Date().toISOString().split('T')[0]}.csv`, csv);
   } catch (error) {
-    console.error('Error generating sentiment report:', error);
+    if (DEBUG) console.error('Error generating sentiment report:', error);
     throw error;
   }
 }
@@ -150,6 +153,7 @@ export async function generateClassPerformanceReport(format: 'csv' | 'json' = 'c
     const { data: classes, error } = await supabase
       .from('classes')
       .select('id, name, subject, created_at, profiles(full_name)')
+      .eq('is_active', true) // Only include active classes
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -190,7 +194,7 @@ export async function generateClassPerformanceReport(format: 'csv' | 'json' = 'c
     const csv = generateCSV(reportData);
     downloadCSV(`class-performance-${new Date().toISOString().split('T')[0]}.csv`, csv);
   } catch (error) {
-    console.error('Error generating class performance report:', error);
+    if (DEBUG) console.error('Error generating class performance report:', error);
     throw error;
   }
 }
@@ -226,7 +230,7 @@ export async function generateDailyCheckInsReport(format: 'csv' | 'json' = 'csv'
     const csv = generateCSV(reportData);
     downloadCSV(`daily-checkins-${new Date().toISOString().split('T')[0]}.csv`, csv);
   } catch (error) {
-    console.error('Error generating daily check-ins report:', error);
+    if (DEBUG) console.error('Error generating daily check-ins report:', error);
     throw error;
   }
 }
@@ -243,7 +247,8 @@ export async function generatePlatformAnalyticsReport(format: 'csv' | 'json' = '
 
     const { count: totalClasses } = await supabase
       .from('classes')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true);
 
     const { count: totalCheckIns } = await supabase
       .from('pulse_checks')
@@ -280,7 +285,7 @@ export async function generatePlatformAnalyticsReport(format: 'csv' | 'json' = '
     const csv = generateCSV(reportData);
     downloadCSV(`platform-analytics-${new Date().toISOString().split('T')[0]}.csv`, csv);
   } catch (error) {
-    console.error('Error generating platform analytics report:', error);
+    if (DEBUG) console.error('Error generating platform analytics report:', error);
     throw error;
   }
 }

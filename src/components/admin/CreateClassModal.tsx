@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import { logAdminAction } from '../../lib/auditLog';
 import {
   Dialog,
@@ -12,7 +13,7 @@ import {
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Shield } from 'lucide-react';
 
 interface CreateClassModalProps {
   open: boolean;
@@ -26,6 +27,7 @@ interface Teacher {
 }
 
 export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateClassModalProps) {
+  const { role } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingTeachers, setLoadingTeachers] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +38,9 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
     description: '',
     teacher_id: '',
   });
+
+  // Client-side admin role check for UX
+  const isAdmin = role === 'admin';
 
   useEffect(() => {
     if (open) {
@@ -54,7 +59,7 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
       if (error) throw error;
       setTeachers(data || []);
     } catch (err) {
-      console.error('Error loading teachers:', err);
+      // Error loading teachers - silent in production
     } finally {
       setLoadingTeachers(false);
     }
@@ -66,22 +71,53 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
     setError(null);
 
     try {
+      // Validate input before submission
+      const trimmedName = formData.name.trim();
+      if (!trimmedName || trimmedName.length === 0) {
+        throw new Error('Class name is required');
+      }
+      if (trimmedName.length > 255) {
+        throw new Error('Class name must be 255 characters or less');
+      }
+
+      if (!formData.subject || formData.subject.length === 0) {
+        throw new Error('Subject is required');
+      }
+
+      const validSubjects = ['Mathematics', 'Science', 'English', 'History', 'Art', 'Physical Education', 'Music', 'Computer Science', 'Other'];
+      if (!validSubjects.includes(formData.subject)) {
+        throw new Error('Invalid subject selected');
+      }
+
+      if (!formData.teacher_id || formData.teacher_id.length === 0) {
+        throw new Error('Teacher selection is required');
+      }
+
+      if (formData.description && formData.description.length > 1000) {
+        throw new Error('Description must be 1000 characters or less');
+      }
+
+      // Find the selected teacher's name
+      const selectedTeacher = teachers.find(t => t.id === formData.teacher_id);
+      const teacherName = selectedTeacher?.full_name || '';
+
       const { data: newClass, error: insertError } = await supabase
         .from('classes')
         .insert({
-          name: formData.name,
+          name: trimmedName,
           subject: formData.subject,
-          description: formData.description || null,
+          description: formData.description?.trim() || null,
           teacher_id: formData.teacher_id,
+          teacher_name: teacherName,
         })
         .select()
         .single();
 
       if (insertError) throw insertError;
 
-      // Log the action for audit trail
+      // Log the action for audit trail (non-blocking)
       if (newClass) {
-        await logAdminAction({
+        logAdminAction({
           action: 'create_class',
           targetType: 'class',
           targetId: newClass.id,
@@ -90,12 +126,18 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
             subject: formData.subject,
             teacher_id: formData.teacher_id,
           },
+        }).catch((err) => {
+          // Audit failures shouldn't block class creation success
+          console.error('Audit log failed:', err);
         });
       }
 
       // Reset form and close modal
       setFormData({ name: '', subject: '', description: '', teacher_id: '' });
-      onClassCreated();
+
+      // Refresh the class list BEFORE closing modal to ensure it updates
+      await onClassCreated();
+
       onOpenChange(false);
     } catch (err: any) {
       setError(err.message || 'Failed to create class');
@@ -114,7 +156,31 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {!isAdmin ? (
+          <div className="space-y-4 py-8">
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/30">
+                <Shield className="h-8 w-8 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-foreground">Access Denied</h3>
+                <p className="text-sm text-muted-foreground">
+                  Only administrators can create classes.
+                </p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="mb-2 block text-sm font-medium text-foreground">
               Class Name
@@ -228,6 +294,7 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
             </Button>
           </DialogFooter>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );

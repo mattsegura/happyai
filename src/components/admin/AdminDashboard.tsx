@@ -6,6 +6,7 @@ import { ClassManagement } from './ClassManagement';
 import { SentimentMonitoring } from './SentimentMonitoring';
 import { ReportsView } from './ReportsView';
 import { SettingsView } from './SettingsView';
+import { ErrorLogsView } from './ErrorLogsView';
 import {
   Home,
   Users,
@@ -14,12 +15,13 @@ import {
   FileText,
   Settings,
   ChevronLeft,
-  Shield
+  Shield,
+  AlertTriangle
 } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
 
-type View = 'home' | 'users' | 'classes' | 'sentiment' | 'reports' | 'settings';
+type View = 'home' | 'users' | 'classes' | 'sentiment' | 'reports' | 'errors' | 'settings';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
@@ -34,6 +36,7 @@ export function AdminDashboard() {
     { id: 'classes', icon: GraduationCap, label: 'Classes' },
     { id: 'sentiment', icon: Activity, label: 'Sentiment' },
     { id: 'reports', icon: FileText, label: 'Reports' },
+    { id: 'errors', icon: AlertTriangle, label: 'Error Logs' },
     { id: 'settings', icon: Settings, label: 'Settings' },
   ] as const;
 
@@ -174,6 +177,11 @@ export function AdminDashboard() {
             {currentView === 'reports' && (
               <div className={cn(SURFACE_BASE, 'p-5')}>
                 <ReportsView />
+              </div>
+            )}
+            {currentView === 'errors' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <ErrorLogsView />
               </div>
             )}
             {currentView === 'settings' && (

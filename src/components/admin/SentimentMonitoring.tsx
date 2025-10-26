@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { ADMIN_CONFIG } from '../../lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
   Activity,
@@ -94,9 +95,9 @@ export function SentimentMonitoring() {
         return (emotion?.sentimentValue || 3) <= 2;
       });
 
-      // Get unique users with low sentiment
+      // Get unique users with low sentiment (limit configurable via env)
       const userIds = [...new Set(lowSentimentChecks?.map((c) => c.user_id))];
-      const topUserIds = userIds.slice(0, 10);
+      const topUserIds = userIds.slice(0, ADMIN_CONFIG.STUDENT_ALERTS_LIMIT);
 
       // Batch fetch all profiles in one query (fixes N+1 problem)
       const { data: profiles } = await supabase
@@ -148,7 +149,7 @@ export function SentimentMonitoring() {
       setEmotionDist(distribution);
       setAlerts(studentAlerts);
     } catch (error) {
-      console.error('Error loading sentiment data:', error);
+      // Error loading sentiment data - silent in production
     } finally {
       setLoading(false);
     }

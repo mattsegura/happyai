@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { ADMIN_CONFIG } from '../../lib/config';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { AddUserModal } from './AddUserModal';
@@ -42,7 +43,7 @@ export function UserManagement() {
   const [disabling, setDisabling] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const PAGE_SIZE = 50;
+  const PAGE_SIZE = ADMIN_CONFIG.USER_PAGE_SIZE;
 
   useEffect(() => {
     loadUsers();
@@ -78,7 +79,7 @@ export function UserManagement() {
       setUsers(data || []);
       setTotalCount(count || 0);
     } catch (error) {
-      console.error('Error loading users:', error);
+      // Error loading users - silent in production
     } finally {
       setLoading(false);
     }
@@ -145,7 +146,6 @@ export function UserManagement() {
     try {
       // For now, we'll just mark in a comment that this should disable the user
       // In production, you'd add a 'disabled' or 'status' column to profiles table
-      console.log('Disabling user:', disablingUser.id);
 
       // TODO: Implement actual disable logic when schema has status field
       // await supabase.from('profiles').update({ status: 'disabled' }).eq('id', disablingUser.id);
@@ -153,7 +153,7 @@ export function UserManagement() {
       alert('Disable user functionality requires a "status" column in profiles table. Add this column in Supabase to enable this feature.');
       setDisablingUser(null);
     } catch (err) {
-      console.error('Error disabling user:', err);
+      // Error disabling user - silent in production
     } finally {
       setDisabling(false);
     }
@@ -318,6 +318,7 @@ export function UserManagement() {
                             onClick={() => setEditingUser(user)}
                             className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
                             title="Edit user"
+                            aria-label="Edit user"
                           >
                             <Edit className="h-4 w-4" />
                           </button>
@@ -325,6 +326,7 @@ export function UserManagement() {
                             onClick={() => setDisablingUser(user)}
                             className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
                             title="Disable user"
+                            aria-label="Disable user"
                           >
                             <Ban className="h-4 w-4" />
                           </button>

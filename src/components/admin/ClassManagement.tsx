@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { ADMIN_CONFIG } from '../../lib/config';
+import { handleError, handleSuccess } from '../../lib/errorHandler';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -40,7 +42,7 @@ export function ClassManagement() {
   const [deleting, setDeleting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const PAGE_SIZE = 30;
+  const PAGE_SIZE = ADMIN_CONFIG.CLASS_PAGE_SIZE;
 
   useEffect(() => {
     loadClasses();
@@ -61,6 +63,7 @@ export function ClassManagement() {
       const { data: classesData, error: classesError, count } = await supabase
         .from('classes')
         .select('*', { count: 'exact' })
+        .eq('is_active', true) // Only fetch active (non-deleted) classes
         .order('created_at', { ascending: false })
         .range(from, to);
 
@@ -107,7 +110,10 @@ export function ClassManagement() {
 
       setClasses(classesWithDetails);
     } catch (error) {
-      console.error('Error loading classes:', error);
+      handleError(error as Error, {
+        action: 'load_classes',
+        component: 'ClassManagement',
+      });
     } finally {
       setLoading(false);
     }
@@ -137,19 +143,27 @@ export function ClassManagement() {
 
     setDeleting(true);
     try {
+      // Soft delete: set is_active = false and deleted_at = NOW()
       const { error } = await supabase
         .from('classes')
-        .delete()
+        .update({
+          is_active: false,
+          deleted_at: new Date().toISOString(),
+        })
         .eq('id', deletingClass.id);
 
       if (error) throw error;
 
       // Refresh the class list
       await loadClasses();
+      handleSuccess(`Class "${deletingClass.name}" deleted successfully`);
       setDeletingClass(null);
     } catch (err: any) {
-      console.error('Error deleting class:', err);
-      alert('Failed to delete class: ' + err.message);
+      handleError(err, {
+        action: 'delete_class',
+        component: 'ClassManagement',
+        metadata: { classId: deletingClass.id, className: deletingClass.name },
+      });
     } finally {
       setDeleting(false);
     }
@@ -243,6 +257,7 @@ export function ClassManagement() {
                       onClick={() => setEditingClass(cls)}
                       className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
                       title="Edit class"
+                      aria-label="Edit class"
                     >
                       <Edit className="h-4 w-4" />
                     </button>
@@ -250,6 +265,7 @@ export function ClassManagement() {
                       onClick={() => setDeletingClass(cls)}
                       className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
                       title="Delete class"
+                      aria-label="Delete class"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
