@@ -3,6 +3,8 @@ import { supabase } from '../../lib/supabase';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { AddUserModal } from './AddUserModal';
+import { EditUserModal } from './EditUserModal';
+import { ConfirmDialog } from './ConfirmDialog';
 import {
   User,
   Search,
@@ -35,24 +37,46 @@ export function UserManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+  const [disablingUser, setDisablingUser] = useState<UserProfile | null>(null);
+  const [disabling, setDisabling] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const PAGE_SIZE = 50;
 
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [currentPage, roleFilter]);
 
   useEffect(() => {
     filterUsers();
-  }, [searchQuery, roleFilter, users]);
+  }, [searchQuery, users]);
 
   const loadUsers = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+
+      // Build query with pagination
+      let query = supabase
         .from('profiles')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false });
+
+      // Apply role filter at database level for efficiency
+      if (roleFilter !== 'all') {
+        query = query.eq('role', roleFilter);
+      }
+
+      // Apply pagination
+      const from = (currentPage - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
 
       if (error) throw error;
       setUsers(data || []);
+      setTotalCount(count || 0);
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {
@@ -63,7 +87,7 @@ export function UserManagement() {
   const filterUsers = () => {
     let filtered = users;
 
-    // Filter by search query
+    // Filter by search query (role filter is now applied at database level)
     if (searchQuery) {
       filtered = filtered.filter(
         (user) =>
@@ -72,12 +96,13 @@ export function UserManagement() {
       );
     }
 
-    // Filter by role
-    if (roleFilter !== 'all') {
-      filtered = filtered.filter((user) => user.role === roleFilter);
-    }
-
     setFilteredUsers(filtered);
+  };
+
+  // Reset to page 1 when role filter changes
+  const handleRoleFilterChange = (newRole: string) => {
+    setRoleFilter(newRole);
+    setCurrentPage(1);
   };
 
   const getRoleIcon = (role: string) => {
@@ -113,6 +138,27 @@ export function UserManagement() {
     return date.toLocaleDateString();
   };
 
+  const handleDisableUser = async () => {
+    if (!disablingUser) return;
+
+    setDisabling(true);
+    try {
+      // For now, we'll just mark in a comment that this should disable the user
+      // In production, you'd add a 'disabled' or 'status' column to profiles table
+      console.log('Disabling user:', disablingUser.id);
+
+      // TODO: Implement actual disable logic when schema has status field
+      // await supabase.from('profiles').update({ status: 'disabled' }).eq('id', disablingUser.id);
+
+      alert('Disable user functionality requires a "status" column in profiles table. Add this column in Supabase to enable this feature.');
+      setDisablingUser(null);
+    } catch (err) {
+      console.error('Error disabling user:', err);
+    } finally {
+      setDisabling(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -146,7 +192,7 @@ export function UserManagement() {
         </div>
         <select
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
+          onChange={(e) => handleRoleFilterChange(e.target.value)}
           className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[180px]"
         >
           <option value="all">All Roles</option>
@@ -269,12 +315,14 @@ export function UserManagement() {
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            onClick={() => setEditingUser(user)}
                             className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
                             title="Edit user"
                           >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
+                            onClick={() => setDisablingUser(user)}
                             className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
                             title="Disable user"
                           >
@@ -297,6 +345,60 @@ export function UserManagement() {
             </p>
           </div>
         )}
+
+        {/* Pagination Controls */}
+        {!loading && filteredUsers.length > 0 && (
+          <div className="flex items-center justify-between border-t border-border/60 px-6 py-4">
+            <div className="text-sm text-muted-foreground">
+              Showing {((currentPage - 1) * PAGE_SIZE) + 1} to {Math.min(currentPage * PAGE_SIZE, totalCount)} of {totalCount} users
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: Math.ceil(totalCount / PAGE_SIZE) }, (_, i) => i + 1)
+                  .filter(page => {
+                    // Show first page, last page, current page, and pages around current
+                    const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+                    return (
+                      page === 1 ||
+                      page === totalPages ||
+                      Math.abs(page - currentPage) <= 1
+                    );
+                  })
+                  .map((page, idx, arr) => (
+                    <div key={page} className="flex items-center">
+                      {idx > 0 && arr[idx - 1] !== page - 1 && (
+                        <span className="px-2 text-muted-foreground">...</span>
+                      )}
+                      <Button
+                        variant={currentPage === page ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className={currentPage === page ? 'bg-purple-600 hover:bg-purple-700' : ''}
+                      >
+                        {page}
+                      </Button>
+                    </div>
+                  ))}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / PAGE_SIZE), p + 1))}
+                disabled={currentPage >= Math.ceil(totalCount / PAGE_SIZE)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Add User Modal */}
@@ -305,6 +407,35 @@ export function UserManagement() {
         onOpenChange={setShowAddUserModal}
         onUserAdded={loadUsers}
       />
+
+      {/* Edit User Modal */}
+      {editingUser && (
+        <EditUserModal
+          open={!!editingUser}
+          onOpenChange={(open) => !open && setEditingUser(null)}
+          onUserUpdated={loadUsers}
+          userId={editingUser.id}
+          initialData={{
+            email: editingUser.email,
+            fullName: editingUser.full_name,
+            role: editingUser.role,
+          }}
+        />
+      )}
+
+      {/* Disable User Confirmation */}
+      {disablingUser && (
+        <ConfirmDialog
+          open={!!disablingUser}
+          onOpenChange={(open) => !open && setDisablingUser(null)}
+          onConfirm={handleDisableUser}
+          title="Disable User"
+          description={`Are you sure you want to disable ${disablingUser.full_name}? They will not be able to login until re-enabled.`}
+          confirmText="Disable User"
+          confirmVariant="destructive"
+          loading={disabling}
+        />
+      )}
     </div>
   );
 }

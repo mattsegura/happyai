@@ -154,20 +154,22 @@ export async function generateClassPerformanceReport(format: 'csv' | 'json' = 'c
 
     if (error) throw error;
 
-    // Get enrollment counts for each class
-    const classesWithCounts = await Promise.all(
-      (classes || []).map(async (cls) => {
-        const { count } = await supabase
-          .from('class_members')
-          .select('*', { count: 'exact', head: true })
-          .eq('class_id', cls.id);
+    // Batch fetch all class members in one query (fixes N+1 problem)
+    const { data: allMembers } = await supabase
+      .from('class_members')
+      .select('class_id');
 
-        return {
-          ...cls,
-          student_count: count || 0,
-        };
-      })
-    );
+    // Count students per class in memory
+    const countMap = allMembers?.reduce((acc, m) => ({
+      ...acc,
+      [m.class_id]: (acc[m.class_id] || 0) + 1
+    }), {} as Record<string, number>) || {};
+
+    // Combine data
+    const classesWithCounts = (classes || []).map(cls => ({
+      ...cls,
+      student_count: countMap[cls.id] || 0,
+    }));
 
     if (format === 'json') {
       downloadJSON(`class-performance-${new Date().toISOString().split('T')[0]}.json`, classesWithCounts);

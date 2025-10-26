@@ -96,14 +96,25 @@ export function SentimentMonitoring() {
 
       // Get unique users with low sentiment
       const userIds = [...new Set(lowSentimentChecks?.map((c) => c.user_id))];
+      const topUserIds = userIds.slice(0, 10);
+
+      // Batch fetch all profiles in one query (fixes N+1 problem)
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', topUserIds);
+
+      // Create lookup map for O(1) access
+      const profileMap = profiles?.reduce((acc, p) => ({
+        ...acc,
+        [p.id]: p
+      }), {} as Record<string, { id: string; full_name: string; email: string }>) || {};
+
       const studentAlerts: StudentAlert[] = [];
 
-      for (const userId of userIds.slice(0, 10)) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('id', userId)
-          .single();
+      for (const userId of topUserIds) {
+        const profile = profileMap[userId];
+        if (!profile) continue;
 
         const userChecks = pulseChecks?.filter((c) => c.user_id === userId) || [];
         const lastCheck = userChecks.sort(
@@ -112,7 +123,7 @@ export function SentimentMonitoring() {
 
         const lastEmotion = EMOTION_CONFIGS.find((e: EmotionConfig) => e.name === lastCheck?.emotion);
 
-        if (profile && lastEmotion) {
+        if (lastEmotion) {
           studentAlerts.push({
             id: userId,
             name: profile.full_name,

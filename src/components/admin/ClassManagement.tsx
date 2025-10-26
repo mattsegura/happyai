@@ -4,6 +4,8 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { CreateClassModal } from './CreateClassModal';
+import { EditClassModal } from './EditClassModal';
+import { ConfirmDialog } from './ConfirmDialog';
 import {
   GraduationCap,
   Search,
@@ -33,10 +35,16 @@ export function ClassManagement() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingClass, setEditingClass] = useState<Class | null>(null);
+  const [deletingClass, setDeletingClass] = useState<Class | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const PAGE_SIZE = 30;
 
   useEffect(() => {
     loadClasses();
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     filterClasses();
@@ -44,37 +52,58 @@ export function ClassManagement() {
 
   const loadClasses = async () => {
     try {
-      // Get all classes
-      const { data: classesData, error: classesError } = await supabase
+      setLoading(true);
+
+      // Get paginated classes with total count
+      const from = (currentPage - 1) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+
+      const { data: classesData, error: classesError, count } = await supabase
         .from('classes')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
 
       if (classesError) throw classesError;
 
-      // Get teacher info for each class
-      const classesWithDetails = await Promise.all(
-        (classesData || []).map(async (cls) => {
-          // Get teacher name
-          const { data: teacherData } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', cls.teacher_id)
-            .single();
+      setTotalCount(count || 0);
 
-          // Get student count
-          const { count: studentCount } = await supabase
-            .from('class_members')
-            .select('*', { count: 'exact', head: true })
-            .eq('class_id', cls.id);
+      if (!classesData || classesData.length === 0) {
+        setClasses([]);
+        setLoading(false);
+        return;
+      }
 
-          return {
-            ...cls,
-            teacher_name: teacherData?.full_name || 'Unknown Teacher',
-            student_count: studentCount || 0,
-          };
-        })
-      );
+      // Batch fetch all teachers in one query (fixes N+1 problem)
+      const teacherIds = [...new Set(classesData.map(cls => cls.teacher_id))];
+      const { data: teachers } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', teacherIds);
+
+      // Create teacher lookup map
+      const teacherMap = teachers?.reduce((acc, t) => ({
+        ...acc,
+        [t.id]: t.full_name
+      }), {} as Record<string, string>) || {};
+
+      // Batch fetch all student counts in one query (fixes N+1 problem)
+      const { data: memberCounts } = await supabase
+        .from('class_members')
+        .select('class_id');
+
+      // Count students per class
+      const countMap = memberCounts?.reduce((acc, m) => ({
+        ...acc,
+        [m.class_id]: (acc[m.class_id] || 0) + 1
+      }), {} as Record<string, number>) || {};
+
+      // Combine data
+      const classesWithDetails = classesData.map(cls => ({
+        ...cls,
+        teacher_name: teacherMap[cls.teacher_id] || 'Unknown Teacher',
+        student_count: countMap[cls.id] || 0,
+      }));
 
       setClasses(classesWithDetails);
     } catch (error) {
@@ -101,6 +130,29 @@ export function ClassManagement() {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleDeleteClass = async () => {
+    if (!deletingClass) return;
+
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('classes')
+        .delete()
+        .eq('id', deletingClass.id);
+
+      if (error) throw error;
+
+      // Refresh the class list
+      await loadClasses();
+      setDeletingClass(null);
+    } catch (err: any) {
+      console.error('Error deleting class:', err);
+      alert('Failed to delete class: ' + err.message);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const getSubjectColor = (subject: string) => {
@@ -188,12 +240,14 @@ export function ClassManagement() {
                   </div>
                   <div className="flex gap-1">
                     <button
+                      onClick={() => setEditingClass(cls)}
                       className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
                       title="Edit class"
                     >
                       <Edit className="h-4 w-4" />
                     </button>
                     <button
+                      onClick={() => setDeletingClass(cls)}
                       className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
                       title="Delete class"
                     >
@@ -277,12 +331,95 @@ export function ClassManagement() {
         </div>
       )}
 
+      {/* Pagination Controls */}
+      {!loading && filteredClasses.length > 0 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {((currentPage - 1) * PAGE_SIZE) + 1} to {Math.min(currentPage * PAGE_SIZE, totalCount)} of {totalCount} classes
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.ceil(totalCount / PAGE_SIZE) }, (_, i) => i + 1)
+                .filter(page => {
+                  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+                  return (
+                    page === 1 ||
+                    page === totalPages ||
+                    Math.abs(page - currentPage) <= 1
+                  );
+                })
+                .map((page, idx, arr) => (
+                  <div key={page} className="flex items-center">
+                    {idx > 0 && arr[idx - 1] !== page - 1 && (
+                      <span className="px-2 text-muted-foreground">...</span>
+                    )}
+                    <Button
+                      variant={currentPage === page ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className={currentPage === page ? 'bg-purple-600 hover:bg-purple-700' : ''}
+                    >
+                      {page}
+                    </Button>
+                  </div>
+                ))}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / PAGE_SIZE), p + 1))}
+              disabled={currentPage >= Math.ceil(totalCount / PAGE_SIZE)}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Create Class Modal */}
       <CreateClassModal
         open={showCreateModal}
         onOpenChange={setShowCreateModal}
         onClassCreated={loadClasses}
       />
+
+      {/* Edit Class Modal */}
+      {editingClass && (
+        <EditClassModal
+          open={!!editingClass}
+          onOpenChange={(open) => !open && setEditingClass(null)}
+          onClassUpdated={loadClasses}
+          classId={editingClass.id}
+          initialData={{
+            name: editingClass.name,
+            subject: editingClass.subject,
+            description: editingClass.description || '',
+            teacherId: editingClass.teacher_id,
+          }}
+        />
+      )}
+
+      {/* Delete Class Confirmation */}
+      {deletingClass && (
+        <ConfirmDialog
+          open={!!deletingClass}
+          onOpenChange={(open) => !open && setDeletingClass(null)}
+          onConfirm={handleDeleteClass}
+          title="Delete Class"
+          description={`Are you sure you want to delete "${deletingClass.name}"? This action cannot be undone.`}
+          confirmText="Delete Class"
+          confirmVariant="destructive"
+          loading={deleting}
+        />
+      )}
     </div>
   );
 }
