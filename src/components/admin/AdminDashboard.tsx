@@ -18,7 +18,8 @@ import {
   ChevronLeft,
   Shield,
   AlertTriangle,
-  Building2
+  Building2,
+  LogOut
 } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
@@ -28,7 +29,7 @@ type View = 'home' | 'users' | 'classes' | 'sentiment' | 'reports' | 'errors' | 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
 export function AdminDashboard() {
-  const { profile, university, role } = useAuth();
+  const { profile, university, role, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<View>('home');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -99,6 +100,14 @@ export function AdminDashboard() {
 
         <div className="space-y-3 px-4 pb-6">
           <ThemeToggle />
+          <button
+            onClick={signOut}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-50/50 px-3 py-2 text-xs font-semibold text-red-600 shadow-sm transition hover:border-red-500/50 hover:bg-red-100 dark:bg-red-950/20 dark:text-red-400 dark:hover:bg-red-950/40"
+            aria-label="Sign out"
+          >
+            <LogOut className="h-4 w-4" />
+            {!sidebarCollapsed && <span>Sign Out</span>}
+          </button>
           <button
             onClick={() => setSidebarCollapsed((prev) => !prev)}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-purple-500/40 hover:text-purple-600 dark:hover:text-purple-400"
