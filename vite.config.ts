@@ -15,14 +15,18 @@ export default defineConfig({
         manualChunks(id) {
           // Vendor chunks for core libraries
           if (id.includes('node_modules')) {
-            // React and core (including react-hot-toast to avoid multiple React instances)
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router') || id.includes('react-hot-toast')) {
+            // React and all React-dependent libraries must be in the same chunk
+            // to avoid "useLayoutEffect" errors in production
+            if (
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('react-router') ||
+              id.includes('react-hot-toast') ||
+              id.includes('use-') ||  // use-callback-ref, use-sidecar, etc.
+              id.includes('@radix-ui') ||  // Radix UI uses React hooks internally
+              id.includes('lucide-react')  // lucide-react also uses React
+            ) {
               return 'vendor-react';
-            }
-
-            // UI libraries
-            if (id.includes('lucide-react') || id.includes('@radix-ui')) {
-              return 'vendor-ui';
             }
 
             // Charts
