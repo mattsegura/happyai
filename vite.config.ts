@@ -15,8 +15,8 @@ export default defineConfig({
         manualChunks(id) {
           // Vendor chunks for core libraries
           if (id.includes('node_modules')) {
-            // React and core
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            // React and core (including react-hot-toast to avoid multiple React instances)
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router') || id.includes('react-hot-toast')) {
               return 'vendor-react';
             }
 
