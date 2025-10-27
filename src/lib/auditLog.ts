@@ -48,9 +48,18 @@ export async function logAdminAction(options: LogOptions): Promise<void> {
       return;
     }
 
+    // Get user's university_id from stored context
+    const universityId = typeof window !== 'undefined' ? (window as any).__userContext?.universityId : null;
+
+    if (!universityId) {
+      if (DEBUG) console.warn('[Audit] No university context - skipping audit log');
+      return;
+    }
+
     // Insert audit log
     const { error } = await supabase.from('admin_audit_logs').insert({
       user_id: user.id,
+      university_id: universityId,
       action,
       target_type: targetType,
       target_id: targetId || null,

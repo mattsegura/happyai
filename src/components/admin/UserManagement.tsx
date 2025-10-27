@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ADMIN_CONFIG } from '../../lib/config';
+import { useAuth } from '../../contexts/AuthContext';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { AddUserModal } from './AddUserModal';
@@ -32,6 +33,7 @@ interface UserProfile {
 }
 
 export function UserManagement() {
+  const { universityId, role } = useAuth();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,8 +48,10 @@ export function UserManagement() {
   const PAGE_SIZE = ADMIN_CONFIG.USER_PAGE_SIZE;
 
   useEffect(() => {
-    loadUsers();
-  }, [currentPage, roleFilter]);
+    if (universityId || role === 'super_admin') {
+      loadUsers();
+    }
+  }, [currentPage, roleFilter, universityId, role]);
 
   useEffect(() => {
     filterUsers();
@@ -57,11 +61,16 @@ export function UserManagement() {
     try {
       setLoading(true);
 
-      // Build query with pagination
+      // Build query with pagination and university filtering
       let query = supabase
         .from('profiles')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false });
+
+      // Apply university filter (unless super_admin)
+      if (role !== 'super_admin' && universityId) {
+        query = query.eq('university_id', universityId);
+      }
 
       // Apply role filter at database level for efficiency
       if (roleFilter !== 'all') {

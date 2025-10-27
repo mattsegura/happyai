@@ -21,7 +21,7 @@ interface EditUserModalProps {
   initialData: {
     email: string;
     fullName: string;
-    role: 'student' | 'teacher' | 'admin';
+    role: 'student' | 'teacher' | 'admin' | 'super_admin';
   };
 }
 
@@ -41,7 +41,7 @@ export function EditUserModal({
   });
 
   // Client-side admin role check for UX
-  const isAdmin = role === 'admin';
+  const isAdmin = role === 'admin' || role === 'super_admin';
 
   // Update form when initialData changes
   useEffect(() => {
@@ -66,7 +66,7 @@ export function EditUserModal({
         throw new Error('Full name must be 255 characters or less');
       }
 
-      const validRoles = ['student', 'teacher', 'admin'];
+      const validRoles = ['student', 'teacher', 'admin', 'super_admin'];
       if (!validRoles.includes(formData.role)) {
         throw new Error('Invalid role selected');
       }
@@ -168,6 +168,9 @@ export function EditUserModal({
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
               <option value="admin">Admin</option>
+              {role === 'super_admin' && (
+                <option value="super_admin">Super Admin</option>
+              )}
             </select>
           </div>
 

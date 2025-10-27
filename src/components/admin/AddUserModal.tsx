@@ -27,11 +27,11 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
     email: '',
     fullName: '',
     password: '',
-    role: 'student' as 'student' | 'teacher' | 'admin',
+    role: 'student' as 'student' | 'teacher' | 'admin' | 'super_admin',
   });
 
   // Client-side admin role check for UX
-  const isAdmin = role === 'admin';
+  const isAdmin = role === 'admin' || role === 'super_admin';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +61,7 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
         throw new Error('Password must be 72 characters or less');
       }
 
-      const validRoles = ['student', 'teacher', 'admin'];
+      const validRoles = ['student', 'teacher', 'admin', 'super_admin'];
       if (!validRoles.includes(formData.role)) {
         throw new Error('Invalid role selected');
       }
@@ -183,11 +183,11 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
             <Input
               id="password"
               type="password"
-              placeholder="Minimum 6 characters"
+              placeholder="Minimum 8 characters"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
 
@@ -205,6 +205,9 @@ export function AddUserModal({ open, onOpenChange, onUserAdded }: AddUserModalPr
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
               <option value="admin">Admin</option>
+              {role === 'super_admin' && (
+                <option value="super_admin">Super Admin</option>
+              )}
             </select>
           </div>
 

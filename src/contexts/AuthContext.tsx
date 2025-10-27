@@ -3,12 +3,12 @@ import { supabase } from '../lib/supabase';
 import { setUserContext, clearUserContext } from '../lib/errorHandler';
 import { AUTH_CONFIG } from '../lib/config';
 import type { User, Session } from '@supabase/supabase-js';
-import type { Profile } from '../lib/supabase';
+import type { Profile, University } from '../lib/supabase';
 
 // Only log in development mode
 const DEBUG = import.meta.env.DEV;
 
-type UserRole = 'student' | 'teacher' | 'admin';
+type UserRole = 'student' | 'teacher' | 'admin' | 'super_admin';
 
 type AuthError = {
   message: string;
@@ -20,6 +20,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   role: UserRole;
+  university: University | null;
+  universityId: string | null;
   signUp: (email: string, password: string, fullName: string, role: UserRole) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
@@ -33,6 +35,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [university, setUniversity] = useState<University | null>(null);
+  const [universityId, setUniversityId] = useState<string | null>(() => {
+    return localStorage.getItem('university_id');
+  });
 
   // Initialize role from localStorage to prevent role flickering
   const [role, setRole] = useState<UserRole>(() => {
@@ -50,6 +56,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const clearRole = () => {
     setRole('student');
     localStorage.removeItem('user_role');
+  };
+
+  // Update university with caching
+  const updateUniversity = (newUniversity: University | null) => {
+    setUniversity(newUniversity);
+    setUniversityId(newUniversity?.id || null);
+    if (newUniversity) {
+      localStorage.setItem('university_id', newUniversity.id);
+    } else {
+      localStorage.removeItem('university_id');
+    }
+  };
+
+  // Clear university cache
+  const clearUniversity = () => {
+    setUniversity(null);
+    setUniversityId(null);
+    localStorage.removeItem('university_id');
+  }
+
+  // Fetch university data
+  const fetchUniversity = async (universityId: string): Promise<University | null> => {
+    if (DEBUG) console.log('[Auth] Fetching university for ID:', universityId);
+
+    try {
+      const { data, error } = await supabase
+        .from('universities')
+        .select('*')
+        .eq('id', universityId)
+        .single();
+
+      if (error) {
+        if (DEBUG) console.error('[Auth] Error fetching university:', error);
+        return null;
+      }
+
+      if (DEBUG) console.log('[Auth] University fetched successfully:', data);
+      return data as University;
+    } catch (err) {
+      if (DEBUG) console.error('[Auth] Exception fetching university:', err);
+      return null;
+    }
   };
 
   // Fetch user profile from Supabase
@@ -86,8 +134,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (profileData.role) {
         updateRole(profileData.role as UserRole);
       }
-      // Set user context for error tracking
-      setUserContext(profileData.id, profileData.email, profileData.role);
+
+      // Fetch and update university data
+      if (profileData.university_id) {
+        const universityData = await fetchUniversity(profileData.university_id);
+        if (universityData) {
+          updateUniversity(universityData);
+        }
+      }
+
+      // Set user context for error tracking with university
+      setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id);
     }
   };
 
@@ -123,14 +180,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (currentSession?.user) {
           try {
             const profileData = await fetchProfile(currentSession.user.id);
-            if (mounted) {
+            if (mounted && profileData) {
               setProfile(profileData);
-              if (profileData?.role) {
+              if (profileData.role) {
                 // Successfully fetched role - update and cache it
                 updateRole(profileData.role as UserRole);
-                // Set user context for error tracking
-                setUserContext(profileData.id, profileData.email, profileData.role);
               }
+
+              // Fetch and update university data
+              if (profileData.university_id) {
+                const universityData = await fetchUniversity(profileData.university_id);
+                if (mounted && universityData) {
+                  updateUniversity(universityData);
+                }
+              }
+
+              // Set user context for error tracking with university
+              setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id);
               // If profile fetch fails, keep existing cached role
               // Don't reset to 'student' - prevents role flickering
             }
@@ -147,6 +213,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (mounted) {
             setProfile(null);
             clearRole();
+            clearUniversity();
             clearUserContext(); // Clear error tracking context
           }
         }
@@ -171,14 +238,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (currentSession?.user) {
           try {
             const profileData = await fetchProfile(currentSession.user.id);
-            if (mounted) {
+            if (mounted && profileData) {
               setProfile(profileData);
-              if (profileData?.role) {
+              if (profileData.role) {
                 // Successfully fetched role - update and cache it
                 updateRole(profileData.role as UserRole);
-                // Set user context for error tracking
-                setUserContext(profileData.id, profileData.email, profileData.role);
               }
+
+              // Fetch and update university data
+              if (profileData.university_id) {
+                const universityData = await fetchUniversity(profileData.university_id);
+                if (mounted && universityData) {
+                  updateUniversity(universityData);
+                }
+              }
+
+              // Set user context for error tracking with university
+              setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id);
               // If profile fetch fails, keep existing cached role
             }
           } catch (err) {
@@ -193,6 +269,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (mounted) {
             setProfile(null);
             clearRole();
+            clearUniversity();
             clearUserContext(); // Clear error tracking context
           }
         }
@@ -214,7 +291,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     userRole: UserRole
   ) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      if (DEBUG) console.log('[Auth] Starting signup for:', { email, fullName, role: userRole });
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -226,13 +305,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (error) {
+        console.error('[Auth] Signup error:', error);
         return { error: { message: error.message } };
       }
+
+      if (DEBUG) console.log('[Auth] Signup successful, user ID:', data?.user?.id);
 
       // Profile will be auto-created by the trigger
       // The auth state change listener will fetch it automatically
       return { error: null };
     } catch (error) {
+      console.error('[Auth] Signup exception:', error);
       return {
         error: {
           message: error instanceof Error ? error.message : 'An error occurred during sign up',
@@ -270,7 +353,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setProfile(null);
     setSession(null);
-    setRole('student');
+    clearRole();
+    clearUniversity();
     clearUserContext(); // Clear error tracking context
   };
 
@@ -280,6 +364,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     loading,
     role,
+    university,
+    universityId,
     signUp,
     signIn,
     signOut,

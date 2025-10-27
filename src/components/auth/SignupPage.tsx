@@ -5,6 +5,7 @@ import { AuthLayout } from './common/AuthLayout';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/Toast';
+import { EmailVerificationPage } from './EmailVerificationPage';
 
 interface SignupPageProps {
   onToggleMode: () => void;
@@ -20,6 +21,8 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<'student' | 'teacher'>('student');
+  const [showVerification, setShowVerification] = useState(false);
+  const [signupEmail, setSignupEmail] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,9 +44,25 @@ export function SignupPage({ onToggleMode }: SignupPageProps) {
       toast.error('Signup failed', error.message);
       setLoading(false);
     } else {
-      toast.success('Account created!', `Welcome to HapiAI, ${fullName}!`);
+      // Show verification page instead of staying in loading state
+      setSignupEmail(email);
+      setShowVerification(true);
+      setLoading(false);
+      toast.success('Account created!', 'Please check your email to verify your account.');
     }
   };
+
+  const handleBackToSignup = () => {
+    setShowVerification(false);
+    setEmail('');
+    setPassword('');
+    setFullName('');
+  };
+
+  // Show verification page if signup was successful
+  if (showVerification) {
+    return <EmailVerificationPage email={signupEmail} onBack={handleBackToSignup} />;
+  }
 
   return (
     <AuthLayout title="Join HapiAI" subtitle="Start your emotional wellness journey">

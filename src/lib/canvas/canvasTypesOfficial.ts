@@ -53,6 +53,22 @@ export type CanvasEnrollmentState =
   | 'rejected'
   | 'deleted';
 
+export type CanvasAccount = {
+  id: number;
+  name: string;
+  uuid: string;
+  parent_account_id?: number | null;
+  root_account_id?: number | null;
+  workflow_state: 'active' | 'deleted';
+  default_storage_quota_mb?: number;
+  default_user_storage_quota_mb?: number;
+  default_group_storage_quota_mb?: number;
+  default_time_zone?: string;
+  sis_account_id?: string | null;
+  sis_import_id?: number | null;
+  integration_id?: string | null;
+};
+
 export type CanvasEnrollment = {
   id: number;
   user_id: number;

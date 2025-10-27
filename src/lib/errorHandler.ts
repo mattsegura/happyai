@@ -138,6 +138,9 @@ async function logErrorToDatabase(
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Get university context from stored user context
+    const universityId = typeof window !== 'undefined' ? (window as any).__userContext?.universityId : null;
+
     // Prepare error log data
     const errorData = {
       error_fingerprint: fingerprint,
@@ -146,6 +149,7 @@ async function logErrorToDatabase(
       component: context?.component || null,
       action: context?.action || null,
       user_id: user?.id || null,
+      university_id: universityId || null,
       metadata: sanitizeData(context?.metadata || {}),
       user_agent: browserInfo.userAgent,
       browser_name: browserInfo.browserName,
@@ -180,6 +184,7 @@ async function logErrorToDatabase(
             {
               error_log_id: existingError.id,
               user_id: user.id,
+              university_id: universityId || null,
               last_affected_at: new Date().toISOString(),
               occurrence_count: 1, // Will be incremented by trigger
             },
@@ -201,6 +206,7 @@ async function logErrorToDatabase(
         await supabase.from('error_affected_users').insert({
           error_log_id: newError.id,
           user_id: user.id,
+          university_id: universityId || null,
         });
       }
     }
@@ -345,11 +351,13 @@ export function trackEvent(
  * In self-hosted version, user context is automatically captured
  * from Supabase auth in logErrorToDatabase()
  */
-export function setUserContext(userId: string, email?: string, role?: string): void {
-  // User context is automatically captured from Supabase auth
-  // No need to maintain separate context
+export function setUserContext(userId: string, email?: string, role?: string, universityId?: string): void {
+  // Store university context for error logging
+  if (typeof window !== 'undefined') {
+    (window as any).__userContext = { userId, email, role, universityId };
+  }
   if (!IS_PRODUCTION) {
-    console.log('[UserContext] Set:', { userId, email, role });
+    console.log('[UserContext] Set:', { userId, email, role, universityId });
   }
 }
 

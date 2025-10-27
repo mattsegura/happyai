@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   FileText,
   Download,
@@ -22,6 +23,7 @@ import {
 import { handleError } from '../../lib/errorHandler';
 
 export function ReportsView() {
+  const { universityId, role } = useAuth();
   const [generating, setGenerating] = useState<string | null>(null);
   // Rate limiting: track last generation time per report type
   const [lastGeneratedTime, setLastGeneratedTime] = useState<Record<string, number>>({});
@@ -92,21 +94,24 @@ export function ReportsView() {
 
     setGenerating(reportId);
     try {
+      // Pass university ID for filtering (unless super_admin)
+      const filterUniversityId = role === 'super_admin' ? null : universityId;
+
       switch (reportId) {
         case 'user-activity':
-          await generateUserActivityReport(format);
+          await generateUserActivityReport(format, filterUniversityId);
           break;
         case 'sentiment-trends':
-          await generateSentimentReport(format);
+          await generateSentimentReport(format, filterUniversityId);
           break;
         case 'class-performance':
-          await generateClassPerformanceReport(format);
+          await generateClassPerformanceReport(format, filterUniversityId);
           break;
         case 'daily-checkins':
-          await generateDailyCheckInsReport(format);
+          await generateDailyCheckInsReport(format, filterUniversityId);
           break;
         case 'platform-analytics':
-          await generatePlatformAnalyticsReport(format);
+          await generatePlatformAnalyticsReport(format, filterUniversityId);
           break;
         default:
           // Report type not implemented

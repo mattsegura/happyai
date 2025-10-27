@@ -50,7 +50,13 @@ function AppContent() {
 
   return (
     <Suspense fallback={DashboardLoadingFallback}>
-      {role === 'admin' ? <AdminDashboard /> : role === 'teacher' ? <TeacherDashboard /> : <Dashboard />}
+      {(role === 'admin' || role === 'super_admin') ? (
+        <AdminDashboard />
+      ) : role === 'teacher' ? (
+        <TeacherDashboard />
+      ) : (
+        <Dashboard />
+      )}
     </Suspense>
   );
 }

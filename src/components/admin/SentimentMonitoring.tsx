@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ADMIN_CONFIG } from '../../lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   Activity,
   TrendingUp,
@@ -37,6 +38,7 @@ interface StudentAlert {
 }
 
 export function SentimentMonitoring() {
+  const { universityId, role } = useAuth();
   const [stats, setStats] = useState<SentimentStats>({
     totalCheckIns: 0,
     averageSentiment: 0,
@@ -48,19 +50,27 @@ export function SentimentMonitoring() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadSentimentData();
-  }, []);
+    if (universityId || role === 'super_admin') {
+      loadSentimentData();
+    }
+  }, [universityId, role]);
 
   const loadSentimentData = async () => {
     try {
-      // Get all pulse checks from last 30 days
+      // Get all pulse checks from last 30 days (filtered by university unless super_admin)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const { data: pulseChecks, error } = await supabase
+      let pulseChecksQuery = supabase
         .from('pulse_checks')
         .select('*')
         .gte('created_at', thirtyDaysAgo.toISOString());
+
+      if (role !== 'super_admin' && universityId) {
+        pulseChecksQuery = pulseChecksQuery.eq('university_id', universityId);
+      }
+
+      const { data: pulseChecks, error } = await pulseChecksQuery;
 
       if (error) throw error;
 
@@ -99,11 +109,17 @@ export function SentimentMonitoring() {
       const userIds = [...new Set(lowSentimentChecks?.map((c) => c.user_id))];
       const topUserIds = userIds.slice(0, ADMIN_CONFIG.STUDENT_ALERTS_LIMIT);
 
-      // Batch fetch all profiles in one query (fixes N+1 problem)
-      const { data: profiles } = await supabase
+      // Batch fetch all profiles in one query (fixes N+1 problem, filtered by university)
+      let profilesQuery = supabase
         .from('profiles')
         .select('id, full_name, email')
         .in('id', topUserIds);
+
+      if (role !== 'super_admin' && universityId) {
+        profilesQuery = profilesQuery.eq('university_id', universityId);
+      }
+
+      const { data: profiles } = await profilesQuery;
 
       // Create lookup map for O(1) access
       const profileMap = profiles?.reduce((acc, p) => ({

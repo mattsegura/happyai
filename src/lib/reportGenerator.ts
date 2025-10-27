@@ -71,12 +71,19 @@ function downloadJSON(filename: string, data: any) {
 /**
  * Generate User Activity Report
  */
-export async function generateUserActivityReport(format: 'csv' | 'json' = 'csv') {
+export async function generateUserActivityReport(format: 'csv' | 'json' = 'csv', universityId?: string | null) {
   try {
-    const { data: users, error } = await supabase
+    let query = supabase
       .from('profiles')
       .select('id, email, full_name, role, total_points, current_streak, created_at')
       .order('created_at', { ascending: false });
+
+    // Filter by university if provided
+    if (universityId) {
+      query = query.eq('university_id', universityId);
+    }
+
+    const { data: users, error } = await query;
 
     if (error) throw error;
 
@@ -108,16 +115,23 @@ export async function generateUserActivityReport(format: 'csv' | 'json' = 'csv')
 /**
  * Generate Sentiment Trends Report
  */
-export async function generateSentimentReport(format: 'csv' | 'json' = 'csv') {
+export async function generateSentimentReport(format: 'csv' | 'json' = 'csv', universityId?: string | null) {
   try {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const { data: pulseChecks, error } = await supabase
+    let query = supabase
       .from('pulse_checks')
       .select('user_id, emotion, intensity, created_at, profiles(email, full_name)')
       .gte('created_at', thirtyDaysAgo.toISOString())
       .order('created_at', { ascending: false });
+
+    // Filter by university if provided
+    if (universityId) {
+      query = query.eq('university_id', universityId);
+    }
+
+    const { data: pulseChecks, error } = await query;
 
     if (error) throw error;
 
@@ -148,20 +162,34 @@ export async function generateSentimentReport(format: 'csv' | 'json' = 'csv') {
 /**
  * Generate Class Performance Report
  */
-export async function generateClassPerformanceReport(format: 'csv' | 'json' = 'csv') {
+export async function generateClassPerformanceReport(format: 'csv' | 'json' = 'csv', universityId?: string | null) {
   try {
-    const { data: classes, error } = await supabase
+    let classesQuery = supabase
       .from('classes')
       .select('id, name, subject, created_at, profiles(full_name)')
       .eq('is_active', true) // Only include active classes
       .order('created_at', { ascending: false });
 
+    // Filter by university if provided
+    if (universityId) {
+      classesQuery = classesQuery.eq('university_id', universityId);
+    }
+
+    const { data: classes, error } = await classesQuery;
+
     if (error) throw error;
 
     // Batch fetch all class members in one query (fixes N+1 problem)
-    const { data: allMembers } = await supabase
+    let membersQuery = supabase
       .from('class_members')
       .select('class_id');
+
+    // Filter by university if provided
+    if (universityId) {
+      membersQuery = membersQuery.eq('university_id', universityId);
+    }
+
+    const { data: allMembers } = await membersQuery;
 
     // Count students per class in memory
     const countMap = allMembers?.reduce((acc, m) => ({
@@ -202,13 +230,20 @@ export async function generateClassPerformanceReport(format: 'csv' | 'json' = 'c
 /**
  * Generate Daily Check-ins Report
  */
-export async function generateDailyCheckInsReport(format: 'csv' | 'json' = 'csv') {
+export async function generateDailyCheckInsReport(format: 'csv' | 'json' = 'csv', universityId?: string | null) {
   try {
-    const { data: pulseChecks, error } = await supabase
+    let query = supabase
       .from('pulse_checks')
       .select('created_at, emotion, profiles(email, full_name)')
       .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
       .order('created_at', { ascending: false });
+
+    // Filter by university if provided
+    if (universityId) {
+      query = query.eq('university_id', universityId);
+    }
+
+    const { data: pulseChecks, error } = await query;
 
     if (error) throw error;
 
@@ -238,25 +273,27 @@ export async function generateDailyCheckInsReport(format: 'csv' | 'json' = 'csv'
 /**
  * Generate Platform Analytics Report
  */
-export async function generatePlatformAnalyticsReport(format: 'csv' | 'json' = 'csv') {
+export async function generatePlatformAnalyticsReport(format: 'csv' | 'json' = 'csv', universityId?: string | null) {
   try {
-    // Get aggregate statistics
-    const { count: totalUsers } = await supabase
-      .from('profiles')
-      .select('*', { count: 'exact', head: true });
+    // Helper function to apply university filter
+    const applyFilter = (query: any) => universityId ? query.eq('university_id', universityId) : query;
 
-    const { count: totalClasses } = await supabase
-      .from('classes')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_active', true);
+    // Get aggregate statistics (filtered by university if provided)
+    const { count: totalUsers } = await applyFilter(
+      supabase.from('profiles').select('*', { count: 'exact', head: true })
+    );
 
-    const { count: totalCheckIns } = await supabase
-      .from('pulse_checks')
-      .select('*', { count: 'exact', head: true });
+    const { count: totalClasses } = await applyFilter(
+      supabase.from('classes').select('*', { count: 'exact', head: true }).eq('is_active', true)
+    );
 
-    const { count: totalMoments } = await supabase
-      .from('hapi_moments')
-      .select('*', { count: 'exact', head: true });
+    const { count: totalCheckIns } = await applyFilter(
+      supabase.from('pulse_checks').select('*', { count: 'exact', head: true })
+    );
+
+    const { count: totalMoments } = await applyFilter(
+      supabase.from('hapi_moments').select('*', { count: 'exact', head: true })
+    );
 
     const analytics = {
       generated_at: new Date().toISOString(),

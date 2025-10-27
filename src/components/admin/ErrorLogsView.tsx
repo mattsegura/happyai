@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { handleError } from '../../lib/errorHandler';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   AlertTriangle,
   Search,
@@ -37,6 +38,7 @@ interface ErrorLog {
 }
 
 export function ErrorLogsView() {
+  const { universityId, role } = useAuth();
   const [errors, setErrors] = useState<ErrorLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,8 +46,10 @@ export function ErrorLogsView() {
   const [expandedError, setExpandedError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadErrors();
-  }, [statusFilter]);
+    if (universityId || role === 'super_admin') {
+      loadErrors();
+    }
+  }, [statusFilter, universityId, role]);
 
   const loadErrors = async () => {
     try {
@@ -55,6 +59,11 @@ export function ErrorLogsView() {
         .from('error_logs')
         .select('*')
         .order('last_seen_at', { ascending: false });
+
+      // Apply university filter (unless super_admin)
+      if (role !== 'super_admin' && universityId) {
+        query = query.eq('university_id', universityId);
+      }
 
       if (statusFilter !== 'all') {
         query = query.eq('status', statusFilter);

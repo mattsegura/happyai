@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ADMIN_CONFIG } from '../../lib/config';
 import { handleError, handleSuccess } from '../../lib/errorHandler';
+import { useAuth } from '../../contexts/AuthContext';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -32,6 +33,7 @@ interface Class {
 }
 
 export function ClassManagement() {
+  const { universityId, role } = useAuth();
   const [classes, setClasses] = useState<Class[]>([]);
   const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,8 +47,10 @@ export function ClassManagement() {
   const PAGE_SIZE = ADMIN_CONFIG.CLASS_PAGE_SIZE;
 
   useEffect(() => {
-    loadClasses();
-  }, [currentPage]);
+    if (universityId || role === 'super_admin') {
+      loadClasses();
+    }
+  }, [currentPage, universityId, role]);
 
   useEffect(() => {
     filterClasses();
@@ -56,16 +60,22 @@ export function ClassManagement() {
     try {
       setLoading(true);
 
-      // Get paginated classes with total count
+      // Get paginated classes with total count (filtered by university unless super_admin)
       const from = (currentPage - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      const { data: classesData, error: classesError, count } = await supabase
+      let classesQuery = supabase
         .from('classes')
         .select('*', { count: 'exact' })
         .eq('is_active', true) // Only fetch active (non-deleted) classes
         .order('created_at', { ascending: false })
         .range(from, to);
+
+      if (role !== 'super_admin' && universityId) {
+        classesQuery = classesQuery.eq('university_id', universityId);
+      }
+
+      const { data: classesData, error: classesError, count } = await classesQuery;
 
       if (classesError) throw classesError;
 
@@ -79,10 +89,16 @@ export function ClassManagement() {
 
       // Batch fetch all teachers in one query (fixes N+1 problem)
       const teacherIds = [...new Set(classesData.map(cls => cls.teacher_id))];
-      const { data: teachers } = await supabase
+      let teachersQuery = supabase
         .from('profiles')
         .select('id, full_name')
         .in('id', teacherIds);
+
+      if (role !== 'super_admin' && universityId) {
+        teachersQuery = teachersQuery.eq('university_id', universityId);
+      }
+
+      const { data: teachers } = await teachersQuery;
 
       // Create teacher lookup map
       const teacherMap = teachers?.reduce((acc, t) => ({
@@ -91,9 +107,15 @@ export function ClassManagement() {
       }), {} as Record<string, string>) || {};
 
       // Batch fetch all student counts in one query (fixes N+1 problem)
-      const { data: memberCounts } = await supabase
+      let memberCountsQuery = supabase
         .from('class_members')
         .select('class_id');
+
+      if (role !== 'super_admin' && universityId) {
+        memberCountsQuery = memberCountsQuery.eq('university_id', universityId);
+      }
+
+      const { data: memberCounts } = await memberCountsQuery;
 
       // Count students per class
       const countMap = memberCounts?.reduce((acc, m) => ({

@@ -61,7 +61,47 @@ class CanvasSyncService {
 
       onProgress?.(`Found ${activeCourses.length} active courses`);
 
-      // 2. Sync each course
+      // 2. Check for Canvas Account ID and assign university
+      if (this.userId && activeCourses.length > 0) {
+        try {
+          const firstCourse = activeCourses[0];
+          const rootAccountId = firstCourse.root_account_id || firstCourse.account_id;
+
+          if (rootAccountId) {
+            onProgress?.('Checking university assignment...');
+
+            // Try to match Canvas account to university
+            const { data: universityId, error: univError } = await supabase.rpc(
+              'get_university_id_by_canvas_account',
+              { canvas_account_id: String(rootAccountId) }
+            );
+
+            if (!univError && universityId) {
+              // Update user's university based on Canvas account
+              const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ university_id: universityId })
+                .eq('id', this.userId);
+
+              if (!updateError) {
+                onProgress?.('✓ University assigned based on Canvas account');
+              }
+            }
+
+            // Also save Canvas root account ID to settings for future reference
+            await supabase
+              .from('canvas_settings')
+              .upsert({
+                user_id: this.userId,
+                canvas_root_account_id: String(rootAccountId),
+              }, { onConflict: 'user_id' });
+          }
+        } catch (err) {
+          errors.push(`University assignment: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        }
+      }
+
+      // 3. Sync each course
       for (const course of activeCourses) {
         try {
           onProgress?.(`Syncing course: ${course.name}`);
@@ -79,7 +119,7 @@ class CanvasSyncService {
 
           courseCount++;
 
-          // 3. Sync enrollments for this course
+          // 4. Sync enrollments for this course
           if (course.enrollments) {
             const studentEnrollments = course.enrollments.filter(
               (e: any) => e.type === 'StudentEnrollment' && e.enrollment_state === 'active'
@@ -103,7 +143,7 @@ class CanvasSyncService {
             }
           }
 
-          // 4. Optionally sync assignments
+          // 5. Optionally sync assignments
           if (syncAssignments) {
             try {
               const assignments = await canvasService.getAssignments(String(course.id));

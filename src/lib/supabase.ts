@@ -1,12 +1,25 @@
+// University type
+export type University = {
+  id: string;
+  name: string;
+  domain: string | null;
+  logo_url: string | null;
+  settings: Record<string, any>;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Profile = {
   id: string;
   email: string;
   full_name: string;
-  role: 'student' | 'teacher' | 'admin';
+  role: 'student' | 'teacher' | 'admin' | 'super_admin';
   avatar_url: string | null;
   total_points: number;
   current_streak: number;
   last_pulse_check_date: string | null;
+  university_id: string;
   created_at: string;
   updated_at: string;
 };
@@ -18,6 +31,7 @@ export type Class = {
   teacher_name: string;
   teacher_id: string | null;
   class_code: string;
+  university_id: string;
   created_at: string;
   updated_at: string;
 };
@@ -27,6 +41,7 @@ export type ClassMember = {
   user_id: string;
   class_id: string;
   class_points: number;
+  university_id: string;
   joined_at: string;
 };
 
@@ -37,6 +52,7 @@ export type PulseCheck = {
   emotion: string;
   intensity: number;
   notes: string | null;
+  university_id: string;
   created_at: string;
   check_date: string;
 };
@@ -50,6 +66,7 @@ export type ClassPulse = {
   answer_choices: string[] | null;
   expires_at: string;
   is_active: boolean;
+  university_id: string;
   created_at: string;
 };
 
@@ -60,6 +77,7 @@ export type ClassPulseResponse = {
   class_id: string;
   response_text: string;
   points_earned: number;
+  university_id: string;
   created_at: string;
 };
 
@@ -71,6 +89,7 @@ export type HapiMoment = {
   message: string;
   sender_points: number;
   recipient_points: number;
+  university_id: string;
   created_at: string;
 };
 
@@ -106,6 +125,7 @@ export type OfficeHour = {
   max_queue_size: number;
   is_active: boolean;
   notes: string | null;
+  university_id: string;
   created_at: string;
   updated_at: string;
 };
@@ -116,6 +136,7 @@ export type OfficeHoursQueue = {
   student_id: string;
   status: 'waiting' | 'in_session' | 'completed' | 'cancelled';
   reason: string | null;
+  university_id: string;
   joined_at: string;
   started_at: string | null;
   completed_at: string | null;

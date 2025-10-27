@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   Users,
   GraduationCap,
@@ -73,6 +74,7 @@ function StatCard({ title, value, change, icon: Icon, iconColor, loading }: Stat
 }
 
 export function AdminHomeView() {
+  const { universityId, role } = useAuth();
   const [stats, setStats] = useState<SystemStats>({
     totalUsers: 0,
     totalStudents: 0,
@@ -87,50 +89,55 @@ export function AdminHomeView() {
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
 
   useEffect(() => {
-    loadSystemStats();
-    loadRecentActivity();
-  }, []);
+    if (universityId || role === 'super_admin') {
+      loadSystemStats();
+      loadRecentActivity();
+    }
+  }, [universityId, role]);
 
   const loadSystemStats = async () => {
     try {
+      // Build queries with university scoping (unless super_admin)
+      const applyUniversityFilter = (query: any) => {
+        if (role !== 'super_admin' && universityId) {
+          return query.eq('university_id', universityId);
+        }
+        return query;
+      };
+
       // Get total users by role
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
+      const { count: totalUsers } = await applyUniversityFilter(
+        supabase.from('profiles').select('*', { count: 'exact', head: true })
+      );
 
-      const { count: totalStudents } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('role', 'student');
+      const { count: totalStudents } = await applyUniversityFilter(
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student')
+      );
 
-      const { count: totalTeachers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('role', 'teacher');
+      const { count: totalTeachers } = await applyUniversityFilter(
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'teacher')
+      );
 
-      const { count: totalAdmins } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('role', 'admin');
+      const { count: totalAdmins } = await applyUniversityFilter(
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'admin')
+      );
 
       // Get total classes (only active, non-deleted)
-      const { count: totalClasses } = await supabase
-        .from('classes')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_active', true);
+      const { count: totalClasses } = await applyUniversityFilter(
+        supabase.from('classes').select('*', { count: 'exact', head: true }).eq('is_active', true)
+      );
 
       // Get total check-ins
-      const { count: totalCheckIns } = await supabase
-        .from('pulse_checks')
-        .select('*', { count: 'exact', head: true });
+      const { count: totalCheckIns } = await applyUniversityFilter(
+        supabase.from('pulse_checks').select('*', { count: 'exact', head: true })
+      );
 
       // Get daily active users (users who checked in today)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const { count: dailyActiveUsers } = await supabase
-        .from('pulse_checks')
-        .select('user_id', { count: 'exact', head: true })
-        .gte('created_at', today.toISOString());
+      const { count: dailyActiveUsers } = await applyUniversityFilter(
+        supabase.from('pulse_checks').select('user_id', { count: 'exact', head: true }).gte('created_at', today.toISOString())
+      );
 
       setStats({
         totalUsers: totalUsers || 0,
@@ -151,12 +158,18 @@ export function AdminHomeView() {
 
   const loadRecentActivity = async () => {
     try {
-      // Get recent user signups
-      const { data: recentUsers } = await supabase
+      // Get recent user signups (filtered by university unless super_admin)
+      let query = supabase
         .from('profiles')
         .select('id, full_name, role, created_at')
         .order('created_at', { ascending: false })
         .limit(5);
+
+      if (role !== 'super_admin' && universityId) {
+        query = query.eq('university_id', universityId);
+      }
+
+      const { data: recentUsers } = await query;
 
       setRecentActivity(recentUsers || []);
     } catch (error) {

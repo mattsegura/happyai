@@ -25,7 +25,7 @@ serve(async (req) => {
     }
 
     // Validate role
-    if (!['student', 'teacher', 'admin'].includes(role)) {
+    if (!['student', 'teacher', 'admin', 'super_admin'].includes(role)) {
       return new Response(
         JSON.stringify({ error: 'Invalid role' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -70,7 +70,7 @@ serve(async (req) => {
       .eq('id', callingUser.id)
       .single();
 
-    if (profileError || profile?.role !== 'admin') {
+    if (profileError || !['admin', 'super_admin'].includes(profile?.role)) {
       return new Response(
         JSON.stringify({ error: 'Only admins can create users' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -99,7 +99,22 @@ serve(async (req) => {
       );
     }
 
-    // Create profile for the user
+    // Get university_id based on email domain
+    let universityId = null;
+    try {
+      const { data: univId, error: univError } = await adminClient.rpc(
+        'get_university_id_by_email',
+        { user_email: email }
+      );
+      if (!univError && univId) {
+        universityId = univId;
+      }
+    } catch (err) {
+      console.warn('Could not auto-assign university:', err);
+      // Continue without university_id - will use fallback
+    }
+
+    // Create profile for the user with university_id
     const { error: profileInsertError } = await adminClient
       .from('profiles')
       .insert({
@@ -107,6 +122,7 @@ serve(async (req) => {
         email,
         full_name: fullName,
         role,
+        university_id: universityId,
       });
 
     if (profileInsertError) {

@@ -7,6 +7,7 @@ import { SentimentMonitoring } from './SentimentMonitoring';
 import { ReportsView } from './ReportsView';
 import { SettingsView } from './SettingsView';
 import { ErrorLogsView } from './ErrorLogsView';
+import { UniversityManagement } from './UniversityManagement';
 import {
   Home,
   Users,
@@ -16,22 +17,26 @@ import {
   Settings,
   ChevronLeft,
   Shield,
-  AlertTriangle
+  AlertTriangle,
+  Building2
 } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
 
-type View = 'home' | 'users' | 'classes' | 'sentiment' | 'reports' | 'errors' | 'settings';
+type View = 'home' | 'users' | 'classes' | 'sentiment' | 'reports' | 'errors' | 'settings' | 'universities';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
 export function AdminDashboard() {
-  const { profile } = useAuth();
+  const { profile, university, role } = useAuth();
   const [currentView, setCurrentView] = useState<View>('home');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  const isSuperAdmin = role === 'super_admin';
+
   const navigationItems = [
     { id: 'home', icon: Home, label: 'Overview' },
+    ...(isSuperAdmin ? [{ id: 'universities', icon: Building2, label: 'Universities' }] : []),
     { id: 'users', icon: Users, label: 'Users' },
     { id: 'classes', icon: GraduationCap, label: 'Classes' },
     { id: 'sentiment', icon: Activity, label: 'Sentiment' },
@@ -116,19 +121,27 @@ export function AdminDashboard() {
           >
             <div>
               <h1 className="text-xl font-semibold text-foreground">
-                Platform Administration
+                {role === 'super_admin' ? 'Platform Administration' : university?.name || 'University Administration'}
               </h1>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                System monitoring, user management, and analytics
+                {role === 'super_admin' ? 'Multi-university system management' : 'System monitoring, user management, and analytics'}
               </p>
             </div>
             {profile && (
-              <div className="flex items-center gap-3 rounded-xl border border-purple-500/30 bg-purple-50/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm dark:bg-purple-950/20">
-                <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                <span>{profile.full_name}</span>
-                <span className="rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-bold text-white">
-                  ADMIN
-                </span>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                {university && role !== 'super_admin' && (
+                  <div className="flex items-center gap-2 rounded-xl border border-blue-500/30 bg-blue-50/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm dark:bg-blue-950/20">
+                    <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <span>{university.name}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 rounded-xl border border-purple-500/30 bg-purple-50/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm dark:bg-purple-950/20">
+                  <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <span>{profile.full_name}</span>
+                  <span className="rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                    {role === 'super_admin' ? 'SUPER ADMIN' : 'ADMIN'}
+                  </span>
+                </div>
               </div>
             )}
             {/* Mobile Navigation */}
@@ -159,6 +172,11 @@ export function AdminDashboard() {
 
           <div className="space-y-5">
             {currentView === 'home' && <AdminHomeView />}
+            {currentView === 'universities' && isSuperAdmin && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <UniversityManagement />
+              </div>
+            )}
             {currentView === 'users' && (
               <div className={cn(SURFACE_BASE, 'p-5')}>
                 <UserManagement />

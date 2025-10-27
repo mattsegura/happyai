@@ -27,7 +27,7 @@ interface Teacher {
 }
 
 export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateClassModalProps) {
-  const { role } = useAuth();
+  const { role, universityId } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingTeachers, setLoadingTeachers] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +40,7 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
   });
 
   // Client-side admin role check for UX
-  const isAdmin = role === 'admin';
+  const isAdmin = role === 'admin' || role === 'super_admin';
 
   useEffect(() => {
     if (open) {
@@ -109,6 +109,7 @@ export function CreateClassModal({ open, onOpenChange, onClassCreated }: CreateC
           description: formData.description?.trim() || null,
           teacher_id: formData.teacher_id,
           teacher_name: teacherName,
+          university_id: universityId, // Add university_id from auth context
         })
         .select()
         .single();
