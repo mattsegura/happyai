@@ -5,6 +5,7 @@ import { AuthLayout } from './common/AuthLayout';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/Toast';
+import { DemoAccounts } from './DemoAccounts';
 
 interface LoginPageProps {
   onToggleMode: () => void;
@@ -112,6 +113,22 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
           {loading ? 'Signing in...' : 'Sign In'}
         </Button>
       </form>
+
+      {/* Demo Accounts Section */}
+      <div className="mt-6">
+        <DemoAccounts
+          onSelectAccount={(demoEmail, demoPassword) => {
+            setEmail(demoEmail);
+            setPassword(demoPassword);
+            // Auto-detect role from email
+            if (demoEmail.includes('teacher')) {
+              setRole('teacher');
+            } else {
+              setRole('student');
+            }
+          }}
+        />
+      </div>
 
       <div className="mt-6 text-center">
         <button
