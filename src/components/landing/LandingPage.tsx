@@ -120,27 +120,6 @@ export function LandingPage() {
         items={navItems}
         showSignIn={false}
       />
-      
-      {/* Sign In button in top right corner */}
-      <div className="fixed top-6 right-6 z-50">
-        <div className="bg-background/80 border border-border backdrop-blur-lg rounded-full shadow-lg">
-          <button
-            onClick={() => setShowAuth(true)}
-            className="group relative w-32 cursor-pointer overflow-hidden rounded-full bg-transparent p-2 text-center font-semibold text-sm transition-all duration-300 hover:scale-105"
-          >
-            <span className="inline-block translate-x-1 transition-all duration-300 group-hover:translate-x-12 group-hover:opacity-0">
-              Sign In
-            </span>
-            <div className="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-primary-foreground opacity-0 transition-all duration-300 group-hover:-translate-x-1 group-hover:opacity-100">
-              <span>Sign In</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-            <div className="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-lg bg-sky-500 transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-sky-500"></div>
-          </button>
-        </div>
-      </div>
 
       <main>
         <section id="platform" className="relative overflow-hidden bg-[#FFFDF8] dark:bg-slate-900">
