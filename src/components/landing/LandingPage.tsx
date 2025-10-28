@@ -1,482 +1,471 @@
 import { useState } from 'react';
 import {
-  ArrowRight,
   BarChart3,
   BookOpen,
   Brain,
-  CheckCircle2,
   GraduationCap,
-  Menu,
   ShieldCheck,
   Sparkles,
   Users,
-  X,
-  LogIn
+  Lock,
+  Eye,
+  FileCheck,
+  Server,
+  Key,
+  Shield
 } from 'lucide-react';
 import { AuthGate } from '../auth/AuthGate';
-import { Button } from '../ui/button';
+import { AnimatedHero } from '../ui/animated-hero';
+import { TubelightNavBar } from '../ui/tubelight-navbar';
+import type { NavItem } from '../ui/tubelight-navbar';
+import { DashboardShowcase } from '../ui/dashboard-showcase';
+import { BentoCard, BentoGrid } from '../ui/bento-grid';
+import { TiltedScroll } from '../ui/tilted-scroll';
+import { HapiIntelligence } from '../ui/hapi-intelligence';
+import { Footer } from '../ui/footer';
+import { ContactSection } from '../ui/contact-section';
+import { HapiMomentsCarousel } from '../ui/hapi-moments-carousel';
+import { ImageComparison, ImageComparisonContent, ImageComparisonSlider } from '../ui/image-comparison';
+import { useEffect } from 'react';
 
-const navigation = [
-  { label: 'Platform', href: '#platform' },
-  { label: 'Students', href: '#students' },
-  { label: 'Teachers', href: '#teachers' },
-  { label: 'Security', href: '#security' },
-];
-
-const studentHighlights = [
+const securityFeatures = [
   {
-    title: 'Daily mood pulse',
-    description: 'One-minute reflections help students recognise patterns and name the why behind their mood.',
-    icon: Sparkles,
+    title: 'End-to-End Encryption',
+    description: 'All student data is encrypted in transit and at rest using industry-standard AES-256 encryption.',
+    icon: Lock,
   },
   {
-    title: 'Academic snapshot',
-    description: 'Assignments and Canvas grades surface alongside emotions so students can plan with context.',
-    icon: BookOpen,
+    title: 'FERPA Compliant',
+    description: 'Fully compliant with the Family Educational Rights and Privacy Act, ensuring student records remain protected.',
+    icon: FileCheck,
   },
   {
-    title: 'Guided next steps',
-    description: 'Hapi Companion offers grounding prompts, study tips, and goal suggestions tailored to each check-in.',
+    title: 'Role-Based Access Control',
+    description: 'Granular permissions ensure users only access data relevant to their role—no more, no less.',
+    icon: Key,
+  },
+  {
+    title: 'Privacy by Design',
+    description: 'Students maintain ownership of their reflections. Raw check-ins remain private unless escalation thresholds are met.',
+    icon: Eye,
+  },
+  {
+    title: 'Secure Infrastructure',
+    description: 'Hosted on SOC 2 Type II certified infrastructure with 99.9% uptime and automated backups.',
+    icon: Server,
+  },
+  {
+    title: 'Transparent AI',
+    description: 'Every AI-generated insight includes context and sources, empowering informed decisions without black-box algorithms.',
     icon: Brain,
   },
 ];
 
-const teacherHighlights = [
-  {
-    title: 'Pulse analytics',
-    description: 'Class sentiment, participation, and engagement trends update automatically from daily check-ins.',
-    icon: BarChart3,
-  },
-  {
-    title: 'Actionable briefs',
-    description: 'Weekly digests flag students who may need support and celebrate moments of progress.',
-    icon: Users,
-  },
-  {
-    title: 'Instructional signals',
-    description: 'Detect topics that correlate with stress or confidence, so teaching plans adapt in real time.',
-    icon: GraduationCap,
-  },
-];
-
-const workflowSteps = [
-  {
-    title: 'Collect meaningful signals',
-    description: 'Mood pulses, peer recognitions, Canvas performance, and calendar events flow into a unified hub.',
-  },
-  {
-    title: 'Synthesize for every role',
-    description: 'Student Companion, Teacher Analyst, and System Bridge prepare views tuned to individual needs.',
-  },
-  {
-    title: 'Deliver timely guidance',
-    description: 'AI-generated nudges, study plans, and alerts keep wellness and learning aligned day by day.',
-  },
-];
-
-const principles = [
-  {
-    title: 'Privacy by design',
-    description: 'Students own their reflections. Sensitive notes stay private unless a risk pattern is detected.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Evidence over hype',
-    description: 'Every insight is grounded in real class data with transparent context for teachers and leaders.',
-    icon: CheckCircle2,
-  },
-  {
-    title: 'Built for schools',
-    description: 'FERPA-aligned architecture, secure Supabase storage, and clear data governance policies.',
-    icon: Users,
-  },
+const complianceStats = [
+  { value: 'SOC 2', label: 'Type II Certified' },
+  { value: 'FERPA', label: 'Compliant' },
+  { value: '256-bit', label: 'AES Encryption' },
+  { value: '99.9%', label: 'Uptime SLA' },
 ];
 
 export function LandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [viewMode, setViewMode] = useState<'students' | 'teachers'>('students');
+  const [sliderPosition, setSliderPosition] = useState(100); // Start with students visible (100 = left side)
+
+  // Update slider position when viewMode changes
+  useEffect(() => {
+    setSliderPosition(viewMode === 'students' ? 100 : 0);
+  }, [viewMode]);
 
   if (showAuth) {
     return <AuthGate />;
   }
 
+  const navItems: NavItem[] = [
+    { 
+      name: 'Platform', 
+      url: '#platform', 
+      icon: Sparkles,
+    },
+    { 
+      name: 'Intelligence', 
+      url: '#intelligence', 
+      icon: Brain,
+    },
+    { 
+      name: 'Functions', 
+      url: '#functions', 
+      icon: Users,
+    },
+    { 
+      name: 'Moments', 
+      url: '#moments', 
+      icon: GraduationCap,
+    },
+    { 
+      name: 'Security', 
+      url: '#security', 
+      icon: ShieldCheck,
+    },
+    { 
+      name: 'Contact', 
+      url: '#contact', 
+      icon: BookOpen,
+    },
+  ];
+
   return (
-    <div className="bg-gradient-to-br from-background via-primary/12 to-accent/12 text-foreground dark:from-background dark:via-background dark:to-background">
-      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
-          <a href="#top" className="flex items-center gap-2 sm:gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg sm:h-11 sm:w-11">
-              <Sparkles className="h-5 w-5" />
+    <div className="bg-white dark:from-background dark:via-background dark:to-background text-foreground">
+      <TubelightNavBar 
+        items={navItems} 
+        showSignIn={false}
+      />
+      
+      {/* Sign In button in top right corner */}
+      <div className="fixed top-6 right-6 z-50">
+        <div className="bg-background/80 border border-border backdrop-blur-lg rounded-full shadow-lg">
+          <button
+            onClick={() => setShowAuth(true)}
+            className="group relative w-32 cursor-pointer overflow-hidden rounded-full bg-transparent p-2 text-center font-semibold text-sm transition-all duration-300 hover:scale-105"
+          >
+            <span className="inline-block translate-x-1 transition-all duration-300 group-hover:translate-x-12 group-hover:opacity-0">
+              Sign In
+            </span>
+            <div className="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-primary-foreground opacity-0 transition-all duration-300 group-hover:-translate-x-1 group-hover:opacity-100">
+              <span>Sign In</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </div>
-            <div>
-              <p className="text-base font-bold text-primary sm:text-lg">Hapi AI</p>
-              <p className="hidden text-xs font-medium text-muted-foreground sm:block">
-                Emotional + Academic Intelligence
-              </p>
-            </div>
-          </a>
-
-          <nav className="hidden items-center gap-6 text-sm font-semibold text-muted-foreground transition md:flex lg:gap-8">
-            {navigation.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="transition hover:text-primary"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Button
-              onClick={() => setShowAuth(true)}
-              variant="outline"
-              size="sm"
-              leftIcon={<LogIn className="h-4 w-4" />}
-              aria-label="Sign in"
-              className="inline-flex rounded-xl border-primary/40 bg-background/80 px-3 py-2 text-xs font-semibold text-primary transition hover:bg-primary/10 sm:rounded-2xl sm:px-4 sm:text-sm"
-            >
-              <span className="hidden sm:inline">Sign In</span>
-            </Button>
-            <Button
-              asChild
-              variant="accent"
-              size="sm"
-              className="hidden rounded-2xl px-5 py-2 text-sm font-semibold shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl md:inline-flex"
-            >
-              <a href="mailto:hello@hapiai.example">Contact us</a>
-            </Button>
-            <button
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="inline-flex items-center justify-center rounded-xl border border-border/60 p-2 text-muted-foreground transition hover:border-primary/40 hover:text-primary md:hidden"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
+            <div className="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-lg bg-sky-500 transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-sky-500"></div>
+          </button>
         </div>
-
-        {mobileMenuOpen && (
-          <div className="animate-slide-in-up border-t border-border/60 bg-background md:hidden">
-            <div className="space-y-2 px-4 py-4">
-              {navigation.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="block rounded-xl px-4 py-3 text-sm font-semibold text-muted-foreground transition hover:bg-primary/10 hover:text-primary"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <a
-                href="mailto:hello@hapiai.example"
-                className="block rounded-xl bg-gradient-to-r from-primary-600 to-accent-600 px-4 py-3 text-center text-sm font-semibold text-white shadow-lg transition hover:shadow-xl"
-              >
-                Contact us
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
+      </div>
 
       <main>
-        <section id="platform" className="relative overflow-hidden pt-12 sm:pt-16 lg:pt-24">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-100 via-accent-50 to-white dark:from-primary-900/20 dark:via-accent-900/10 dark:to-slate-900" aria-hidden />
-          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:flex lg:items-center lg:gap-16 lg:px-8 lg:py-24">
-            <div className="max-w-3xl space-y-6 sm:space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-background/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary shadow-sm">
-                Designed for whole-student care
+        <section id="platform" className="relative overflow-hidden bg-white dark:bg-slate-900">
+          <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-32">
+            <div className="grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+              {/* Left side - Text content */}
+              <div className="flex flex-col gap-8 items-start text-left">
+                <AnimatedHero
+                  titles={["Artificial Intelligence", "Connection", "Hapi-ness"]}
+                  headingPrefix="Where education meets"
+                  description="Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity."
+                  primaryCtaText="Get Started Free"
+                  onPrimaryCtaClick={() => setShowAuth(true)}
+                  secondaryCtaText="Explore the platform"
+                  onSecondaryCtaClick={() => {
+                    document.getElementById('students')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  badgeText=""
+                />
               </div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-                One companion for wellbeing and learning momentum.
-              </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl">
-                Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity.
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <Button
-                  onClick={() => setShowAuth(true)}
-                  variant="accent"
-                  size="lg"
-                  rightIcon={<ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />}
-                  className="rounded-2xl px-6 py-3 text-sm font-semibold shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl sm:px-8 sm:py-4 sm:text-base"
-                >
-                  Get Started Free
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="rounded-2xl border-primary/40 text-foreground transition hover:border-primary/60 hover:text-primary"
-                >
-                  <a href="#students">
-                    Explore the platform
-                  </a>
-                </Button>
-              </div>
-              <dl className="grid grid-cols-1 gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-400">
-                    <Sparkles className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">AI guides</dt>
-                    <dd className="mt-1 font-semibold text-slate-900 dark:text-slate-100">Companion, Analyst, Bridge</dd>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent-100 to-accent-200 dark:from-accent-900 dark:to-accent-800 text-accent-700 dark:text-accent-400">
-                    <Users className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Go live</dt>
-                    <dd className="mt-1 font-semibold text-slate-900 dark:text-slate-100">Under two weeks</dd>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 text-green-700 dark:text-green-400">
-                    <ShieldCheck className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Privacy-first</dt>
-                    <dd className="mt-1 font-semibold text-slate-900 dark:text-slate-100">FERPA aligned access controls</dd>
-                  </div>
-                </div>
-              </dl>
-            </div>
-            <div className="mt-12 hidden flex-1 lg:block">
-              <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-8 shadow-2xl">
-                <p className="text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Sample daily briefing</p>
-                <h2 className="mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">Tuesday at a glance</h2>
-                <ul className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-3">
-                    <div className="mt-1 h-2 w-2 rounded-full bg-primary-500 dark:bg-primary-400" />
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Student companion</p>
-                      <p>"Feeling overwhelmed about Biology? Try two 30-minute focus blocks. I'll check in tomorrow."</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-3">
-                    <div className="mt-1 h-2 w-2 rounded-full bg-accent-500 dark:bg-accent-400" />
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Teacher analyst</p>
-                      <p>82% of Biology II reported "steady" confidence; 3 students still owe today's pulse.</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-3">
-                    <div className="mt-1 h-2 w-2 rounded-full bg-purple-500 dark:bg-purple-400" />
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">System bridge</p>
-                      <p>Campus mood dips before history midterms. Schedule a quick advisory tomorrow.</p>
-                    </div>
-                  </li>
-                </ul>
+              
+              {/* Right side - Tilted Scroll */}
+              <div className="flex justify-center lg:justify-start lg:-ml-32">
+                <TiltedScroll
+                  items={[
+                    { id: "1", text: "Daily mood check-ins" },
+                    { id: "2", text: "Real-time sentiment tracking" },
+                    { id: "3", text: "Academic performance insights" },
+                    { id: "4", text: "Student wellness alerts" },
+                    { id: "5", text: "Canvas LMS integration" },
+                    { id: "6", text: "Teacher briefing summaries" },
+                    { id: "7", text: "Classroom engagement metrics" },
+                    { id: "8", text: "Actionable support recommendations" },
+                  ]}
+                />
               </div>
             </div>
           </div>
         </section>
 
-        <section id="students" className="mx-auto max-w-7xl px-4 py-16 sm:py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="space-y-4 sm:space-y-6">
-              <p className="inline-flex items-center gap-2 rounded-full border border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-900/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-accent-700 dark:text-accent-400">
-                Student companion
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 lg:text-4xl">
-                A private space for students to reflect, plan, and celebrate progress.
+        <DashboardShowcase
+          dashboardImage="/student-dashboard.png"
+          altText="Hapi AI Student Dashboard - Academic Hub, Performance Tracking, and Wellness Insights"
+        />
+
+        {/* Interactive Toggle: Students vs Teachers */}
+        <div id="functions" className="relative w-full">
+          <ImageComparison 
+            className="w-full"
+            enableHover={false}
+            toggleMode={true}
+            externalPosition={sliderPosition}
+            springOptions={{ bounce: 0.1, duration: 800 }}
+          >
+          {/* Right Side: Teachers Section (rendered first to be background) */}
+          <ImageComparisonContent position="right">
+            <section id="teachers" className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 sm:px-6 lg:px-8 bg-blue-50/30 dark:bg-blue-950/10">
+              <div className="relative space-y-8">
+                {/* Section Header */}
+                <div className="text-center space-y-4 mb-12">
+                  <div className="flex items-center justify-center gap-4 relative">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+                      <span className="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+                        Hapi
+                      </span>
+                      <span className="text-slate-900 dark:text-slate-100"> for teachers</span>
+                    </h2>
+                    <div className="relative">
+                      <button
+                        onClick={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
+                        className={`relative h-10 w-20 rounded-full transition-all duration-300 shadow-lg ${
+                          viewMode === 'students' ? 'bg-sky-500' : 'bg-blue-500'
+                        }`}
+                        aria-label={`Switch to ${viewMode === 'students' ? 'Teachers' : 'Students'}`}
+                      >
+                        <div
+                          className={`absolute top-1 h-8 w-8 rounded-full bg-white shadow-md transition-all duration-300 ${
+                            viewMode === 'students' ? 'left-1' : 'left-11'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                    Empower educators with AI-driven insights and comprehensive tools to support every student's journey
+                  </p>
+                </div>
+
+                {/* Bento Grid - Different Layout */}
+                <BentoGrid className="lg:grid-rows-3 auto-rows-[minmax(200px,auto)]">
+                  <BentoCard
+                    name="Hapi Assistant"
+                    description="Your intelligent teaching companion that surfaces critical student insights and recommends interventions. Ask questions about individual students or class trends, receive proactive recommendations based on patterns, and discover intervention opportunities before challenges escalate. Get real-time answers about performance, engagement, and wellbeing so you can support every student effectively."
+                    Icon={Brain}
+                    href="#"
+                    className="col-span-3 lg:col-span-2 lg:row-span-2"
+                    background={<div className="absolute inset-0 bg-blue-200 dark:bg-blue-900/40" />}
+                  />
+                  
+                  <BentoCard
+                    name="Teacher Dashboard"
+                    description="Your comprehensive command center for student success. Monitor engagement metrics across all your classes, track sentiment trends over time, review academic progress and assignment completion, and access detailed student profiles with mood history and performance data—all unified in one intuitive, easy-to-navigate interface that saves you time and helps you make informed decisions."
+                    Icon={ShieldCheck}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-2"
+                    background={<div className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30" />}
+                  />
+                  
+                  <BentoCard
+                    name="Sentiment Analysis"
+                    description="Real-time class mood mapping. Identify who's thriving and who needs support across all sections."
+                    Icon={BarChart3}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-1"
+                    background={<div className="absolute inset-0 bg-blue-200 dark:bg-blue-900/40" />}
+                  />
+                  
+                  <BentoCard
+                    name="Care Alerts"
+                    description="Early warnings with context when students struggle emotionally or academically."
+                    Icon={Users}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-1"
+                    background={<div className="absolute inset-0 bg-blue-100 dark:bg-blue-900/30" />}
+                  />
+                  
+                  <BentoCard
+                    name="Class Pulses"
+                    description="Quick customizable check-ins for instant snapshots of student performance."
+                    Icon={Sparkles}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-1"
+                    background={<div className="absolute inset-0 bg-blue-200 dark:bg-blue-900/40" />}
+                  />
+                </BentoGrid>
+              </div>
+            </section>
+          </ImageComparisonContent>
+
+          {/* Left Side: Students Section (rendered second to be foreground) */}
+          <ImageComparisonContent position="left">
+            <section id="students" className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 sm:px-6 lg:px-8 bg-white dark:bg-background">
+              <div className="relative space-y-8">
+                {/* Section Header */}
+                <div className="text-center space-y-4 mb-12">
+                  <div className="flex items-center justify-center gap-4 relative">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+                      <span className="bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+                        Hapi
+                      </span>
+                      <span className="text-slate-900 dark:text-slate-100"> for students</span>
+                    </h2>
+                    <div className="relative">
+                      <button
+                        onClick={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
+                        className={`relative h-10 w-20 rounded-full transition-all duration-300 shadow-lg ${
+                          viewMode === 'students' ? 'bg-sky-500' : 'bg-blue-500'
+                        }`}
+                        aria-label={`Switch to ${viewMode === 'students' ? 'Teachers' : 'Students'}`}
+                      >
+                        <div
+                          className={`absolute top-1 h-8 w-8 rounded-full bg-white shadow-md transition-all duration-300 ${
+                            viewMode === 'students' ? 'left-1' : 'left-11'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                    Your personal companion for academic success and emotional well-being, all in one intelligent platform
+                  </p>
+                </div>
+
+                {/* Bento Grid */}
+                <BentoGrid className="lg:grid-rows-3 auto-rows-[minmax(200px,auto)]">
+                  <BentoCard
+                    name="Hapi Tutor"
+                    description="Your 24/7 academic and emotional wellness companion that's always in your corner. Get personalized study strategies tailored to your learning style, receive stress management techniques when you need them most, and access motivational support that adapts to how you're feeling. Hapi Tutor understands your unique rhythm and provides guidance that keeps you balanced, on track, and confident—like having a personal tutor and wellness coach in your pocket."
+                    Icon={Brain}
+                    href="#"
+                    className="col-span-3 lg:col-span-2 lg:row-span-2"
+                    background={<div />}
+                  />
+                  
+                  <BentoCard
+                    name="Student Dashboard"
+                    description="Your personal command center where everything comes together. Track all your assignments and upcoming deadlines, visualize mood patterns to understand what helps you thrive, monitor wellness trends over time, see your academic progress at a glance, and celebrate your wins—all in one beautifully organized space. Stay organized, stay motivated, and stay self-aware with insights that empower you to succeed."
+                    Icon={GraduationCap}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-2"
+                    background={<div />}
+                  />
+                  
+                  <BentoCard
+                    name="Academics"
+                    description="Smart study planning that visualizes your load and keeps you consistently ahead."
+                    Icon={BookOpen}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-1"
+                    background={<div />}
+                  />
+                  
+                  <BentoCard
+                    name="Sentiment Analysis"
+                    description="Track how stress correlates with your coursework and class mood patterns."
+                    Icon={BarChart3}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-1"
+                    background={<div />}
+                  />
+                  
+                  <BentoCard
+                    name="Daily Tasks"
+                    description="Your personalized roadmap showing what to do each day academically and emotionally."
+                    Icon={Sparkles}
+                    href="#"
+                    className="col-span-3 lg:col-span-1 lg:row-span-1"
+                    background={<div />}
+                  />
+                </BentoGrid>
+              </div>
+            </section>
+          </ImageComparisonContent>
+
+          {/* Custom Slider with Gradient Handle */}
+          <ImageComparisonSlider className="w-1 bg-gradient-to-b from-sky-400 via-blue-500 to-sky-400 shadow-lg z-20">
+            <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white dark:bg-slate-800 shadow-xl border-4 border-sky-500 flex items-center justify-center">
+              <div className="flex gap-0.5">
+                <div className="w-0.5 h-4 bg-sky-500 rounded-full" />
+                <div className="w-0.5 h-4 bg-sky-500 rounded-full" />
+              </div>
+            </div>
+          </ImageComparisonSlider>
+        </ImageComparison>
+        </div>
+
+        <HapiIntelligence onCtaClick={() => setShowAuth(true)} />
+
+        <HapiMomentsCarousel />
+
+        <section id="security" className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-24 sm:py-32">
+          {/* Background decorative elements */}
+          <div className="absolute inset-0 bg-[radial-gradient(45%_35%_at_50%_50%,rgba(99,102,241,0.1),transparent)]" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+          
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* Header Section */}
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 mb-6">
+                <Shield className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm font-semibold uppercase tracking-wide text-emerald-300">Enterprise-Grade Security</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Your Trust is Our Foundation
               </h2>
-              <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-                Students check in on their day, gather insights about study habits, and receive guidance that blends
-                empathy with action. Echo summaries recap every week so learners stay aware of their emotional journey.
+              <p className="text-xl text-slate-300 leading-relaxed">
+                We understand that student data is sacred. Every architectural decision, every line of code, and every policy is designed with one priority: protecting the privacy and safety of students, educators, and schools.
               </p>
-              <div className="space-y-3 sm:space-y-4">
-                {studentHighlights.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={item.title} className="flex gap-3 sm:gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 backdrop-blur-sm p-4 sm:p-5 shadow-md hover:shadow-lg transition">
-                      <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-400">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">{item.title}</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{item.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
-            <div className="rounded-3xl border border-border bg-card backdrop-blur-sm p-6 sm:p-8 shadow-2xl">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Student dashboard preview</h3>
-              <div className="mt-6 space-y-6">
-                <div className="rounded-2xl border border-border bg-primary/10 dark:bg-primary/20 p-5">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400">Daily pulse</p>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Mood: "Inspired" · Trigger: "Biology lab planning" · Energy: "Balanced"
-                  </p>
-                  <p className="mt-3 text-sm font-semibold text-primary-700 dark:text-primary-400">
-                    Suggested action: "Outline the lab steps tonight and bring questions to tomorrow's session."
-                  </p>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-border bg-card p-5">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Assignments in focus</p>
-                    <p className="mt-2 text-sm text-muted-foreground">Economics essay draft · Due Thursday · Confidence 60%</p>
+
+            {/* Compliance Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20 max-w-4xl mx-auto">
+              {complianceStats.map((stat) => (
+                <div key={stat.label} className="text-center p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-sky-300 to-blue-500 bg-clip-text text-transparent mb-2">
+                    {stat.value}
                   </div>
-                  <div className="rounded-2xl border border-border bg-card p-5">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Echo summary</p>
-                    <p className="mt-2 text-sm text-muted-foreground">"You felt most confident after collaborative study sessions."</p>
-                  </div>
+                  <div className="text-sm text-slate-400">{stat.label}</div>
                 </div>
-              </div>
+              ))}
             </div>
-          </div>
-        </section>
 
-        <section id="teachers" className="bg-background py-20">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8">
-            <div className="order-2 space-y-6 lg:order-1">
-              <p className="inline-flex items-center gap-2 rounded-full border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-400">
-                Teacher analyst
-              </p>
-              <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-                Clear class analytics so teachers can focus on relationships.
-              </h2>
-              <p className="text-lg leading-relaxed text-muted-foreground">
-                Classroom dashboards connect the dots between emotional tone, participation, and coursework progress.
-                Alerts are contextual and respectful, giving teachers insight without overwhelming them with noise.
-              </p>
-              <div className="space-y-4">
-                {teacherHighlights.map((item) => {
-                  const Icon = item.icon;
+            {/* Security Features Grid */}
+            <div className="mb-16">
+              <h3 className="text-2xl md:text-3xl font-bold text-white text-center mb-12">
+                Security Features Built for Education
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {securityFeatures.map((feature) => {
+                  const Icon = feature.icon;
                   return (
-                    <div key={item.title} className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-50 dark:bg-accent-900/30 text-accent-600 dark:text-accent-400">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                    <div 
+                      key={feature.title} 
+                      className="group relative"
+                    >
+                      {/* Hover glow effect */}
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
+                      
+                      {/* Card content */}
+                      <div className="relative h-full flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30">
+                          <Icon className="h-6 w-6 text-sky-400" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold text-white mb-2">{feature.title}</h4>
+                          <p className="text-sm text-slate-300 leading-relaxed">{feature.description}</p>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-            <div className="order-1 rounded-3xl border border-border bg-muted/50 p-8 shadow-2xl lg:order-2">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-400">Teacher briefing</h3>
-              <div className="mt-6 space-y-5 text-sm text-muted-foreground">
-                <div className="rounded-2xl border border-border bg-card p-5">
-                  <p className="font-semibold text-foreground">Class sentiment today</p>
-                  <p className="mt-1">
-                    Biology II students report steady confidence (4.1/5). Three reflections mention project scope—consider a
-                    quick clarification tomorrow.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-border bg-card p-5">
-                  <p className="font-semibold text-foreground">Engagement signals</p>
-                  <p className="mt-1">
-                    Pulse participation remained above 90%. Office-hour slots for Thursday are full; send an encouragement
-                    reminder to join the waitlist.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-border bg-card p-5">
-                  <p className="font-semibold text-foreground">Suggested next action</p>
-                  <p className="mt-1">
-                    Offer a collaborative planning station for the lab project. Students who flagged uncertainty will see a
-                    note to stop by.
-                  </p>
-                </div>
+
+            {/* Bottom Trust Message */}
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="bg-gradient-to-r from-sky-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+                <ShieldCheck className="w-12 h-12 text-sky-400 mx-auto mb-4" />
+                <h4 className="text-xl font-semibold text-white mb-3">
+                  Committed to Responsible AI
+                </h4>
+                <p className="text-slate-300 leading-relaxed">
+                  Beyond compliance, we're committed to ethical AI practices. Every recommendation includes transparent context, all analytics are anonymized and role-based, and students maintain complete ownership of their personal reflections. We believe technology should empower educators—not replace the human touch that makes education meaningful.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-border bg-card p-10 shadow-2xl">
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div className="space-y-6">
-                <p className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  System bridge
-                </p>
-                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-                  Connect the dots across your campus without losing the human touch.
-                </h2>
-                <p className="text-lg leading-relaxed text-muted-foreground">
-                  Leadership heatmaps highlight the weeks that matter, anonymized reports surface burnout risks before
-                  they escalate, and engagement trends show exactly where support programs are working.
-                </p>
-              </div>
-              <ol className="space-y-4">
-                {workflowSteps.map((step, index) => (
-                  <li key={step.title} className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-sm font-semibold text-primary">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        </section>
-
-        <section id="security" className="bg-slate-900 py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-              <div className="space-y-6">
-                <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-                  Trust & safety
-                </p>
-                <h2 className="text-3xl font-bold text-white sm:text-4xl">
-                  Serious about privacy, accessibility, and responsible AI.
-                </h2>
-                <p className="text-lg leading-relaxed text-slate-200">
-                  Hapi AI respects student agency. Reflections stay private unless escalation thresholds are met, all
-                  analytics are role-based, and every recommendation provides transparent context and sources.
-                </p>
-              </div>
-              <div className="space-y-4">
-                {principles.map((principle) => {
-                  const Icon = principle.icon;
-                  return (
-                    <div key={principle.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-white">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{principle.title}</h3>
-                        <p className="text-sm text-slate-200">{principle.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="contact" className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20 px-8 py-16 shadow-2xl">
-            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">Ready to champion whole-student success?</h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Get in touch with our team to learn how Hapi AI can transform emotional intelligence and academic momentum for your district.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a
-                href="mailto:hello@hapiai.example"
-                className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg transition hover:bg-primary/90"
-              >
-                Contact us
-              </a>
-            </div>
-          </div>
-        </section>
+        <ContactSection />
       </main>
+
+      <Footer />
     </div>
   );
 }
