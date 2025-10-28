@@ -1,7 +1,4 @@
-import { Brain, Sparkles, Zap, Target, TrendingUp, Shield, AlertTriangle, TrendingDown, Heart } from "lucide-react";
-import { Button } from "./button";
-import DisplayCards from "./display-cards";
-import type { DisplayCardProps } from "./display-cards";
+import { Brain, Sparkles, Zap, Target, TrendingUp, Shield } from "lucide-react";
 
 export interface HapiIntelligenceProps {
   onCtaClick?: () => void;
@@ -31,53 +28,23 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
     }
   ];
 
-  const insightCards: DisplayCardProps[] = [
-    {
-      icon: <AlertTriangle className="w-4 h-4 text-amber-300" />,
-      title: "At-Risk Alert",
-      description: "3 students need attention",
-      date: "Real-time",
-      iconClassName: "text-amber-500",
-      titleClassName: "text-amber-500",
-      className: "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
-    },
-    {
-      icon: <TrendingDown className="w-4 h-4 text-red-300" />,
-      title: "Engagement Drop",
-      description: "Class 4B showing 15% decline",
-      date: "This week",
-      iconClassName: "text-red-500",
-      titleClassName: "text-red-500",
-      className: "[grid-area:stack] translate-x-16 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
-    },
-    {
-      icon: <Heart className="w-4 h-4 text-green-300" />,
-      title: "Wellbeing Boost",
-      description: "Morning check-ins +22%",
-      date: "Today",
-      iconClassName: "text-green-500",
-      titleClassName: "text-green-500",
-      className: "[grid-area:stack] translate-x-32 translate-y-20 hover:translate-y-10",
-    },
-  ];
-
   return (
-    <section id="intelligence" className="relative overflow-hidden bg-slate-50 dark:bg-slate-900 py-24 sm:py-32">
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
-        {/* Header and AI Insights - Side by Side Layout */}
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
+    <section id="intelligence" className="relative overflow-hidden bg-[#FFFDF8] dark:bg-slate-900 py-24 sm:py-32">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-6 lg:px-8">
+        {/* Header and Video - Side by Side Layout */}
+        <div className="grid lg:grid-cols-[0.85fr,1.15fr] gap-6 lg:gap-10 items-start mb-20">
           {/* Left: Title and Description */}
-          <div className="text-left">
+          <div className="text-left pt-2">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 px-4 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span className="text-sm font-semibold text-purple-700 dark:text-purple-300">Powered by AI</span>
+            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/30 px-4 py-2 mb-6">
+              <Sparkles className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+              <span className="text-sm font-semibold text-sky-700 dark:text-sky-300">Powered by AI</span>
               <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
 
             {/* Main heading with gradient */}
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-600 dark:from-sky-400 dark:via-blue-400 dark:to-sky-500 bg-clip-text text-transparent">
                 Hapi Intelligence
               </span>
             </h2>
@@ -98,9 +65,19 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
             </div>
           </div>
 
-          {/* Right: Display Cards */}
-          <div className="flex justify-center lg:justify-start">
-            <DisplayCards cards={insightCards} />
+          {/* Right: App Preview Video */}
+          <div className="w-full flex items-start justify-end pt-2">
+            <div className="relative w-full rounded-lg overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-[0.5px] border-gray-300/30 dark:border-gray-600 bg-white dark:bg-slate-800">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto block"
+              >
+                <source src="/app-preview.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
         </div>
 
@@ -115,21 +92,21 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Hover glow effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
+
                 {/* Card content */}
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 transition-all duration-300 group-hover:border-purple-500/50 group-hover:transform group-hover:-translate-y-1 shadow-sm">
+                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 transition-all duration-300 group-hover:border-sky-500/50 group-hover:transform group-hover:-translate-y-1 shadow-sm">
                   <div className="flex flex-col items-center text-center gap-4">
                     {/* Icon */}
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30">
-                      <Icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30">
+                      <Icon className="w-6 h-6 text-sky-600 dark:text-sky-400" />
                     </div>
-                    
+
                     {/* Title */}
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                       {capability.title}
                     </h3>
-                    
+
                     {/* Description */}
                     <p className="text-sm text-slate-600 dark:text-slate-400">
                       {capability.description}
@@ -144,19 +121,19 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
         {/* Stats Section */}
         <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mb-12">
           <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-2">
+            <div className="text-4xl font-bold bg-gradient-to-r from-sky-400 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent mb-2">
               99.7%
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">Accuracy Rate</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-blue-600 dark:from-pink-400 dark:to-blue-400 bg-clip-text text-transparent mb-2">
+            <div className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-sky-500 dark:from-blue-400 dark:to-sky-400 bg-clip-text text-transparent mb-2">
               &lt;100ms
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">Response Time</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
+            <div className="text-4xl font-bold bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 bg-clip-text text-transparent mb-2">
               24/7
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">Always Learning</div>

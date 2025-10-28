@@ -20,7 +20,6 @@ import { TubelightNavBar } from '../ui/tubelight-navbar';
 import type { NavItem } from '../ui/tubelight-navbar';
 import { DashboardShowcase } from '../ui/dashboard-showcase';
 import { BentoCard, BentoGrid } from '../ui/bento-grid';
-import { TiltedScroll } from '../ui/tilted-scroll';
 import { HapiIntelligence } from '../ui/hapi-intelligence';
 import { Footer } from '../ui/footer';
 import { ContactSection } from '../ui/contact-section';
@@ -116,9 +115,9 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="bg-white dark:from-background dark:via-background dark:to-background text-foreground">
-      <TubelightNavBar 
-        items={navItems} 
+    <div className="bg-[#FFFDF8] dark:from-background dark:via-background dark:to-background text-foreground">
+      <TubelightNavBar
+        items={navItems}
         showSignIn={false}
       />
       
@@ -144,11 +143,11 @@ export function LandingPage() {
       </div>
 
       <main>
-        <section id="platform" className="relative overflow-hidden bg-white dark:bg-slate-900">
-          <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-32">
-            <div className="grid lg:grid-cols-[1fr_auto] gap-6 items-center">
+        <section id="platform" className="relative overflow-hidden bg-[#FFFDF8] dark:bg-slate-900">
+          <div className="relative max-w-[1400px] mx-auto px-6 py-20 lg:py-28">
+            <div className="grid lg:grid-cols-[0.85fr,1.15fr] gap-4 lg:gap-8 items-start">
               {/* Left side - Text content */}
-              <div className="flex flex-col gap-8 items-start text-left">
+              <div className="w-full pt-2">
                 <AnimatedHero
                   titles={["Artificial Intelligence", "Connection", "Hapi-ness"]}
                   headingPrefix="Where education meets"
@@ -162,30 +161,25 @@ export function LandingPage() {
                   badgeText=""
                 />
               </div>
-              
-              {/* Right side - Tilted Scroll */}
-              <div className="flex justify-center lg:justify-start lg:-ml-32">
-                <TiltedScroll
-                  items={[
-                    { id: "1", text: "Daily mood check-ins" },
-                    { id: "2", text: "Real-time sentiment tracking" },
-                    { id: "3", text: "Academic performance insights" },
-                    { id: "4", text: "Student wellness alerts" },
-                    { id: "5", text: "Canvas LMS integration" },
-                    { id: "6", text: "Teacher briefing summaries" },
-                    { id: "7", text: "Classroom engagement metrics" },
-                    { id: "8", text: "Actionable support recommendations" },
-                  ]}
-                />
+
+              {/* Right side - App preview video */}
+              <div className="w-full flex items-start justify-end pt-2">
+                <div className="relative w-full rounded-lg overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-[0.5px] border-gray-300/30 dark:border-gray-600 bg-white dark:bg-slate-800">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-auto block"
+                    key="/app-preview.mp4"
+                  >
+                    <source src="/app-preview.mp4" type="video/mp4" />
+                  </video>
+                </div>
               </div>
             </div>
           </div>
         </section>
-
-        <DashboardShowcase
-          dashboardImage="/student-dashboard.png"
-          altText="Hapi AI Student Dashboard - Academic Hub, Performance Tracking, and Wellness Insights"
-        />
 
         {/* Interactive Toggle: Students vs Teachers */}
         <div id="functions" className="relative w-full">
@@ -283,7 +277,7 @@ export function LandingPage() {
 
           {/* Left Side: Students Section (rendered second to be foreground) */}
           <ImageComparisonContent position="left">
-            <section id="students" className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 sm:px-6 lg:px-8 bg-white dark:bg-background">
+            <section id="students" className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 sm:px-6 lg:px-8 bg-[#FFFDF8] dark:bg-background">
               <div className="relative space-y-8">
                 {/* Section Header */}
                 <div className="text-center space-y-4 mb-12">
