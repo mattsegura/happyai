@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
@@ -28,6 +29,7 @@ export default defineConfig({
               id.includes('react-dom') ||
               id.includes('react-router') ||
               id.includes('react-hot-toast') ||
+              id.includes('framer-motion') ||  // framer-motion uses React hooks internally
               id.includes('use-') ||  // use-callback-ref, use-sidecar, etc.
               id.includes('@radix-ui') ||  // Radix UI uses React hooks internally
               id.includes('lucide-react')  // lucide-react also uses React
