@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   BarChart3,
   BookOpen,
@@ -14,18 +14,15 @@ import {
   Key,
   Shield
 } from 'lucide-react';
-import { AuthGate } from '../auth/AuthGate';
 import { AnimatedHero } from '../ui/animated-hero';
 import { TubelightNavBar } from '../ui/tubelight-navbar';
 import type { NavItem } from '../ui/tubelight-navbar';
-import { DashboardShowcase } from '../ui/dashboard-showcase';
 import { BentoCard, BentoGrid } from '../ui/bento-grid';
 import { HapiIntelligence } from '../ui/hapi-intelligence';
 import { Footer } from '../ui/footer';
 import { ContactSection } from '../ui/contact-section';
 import { HapiMomentsCarousel } from '../ui/hapi-moments-carousel';
 import { ImageComparison, ImageComparisonContent, ImageComparisonSlider } from '../ui/image-comparison';
-import { useEffect } from 'react';
 
 const securityFeatures = [
   {
@@ -68,7 +65,6 @@ const complianceStats = [
 ];
 
 export function LandingPage() {
-  const [showAuth, setShowAuth] = useState(false);
   const [viewMode, setViewMode] = useState<'students' | 'teachers'>('students');
   const [sliderPosition, setSliderPosition] = useState(100); // Start with students visible (100 = left side)
 
@@ -76,10 +72,6 @@ export function LandingPage() {
   useEffect(() => {
     setSliderPosition(viewMode === 'students' ? 100 : 0);
   }, [viewMode]);
-
-  if (showAuth) {
-    return <AuthGate />;
-  }
 
   const navItems: NavItem[] = [
     { 
@@ -131,8 +123,10 @@ export function LandingPage() {
                   titles={["Artificial Intelligence", "Connection", "Hapi-ness"]}
                   headingPrefix="Where education meets"
                   description="Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity."
-                  primaryCtaText="Get Started Free"
-                  onPrimaryCtaClick={() => setShowAuth(true)}
+                  primaryCtaText="Contact Us"
+                  onPrimaryCtaClick={() => {
+                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   secondaryCtaText="Explore the platform"
                   onSecondaryCtaClick={() => {
                     document.getElementById('students')?.scrollIntoView({ behavior: 'smooth' });
