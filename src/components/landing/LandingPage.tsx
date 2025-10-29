@@ -79,7 +79,7 @@ export function LandingPage() {
 
   const navItems: NavItem[] = [
     {
-      name: 'Platform',
+      name: 'Home',
       url: '#platform',
       icon: Sparkles,
     },
@@ -89,14 +89,14 @@ export function LandingPage() {
       icon: Brain,
     },
     {
-      name: 'Functions',
-      url: '#functions',
-      icon: Users,
-    },
-    {
       name: 'Moments',
       url: '#moments',
       icon: GraduationCap,
+    },
+    {
+      name: 'Functions',
+      url: '#functions',
+      icon: Users,
     },
     {
       name: 'Enterprise',
@@ -376,7 +376,7 @@ export function LandingPage() {
                 </span>
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
-                Comprehensive solutions for schools, districts, and institutions that need advanced features, dedicated support, and enterprise-grade security.
+                Comprehensive solutions for schools, districts, and universities that need advanced features, dedicated support, and enterprise-grade security.
               </p>
             </div>
 
@@ -393,7 +393,7 @@ export function LandingPage() {
                       Unlimited Users
                     </h3>
                     <p className="text-slate-600 dark:text-slate-400">
-                      Scale seamlessly across your entire institution with unlimited student, teacher, and administrator accounts.
+                      Scale seamlessly across your entire university with unlimited student, teacher, and administrator accounts.
                     </p>
                   </div>
                 </div>
@@ -489,7 +489,7 @@ export function LandingPage() {
             <div className="max-w-4xl mx-auto text-center">
               <div className="bg-gradient-to-r from-sky-500/10 to-blue-500/10 backdrop-blur-sm border border-sky-500/30 rounded-2xl p-8 md:p-12">
                 <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">
-                  Ready to transform your institution?
+                  Ready to transform your university?
                 </h3>
                 <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
                   Let's discuss how Hapi can meet your specific needs and create a custom solution for your organization.
