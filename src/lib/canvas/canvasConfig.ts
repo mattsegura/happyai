@@ -6,24 +6,117 @@
  */
 
 export const CANVAS_CONFIG = {
-  // Canvas API base URL (to be set via environment variable)
-  API_BASE_URL: import.meta.env.VITE_CANVAS_API_URL || 'https://canvas.instructure.com/api/v1',
+  // ============================================================================
+  // CANVAS INSTANCE CONFIGURATION
+  // ============================================================================
 
-  // Canvas API access token (to be set via environment variable)
-  ACCESS_TOKEN: import.meta.env.VITE_CANVAS_ACCESS_TOKEN || '',
+  // Canvas instance URL (without trailing slash)
+  INSTANCE_URL: import.meta.env.VITE_CANVAS_INSTANCE_URL || 'https://canvas.instructure.com',
+
+  // Canvas API base path
+  API_PATH: import.meta.env.VITE_CANVAS_API_PATH || '/api/v1',
+
+  // Full API base URL (computed)
+  get API_BASE_URL() {
+    return `${this.INSTANCE_URL}${this.API_PATH}`;
+  },
+
+  // ============================================================================
+  // OAUTH CONFIGURATION
+  // ============================================================================
+
+  // OAuth Client ID
+  CLIENT_ID: import.meta.env.VITE_CANVAS_CLIENT_ID || '',
+
+  // OAuth Redirect URI
+  REDIRECT_URI: import.meta.env.VITE_CANVAS_REDIRECT_URI || `${window.location.origin}/academics/canvas/callback`,
+
+  // OAuth Scopes (Canvas permissions to request)
+  OAUTH_SCOPES: [
+    'url:GET|/api/v1/courses',
+    'url:GET|/api/v1/courses/:id',
+    'url:GET|/api/v1/courses/:course_id/assignments',
+    'url:GET|/api/v1/courses/:course_id/assignments/:id/submissions',
+    'url:GET|/api/v1/calendar_events',
+    'url:GET|/api/v1/courses/:course_id/modules',
+    'url:GET|/api/v1/courses/:course_id/analytics',
+    'url:GET|/api/v1/users/self',
+  ].join(' '),
+
+  // ============================================================================
+  // MOCK DATA TOGGLE
+  // ============================================================================
 
   // Use mock data instead of real Canvas API
   USE_MOCK_DATA: import.meta.env.VITE_USE_CANVAS_MOCK !== 'false',
 
+  // ============================================================================
+  // API REQUEST CONFIGURATION
+  // ============================================================================
+
   // API request timeout (milliseconds)
-  REQUEST_TIMEOUT: 10000,
+  REQUEST_TIMEOUT: parseInt(import.meta.env.VITE_CANVAS_API_TIMEOUT || '10000', 10),
 
-  // Rate limiting
-  MAX_REQUESTS_PER_SECOND: 10,
+  // ============================================================================
+  // RATE LIMITING CONFIGURATION
+  // ============================================================================
 
-  // Pagination
+  // Canvas rate limit (requests per hour)
+  // Default: 600 requests/hour (Canvas's limit)
+  RATE_LIMIT_PER_HOUR: parseInt(import.meta.env.VITE_CANVAS_RATE_LIMIT || '600', 10),
+
+  // Computed: requests per minute (safe limit)
+  get RATE_LIMIT_PER_MINUTE() {
+    return Math.floor(this.RATE_LIMIT_PER_HOUR / 60);
+  },
+
+  // Computed: requests per second (very conservative)
+  get RATE_LIMIT_PER_SECOND() {
+    return Math.max(1, Math.floor(this.RATE_LIMIT_PER_MINUTE / 60));
+  },
+
+  // ============================================================================
+  // PAGINATION CONFIGURATION
+  // ============================================================================
+
+  // Default number of items per page
   DEFAULT_PAGE_SIZE: 50,
+
+  // Maximum items per page (Canvas allows up to 100)
   MAX_PAGE_SIZE: 100,
+
+  // ============================================================================
+  // CACHING CONFIGURATION
+  // ============================================================================
+
+  // Cache TTL in milliseconds
+  CACHE_TTL_MS: parseInt(import.meta.env.VITE_CANVAS_CACHE_TTL || '15', 10) * 60 * 1000,
+
+  // ============================================================================
+  // SYNC CONFIGURATION
+  // ============================================================================
+
+  // Auto-sync interval in milliseconds (0 = disabled)
+  SYNC_INTERVAL_MS: parseInt(import.meta.env.VITE_CANVAS_SYNC_INTERVAL || '30', 10) * 60 * 1000,
+
+  // Whether auto-sync is enabled
+  get AUTO_SYNC_ENABLED() {
+    return this.SYNC_INTERVAL_MS > 0;
+  },
+} as const;
+
+/**
+ * Canvas OAuth endpoints
+ */
+export const CANVAS_OAUTH_ENDPOINTS = {
+  // OAuth authorization endpoint (full URL)
+  AUTHORIZE: (instanceUrl: string) => `${instanceUrl}/login/oauth2/auth`,
+
+  // OAuth token endpoint (full URL)
+  TOKEN: (instanceUrl: string) => `${instanceUrl}/login/oauth2/token`,
+
+  // OAuth token revocation endpoint (full URL)
+  REVOKE: (instanceUrl: string) => `${instanceUrl}/login/oauth2/token`,
 } as const;
 
 /**

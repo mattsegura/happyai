@@ -13,6 +13,8 @@ import {
   FileText,
 } from 'lucide-react';
 import { canvasApi, type CanvasCourse, type CanvasAssignment, type CanvasSubmission } from '../../lib/canvasApiMock';
+import { GoogleCalendarConnect } from './GoogleCalendarConnect';
+import { CalendarSyncSettings } from './CalendarSyncSettings';
 
 type AssignmentWithSubmission = CanvasAssignment & {
   submission?: CanvasSubmission;
@@ -200,6 +202,12 @@ export function GradesView() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Google Calendar Integration */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GoogleCalendarConnect />
+        <CalendarSyncSettings />
       </div>
 
       {/* Course Cards */}
