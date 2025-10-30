@@ -227,8 +227,8 @@ export function Dashboard() {
         </div>
       </aside>
 
-      <div className="flex-1 overflow-hidden">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
           {!location.pathname.includes('/overview') && (
             <header
               className={cn(
@@ -356,11 +356,7 @@ export function Dashboard() {
               />
               <Route
                 path="academics"
-                element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicsHub />
-                  </div>
-                }
+                element={<AcademicsHub />}
               />
             </Routes>
         </div>
