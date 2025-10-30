@@ -238,11 +238,11 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                 <button
                   key={action.id}
                   onClick={() => onNavigate(action.id)}
-                  className="group relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm hover:shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] text-left"
+                  className="group relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm hover:shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] text-left h-full flex flex-col"
                 >
                   {/* Header */}
-                  <div className="p-4 md:p-5 pb-3">
-                    <div className="flex items-center gap-3 md:gap-4 mb-4">
+                  <div className="p-4 md:p-5 pb-3 flex-1 flex flex-col">
+                    <div className="flex items-center gap-3 md:gap-4 mb-3">
                       <div className={cn('p-2.5 md:p-3 rounded-xl shadow-md flex-shrink-0', action.iconBg)}>
                         <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                       </div>
@@ -254,9 +254,9 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                     </div>
 
                     {/* Preview Content */}
-                    <div className="mt-3">
+                    <div className="mt-auto pt-2">
                       {action.preview.type === 'assignments' && (
-                        <div className="space-y-2">
+                        <div className="space-y-2 min-h-[80px]">
                           {action.preview.items.slice(0, 3).map((item: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-2 text-xs">
                               {item.status === 'in-progress' ? (
@@ -272,7 +272,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                       )}
 
                       {action.preview.type === 'mood-tracker' && (
-                        <div className="space-y-3">
+                        <div className="space-y-3 min-h-[80px]">
                           {/* Mood indicator */}
                           <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20">
                             <div className="flex items-center gap-2">
@@ -305,7 +305,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                       )}
 
                       {action.preview.type === 'suggestions' && (
-                        <div className="space-y-1.5">
+                        <div className="space-y-1.5 min-h-[80px]">
                           {action.preview.items.slice(0, 2).map((item: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-2 text-xs text-foreground/70 group-hover:text-foreground/90 transition-colors">
                               <Sparkles className="h-3 w-3 text-purple-500 flex-shrink-0" />
@@ -316,7 +316,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                       )}
 
                       {action.preview.type === 'moments' && (
-                        <div className="space-y-2">
+                        <div className="space-y-2 min-h-[80px]">
                           {action.preview.items.map((item: any, idx: number) => (
                             <div key={idx} className="flex items-start gap-2">
                               <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0">
