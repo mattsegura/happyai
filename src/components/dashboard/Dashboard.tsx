@@ -226,58 +226,58 @@ export function Dashboard() {
 
       <div className="flex-1 overflow-hidden">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          <header
-            className={cn(
-              SURFACE_BASE,
-              'flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between'
-            )}
-          >
-            <div>
-              <h1 className="text-xl font-semibold text-foreground md:text-2xl">
-                {currentView === 'home' && 'Overview'}
-                {currentView === 'academics' && 'Academics'}
-                {currentView === 'wellbeing' && 'Wellbeing'}
-                {currentView === 'progress' && 'Progress'}
-                {currentView === 'hapi' && 'Hapi AI'}
-                {currentView === 'lab' && 'Hapi Lab'}
-                {currentView === 'classes' && 'Classes'}
-                {currentView === 'profile' && 'Profile'}
-              </h1>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {currentView === 'home' && 'Your dashboard at a glance'}
-                {currentView === 'academics' && 'Grades, assignments & study tools'}
-                {currentView === 'wellbeing' && 'Mood tracking & sentiment analytics'}
-                {currentView === 'progress' && 'Achievements, badges & leaderboard'}
-                {currentView === 'hapi' && 'AI-powered assistant'}
-                {currentView === 'lab' && 'Pulse checks & Hapi moments'}
-                {currentView === 'classes' && 'Your enrolled classes'}
-                {currentView === 'profile' && 'Your account settings'}
-              </p>
-            </div>
-            <div className="md:hidden">
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = currentView === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setCurrentView(item.id as View)}
-                      className={cn(
-                        'flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap',
-                        isActive
-                          ? 'bg-primary text-primary-foreground shadow'
-                          : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                    </button>
-                  );
-                })}
+          {currentView !== 'home' && (
+            <header
+              className={cn(
+                SURFACE_BASE,
+                'flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between'
+              )}
+            >
+              <div>
+                <h1 className="text-xl font-semibold text-foreground md:text-2xl">
+                  {currentView === 'academics' && 'Academics'}
+                  {currentView === 'wellbeing' && 'Wellbeing'}
+                  {currentView === 'progress' && 'Progress'}
+                  {currentView === 'hapi' && 'Hapi AI'}
+                  {currentView === 'lab' && 'Hapi Lab'}
+                  {currentView === 'classes' && 'Classes'}
+                  {currentView === 'profile' && 'Profile'}
+                </h1>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {currentView === 'academics' && 'Grades, assignments & study tools'}
+                  {currentView === 'wellbeing' && 'Mood tracking & sentiment analytics'}
+                  {currentView === 'progress' && 'Achievements, badges & leaderboard'}
+                  {currentView === 'hapi' && 'AI-powered assistant'}
+                  {currentView === 'lab' && 'Pulse checks & Hapi moments'}
+                  {currentView === 'classes' && 'Your enrolled classes'}
+                  {currentView === 'profile' && 'Your account settings'}
+                </p>
               </div>
-            </div>
-          </header>
+              <div className="md:hidden">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  {navigationItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = currentView === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setCurrentView(item.id as View)}
+                        className={cn(
+                          'flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap',
+                          isActive
+                            ? 'bg-primary text-primary-foreground shadow'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </header>
+          )}
 
             <div>
               {currentView === 'home' && (

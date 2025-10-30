@@ -20,7 +20,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       icon: Zap,
       color: 'from-orange-500 to-red-500',
       bgColor: 'bg-orange-50 dark:bg-orange-950/20',
-      iconBg: 'bg-orange-100 dark:bg-orange-900/30'
+      iconBg: 'bg-gradient-to-br from-orange-500 to-red-500'
     },
     {
       label: 'Points Today',
@@ -29,7 +29,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       icon: Trophy,
       color: 'from-yellow-500 to-orange-500',
       bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
-      iconBg: 'bg-yellow-100 dark:bg-yellow-900/30'
+      iconBg: 'bg-gradient-to-br from-yellow-500 to-orange-500'
     },
     {
       label: 'Class Rank',
@@ -38,7 +38,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       icon: TrendingUp,
       color: 'from-green-500 to-emerald-500',
       bgColor: 'bg-green-50 dark:bg-green-950/20',
-      iconBg: 'bg-green-100 dark:bg-green-900/30'
+      iconBg: 'bg-gradient-to-br from-green-500 to-emerald-500'
     },
     {
       label: 'Current Level',
@@ -47,7 +47,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       icon: Activity,
       color: 'from-purple-500 to-pink-500',
       bgColor: 'bg-purple-50 dark:bg-purple-950/20',
-      iconBg: 'bg-purple-100 dark:bg-purple-900/30'
+      iconBg: 'bg-gradient-to-br from-purple-500 to-pink-500'
     },
   ];
 
