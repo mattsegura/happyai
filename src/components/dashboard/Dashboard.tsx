@@ -5,23 +5,21 @@ import { mockPulseCheckSets } from '../../lib/mockData';
 import { OverviewView } from './OverviewView';
 import { MeetingDetailsModal } from './MeetingDetailsModal';
 import { StudentHapiLab } from '../student/StudentHapiLab';
-import { StudentHapiChat } from '../student/StudentHapiChat';
+import { EnhancedHapiChat } from '../student/EnhancedHapiChat';
 import { ClassesView } from './ClassesView';
 import { ProfileView } from './ProfileView';
+import { WellbeingView } from '../wellbeing/WellbeingView';
+import { ProgressView } from '../progress/ProgressView';
 import { PopupQueueManager } from '../popups/PopupQueueManager';
 import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { generateAnalyticsPrompt } from '../../lib/analyticsPrompts';
-import { getStaticAnalyticsData } from '../../lib/staticAnalyticsData';
-import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare, GraduationCap, ChevronLeft } from 'lucide-react';
+import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp } from 'lucide-react';
 import { AcademicsHub } from '../academics/AcademicsHub';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
-import { EngagementSection } from './EngagementSection';
 
-type View = 'home' | 'wellbeing' | 'progress' | 'lab' | 'hapi' | 'classes' | 'profile' | 'academics';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
@@ -41,16 +39,14 @@ export function Dashboard() {
   const [classPulses] = useState<any[]>([]);
   const [selectedPulse, setSelectedPulse] = useState<any>(null);
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
-  const [analyticsPrompt, setAnalyticsPrompt] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const analyticsData = getStaticAnalyticsData();
 
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Overview' },
     { id: 'academics', path: '/dashboard/academics', icon: GraduationCap, label: 'Academics' },
     { id: 'wellbeing', path: '/dashboard/wellbeing', icon: Smile, label: 'Wellbeing' },
-    { id: 'progress', path: '/dashboard/progress', icon: Trophy, label: 'Progress' },
+    { id: 'progress', path: '/dashboard/progress', icon: TrendingUp, label: 'Progress' },
     { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
     { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Lab' },
     { id: 'classes', path: '/dashboard/classes', icon: Users, label: 'Classes' },
@@ -121,7 +117,7 @@ export function Dashboard() {
       setSelectedReferral(data);
       setShowHapiReferralModal(true);
     } else {
-      setCurrentView('lab');
+      navigate('/dashboard/lab');
     }
   };
 
@@ -152,15 +148,6 @@ export function Dashboard() {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const handleTalkMore = () => {
-    const prompt = generateAnalyticsPrompt(analyticsData);
-    setAnalyticsPrompt(prompt);
-    setCurrentView('hapi');
-  };
-
-  const handleAnalyticsPromptUsed = () => {
-    setAnalyticsPrompt(null);
-  };
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
@@ -302,8 +289,7 @@ export function Dashboard() {
                 path="wellbeing"
                 element={
                   <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <h1 className="mb-4 text-2xl font-bold">Wellbeing Dashboard</h1>
-                    <p className="text-muted-foreground">Coming soon: Consolidated mood tracking and sentiment analytics</p>
+                    <WellbeingView />
                   </div>
                 }
               />
@@ -311,11 +297,7 @@ export function Dashboard() {
                 path="progress"
                 element={
                   <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <h1 className="mb-4 text-2xl font-bold">Progress & Achievements</h1>
-                    <p className="text-muted-foreground">Coming soon: Badges, leaderboard, and Hapi Moments</p>
-                    <div className="mt-6">
-                      <EngagementSection />
-                    </div>
+                    <ProgressView />
                   </div>
                 }
               />
@@ -331,10 +313,7 @@ export function Dashboard() {
                 path="hapi"
                 element={
                   <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <StudentHapiChat
-                      initialPrompt={analyticsPrompt}
-                      onPromptUsed={handleAnalyticsPromptUsed}
-                    />
+                    <EnhancedHapiChat />
                   </div>
                 }
               />

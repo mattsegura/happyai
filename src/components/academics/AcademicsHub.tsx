@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   GraduationCap,
   Calendar,
@@ -13,11 +14,13 @@ import {
   Star,
   ArrowUp,
   ArrowDown,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export function AcademicsHub() {
   const [selectedAssignment, setSelectedAssignment] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Mock data
   const courses = [
@@ -33,6 +36,41 @@ export function AcademicsHub() {
     { id: '3', title: 'History Essay', course: 'History 201', due: 'Next Week', daysLeft: 7, status: 'not-started', priority: 'high', points: 150, completed: 0 },
     { id: '4', title: 'Chem Quiz Ch.4', course: 'Chemistry', due: '3 days', daysLeft: 3, status: 'in-progress', priority: 'low', points: 25, completed: 30 },
   ];
+
+  const handleStudyPlan = () => {
+    // Generate context for study plan
+    const context = {
+      type: 'study-plan',
+      courses: courses.map(c => ({ name: c.name, grade: c.grade, percent: c.percent })),
+      assignments: assignments.map(a => ({
+        title: a.title,
+        course: a.course,
+        due: a.due,
+        priority: a.priority,
+        status: a.status
+      })),
+      message: `Based on your current courses and assignments, I'll help you create an optimized study plan. You have ${assignments.filter(a => a.priority === 'high').length} high-priority assignments coming up.`
+    };
+
+    // Navigate to Hapi AI with context
+    navigate('/dashboard/hapi', { state: { context } });
+  };
+
+  const handleAITutor = () => {
+    // Generate context for AI tutor
+    const strugglingCourse = courses.reduce((prev, current) =>
+      prev.percent < current.percent ? prev : current
+    );
+
+    const context = {
+      type: 'ai-tutor',
+      focusCourse: strugglingCourse,
+      allCourses: courses,
+      message: `I can help you with any of your courses. It looks like you might benefit from some extra help with ${strugglingCourse.name} (currently at ${strugglingCourse.percent}%). What would you like to work on?`
+    };
+
+    navigate('/dashboard/hapi', { state: { context } });
+  };
 
   return (
     <div className="h-full flex flex-col gap-3 max-h-[calc(100vh-120px)]">
@@ -192,13 +230,36 @@ export function AcademicsHub() {
           <div className="bg-card rounded-xl border border-border p-3">
             <h3 className="text-sm font-semibold text-foreground mb-2">Quick Actions</h3>
             <div className="grid grid-cols-2 gap-2">
-              <button className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950/20 dark:to-violet-900/20 border border-violet-200/50 dark:border-violet-800/50 hover:scale-[1.02] transition-transform">
-                <FileText className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                <span className="text-xs font-medium text-violet-700 dark:text-violet-300">Study Plan</span>
+              <button
+                onClick={handleStudyPlan}
+                className="relative group flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950/20 dark:to-violet-900/20 border border-violet-200/50 dark:border-violet-800/50 hover:scale-[1.02] transition-all overflow-hidden"
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                {/* Sparkle animation on hover */}
+                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Sparkles className="h-3 w-3 text-violet-400 animate-pulse" />
+                </div>
+
+                <FileText className="h-5 w-5 text-violet-600 dark:text-violet-400 relative z-10" />
+                <span className="text-xs font-medium text-violet-700 dark:text-violet-300 relative z-10">Study Plan</span>
               </button>
-              <button className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 border border-blue-200/50 dark:border-blue-800/50 hover:scale-[1.02] transition-transform">
-                <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                <span className="text-xs font-medium text-blue-700 dark:text-blue-300">AI Tutor</span>
+
+              <button
+                onClick={handleAITutor}
+                className="relative group flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 border border-blue-200/50 dark:border-blue-800/50 hover:scale-[1.02] transition-all overflow-hidden"
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                {/* Sparkle animation on hover */}
+                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Sparkles className="h-3 w-3 text-blue-400 animate-pulse" />
+                </div>
+
+                <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400 relative z-10" />
+                <span className="text-xs font-medium text-blue-700 dark:text-blue-300 relative z-10">AI Tutor</span>
               </button>
             </div>
           </div>
