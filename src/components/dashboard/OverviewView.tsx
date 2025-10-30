@@ -170,20 +170,20 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
   ];
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-4 pb-6">
       {/* Welcome Section */}
-      <div className="rounded-2xl border border-border/60 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 p-6 md:p-8 shadow-sm">
-        <div className="flex items-start justify-between flex-wrap gap-4">
+      <div className="rounded-xl border border-border/60 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 p-4 md:p-5 shadow-sm">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+            <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
               Welcome back! 👋
             </h2>
-            <p className="text-sm md:text-base text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground">
               Here's what's happening with your academics and wellbeing today.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-border/40">
-            <Calendar className="h-4 w-4" />
+          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/50 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border/40">
+            <Calendar className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{currentDate}</span>
             <span className="sm:hidden">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
           </div>
@@ -218,9 +218,9 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Quick Actions - Takes 2 columns */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-lg md:text-xl font-semibold text-foreground">Quick Actions</h3>
             <button
@@ -345,7 +345,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
         </div>
 
         {/* Weekly Calendar - Takes 1 column */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 md:h-5 md:w-5 text-primary" />
