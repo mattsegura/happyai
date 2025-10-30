@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   BookOpen,
   FileText,
@@ -9,10 +9,11 @@ import {
   Lock,
   ChevronRight,
   Brain,
-  Sparkles,
   MessageSquare,
   Play,
   Download,
+  GraduationCap,
+  Zap,
 } from 'lucide-react';
 import {
   canvasApi,
@@ -20,6 +21,10 @@ import {
   type CanvasModule,
   type CanvasModuleItem,
 } from '../../lib/canvasApiMock';
+import { AICourseTutor, type TutorContext, type TutorResponse } from '../../lib/ai/features/courseTutor';
+import { useAuth } from '../../contexts/AuthContext';
+import { PracticeQuizModal } from './PracticeQuizModal';
+import { QuickReviewModal } from './QuickReviewModal';
 
 type CourseContent = {
   course: CanvasCourse;
@@ -28,24 +33,61 @@ type CourseContent = {
   moduleItems: CanvasModuleItem[];
 };
 
+type ChatMessage = {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+  relatedTopics?: string[];
+  resources?: Array<{ title: string; url: string }>;
+};
+
 export function CourseTutorMode() {
+  const { user } = useAuth();
   const [courses, setCourses] = useState<CanvasCourse[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
   const [courseContent, setCourseContent] = useState<CourseContent | null>(null);
   const [selectedItem, setSelectedItem] = useState<CanvasModuleItem | null>(null);
   const [showAITutor, setShowAITutor] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [aiQuestion, setAiQuestion] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isAIThinking, setIsAIThinking] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [generatedQuiz, setGeneratedQuiz] = useState<any>(null);
+  const [generatedReview, setGeneratedReview] = useState<any>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const courseTutor = useRef<AICourseTutor | null>(null);
 
   useEffect(() => {
     loadCourses();
-  }, []);
+    // Initialize AI tutor
+    if (user?.id) {
+      courseTutor.current = new AICourseTutor(user.id);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (selectedCourse) {
       loadCourseContent(selectedCourse);
+      // Reset chat when course changes
+      setChatMessages([{
+        id: 'welcome',
+        role: 'assistant',
+        content: `Hi! I'm your AI tutor for ${courses.find(c => c.id === selectedCourse)?.name}. I can help you understand course materials, generate practice quizzes, summarize assignments, and create study materials. What would you like to work on today?`,
+        timestamp: new Date(),
+      }]);
     }
-  }, [selectedCourse]);
+  }, [selectedCourse, courses]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages, isAIThinking]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const loadCourses = async () => {
     setLoading(true);
@@ -129,12 +171,136 @@ export function CourseTutorMode() {
     }
   };
 
-  const handleAskAI = () => {
-    if (!aiQuestion.trim()) return;
+  const handleAskAI = async () => {
+    if (!aiQuestion.trim() || !courseTutor.current || !selectedCourse) return;
 
-    // Simulate AI response
-    alert(`AI Tutor: Let me help you understand "${aiQuestion}". This feature uses AI to provide personalized explanations based on your course content and learning style.`);
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: aiQuestion.trim(),
+      timestamp: new Date(),
+    };
+
+    setChatMessages((prev) => [...prev, userMessage]);
     setAiQuestion('');
+    setIsAIThinking(true);
+
+    try {
+      // Build tutor context
+      const course = courses.find((c) => c.id === selectedCourse);
+      const context: TutorContext = {
+        courseId: selectedCourse,
+        courseName: course?.name || '',
+        courseCode: course?.course_code || '',
+        moduleId: courseContent?.currentModule?.id,
+        moduleName: courseContent?.currentModule?.name,
+        assignmentId: selectedItem?.type === 'Assignment' ? selectedItem.content_id : undefined,
+        assignmentName: selectedItem?.type === 'Assignment' ? selectedItem.title : undefined,
+        additionalContext: selectedItem ? `Current content: ${selectedItem.title}` : undefined,
+      };
+
+      // Get AI response
+      const response: TutorResponse = await courseTutor.current.answerQuestion(
+        userMessage.content,
+        context
+      );
+
+      const aiMessage: ChatMessage = {
+        id: `ai-${Date.now()}`,
+        role: 'assistant',
+        content: response.answer,
+        timestamp: new Date(),
+        relatedTopics: response.relatedTopics,
+        resources: response.additionalResources.map((r) => ({ title: r, url: '#' })),
+      };
+
+      setChatMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Failed to get AI response:', error);
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error processing your question. Please make sure Chatbase is configured in your environment variables and try again.',
+        timestamp: new Date(),
+      };
+      setChatMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsAIThinking(false);
+    }
+  };
+
+  const handleGenerateQuiz = async () => {
+    if (!courseTutor.current || !selectedCourse || !courseContent?.currentModule) {
+      alert('Please select a module first');
+      return;
+    }
+
+    setIsAIThinking(true);
+    try {
+      const quiz = await courseTutor.current.generatePracticeQuiz(
+        selectedCourse,
+        courseContent.currentModule.id,
+        { difficulty: 'medium', questionCount: 5 }
+      );
+
+      // Save quiz and show modal
+      setGeneratedQuiz(quiz);
+      setShowQuizModal(true);
+
+      // Also add message to chat
+      const quizMessage: ChatMessage = {
+        id: `quiz-${Date.now()}`,
+        role: 'assistant',
+        content: `✅ I've generated a practice quiz titled "${quiz.quizTitle}" with ${quiz.questions.length} questions. The quiz has opened in a new window. Good luck!`,
+        timestamp: new Date(),
+      };
+
+      setChatMessages((prev) => [...prev, quizMessage]);
+    } catch (error) {
+      console.error('Failed to generate quiz:', error);
+      alert('Failed to generate quiz. Please make sure AI is configured properly.');
+    } finally {
+      setIsAIThinking(false);
+    }
+  };
+
+  const handleGenerateReview = async () => {
+    if (!courseTutor.current || !selectedCourse) {
+      alert('Please select a course first');
+      return;
+    }
+
+    setIsAIThinking(true);
+    try {
+      const moduleIds = courseContent?.modules.map((m) => m.id) || [];
+      const review = await courseTutor.current.generateQuickReview(selectedCourse, moduleIds);
+
+      // Save review and show modal
+      setGeneratedReview(review);
+      setShowReviewModal(true);
+
+      // Also add message to chat
+      const reviewMessage: ChatMessage = {
+        id: `review-${Date.now()}`,
+        role: 'assistant',
+        content: `✅ I've generated comprehensive review materials!\n\n**Includes:**\n• Key concepts summary\n• ${review.flashcards.length} flashcards for active recall\n• ${review.practiceProblems.length} practice problems with solutions\n\nThe review materials have opened in a new window. Happy studying!`,
+        timestamp: new Date(),
+      };
+
+      setChatMessages((prev) => [...prev, reviewMessage]);
+    } catch (error) {
+      console.error('Failed to generate review:', error);
+      alert('Failed to generate review materials. Please make sure AI is configured properly.');
+    } finally {
+      setIsAIThinking(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleAskAI();
+    }
   };
 
   if (loading) {
@@ -185,32 +351,164 @@ export function CourseTutorMode() {
 
       {/* AI Tutor Chat */}
       {showAITutor && (
-        <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-800">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <h3 className="text-lg font-bold text-foreground">Ask AI Tutor Anything</h3>
+        <div className="bg-card rounded-xl border border-border shadow-lg overflow-hidden">
+          {/* Chat Header */}
+          <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+                <Brain className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold">AI Course Tutor</h3>
+                <p className="text-sm opacity-90">Powered by AI - Ask me anything!</p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={aiQuestion}
-              onChange={(e) => setAiQuestion(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAskAI()}
-              placeholder="e.g., Can you explain cellular respiration in simple terms?"
-              className="flex-1 px-4 py-3 rounded-lg border border-blue-300 dark:border-blue-700 bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
-            />
-            <button
-              onClick={handleAskAI}
-              className="px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2 font-medium"
-            >
-              <MessageSquare className="w-5 h-5" />
-              Ask
-            </button>
+
+          {/* Quick Actions */}
+          <div className="border-b border-border p-4 bg-muted/30">
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={handleGenerateQuiz}
+                disabled={!courseContent?.currentModule || isAIThinking}
+                className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+              >
+                <GraduationCap className="w-4 h-4" />
+                Generate Practice Quiz
+              </button>
+              <button
+                onClick={handleGenerateReview}
+                disabled={!selectedCourse || isAIThinking}
+                className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+              >
+                <Zap className="w-4 h-4" />
+                Generate Quick Review
+              </button>
+            </div>
           </div>
-          <div className="mt-4 p-4 bg-card rounded-lg border border-blue-200 dark:border-blue-800">
-            <p className="text-sm text-muted-foreground">
-              <strong className="text-foreground">Tip:</strong> Ask questions about course content, request explanations, get study tips, or practice problems!
-            </p>
+
+          {/* Chat Messages */}
+          <div className="h-96 overflow-y-auto p-4 space-y-4 bg-muted/20">
+            {chatMessages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`max-w-[85%] ${message.role === 'user' ? 'order-2' : 'order-1'}`}>
+                  <div
+                    className={`rounded-2xl px-4 py-3 shadow ${
+                      message.role === 'user'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-card text-foreground border border-border'
+                    }`}
+                  >
+                    {message.role === 'assistant' && (
+                      <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                          <Brain className="h-3.5 w-3.5" />
+                        </div>
+                        AI Tutor
+                      </div>
+                    )}
+                    <p className="text-sm leading-relaxed whitespace-pre-line">{message.content}</p>
+
+                    {/* Related Topics */}
+                    {message.relatedTopics && message.relatedTopics.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border/50">
+                        <p className="text-xs font-medium mb-2 opacity-75">Related topics:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {message.relatedTopics.map((topic, i) => (
+                            <span
+                              key={i}
+                              className="text-xs px-2 py-1 bg-primary/10 rounded-full"
+                            >
+                              {topic}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Resources */}
+                    {message.resources && message.resources.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border/50">
+                        <p className="text-xs font-medium mb-2 opacity-75">Helpful resources:</p>
+                        <ul className="text-xs space-y-1">
+                          {message.resources.map((resource, i) => (
+                            <li key={i}>
+                              <a href={resource.url} className="underline hover:no-underline opacity-90">
+                                {resource.title}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                  <span
+                    className={`mt-1 block text-xs text-muted-foreground ${
+                      message.role === 'user' ? 'text-right' : 'text-left'
+                    }`}
+                  >
+                    {message.timestamp.toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {/* Typing Indicator */}
+            {isAIThinking && (
+              <div className="flex justify-start">
+                <div className="max-w-[85%]">
+                  <div className="rounded-2xl border border-border bg-card px-4 py-3 shadow">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                        <Brain className="h-3.5 w-3.5" />
+                      </div>
+                      AI Tutor is thinking...
+                    </div>
+                    <div className="flex gap-1">
+                      {[0, 150, 300].map((delay) => (
+                        <span
+                          key={delay}
+                          className="h-2 w-2 animate-bounce rounded-full bg-primary/60"
+                          style={{ animationDelay: `${delay}ms` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Area */}
+          <div className="border-t border-border p-4 bg-card">
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={aiQuestion}
+                onChange={(e) => setAiQuestion(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask a question about this course..."
+                disabled={!selectedCourse || isAIThinking}
+                className="flex-1 px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <button
+                onClick={handleAskAI}
+                disabled={!aiQuestion.trim() || !selectedCourse || isAIThinking}
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <MessageSquare className="h-5 w-5" />
+              </button>
+            </div>
+            {!selectedCourse && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Select a course to start chatting with the AI tutor
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -396,6 +694,22 @@ export function CourseTutorMode() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modals */}
+      {showQuizModal && generatedQuiz && (
+        <PracticeQuizModal
+          quiz={generatedQuiz}
+          onClose={() => setShowQuizModal(false)}
+        />
+      )}
+
+      {showReviewModal && generatedReview && (
+        <QuickReviewModal
+          reviewMaterials={generatedReview}
+          courseName={courses.find((c) => c.id === selectedCourse)?.name}
+          onClose={() => setShowReviewModal(false)}
+        />
       )}
     </div>
   );

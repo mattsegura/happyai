@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { GradesView } from './GradesView';
+import { EnhancedGradesView as GradesView } from './EnhancedGradesView';
 import { StudyPlanner } from './StudyPlanner';
 import { CourseTutorMode } from './CourseTutorMode';
 import { MoodGradeAnalytics } from './MoodGradeAnalytics';
+import { FeedbackHub } from './FeedbackHub';
 import {
   GraduationCap,
   Calendar,
   BookOpen,
   BarChart3,
   Sparkles,
+  MessageSquare,
 } from 'lucide-react';
 
-type AcademicView = 'grades' | 'planner' | 'tutor' | 'analytics';
+type AcademicView = 'grades' | 'planner' | 'tutor' | 'analytics' | 'feedback';
 
 export function AcademicsHub() {
   const [currentView, setCurrentView] = useState<AcademicView>('grades');
@@ -39,6 +41,13 @@ export function AcademicsHub() {
       color: 'indigo',
     },
     {
+      id: 'feedback' as AcademicView,
+      name: 'Feedback Hub',
+      icon: MessageSquare,
+      description: 'Instructor insights',
+      color: 'green',
+    },
+    {
       id: 'analytics' as AcademicView,
       name: 'Mood × Grades',
       icon: BarChart3,
@@ -63,7 +72,7 @@ export function AcademicsHub() {
           </div>
 
           {/* View Navigation */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {views.map((view) => {
               const Icon = view.icon;
               const isActive = currentView === view.id;
@@ -113,6 +122,7 @@ export function AcademicsHub() {
         {currentView === 'grades' && <GradesView />}
         {currentView === 'planner' && <StudyPlanner />}
         {currentView === 'tutor' && <CourseTutorMode />}
+        {currentView === 'feedback' && <FeedbackHub />}
         {currentView === 'analytics' && <MoodGradeAnalytics />}
       </div>
     </div>
