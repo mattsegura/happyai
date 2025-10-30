@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockPulseCheckSets } from '../../lib/mockData';
 import { OverviewView } from './OverviewView';
@@ -26,7 +27,8 @@ const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-bl
 
 export function Dashboard() {
   const { user } = useAuth();
-  const [currentView, setCurrentView] = useState<View>('home');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showPopups, setShowPopups] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [popupResetTrigger, setPopupResetTrigger] = useState(0);
@@ -45,14 +47,14 @@ export function Dashboard() {
   const analyticsData = getStaticAnalyticsData();
 
   const navigationItems = [
-    { id: 'home', icon: Home, label: 'Overview' },
-    { id: 'academics', icon: GraduationCap, label: 'Academics' },
-    { id: 'wellbeing', icon: Smile, label: 'Wellbeing' },
-    { id: 'progress', icon: Trophy, label: 'Progress' },
-    { id: 'hapi', icon: MessageSquare, label: 'Hapi AI' },
-    { id: 'lab', icon: Beaker, label: 'Lab' },
-    { id: 'classes', icon: Users, label: 'Classes' },
-    { id: 'profile', icon: User, label: 'Profile' },
+    { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Overview' },
+    { id: 'academics', path: '/dashboard/academics', icon: GraduationCap, label: 'Academics' },
+    { id: 'wellbeing', path: '/dashboard/wellbeing', icon: Smile, label: 'Wellbeing' },
+    { id: 'progress', path: '/dashboard/progress', icon: Trophy, label: 'Progress' },
+    { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
+    { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Lab' },
+    { id: 'classes', path: '/dashboard/classes', icon: Users, label: 'Classes' },
+    { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
   useEffect(() => {
@@ -62,14 +64,14 @@ export function Dashboard() {
   }, [user, refreshTrigger]);
 
   useEffect(() => {
-    if (currentView === 'home' && user) {
+    if (location.pathname.includes('/overview') && user) {
       setShowPopups(true);
       setPopupResetTrigger(prev => prev + 1);
     }
-  }, [currentView, user]);
+  }, [location.pathname, user]);
 
   useEffect(() => {
-    if (currentView !== 'home') return;
+    if (!location.pathname.includes('/overview')) return;
 
     const pollInterval = setInterval(() => {
       setRefreshTrigger(prev => prev + 1);
@@ -77,7 +79,7 @@ export function Dashboard() {
     }, 30000);
 
     return () => clearInterval(pollInterval);
-  }, [currentView]);
+  }, [location.pathname]);
 
   const checkMorningPulse = async () => {
     if (!user) return;
@@ -189,24 +191,25 @@ export function Dashboard() {
         <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
           {navigationItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentView === item.id;
             const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
-              <button
+              <NavLink
                 key={item.id}
-                onClick={() => setCurrentView(item.id as View)}
-                className={cn(
-                  'flex w-full items-center rounded-xl py-3 transition-all duration-200',
-                  isActive
-                    ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
-                    : 'hover:bg-muted/70 hover:text-foreground',
-                  spacingClasses
-                )}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                      : 'hover:bg-muted/70 hover:text-foreground',
+                    spacingClasses
+                  )
+                }
                 aria-label={item.label}
               >
                 <Icon className="h-5 w-5" />
                 {!sidebarCollapsed && <span>{item.label}</span>}
-              </button>
+              </NavLink>
             );
           })}
         </nav>
@@ -226,7 +229,7 @@ export function Dashboard() {
 
       <div className="flex-1 overflow-hidden">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          {currentView !== 'home' && (
+          {!location.pathname.includes('/overview') && (
             <header
               className={cn(
                 SURFACE_BASE,
@@ -235,33 +238,33 @@ export function Dashboard() {
             >
               <div>
                 <h1 className="text-xl font-semibold text-foreground md:text-2xl">
-                  {currentView === 'academics' && 'Academics'}
-                  {currentView === 'wellbeing' && 'Wellbeing'}
-                  {currentView === 'progress' && 'Progress'}
-                  {currentView === 'hapi' && 'Hapi AI'}
-                  {currentView === 'lab' && 'Hapi Lab'}
-                  {currentView === 'classes' && 'Classes'}
-                  {currentView === 'profile' && 'Profile'}
+                  {location.pathname.includes('academics') && 'Academics'}
+                  {location.pathname.includes('wellbeing') && 'Wellbeing'}
+                  {location.pathname.includes('progress') && 'Progress'}
+                  {location.pathname.includes('hapi') && 'Hapi AI'}
+                  {location.pathname.includes('lab') && 'Hapi Lab'}
+                  {location.pathname.includes('classes') && 'Classes'}
+                  {location.pathname.includes('profile') && 'Profile'}
                 </h1>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {currentView === 'academics' && 'Grades, assignments & study tools'}
-                  {currentView === 'wellbeing' && 'Mood tracking & sentiment analytics'}
-                  {currentView === 'progress' && 'Achievements, badges & leaderboard'}
-                  {currentView === 'hapi' && 'AI-powered assistant'}
-                  {currentView === 'lab' && 'Pulse checks & Hapi moments'}
-                  {currentView === 'classes' && 'Your enrolled classes'}
-                  {currentView === 'profile' && 'Your account settings'}
+                  {location.pathname.includes('academics') && 'Grades, assignments & study tools'}
+                  {location.pathname.includes('wellbeing') && 'Mood tracking & sentiment analytics'}
+                  {location.pathname.includes('progress') && 'Achievements, badges & leaderboard'}
+                  {location.pathname.includes('hapi') && 'AI-powered assistant'}
+                  {location.pathname.includes('lab') && 'Pulse checks & Hapi moments'}
+                  {location.pathname.includes('classes') && 'Your enrolled classes'}
+                  {location.pathname.includes('profile') && 'Your account settings'}
                 </p>
               </div>
               <div className="md:hidden">
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                   {navigationItems.map((item) => {
                     const Icon = item.icon;
-                    const isActive = currentView === item.id;
+                    const isActive = location.pathname === item.path;
                     return (
                       <button
                         key={item.id}
-                        onClick={() => setCurrentView(item.id as View)}
+                        onClick={() => navigate(item.path)}
                         className={cn(
                           'flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap',
                           isActive
@@ -279,72 +282,87 @@ export function Dashboard() {
             </header>
           )}
 
-            <div>
-              {currentView === 'home' && (
-                <OverviewView
-                  onNavigate={(view) => setCurrentView(view as View)}
-                />
-              )}
-
-              {currentView === 'wellbeing' && (
-                <div className={cn(SURFACE_BASE, 'p-6')}>
-                  <h1 className="mb-4 text-2xl font-bold">Wellbeing Dashboard</h1>
-                  <p className="text-muted-foreground">Coming soon: Consolidated mood tracking and sentiment analytics</p>
-                </div>
-              )}
-
-              {currentView === 'progress' && (
-                <div className={cn(SURFACE_BASE, 'p-6')}>
-                  <h1 className="mb-4 text-2xl font-bold">Progress & Achievements</h1>
-                  <p className="text-muted-foreground">Coming soon: Badges, leaderboard, and Hapi Moments</p>
-                  <div className="mt-6">
-                    <EngagementSection />
-                  </div>
-                </div>
-              )}
-
-          {showPopups && currentView === 'home' && (
-            <PopupQueueManager
-              onAllComplete={handleAllPopupsComplete}
-              resetTrigger={popupResetTrigger}
-            />
-          )}
-
-
-
-          {currentView === 'lab' && (
-            <div className="space-y-6">
-              <StudentHapiLab />
-            </div>
-          )}
-
-          {currentView === 'hapi' && (
-            <div className={cn(SURFACE_BASE, 'p-6')}>
-              <StudentHapiChat
-                initialPrompt={analyticsPrompt}
-                onPromptUsed={handleAnalyticsPromptUsed}
+            <Routes>
+              <Route index element={<Navigate to="/dashboard/overview" replace />} />
+              <Route
+                path="overview"
+                element={
+                  <>
+                    <OverviewView onNavigate={(view) => navigate(`/dashboard/${view}`)} />
+                    {showPopups && (
+                      <PopupQueueManager
+                        onAllComplete={handleAllPopupsComplete}
+                        resetTrigger={popupResetTrigger}
+                      />
+                    )}
+                  </>
+                }
               />
-            </div>
-          )}
-
-          {currentView === 'classes' && (
-            <div className={cn(SURFACE_BASE, 'p-6')}>
-              <ClassesView />
-            </div>
-          )}
-
-          {currentView === 'profile' && (
-            <div className={cn(SURFACE_BASE, 'p-6')}>
-              <ProfileView />
-            </div>
-          )}
-
-          {currentView === 'academics' && (
-            <div className={cn(SURFACE_BASE, 'p-6')}>
-              <AcademicsHub />
-            </div>
-          )}
-          </div>
+              <Route
+                path="wellbeing"
+                element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <h1 className="mb-4 text-2xl font-bold">Wellbeing Dashboard</h1>
+                    <p className="text-muted-foreground">Coming soon: Consolidated mood tracking and sentiment analytics</p>
+                  </div>
+                }
+              />
+              <Route
+                path="progress"
+                element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <h1 className="mb-4 text-2xl font-bold">Progress & Achievements</h1>
+                    <p className="text-muted-foreground">Coming soon: Badges, leaderboard, and Hapi Moments</p>
+                    <div className="mt-6">
+                      <EngagementSection />
+                    </div>
+                  </div>
+                }
+              />
+              <Route
+                path="lab"
+                element={
+                  <div className="space-y-6">
+                    <StudentHapiLab />
+                  </div>
+                }
+              />
+              <Route
+                path="hapi"
+                element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <StudentHapiChat
+                      initialPrompt={analyticsPrompt}
+                      onPromptUsed={handleAnalyticsPromptUsed}
+                    />
+                  </div>
+                }
+              />
+              <Route
+                path="classes"
+                element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <ClassesView />
+                  </div>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <ProfileView />
+                  </div>
+                }
+              />
+              <Route
+                path="academics"
+                element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicsHub />
+                  </div>
+                }
+              />
+            </Routes>
         </div>
       </div>
 

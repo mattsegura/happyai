@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { ToastProvider } from './components/ui/Toast';
@@ -50,26 +51,44 @@ function AppContent() {
 
   return (
     <Suspense fallback={DashboardLoadingFallback}>
-      {(role === 'admin' || role === 'super_admin') ? (
-        <AdminDashboard />
-      ) : role === 'teacher' ? (
-        <TeacherDashboard />
-      ) : (
-        <Dashboard />
-      )}
+      <Routes>
+        <Route path="/" element={
+          (role === 'admin' || role === 'super_admin') ? (
+            <Navigate to="/admin" replace />
+          ) : role === 'teacher' ? (
+            <Navigate to="/teacher" replace />
+          ) : (
+            <Navigate to="/dashboard" replace />
+          )
+        } />
+
+        {/* Student Dashboard Routes */}
+        <Route path="/dashboard/*" element={<Dashboard />} />
+
+        {/* Teacher Dashboard Routes */}
+        <Route path="/teacher/*" element={<TeacherDashboard />} />
+
+        {/* Admin Dashboard Routes */}
+        <Route path="/admin/*" element={<AdminDashboard />} />
+
+        {/* Catch all route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </Suspense>
   );
 }
 
 function App() {
   return (
-    <TooltipProvider delayDuration={200}>
-      <ToastProvider>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </ToastProvider>
-    </TooltipProvider>
+    <BrowserRouter>
+      <TooltipProvider delayDuration={200}>
+        <ToastProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </ToastProvider>
+      </TooltipProvider>
+    </BrowserRouter>
   );
 }
 

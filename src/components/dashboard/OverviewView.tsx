@@ -170,7 +170,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
   ];
 
   return (
-    <div className="space-y-4 pb-6">
+    <div className="space-y-4">
       {/* Welcome Section */}
       <div className="rounded-xl border border-border/60 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 p-4 md:p-5 shadow-sm">
         <div className="flex items-center justify-between flex-wrap gap-3">
