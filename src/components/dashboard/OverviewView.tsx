@@ -1,16 +1,48 @@
-import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, Clock, ArrowRight, Calendar } from 'lucide-react';
+import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, Clock, ArrowRight, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useState } from 'react';
 
 interface OverviewViewProps {
   onNavigate: (view: string) => void;
 }
 
 export function OverviewView({ onNavigate }: OverviewViewProps) {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric'
   });
+
+  // Calendar logic
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    return { daysInMonth, startingDayOfWeek };
+  };
+
+  const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
+
+  const previousMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  };
+
+  // Mock events for specific days
+  const eventDays = [5, 8, 12, 15, 19, 23, 28]; // Days with events
+  const today = new Date().getDate();
+  const isCurrentMonth =
+    currentMonth.getMonth() === new Date().getMonth() &&
+    currentMonth.getFullYear() === new Date().getFullYear();
 
   const quickStats = [
     {
@@ -94,13 +126,6 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
     },
   ];
 
-  const upcomingItems = [
-    { title: 'Complete Morning Pulse', time: 'Today', type: 'pulse', color: 'bg-rose-500', priority: 'high' },
-    { title: 'Biology Assignment', time: 'Tomorrow, 11:59 PM', type: 'assignment', color: 'bg-blue-500', priority: 'medium' },
-    { title: 'Math Quiz Chapter 5', time: 'Friday, 2:00 PM', type: 'quiz', color: 'bg-yellow-500', priority: 'medium' },
-    { title: 'Office Hours with Dr. Smith', time: 'Next Week', type: 'meeting', color: 'bg-purple-500', priority: 'low' },
-  ];
-
   return (
     <div className="space-y-6 pb-6">
       {/* Welcome Section */}
@@ -172,7 +197,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                   onClick={() => onNavigate(action.id)}
                   className="group relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-5 md:p-6 shadow-sm hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] text-left"
                 >
-                  <div className="flex items-start gap-3 md:gap-4">
+                  <div className="flex items-center gap-3 md:gap-4">
                     <div className={cn('p-2.5 md:p-3 rounded-xl shadow-md flex-shrink-0', action.iconBg)}>
                       <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                     </div>
@@ -181,7 +206,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                       <p className="text-xs md:text-sm text-muted-foreground mb-2 line-clamp-1">{action.description}</p>
                       <p className={cn('text-xs font-semibold', action.statColor)}>{action.stats}</p>
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform opacity-0 group-hover:opacity-100 flex-shrink-0" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform opacity-0 group-hover:opacity-100 flex-shrink-0 self-center" />
                   </div>
 
                   {/* Hover gradient overlay */}
@@ -195,33 +220,97 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
           </div>
         </div>
 
-        {/* Upcoming - Takes 1 column */}
+        {/* Calendar - Takes 1 column */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-              <h3 className="text-lg md:text-xl font-semibold text-foreground">Upcoming</h3>
+              <Calendar className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+              <h3 className="text-lg md:text-xl font-semibold text-foreground">Calendar</h3>
             </div>
-            <span className="text-xs text-muted-foreground hidden sm:inline">Next 7 days</span>
           </div>
-          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm divide-y divide-border/40">
-            {upcomingItems.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group first:rounded-t-xl last:rounded-b-xl"
-              >
-                <div className={cn('h-2 w-2 rounded-full mt-2 flex-shrink-0', item.color)} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground mb-1 group-hover:text-primary transition-colors">{item.title}</p>
-                  <p className="text-xs text-muted-foreground">{item.time}</p>
-                </div>
-                {item.priority === 'high' && (
-                  <span className="text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 px-2 py-0.5 rounded-full">
-                    Urgent
-                  </span>
-                )}
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4">
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-sm font-semibold text-foreground">
+                {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              </h4>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={previousMonth}
+                  className="p-1 hover:bg-muted rounded-md transition-colors"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+                </button>
+                <button
+                  onClick={nextMonth}
+                  className="p-1 hover:bg-muted rounded-md transition-colors"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </button>
               </div>
-            ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="space-y-2">
+              {/* Weekday headers */}
+              <div className="grid grid-cols-7 gap-1 mb-1">
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                  <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              {/* Calendar days */}
+              <div className="grid grid-cols-7 gap-1">
+                {/* Empty cells for days before month starts */}
+                {Array.from({ length: startingDayOfWeek }).map((_, idx) => (
+                  <div key={`empty-${idx}`} className="aspect-square" />
+                ))}
+
+                {/* Days of the month */}
+                {Array.from({ length: daysInMonth }).map((_, idx) => {
+                  const day = idx + 1;
+                  const hasEvent = eventDays.includes(day);
+                  const isToday = isCurrentMonth && day === today;
+
+                  return (
+                    <div
+                      key={day}
+                      className={cn(
+                        'aspect-square flex flex-col items-center justify-center rounded-md text-sm cursor-pointer transition-colors relative',
+                        isToday
+                          ? 'bg-primary text-primary-foreground font-semibold'
+                          : 'hover:bg-muted/50',
+                        !isToday && 'text-foreground'
+                      )}
+                    >
+                      <span className="relative z-10">{day}</span>
+                      {hasEvent && !isToday && (
+                        <div className="absolute bottom-1 w-1 h-1 rounded-full bg-blue-500" />
+                      )}
+                      {hasEvent && isToday && (
+                        <div className="absolute bottom-1 w-1 h-1 rounded-full bg-primary-foreground" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <span>Events</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-md bg-primary" />
+                <span>Today</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
