@@ -1,4 +1,4 @@
-import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, Clock, ArrowRight, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, Clock, ArrowRight, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Circle, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useState } from 'react';
 
@@ -7,7 +7,12 @@ interface OverviewViewProps {
 }
 
 export function OverviewView({ onNavigate }: OverviewViewProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day; // Get Sunday of current week
+    return new Date(today.setDate(diff));
+  });
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -15,34 +20,43 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
     day: 'numeric'
   });
 
-  // Calendar logic
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    return { daysInMonth, startingDayOfWeek };
+  // Weekly calendar logic
+  const getWeekDays = (startDate: Date) => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startDate);
+      day.setDate(startDate.getDate() + i);
+      days.push(day);
+    }
+    return days;
   };
 
-  const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
+  const weekDays = getWeekDays(currentWeekStart);
 
-  const previousMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const previousWeek = () => {
+    const newStart = new Date(currentWeekStart);
+    newStart.setDate(currentWeekStart.getDate() - 7);
+    setCurrentWeekStart(newStart);
   };
 
-  const nextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  const nextWeek = () => {
+    const newStart = new Date(currentWeekStart);
+    newStart.setDate(currentWeekStart.getDate() + 7);
+    setCurrentWeekStart(newStart);
   };
 
-  // Mock events for specific days
-  const eventDays = [5, 8, 12, 15, 19, 23, 28]; // Days with events
-  const today = new Date().getDate();
-  const isCurrentMonth =
-    currentMonth.getMonth() === new Date().getMonth() &&
-    currentMonth.getFullYear() === new Date().getFullYear();
+  // Mock events for specific dates
+  const events = {
+    [new Date().toDateString()]: [{ title: 'Morning Pulse', time: '9:00 AM', color: 'bg-rose-500' }],
+    [new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()]: [
+      { title: 'Bio Lab', time: '2:00 PM', color: 'bg-blue-500' },
+    ],
+    [new Date(new Date().setDate(new Date().getDate() + 3)).toDateString()]: [
+      { title: 'Math Quiz', time: '10:00 AM', color: 'bg-yellow-500' },
+    ],
+  };
+
+  const today = new Date().toDateString();
 
   const quickStats = [
     {
@@ -89,40 +103,73 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       label: 'Academics',
       icon: BookOpen,
       color: 'from-blue-500 to-cyan-600',
-      iconBg: 'bg-blue-500',
+      iconBg: 'bg-gradient-to-br from-blue-500 to-indigo-600',
       description: 'View grades & assignments',
       stats: '3 due this week',
-      statColor: 'text-blue-600 dark:text-blue-400'
+      statColor: 'text-blue-600 dark:text-blue-400',
+      preview: {
+        type: 'assignments',
+        items: [
+          { title: 'Biology Lab Report', due: 'Tomorrow', status: 'pending' },
+          { title: 'Math Problem Set', due: 'Friday', status: 'in-progress' },
+          { title: 'History Essay', due: 'Next Week', status: 'not-started' },
+        ]
+      }
     },
     {
       id: 'wellbeing',
       label: 'Wellbeing',
       icon: Heart,
       color: 'from-rose-500 to-pink-600',
-      iconBg: 'bg-rose-500',
+      iconBg: 'bg-gradient-to-br from-rose-500 to-pink-600',
       description: 'Track your mood',
       stats: "Complete today's pulse",
-      statColor: 'text-rose-600 dark:text-rose-400'
+      statColor: 'text-rose-600 dark:text-rose-400',
+      preview: {
+        type: 'mood',
+        items: [
+          { day: 'M', sentiment: 5, height: 60 },
+          { day: 'T', sentiment: 4, height: 48 },
+          { day: 'W', sentiment: 5, height: 60 },
+          { day: 'Th', sentiment: 6, height: 75 },
+          { day: 'F', sentiment: 0, height: 20 },
+        ]
+      }
     },
     {
       id: 'hapi',
       label: 'Hapi AI',
       icon: MessageSquare,
       color: 'from-purple-500 to-indigo-600',
-      iconBg: 'bg-purple-500',
+      iconBg: 'bg-gradient-to-br from-purple-500 to-violet-600',
       description: 'Chat with your AI assistant',
       stats: 'Ask me anything',
-      statColor: 'text-purple-600 dark:text-purple-400'
+      statColor: 'text-purple-600 dark:text-purple-400',
+      preview: {
+        type: 'suggestions',
+        items: [
+          'Help with math homework?',
+          'Explain photosynthesis',
+          'Study tips for finals',
+        ]
+      }
     },
     {
       id: 'lab',
       label: 'Hapi Lab',
       icon: Beaker,
       color: 'from-emerald-500 to-teal-600',
-      iconBg: 'bg-emerald-500',
+      iconBg: 'bg-gradient-to-br from-emerald-500 to-teal-600',
       description: 'Pulses & Hapi Moments',
       stats: '2 new moments',
-      statColor: 'text-emerald-600 dark:text-emerald-400'
+      statColor: 'text-emerald-600 dark:text-emerald-400',
+      preview: {
+        type: 'moments',
+        items: [
+          { from: 'Sarah', message: 'Thanks for helping me!', time: '2h' },
+          { from: 'Mike', message: 'Great presentation!', time: '5h' },
+        ]
+      }
     },
   ];
 
@@ -195,23 +242,90 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                 <button
                   key={action.id}
                   onClick={() => onNavigate(action.id)}
-                  className="group relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-5 md:p-6 shadow-sm hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] text-left"
+                  className="group relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm hover:shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] text-left"
                 >
-                  <div className="flex items-center gap-3 md:gap-4">
-                    <div className={cn('p-2.5 md:p-3 rounded-xl shadow-md flex-shrink-0', action.iconBg)}>
-                      <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                  {/* Header */}
+                  <div className="p-4 md:p-5 pb-3">
+                    <div className="flex items-center gap-3 md:gap-4 mb-4">
+                      <div className={cn('p-2.5 md:p-3 rounded-xl shadow-md flex-shrink-0', action.iconBg)}>
+                        <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm md:text-base font-semibold text-foreground mb-0.5">{action.label}</h4>
+                        <p className={cn('text-xs font-medium', action.statColor)}>{action.stats}</p>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform flex-shrink-0" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm md:text-base font-semibold text-foreground mb-1">{action.label}</h4>
-                      <p className="text-xs md:text-sm text-muted-foreground mb-2 line-clamp-1">{action.description}</p>
-                      <p className={cn('text-xs font-semibold', action.statColor)}>{action.stats}</p>
+
+                    {/* Preview Content */}
+                    <div className="mt-3">
+                      {action.preview.type === 'assignments' && (
+                        <div className="space-y-2">
+                          {action.preview.items.slice(0, 3).map((item: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs">
+                              {item.status === 'in-progress' ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
+                              ) : (
+                                <Circle className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+                              )}
+                              <span className="flex-1 text-foreground/80 truncate">{item.title}</span>
+                              <span className="text-muted-foreground text-[10px]">{item.due}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {action.preview.type === 'mood' && (
+                        <div className="flex items-end justify-between gap-2 h-16">
+                          {action.preview.items.map((item: any, idx: number) => (
+                            <div key={idx} className="flex flex-col items-center gap-1 flex-1">
+                              <div
+                                className={cn(
+                                  'w-full rounded-t transition-all',
+                                  item.sentiment === 0
+                                    ? 'bg-muted-foreground/20'
+                                    : 'bg-gradient-to-t from-rose-500 to-pink-500'
+                                )}
+                                style={{ height: `${item.sentiment === 0 ? 20 : item.height}%` }}
+                              />
+                              <span className="text-[10px] text-muted-foreground font-medium">{item.day}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {action.preview.type === 'suggestions' && (
+                        <div className="space-y-1.5">
+                          {action.preview.items.slice(0, 2).map((item: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs text-foreground/70 group-hover:text-foreground/90 transition-colors">
+                              <Sparkles className="h-3 w-3 text-purple-500 flex-shrink-0" />
+                              <span className="truncate">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {action.preview.type === 'moments' && (
+                        <div className="space-y-2">
+                          {action.preview.items.map((item: any, idx: number) => (
+                            <div key={idx} className="flex items-start gap-2">
+                              <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0">
+                                {item.from[0]}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-foreground/80 truncate">{item.message}</p>
+                                <p className="text-[10px] text-muted-foreground">{item.from} • {item.time} ago</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform opacity-0 group-hover:opacity-100 flex-shrink-0 self-center" />
                   </div>
 
                   {/* Hover gradient overlay */}
                   <div className={cn(
-                    'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity',
+                    'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity pointer-events-none',
                     action.color
                   )} />
                 </button>
@@ -220,96 +334,99 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
           </div>
         </div>
 
-        {/* Calendar - Takes 1 column */}
+        {/* Weekly Calendar - Takes 1 column */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-              <h3 className="text-lg md:text-xl font-semibold text-foreground">Calendar</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-foreground">This Week</h3>
             </div>
           </div>
           <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4">
-            {/* Calendar Header */}
+            {/* Week Navigation Header */}
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-sm font-semibold text-foreground">
-                {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                {weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} -{' '}
+                {weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </h4>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={previousMonth}
+                  onClick={previousWeek}
                   className="p-1 hover:bg-muted rounded-md transition-colors"
-                  aria-label="Previous month"
+                  aria-label="Previous week"
                 >
                   <ChevronLeft className="h-4 w-4 text-muted-foreground" />
                 </button>
                 <button
-                  onClick={nextMonth}
+                  onClick={nextWeek}
                   className="p-1 hover:bg-muted rounded-md transition-colors"
-                  aria-label="Next month"
+                  aria-label="Next week"
                 >
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </button>
               </div>
             </div>
 
-            {/* Calendar Grid */}
+            {/* Weekly View */}
             <div className="space-y-2">
-              {/* Weekday headers */}
-              <div className="grid grid-cols-7 gap-1 mb-1">
-                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-                  <div key={day} className="text-center text-xs font-medium text-muted-foreground py-1">
-                    {day}
-                  </div>
-                ))}
-              </div>
+              {weekDays.map((day, idx) => {
+                const dateString = day.toDateString();
+                const isToday = dateString === today;
+                const dayEvents = events[dateString] || [];
 
-              {/* Calendar days */}
-              <div className="grid grid-cols-7 gap-1">
-                {/* Empty cells for days before month starts */}
-                {Array.from({ length: startingDayOfWeek }).map((_, idx) => (
-                  <div key={`empty-${idx}`} className="aspect-square" />
-                ))}
-
-                {/* Days of the month */}
-                {Array.from({ length: daysInMonth }).map((_, idx) => {
-                  const day = idx + 1;
-                  const hasEvent = eventDays.includes(day);
-                  const isToday = isCurrentMonth && day === today;
-
-                  return (
-                    <div
-                      key={day}
-                      className={cn(
-                        'aspect-square flex flex-col items-center justify-center rounded-md text-sm cursor-pointer transition-colors relative',
-                        isToday
-                          ? 'bg-primary text-primary-foreground font-semibold'
-                          : 'hover:bg-muted/50',
-                        !isToday && 'text-foreground'
-                      )}
-                    >
-                      <span className="relative z-10">{day}</span>
-                      {hasEvent && !isToday && (
-                        <div className="absolute bottom-1 w-1 h-1 rounded-full bg-blue-500" />
-                      )}
-                      {hasEvent && isToday && (
-                        <div className="absolute bottom-1 w-1 h-1 rounded-full bg-primary-foreground" />
-                      )}
+                return (
+                  <div
+                    key={idx}
+                    className={cn(
+                      'rounded-lg p-3 transition-colors border',
+                      isToday
+                        ? 'bg-primary/10 border-primary/30'
+                        : 'bg-background/50 border-border/40 hover:bg-muted/30'
+                    )}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={cn(
+                            'flex flex-col items-center justify-center w-10 h-10 rounded-lg',
+                            isToday
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted/50 text-foreground'
+                          )}
+                        >
+                          <span className="text-[10px] font-medium uppercase">
+                            {day.toLocaleDateString('en-US', { weekday: 'short' })}
+                          </span>
+                          <span className="text-sm font-bold">{day.getDate()}</span>
+                        </div>
+                        {isToday && (
+                          <span className="text-xs font-semibold text-primary">Today</span>
+                        )}
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
 
-            {/* Legend */}
-            <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-center gap-4 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                <span>Events</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-md bg-primary" />
-                <span>Today</span>
-              </div>
+                    {/* Events for this day */}
+                    {dayEvents.length > 0 ? (
+                      <div className="space-y-1.5 mt-2">
+                        {dayEvents.map((event: any, eventIdx: number) => (
+                          <div
+                            key={eventIdx}
+                            className="flex items-center gap-2 text-xs"
+                          >
+                            <div className={cn('h-1.5 w-1.5 rounded-full', event.color)} />
+                            <span className="text-foreground/80 font-medium">{event.title}</span>
+                            <span className="text-muted-foreground text-[10px] ml-auto">
+                              {event.time}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[10px] text-muted-foreground/60 italic mt-2">No events</p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
