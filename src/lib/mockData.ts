@@ -621,4 +621,199 @@ export const mockHapiMomentReferrals: Array<{
   },
 ];
 
+// ============================================================================
+// NEW: Badge System Data
+// ============================================================================
+
+export type Badge = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: 'academic' | 'engagement' | 'wellness';
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  requirement: string;
+  points: number;
+};
+
+export type UserBadge = {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+  progress?: number; // 0-100 for in-progress badges
+};
+
+export const mockBadges: Badge[] = [
+  // Academic Badges
+  { id: 'badge-1', name: 'Perfect Score', description: '100% on an assignment', icon: '📚', category: 'academic', rarity: 'rare', requirement: 'Score 100% on any assignment', points: 50 },
+  { id: 'badge-2', name: 'Consistent Performer', description: '90%+ on 5 assignments', icon: '🎯', category: 'academic', rarity: 'epic', requirement: 'Score 90% or higher on 5 assignments', points: 100 },
+  { id: 'badge-3', name: 'Grade Improver', description: 'Improved 10%+ in a course', icon: '📈', category: 'academic', rarity: 'rare', requirement: 'Improve your grade by 10% or more', points: 75 },
+  { id: 'badge-4', name: 'Early Bird', description: '5 early submissions', icon: '⏰', category: 'academic', rarity: 'common', requirement: 'Submit 5 assignments early', points: 25 },
+  { id: 'badge-5', name: 'Honor Roll', description: '3.5+ GPA', icon: '🏆', category: 'academic', rarity: 'legendary', requirement: 'Maintain a 3.5 GPA or higher', points: 200 },
+  
+  // Engagement Badges
+  { id: 'badge-6', name: 'Streak Master', description: '30-day streak', icon: '🔥', category: 'engagement', rarity: 'epic', requirement: 'Maintain a 30-day check-in streak', points: 150 },
+  { id: 'badge-7', name: 'Active Participant', description: '50 class pulse responses', icon: '💬', category: 'engagement', rarity: 'rare', requirement: 'Complete 50 class pulse check-ins', points: 75 },
+  { id: 'badge-8', name: 'Helpful Peer', description: '10 Hapi moments sent', icon: '🤝', category: 'engagement', rarity: 'common', requirement: 'Send 10 Hapi moments to classmates', points: 50 },
+  { id: 'badge-9', name: 'Curious Mind', description: '25 AI tutor questions', icon: '🧠', category: 'engagement', rarity: 'rare', requirement: 'Ask 25 questions to the AI tutor', points: 60 },
+  { id: 'badge-10', name: 'Planner Pro', description: '4 weeks following study plan', icon: '📅', category: 'engagement', rarity: 'epic', requirement: 'Follow AI study plan for 4 weeks', points: 100 },
+  
+  // Wellness Badges
+  { id: 'badge-11', name: 'Positive Vibes', description: '7 days of positive mood', icon: '😊', category: 'wellness', rarity: 'common', requirement: 'Log positive mood for 7 consecutive days', points: 30 },
+  { id: 'badge-12', name: 'Balanced', description: 'Low mood variability for 14 days', icon: '🧘', category: 'wellness', rarity: 'rare', requirement: 'Maintain emotional stability for 14 days', points: 75 },
+  { id: 'badge-13', name: 'Resilient', description: 'Maintained streak during tough week', icon: '💪', category: 'wellness', rarity: 'epic', requirement: 'Keep your streak during a high-stress week', points: 100 },
+  { id: 'badge-14', name: 'Self-Care Champion', description: 'Consistent morning pulses', icon: '🌟', category: 'wellness', rarity: 'rare', requirement: 'Complete morning pulse for 21 days', points: 80 },
+];
+
+export const mockUserBadges: UserBadge[] = [
+  { id: 'ub-1', user_id: MOCK_USER_ID, badge_id: 'badge-4', earned_at: new Date(Date.now() - 86400000 * 5).toISOString() },
+  { id: 'ub-2', user_id: MOCK_USER_ID, badge_id: 'badge-8', earned_at: new Date(Date.now() - 86400000 * 10).toISOString() },
+  { id: 'ub-3', user_id: MOCK_USER_ID, badge_id: 'badge-11', earned_at: new Date(Date.now() - 86400000 * 3).toISOString() },
+  { id: 'ub-4', user_id: MOCK_USER_ID, badge_id: 'badge-7', earned_at: new Date(Date.now() - 86400000 * 15).toISOString(), progress: 75 },
+  { id: 'ub-5', user_id: MOCK_USER_ID, badge_id: 'badge-6', earned_at: new Date(Date.now() - 86400000 * 2).toISOString(), progress: 40 },
+];
+
+// ============================================================================
+// NEW: Assignment Status Data
+// ============================================================================
+
+export type AssignmentStatus = 'upcoming' | 'due_soon' | 'late' | 'missing' | 'completed';
+
+export type AssignmentWithStatus = {
+  id: string;
+  course_id: string;
+  course_name: string;
+  name: string;
+  due_at: string;
+  points_possible: number;
+  status: AssignmentStatus;
+  submitted_at?: string;
+  score?: number;
+  graded_at?: string;
+};
+
+export const mockAssignmentsWithStatus: AssignmentWithStatus[] = [
+  // Biology II
+  { id: 'assign-1', course_id: 'class-1', course_name: 'Biology II', name: 'DNA Replication Lab Report', due_at: new Date(Date.now() + 86400000 * 3).toISOString(), points_possible: 100, status: 'due_soon' },
+  { id: 'assign-2', course_id: 'class-1', course_name: 'Biology II', name: 'Cellular Respiration Quiz', due_at: new Date(Date.now() + 86400000 * 5).toISOString(), points_possible: 50, status: 'upcoming' },
+  { id: 'assign-3', course_id: 'class-1', course_name: 'Biology II', name: 'Mitosis Diagram', due_at: new Date(Date.now() - 86400000 * 2).toISOString(), points_possible: 25, status: 'late' },
+  { id: 'assign-4', course_id: 'class-1', course_name: 'Biology II', name: 'Chapter 5 Reading', due_at: new Date(Date.now() - 86400000 * 10).toISOString(), points_possible: 20, status: 'completed', submitted_at: new Date(Date.now() - 86400000 * 11).toISOString(), score: 20, graded_at: new Date(Date.now() - 86400000 * 9).toISOString() },
+  
+  // Economics 101
+  { id: 'assign-5', course_id: 'class-2', course_name: 'Economics 101', name: 'Market Equilibrium Problem Set', due_at: new Date(Date.now() + 86400000 * 2).toISOString(), points_possible: 75, status: 'due_soon' },
+  { id: 'assign-6', course_id: 'class-2', course_name: 'Economics 101', name: 'Supply & Demand Essay', due_at: new Date(Date.now() + 86400000 * 7).toISOString(), points_possible: 100, status: 'upcoming' },
+  { id: 'assign-7', course_id: 'class-2', course_name: 'Economics 101', name: 'Midterm Exam', due_at: new Date(Date.now() - 86400000 * 5).toISOString(), points_possible: 200, status: 'completed', submitted_at: new Date(Date.now() - 86400000 * 5).toISOString(), score: 175, graded_at: new Date(Date.now() - 86400000 * 3).toISOString() },
+  
+  // English Literature
+  { id: 'assign-8', course_id: 'class-3', course_name: 'English Literature', name: 'Poetry Analysis', due_at: new Date(Date.now() + 86400000 * 1).toISOString(), points_possible: 50, status: 'due_soon' },
+  { id: 'assign-9', course_id: 'class-3', course_name: 'English Literature', name: 'Book Report', due_at: new Date(Date.now() - 86400000 * 7).toISOString(), points_possible: 100, status: 'missing' },
+  { id: 'assign-10', course_id: 'class-3', course_name: 'English Literature', name: 'Discussion Post', due_at: new Date(Date.now() - 86400000 * 3).toISOString(), points_possible: 15, status: 'completed', submitted_at: new Date(Date.now() - 86400000 * 4).toISOString(), score: 15, graded_at: new Date(Date.now() - 86400000 * 2).toISOString() },
+];
+
+// ============================================================================
+// NEW: Academic Risk & Wellbeing Data
+// ============================================================================
+
+export type RiskLevel = 'low' | 'medium' | 'high';
+export type WellbeingLevel = 'thriving' | 'managing' | 'struggling';
+
+export type ClassRiskIndicator = {
+  class_id: string;
+  class_name: string;
+  risk_level: RiskLevel;
+  factors: string[];
+  recommendations: string[];
+};
+
+export type ClassWellbeingIndicator = {
+  class_id: string;
+  class_name: string;
+  wellbeing_level: WellbeingLevel;
+  factors: string[];
+  average_mood: number;
+  stress_level: number;
+};
+
+export const mockClassRiskIndicators: ClassRiskIndicator[] = [
+  {
+    class_id: 'class-1',
+    class_name: 'Biology II',
+    risk_level: 'medium',
+    factors: ['1 late assignment', 'Grade trend declining 3%'],
+    recommendations: ['Complete late assignment ASAP', 'Review recent feedback', 'Schedule office hours']
+  },
+  {
+    class_id: 'class-2',
+    class_name: 'Economics 101',
+    risk_level: 'low',
+    factors: ['On track', 'Good participation'],
+    recommendations: ['Keep up the great work!']
+  },
+  {
+    class_id: 'class-3',
+    class_name: 'English Literature',
+    risk_level: 'high',
+    factors: ['1 missing assignment', 'Low participation score', 'Grade below 75%'],
+    recommendations: ['Submit missing book report', 'Attend next class', 'Meet with instructor', 'Use AI tutor for help']
+  },
+];
+
+export const mockClassWellbeingIndicators: ClassWellbeingIndicator[] = [
+  {
+    class_id: 'class-1',
+    class_name: 'Biology II',
+    wellbeing_level: 'managing',
+    factors: ['Moderate stress', 'Workload manageable'],
+    average_mood: 5.2,
+    stress_level: 6
+  },
+  {
+    class_id: 'class-2',
+    class_name: 'Economics 101',
+    wellbeing_level: 'thriving',
+    factors: ['Positive mood', 'Low stress', 'Good peer support'],
+    average_mood: 6.5,
+    stress_level: 3
+  },
+  {
+    class_id: 'class-3',
+    class_name: 'English Literature',
+    wellbeing_level: 'struggling',
+    factors: ['High stress', 'Feeling overwhelmed', 'Missing deadlines'],
+    average_mood: 3.8,
+    stress_level: 8
+  },
+];
+
+// ============================================================================
+// NEW: Participation Data
+// ============================================================================
+
+export type ParticipationData = {
+  class_id: string;
+  class_name: string;
+  total_pulses: number;
+  completed_pulses: number;
+  participation_rate: number;
+  points_earned: number;
+  rank: number;
+  total_students: number;
+};
+
+export const mockParticipationData: ParticipationData[] = [
+  { class_id: 'class-1', class_name: 'Biology II', total_pulses: 42, completed_pulses: 35, participation_rate: 83, points_earned: 320, rank: 3, total_students: 25 },
+  { class_id: 'class-2', class_name: 'Economics 101', total_pulses: 38, completed_pulses: 31, participation_rate: 82, points_earned: 285, rank: 4, total_students: 28 },
+  { class_id: 'class-3', class_name: 'English Literature', total_pulses: 35, completed_pulses: 27, participation_rate: 77, points_earned: 245, rank: 5, total_students: 22 },
+];
+
+export const mockCombinedParticipation = {
+  total_pulses: 115,
+  completed_pulses: 93,
+  participation_rate: 81,
+  total_points_earned: 850,
+  overall_rank: 12,
+  total_students: 75
+};
+
 export { MOCK_USER_ID, MOCK_TEACHER_ID };

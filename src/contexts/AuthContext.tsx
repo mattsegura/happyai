@@ -326,6 +326,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Sign in existing user
   const signIn = async (email: string, password: string) => {
+    // Mock authentication for demo accounts (development only)
+    if (import.meta.env.DEV && email.endsWith('@demo.com') && password === 'demo123') {
+      const mockUser = {
+        id: email === 'student@demo.com' ? 'mock-student-id' : 
+            email === 'teacher@demo.com' ? 'mock-teacher-id' : 'mock-admin-id',
+        email,
+        app_metadata: {},
+        user_metadata: { full_name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1) },
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+      } as User;
+
+      const mockProfile = {
+        id: mockUser.id,
+        email: mockUser.email,
+        full_name: mockUser.user_metadata.full_name,
+        avatar_url: null,
+        total_points: 850,
+        current_streak: 7,
+        last_pulse_check_date: new Date().toISOString().split('T')[0],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: email === 'student@demo.com' ? 'student' : 
+              email === 'teacher@demo.com' ? 'teacher' : 'admin',
+        university_id: null,
+      } as Profile;
+
+      setUser(mockUser);
+      setProfile(mockProfile);
+      updateRole(mockProfile.role as UserRole);
+      setLoading(false);
+      
+      if (DEBUG) console.log('[Auth] Mock login successful for:', email);
+      return { error: null };
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,

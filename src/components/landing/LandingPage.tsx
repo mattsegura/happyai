@@ -27,6 +27,7 @@ import { Footer } from '../ui/footer';
 import { ContactSection } from '../ui/contact-section';
 import { HapiMomentsCarousel } from '../ui/hapi-moments-carousel';
 import { ImageComparison, ImageComparisonContent, ImageComparisonSlider } from '../ui/image-comparison';
+import { useAuth } from '../../contexts/AuthContext';
 
 const securityFeatures = [
   {
@@ -69,8 +70,14 @@ const complianceStats = [
 ];
 
 export function LandingPage() {
+  const { signIn } = useAuth();
   const [viewMode, setViewMode] = useState<'students' | 'teachers'>('students');
   const [sliderPosition, setSliderPosition] = useState(100); // Start with students visible (100 = left side)
+
+  // Demo login function
+  const handleDemoLogin = async () => {
+    await signIn('student@demo.com', 'demo123');
+  };
 
   // Update slider position when viewMode changes
   useEffect(() => {
@@ -119,7 +126,7 @@ export function LandingPage() {
     <div className="bg-[#FFFDF8] dark:from-background dark:via-background dark:to-background text-foreground">
       <TubelightNavBar
         items={navItems}
-        showSignIn={false}
+        showSignIn={true}
       />
 
       <main>
@@ -142,6 +149,17 @@ export function LandingPage() {
                   }}
                   badgeText=""
                 />
+                
+                {/* Demo Login Button */}
+                <div className="mt-6">
+                  <button
+                    onClick={handleDemoLogin}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                  >
+                    <GraduationCap className="w-5 h-5" />
+                    Try Student Demo
+                  </button>
+                </div>
               </div>
 
               {/* Right side - App preview video */}

@@ -1,15 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockPulseCheckSets } from '../../lib/mockData';
-import { PersonalSentimentChart } from './PersonalSentimentChart';
-import { ClassSentimentGauge } from './ClassSentimentGauge';
-import { HapiAiInsights } from './HapiAiInsights';
-import { StatsBar } from './StatsBar';
-import { TodaysTasks } from './TodaysTasks';
+import { OverviewView } from './OverviewView';
 import { MeetingDetailsModal } from './MeetingDetailsModal';
 import { StudentHapiLab } from '../student/StudentHapiLab';
 import { StudentHapiChat } from '../student/StudentHapiChat';
-import { ClassLeaderboard } from '../leaderboard/ClassLeaderboard';
 import { ClassesView } from './ClassesView';
 import { ProfileView } from './ProfileView';
 import { PopupQueueManager } from '../popups/PopupQueueManager';
@@ -23,8 +18,9 @@ import { Home, Users, Beaker, Trophy, User, Smile, MessageSquare, GraduationCap,
 import { AcademicsHub } from '../academics/AcademicsHub';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
+import { EngagementSection } from './EngagementSection';
 
-type View = 'home' | 'leaderboard' | 'lab' | 'hapi' | 'classes' | 'profile' | 'academics';
+type View = 'home' | 'wellbeing' | 'progress' | 'lab' | 'hapi' | 'classes' | 'profile' | 'academics';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
@@ -51,9 +47,10 @@ export function Dashboard() {
   const navigationItems = [
     { id: 'home', icon: Home, label: 'Overview' },
     { id: 'academics', icon: GraduationCap, label: 'Academics' },
-    { id: 'leaderboard', icon: Trophy, label: 'Ranks' },
-    { id: 'lab', icon: Beaker, label: 'Hapi Lab' },
-    { id: 'hapi', icon: MessageSquare, label: 'Chat' },
+    { id: 'wellbeing', icon: Smile, label: 'Wellbeing' },
+    { id: 'progress', icon: Trophy, label: 'Progress' },
+    { id: 'hapi', icon: MessageSquare, label: 'Hapi AI' },
+    { id: 'lab', icon: Beaker, label: 'Lab' },
     { id: 'classes', icon: Users, label: 'Classes' },
     { id: 'profile', icon: User, label: 'Profile' },
   ] as const;
@@ -228,17 +225,33 @@ export function Dashboard() {
       </aside>
 
       <div className="flex-1 overflow-hidden">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <header
             className={cn(
               SURFACE_BASE,
-              'flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between'
+              'flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between'
             )}
           >
             <div>
-              <h1 className="text-2xl font-semibold text-foreground md:text-3xl">Welcome back</h1>
+              <h1 className="text-xl font-semibold text-foreground md:text-2xl">
+                {currentView === 'home' && 'Overview'}
+                {currentView === 'academics' && 'Academics'}
+                {currentView === 'wellbeing' && 'Wellbeing'}
+                {currentView === 'progress' && 'Progress'}
+                {currentView === 'hapi' && 'Hapi AI'}
+                {currentView === 'lab' && 'Hapi Lab'}
+                {currentView === 'classes' && 'Classes'}
+                {currentView === 'profile' && 'Profile'}
+              </h1>
               <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Today's wellbeing & academic overview
+                {currentView === 'home' && 'Your dashboard at a glance'}
+                {currentView === 'academics' && 'Grades, assignments & study tools'}
+                {currentView === 'wellbeing' && 'Mood tracking & sentiment analytics'}
+                {currentView === 'progress' && 'Achievements, badges & leaderboard'}
+                {currentView === 'hapi' && 'AI-powered assistant'}
+                {currentView === 'lab' && 'Pulse checks & Hapi moments'}
+                {currentView === 'classes' && 'Your enrolled classes'}
+                {currentView === 'profile' && 'Your account settings'}
               </p>
             </div>
             <div className="md:hidden">
@@ -266,34 +279,26 @@ export function Dashboard() {
             </div>
           </header>
 
-            {currentView === 'home' && <StatsBar />}
-
             <div>
               {currentView === 'home' && (
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <div className="h-full overflow-hidden">
-                    <div className={cn(SURFACE_BASE, 'h-full overflow-auto p-6')}>
-                      <TodaysTasks
-                        onMorningPulseClick={handleMorningPulseClick}
-                        onClassPulseClick={handleClassPulseClick}
-                        onMeetingClick={handleMeetingClick}
-                        onHapiMomentClick={handleHapiMomentClick}
-                      />
-                    </div>
-                  </div>
+                <OverviewView
+                  onNavigate={(view) => setCurrentView(view as View)}
+                />
+              )}
 
-                  <div className="flex h-full flex-col gap-6 overflow-hidden">
-                    <div className={cn(SURFACE_BASE, 'shrink-0 p-6')}>
-                      <HapiAiInsights analyticsData={analyticsData} onTalkMore={handleTalkMore} />
-                    </div>
-                    <div className="grid h-full gap-6 lg:grid-rows-2">
-                      <div className={cn(SURFACE_BASE, 'overflow-auto p-6')}>
-                        <PersonalSentimentChart />
-                      </div>
-                      <div className={cn(SURFACE_BASE, 'overflow-auto p-6')}>
-                        <ClassSentimentGauge />
-                      </div>
-                    </div>
+              {currentView === 'wellbeing' && (
+                <div className={cn(SURFACE_BASE, 'p-6')}>
+                  <h1 className="mb-4 text-2xl font-bold">Wellbeing Dashboard</h1>
+                  <p className="text-muted-foreground">Coming soon: Consolidated mood tracking and sentiment analytics</p>
+                </div>
+              )}
+
+              {currentView === 'progress' && (
+                <div className={cn(SURFACE_BASE, 'p-6')}>
+                  <h1 className="mb-4 text-2xl font-bold">Progress & Achievements</h1>
+                  <p className="text-muted-foreground">Coming soon: Badges, leaderboard, and Hapi Moments</p>
+                  <div className="mt-6">
+                    <EngagementSection />
                   </div>
                 </div>
               )}
@@ -305,11 +310,7 @@ export function Dashboard() {
             />
           )}
 
-          {currentView === 'leaderboard' && (
-            <div className={cn(SURFACE_BASE, 'p-6')}>
-              <ClassLeaderboard />
-            </div>
-          )}
+
 
           {currentView === 'lab' && (
             <div className="space-y-6">
