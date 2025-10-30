@@ -126,14 +126,10 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       stats: "Complete today's pulse",
       statColor: 'text-rose-600 dark:text-rose-400',
       preview: {
-        type: 'mood',
-        items: [
-          { day: 'M', sentiment: 5, height: 60 },
-          { day: 'T', sentiment: 4, height: 48 },
-          { day: 'W', sentiment: 5, height: 60 },
-          { day: 'Th', sentiment: 6, height: 75 },
-          { day: 'F', sentiment: 0, height: 20 },
-        ]
+        type: 'mood-tracker',
+        sentiment: 5, // Current mood level
+        streak: 7,
+        message: 'Coming soon: Consolidated mood tracking and sentiment analytics'
       }
     },
     {
@@ -275,22 +271,36 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                         </div>
                       )}
 
-                      {action.preview.type === 'mood' && (
-                        <div className="flex items-end justify-between gap-2 h-16">
-                          {action.preview.items.map((item: any, idx: number) => (
-                            <div key={idx} className="flex flex-col items-center gap-1 flex-1">
-                              <div
-                                className={cn(
-                                  'w-full rounded-t transition-all',
-                                  item.sentiment === 0
-                                    ? 'bg-muted-foreground/20'
-                                    : 'bg-gradient-to-t from-rose-500 to-pink-500'
-                                )}
-                                style={{ height: `${item.sentiment === 0 ? 20 : item.height}%` }}
-                              />
-                              <span className="text-[10px] text-muted-foreground font-medium">{item.day}</span>
+                      {action.preview.type === 'mood-tracker' && (
+                        <div className="space-y-3">
+                          {/* Mood indicator */}
+                          <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20">
+                            <div className="flex items-center gap-2">
+                              <Heart className="h-4 w-4 text-rose-500 fill-rose-500" />
+                              <div>
+                                <p className="text-xs font-semibold text-foreground">Current Mood</p>
+                                <p className="text-[10px] text-muted-foreground">Level {action.preview.sentiment}/6</p>
+                              </div>
                             </div>
-                          ))}
+                            <div className="flex gap-1">
+                              {[1, 2, 3, 4, 5, 6].map((level) => (
+                                <div
+                                  key={level}
+                                  className={cn(
+                                    'w-1.5 h-6 rounded-full transition-all',
+                                    level <= action.preview.sentiment
+                                      ? 'bg-gradient-to-t from-rose-500 to-pink-500'
+                                      : 'bg-muted-foreground/20'
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Coming soon message */}
+                          <div className="text-[11px] text-muted-foreground/80 italic leading-relaxed">
+                            {action.preview.message}
+                          </div>
                         </div>
                       )}
 
@@ -367,8 +377,8 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
               </div>
             </div>
 
-            {/* Weekly View */}
-            <div className="space-y-2">
+            {/* Compact Weekly View */}
+            <div className="space-y-1.5">
               {weekDays.map((day, idx) => {
                 const dateString = day.toDateString();
                 const isToday = dateString === today;
@@ -378,52 +388,53 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                   <div
                     key={idx}
                     className={cn(
-                      'rounded-lg p-3 transition-colors border',
+                      'rounded-lg p-2 transition-colors border',
                       isToday
                         ? 'bg-primary/10 border-primary/30'
                         : 'bg-background/50 border-border/40 hover:bg-muted/30'
                     )}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={cn(
-                            'flex flex-col items-center justify-center w-10 h-10 rounded-lg',
-                            isToday
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-muted/50 text-foreground'
-                          )}
-                        >
-                          <span className="text-[10px] font-medium uppercase">
-                            {day.toLocaleDateString('en-US', { weekday: 'short' })}
-                          </span>
-                          <span className="text-sm font-bold">{day.getDate()}</span>
-                        </div>
-                        {isToday && (
-                          <span className="text-xs font-semibold text-primary">Today</span>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={cn(
+                          'flex flex-col items-center justify-center w-8 h-8 rounded-md flex-shrink-0',
+                          isToday
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted/50 text-foreground'
+                        )}
+                      >
+                        <span className="text-[9px] font-medium uppercase">
+                          {day.toLocaleDateString('en-US', { weekday: 'short' })}
+                        </span>
+                        <span className="text-xs font-bold">{day.getDate()}</span>
+                      </div>
+
+                      {/* Events inline */}
+                      <div className="flex-1 min-w-0">
+                        {dayEvents.length > 0 ? (
+                          <div className="flex items-center gap-1.5">
+                            <div className={cn('h-1.5 w-1.5 rounded-full flex-shrink-0', dayEvents[0].color)} />
+                            <span className="text-[11px] text-foreground/80 font-medium truncate">
+                              {dayEvents[0].title}
+                            </span>
+                            {dayEvents.length > 1 && (
+                              <span className="text-[9px] text-muted-foreground">
+                                +{dayEvents.length - 1}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-[10px] text-muted-foreground/50 italic">No events</p>
                         )}
                       </div>
-                    </div>
 
-                    {/* Events for this day */}
-                    {dayEvents.length > 0 ? (
-                      <div className="space-y-1.5 mt-2">
-                        {dayEvents.map((event: any, eventIdx: number) => (
-                          <div
-                            key={eventIdx}
-                            className="flex items-center gap-2 text-xs"
-                          >
-                            <div className={cn('h-1.5 w-1.5 rounded-full', event.color)} />
-                            <span className="text-foreground/80 font-medium">{event.title}</span>
-                            <span className="text-muted-foreground text-[10px] ml-auto">
-                              {event.time}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-[10px] text-muted-foreground/60 italic mt-2">No events</p>
-                    )}
+                      {/* Time - only for events */}
+                      {dayEvents.length > 0 && (
+                        <span className="text-[9px] text-muted-foreground flex-shrink-0">
+                          {dayEvents[0].time}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 );
               })}
