@@ -198,19 +198,19 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
             <div
               key={stat.label}
               className={cn(
-                'rounded-xl border border-border/60 backdrop-blur-sm p-4 md:p-5 shadow-sm hover:shadow-md transition-all cursor-pointer hover:scale-[1.02]',
+                'rounded-xl border border-border/60 backdrop-blur-sm p-3 md:p-4 shadow-sm hover:shadow-md transition-all cursor-pointer hover:scale-[1.02]',
                 stat.bgColor
               )}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className={cn('p-2 md:p-2.5 rounded-xl shadow-sm', stat.iconBg)}>
+              <div className="flex items-center justify-between mb-2">
+                <div className={cn('p-2 rounded-xl shadow-sm', stat.iconBg)}>
                   <Icon className="h-4 w-4 md:h-5 md:w-5 text-white" />
                 </div>
               </div>
-              <p className="text-xs md:text-sm text-muted-foreground font-medium mb-1">{stat.label}</p>
+              <p className="text-xs text-muted-foreground font-medium mb-1">{stat.label}</p>
               <div className="flex items-baseline gap-1">
                 <p className="text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
-                {stat.unit && <span className="text-sm text-muted-foreground font-medium">{stat.unit}</span>}
+                {stat.unit && <span className="text-xs text-muted-foreground font-medium">{stat.unit}</span>}
               </div>
             </div>
           );
@@ -220,8 +220,8 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Quick Actions - Takes 2 columns */}
-        <div className="lg:col-span-2 space-y-3">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-2 flex flex-col">
+          <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg md:text-xl font-semibold text-foreground">Quick Actions</h3>
             <button
               onClick={() => onNavigate('classes')}
@@ -231,7 +231,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
               <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
             </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 flex-1">
             {quickActions.map((action) => {
               const Icon = action.icon;
               return (
@@ -345,16 +345,16 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
         </div>
 
         {/* Weekly Calendar - Takes 1 column */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 md:h-5 md:w-5 text-primary" />
               <h3 className="text-lg md:text-xl font-semibold text-foreground">This Week</h3>
             </div>
           </div>
-          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4">
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-3.5 flex-1 flex flex-col">
             {/* Week Navigation Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-foreground">
                 {weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} -{' '}
                 {weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -365,20 +365,20 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                   className="p-1 hover:bg-muted rounded-md transition-colors"
                   aria-label="Previous week"
                 >
-                  <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+                  <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
                 <button
                   onClick={nextWeek}
                   className="p-1 hover:bg-muted rounded-md transition-colors"
                   aria-label="Next week"
                 >
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
               </div>
             </div>
 
-            {/* Compact Weekly View */}
-            <div className="space-y-1.5">
+            {/* Balanced Weekly View */}
+            <div className="flex flex-col gap-1.5 flex-1">
               {weekDays.map((day, idx) => {
                 const dateString = day.toDateString();
                 const isToday = dateString === today;
@@ -404,7 +404,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                         )}
                       >
                         <span className="text-[9px] font-medium uppercase">
-                          {day.toLocaleDateString('en-US', { weekday: 'short' })}
+                          {day.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 2)}
                         </span>
                         <span className="text-xs font-bold">{day.getDate()}</span>
                       </div>
