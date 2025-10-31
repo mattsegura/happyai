@@ -9,6 +9,16 @@
 import { supabase } from '../supabase';
 import { getAIService } from '../ai/aiService';
 import type { AIFeatureType } from '../ai/aiTypes';
+import {
+  mockInstructorFeedback,
+  mockFeedbackPatterns,
+  mockTimelineEntries,
+  mockImprovementGoals,
+  mockSentimentStats
+} from './mockFeedbackData';
+
+// Check if we should use mock data
+const USE_MOCK_FEEDBACK = import.meta.env.VITE_USE_ACADEMICS_FEEDBACK === 'true';
 
 // =====================================================
 // TYPES
@@ -168,6 +178,12 @@ export class FeedbackAggregator {
    * Get all feedback for a user
    */
   async getAllFeedback(): Promise<InstructorFeedback[]> {
+    // Return mock data if enabled
+    if (USE_MOCK_FEEDBACK) {
+      console.log('[Feedback Aggregator] Using mock feedback data');
+      return mockInstructorFeedback;
+    }
+
     try {
       const { data, error } = await supabase
         .from('instructor_feedback')
@@ -199,8 +215,14 @@ export class FeedbackAggregator {
    * Get feedback patterns for a user
    */
   async getPatterns(): Promise<FeedbackPattern[]> {
+    // Return mock data if enabled
+    if (USE_MOCK_FEEDBACK) {
+      console.log('[Feedback Aggregator] Using mock patterns data');
+      return mockFeedbackPatterns;
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error} = await supabase
         .from('feedback_patterns')
         .select('*')
         .eq('user_id', this.userId)
@@ -219,6 +241,12 @@ export class FeedbackAggregator {
    * Get improvement goals for a user
    */
   async getImprovementGoals(): Promise<ImprovementGoal[]> {
+    // Return mock data if enabled
+    if (USE_MOCK_FEEDBACK) {
+      console.log('[Feedback Aggregator] Using mock improvement goals data');
+      return mockImprovementGoals;
+    }
+
     try {
       const { data, error } = await supabase
         .from('feedback_improvement_goals')
@@ -240,6 +268,12 @@ export class FeedbackAggregator {
    * Get sentiment distribution
    */
   async getSentimentDistribution(courseId?: string): Promise<SentimentStats> {
+    // Return mock data if enabled
+    if (USE_MOCK_FEEDBACK) {
+      console.log('[Feedback Aggregator] Using mock sentiment stats');
+      return mockSentimentStats;
+    }
+
     try {
       const { data, error } = await supabase
         .rpc('get_feedback_sentiment_distribution', {
@@ -292,6 +326,12 @@ export class FeedbackAggregator {
    * Get feedback timeline
    */
   async getFeedbackTimeline(): Promise<TimelineEntry[]> {
+    // Return mock data if enabled
+    if (USE_MOCK_FEEDBACK) {
+      console.log('[Feedback Aggregator] Using mock timeline data');
+      return mockTimelineEntries;
+    }
+
     try {
       const { data, error } = await supabase
         .from('feedback_timeline_events')

@@ -1,5 +1,6 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Award, Flame, Mail, Calendar, TrendingUp, LogOut } from 'lucide-react';
+import { NotificationPreferences } from '../notifications/NotificationPreferences';
 
 export function ProfileView() {
   const { profile, signOut } = useAuth();
@@ -108,6 +109,9 @@ export function ProfileView() {
           </div>
         </div>
       </div>
+
+      {/* Notification Preferences */}
+      <NotificationPreferences />
 
       <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-foreground">Account settings</h3>
