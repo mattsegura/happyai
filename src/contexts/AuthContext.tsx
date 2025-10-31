@@ -329,8 +329,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Mock authentication for demo accounts (development only)
     if (import.meta.env.DEV && email.endsWith('@demo.com') && password === 'demo123') {
       const mockUser = {
-        id: email === 'student@demo.com' ? 'mock-student-id' : 
-            email === 'teacher@demo.com' ? 'mock-teacher-id' : 'mock-admin-id',
+        id: email === 'student@demo.com' ? '00000000-0000-0000-0000-000000000001' :
+            email === 'teacher@demo.com' ? '00000000-0000-0000-0000-000000000002' : '00000000-0000-0000-0000-000000000003',
         email,
         app_metadata: {},
         user_metadata: { full_name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1) },
