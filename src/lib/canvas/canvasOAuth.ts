@@ -256,6 +256,7 @@ class CanvasOAuthService {
         codeVerifier,
         redirectUri,
         canvasInstanceUrl,
+        useMock: CANVAS_CONFIG.USE_MOCK_DATA, // Pass mock flag to Edge Function
       }),
     });
 
@@ -556,6 +557,11 @@ class CanvasOAuthService {
   async isConnected(
     canvasInstanceUrl: string = CANVAS_CONFIG.INSTANCE_URL
   ): Promise<boolean> {
+    // In mock mode, always return true (no real connection needed)
+    if (CANVAS_CONFIG.USE_MOCK_DATA) {
+      return true;
+    }
+
     const token = await this.getToken(canvasInstanceUrl);
     return token !== null;
   }

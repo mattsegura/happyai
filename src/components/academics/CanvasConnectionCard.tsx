@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { canvasOAuth } from '@/lib/canvas';
+import { CANVAS_CONFIG } from '@/lib/canvas/canvasConfig';
 import { Loader2, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 import { CanvasUrlDialog } from './CanvasUrlDialog';
 
@@ -18,6 +19,7 @@ export function CanvasConnectionCard() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [showUrlDialog, setShowUrlDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isMockMode] = useState(CANVAS_CONFIG.USE_MOCK_DATA);
 
   // Check connection status on mount
   useEffect(() => {
@@ -141,29 +143,38 @@ export function CanvasConnectionCard() {
         )}
 
         {isConnected ? (
-          <div className="space-y-3">
-            <div className="text-sm text-muted-foreground">
-              Canvas is connected and ready to sync your academic data.
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-foreground">Security & Privacy:</div>
+              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                <li>Your Canvas credentials are never stored</li>
+                <li>Access tokens are encrypted before storage</li>
+                <li>You can disconnect at any time</li>
+                <li>We only access data you explicitly authorize</li>
+              </ul>
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleValidate}
-                disabled={isLoading}
-              >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Validate Connection
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDisconnect}
-                disabled={isLoading}
-              >
-                Disconnect
-              </Button>
-            </div>
+
+            {!isMockMode && (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleValidate}
+                  disabled={isLoading}
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Validate Connection
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDisconnect}
+                  disabled={isLoading}
+                >
+                  Disconnect
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
@@ -188,15 +199,6 @@ export function CanvasConnectionCard() {
           </div>
         )}
 
-        <div className="text-xs text-muted-foreground border-t pt-3 mt-3">
-          <p className="font-medium mb-1">Security & Privacy:</p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Your Canvas credentials are never stored</li>
-            <li>Access tokens are encrypted before storage</li>
-            <li>You can disconnect at any time</li>
-            <li>We only access data you explicitly authorize</li>
-          </ul>
-        </div>
       </CardContent>
     </Card>
     </>

@@ -18,15 +18,18 @@ import {
   LayoutDashboard,
   BarChart3,
   MessageSquare,
+  RefreshCw,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { AchievementsDisplay } from './AchievementsDisplay';
 import { FeedbackHub } from './FeedbackHub';
 import { MoodGradeAnalytics } from './MoodGradeAnalytics';
+import { CanvasConnectionCard } from './CanvasConnectionCard';
+import { CanvasSyncStatus } from './CanvasSyncStatus';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
-type TabType = 'overview' | 'feedback' | 'analytics' | 'achievements';
+type TabType = 'overview' | 'feedback' | 'analytics' | 'achievements' | 'canvas';
 
 type CourseCard = {
   id: string;
@@ -419,6 +422,19 @@ export function AcademicsHub() {
           <Trophy className="w-4 h-4" />
           Achievements
         </button>
+
+        <button
+          onClick={() => setActiveTab('canvas')}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all',
+            activeTab === 'canvas'
+              ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg'
+              : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
+          )}
+        >
+          <RefreshCw className="w-4 h-4" />
+          Canvas Sync
+        </button>
       </div>
 
       {/* Top Stats Bar - Always Visible */}
@@ -693,6 +709,13 @@ export function AcademicsHub() {
       {activeTab === 'achievements' && (
         <div className="flex-1 overflow-y-auto">
           <AchievementsDisplay />
+        </div>
+      )}
+
+      {activeTab === 'canvas' && (
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
+          <CanvasConnectionCard />
+          <CanvasSyncStatus />
         </div>
       )}
     </div>

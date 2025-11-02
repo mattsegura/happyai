@@ -47,8 +47,9 @@ export function CanvasSyncStatus() {
 
       setLastSync(status);
 
-      if (status.errors.length > 0) {
-        setError(`Sync completed with ${status.errors.length} error(s)`);
+      // Only show error if sync actually failed (not just database save warnings)
+      if (!status.success) {
+        setError(`Sync failed: ${status.errors[0] || 'Unknown error'}`);
       }
     } catch (err) {
       console.error('Sync failed:', err);
@@ -137,6 +138,22 @@ export function CanvasSyncStatus() {
               <div className="text-2xl font-bold">{lastSync.counts.submissions || 0}</div>
             </div>
             <div className="space-y-1">
+              <div className="text-muted-foreground">Calendar Events</div>
+              <div className="text-2xl font-bold">{lastSync.counts.calendar_events || 0}</div>
+            </div>
+            {(lastSync.counts.modules || 0) > 0 && (
+              <>
+                <div className="space-y-1">
+                  <div className="text-muted-foreground">Modules</div>
+                  <div className="text-2xl font-bold">{lastSync.counts.modules || 0}</div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-muted-foreground">Module Items</div>
+                  <div className="text-2xl font-bold">{lastSync.counts.module_items || 0}</div>
+                </div>
+              </>
+            )}
+            <div className="space-y-1">
               <div className="text-muted-foreground">Duration</div>
               <div className="text-2xl font-bold">{formatDuration(lastSync.duration)}</div>
             </div>
@@ -167,7 +184,7 @@ export function CanvasSyncStatus() {
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               <span>
-                Auto-sync {canvasOAuth.AUTO_SYNC_ENABLED ? 'enabled' : 'disabled'}
+                Auto-sync available
               </span>
             </div>
           </div>
