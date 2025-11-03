@@ -24,9 +24,11 @@ function SignupPageWrapper() {
 }
 
 function AppContent() {
-  const { user, loading, role } = useAuth();
+  const { user, loading, role, profile } = useAuth();
 
-  if (loading) {
+  // Show loading while authenticating OR while profile is being fetched
+  // This prevents wrong redirects before role is loaded from database
+  if (loading || (user && !profile)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-accent-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
