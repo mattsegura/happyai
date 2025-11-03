@@ -34,6 +34,7 @@ export function ContactSection({ className, onSubmit }: ContactSectionProps) {
         name: formData.get('name'),
         email: formData.get('email'),
         company: formData.get('company'),
+        product: formData.get('product'),
         message: formData.get('message'),
       });
       
@@ -110,6 +111,22 @@ export function ContactSection({ className, onSubmit }: ContactSectionProps) {
                   required
                   className="w-full mt-2 px-3 py-2 text-foreground bg-transparent outline-none border border-border focus:border-sky-500 dark:focus:border-sky-400 shadow-sm rounded-lg transition-colors"
                 />
+              </div>
+              <div>
+                <label htmlFor="product" className="font-medium text-sm">
+                  I'm interested in
+                </label>
+                <select
+                  id="product"
+                  name="product"
+                  required
+                  className="w-full mt-2 px-3 py-2 text-foreground bg-white dark:bg-slate-900 outline-none border border-border focus:border-sky-500 dark:focus:border-sky-400 shadow-sm rounded-lg transition-colors cursor-pointer"
+                >
+                  <option value="">Select a product</option>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
               </div>
               <div>
                 <label htmlFor="message" className="font-medium text-sm">

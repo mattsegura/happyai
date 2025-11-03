@@ -78,7 +78,7 @@ export function AnimatedHero({
 
   return (
     <div className="w-full">
-      <div className="flex gap-8 items-center justify-center lg:justify-start flex-col">
+      <div className="flex gap-8 items-start justify-start flex-col">
           {badgeText && (
             <div>
               <Button
@@ -95,9 +95,10 @@ export function AnimatedHero({
           )}
 
           <div className="flex gap-4 flex-col">
-            <h1 className="text-5xl md:text-7xl max-w-4xl tracking-tighter text-left font-regular">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl max-w-4xl tracking-tighter text-left font-regular leading-tight">
               <span className="text-foreground">{headingPrefix}</span>
-              <span className="relative flex w-full justify-start text-left h-[4rem] md:h-[5.5rem] items-center min-w-[300px] md:min-w-[500px]">
+              <br />
+              <span className="relative flex w-full justify-start text-left h-[2.5rem] md:h-[3rem] lg:h-[3.5rem] items-center min-w-[200px] md:min-w-[300px]">
                 {memoizedTitles.map((title, index) => (
                   <motion.span
                     key={index}

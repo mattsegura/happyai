@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { LucideIcon } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { Logo } from "./logo"
 
 export interface NavItem {
   name: string
@@ -53,38 +54,59 @@ export function TubelightNavBar({ items, className, activeItem, onItemClick, sho
         }))
         .filter(section => section.element)
 
+      if (sections.length === 0) return
+
+      const scrollPosition = window.scrollY + 150 // Offset for navbar
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+
+      // Check if we're at the bottom of the page
+      if (scrollPosition + windowHeight >= documentHeight - 100) {
+        const lastSection = sections[sections.length - 1]
+        setActiveTab(lastSection.name)
+        return
+      }
+
       // Find which section is currently in view
-      // We check from bottom to top so the last section takes precedence when multiple are in view
-      let currentSection = null
+      // Check from bottom to top to handle overlapping sections
+      let currentSection = sections[0] // Default to first section
       
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i]
         if (!section.element) continue
         
         const rect = section.element.getBoundingClientRect()
-        const offset = 200 // Navbar height + some buffer
+        const sectionTop = rect.top + window.scrollY
         
-        // Check if section is in view (top of section is above the offset line)
-        if (rect.top <= offset) {
+        // If we've scrolled past the top of this section, it's the active one
+        if (window.scrollY >= sectionTop - 200) {
           currentSection = section
           break
         }
       }
 
-      if (currentSection) {
-        setActiveTab(currentSection.name)
-      } else if (sections.length > 0) {
-        // If we're at the very top, activate the first section
-        setActiveTab(sections[0].name)
+      setActiveTab(currentSection.name)
+    }
+
+    // Use throttle to improve performance
+    let ticking = false
+    const scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll()
+          ticking = false
+        })
+        ticking = true
       }
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    // Run once on mount and after a small delay to ensure DOM is ready
+    window.addEventListener('scroll', scrollListener, { passive: true })
+    // Run once on mount and after delays to ensure DOM is ready
     handleScroll()
     setTimeout(handleScroll, 100)
+    setTimeout(handleScroll, 500)
     
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', scrollListener)
   }, [items])
 
   const handleClick = (item: NavItem) => {
@@ -113,14 +135,36 @@ export function TubelightNavBar({ items, className, activeItem, onItemClick, sho
   }
 
   return (
-    <div
-      className={cn(
-        "fixed top-0 left-1/2 -translate-x-1/2 z-50 pt-6",
-        className,
-      )}
-    >
-      <div className="flex items-center gap-2 bg-background/80 border border-border backdrop-blur-lg py-1.5 px-1.5 rounded-full shadow-lg">
-        {items.map((item) => {
+    <>
+      {/* Logo - Fixed top left */}
+      <div className="fixed top-6 left-6 z-50">
+        <a 
+          href="#platform" 
+          onClick={(e) => {
+            e.preventDefault();
+            const element = document.getElementById('platform');
+            if (element) {
+              const offset = 100;
+              const elementPosition = element.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - offset;
+              window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+          }}
+          className="cursor-pointer"
+        >
+          <Logo />
+        </a>
+      </div>
+
+      {/* Navigation Bar - Fixed center */}
+      <div
+        className={cn(
+          "fixed top-0 left-1/2 -translate-x-1/2 z-50 pt-6",
+          className,
+        )}
+      >
+        <div className="flex items-center gap-2 bg-background/80 border border-border backdrop-blur-lg py-1.5 px-1.5 rounded-full shadow-lg">
+          {items.map((item) => {
           const Icon = item.icon
           const isActive = activeTab === item.name
 
@@ -159,8 +203,9 @@ export function TubelightNavBar({ items, className, activeItem, onItemClick, sho
             </button>
           )
         })}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

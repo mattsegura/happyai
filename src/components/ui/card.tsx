@@ -52,11 +52,14 @@ Card.displayName = 'Card';
 
 interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-const CardHeader: React.FC<SectionProps> = ({ className, children, ...props }) => (
-  <div className={cn('flex flex-col gap-2 mb-4', className)} {...props}>
-    {children}
-  </div>
+const CardHeader = React.forwardRef<HTMLDivElement, SectionProps>(
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn('flex flex-col space-y-1.5 p-6', className)} {...props}>
+      {children}
+    </div>
+  )
 );
+CardHeader.displayName = 'CardHeader';
 
 export interface CardTitleProps
   extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -88,15 +91,14 @@ const CardDescription: React.FC<
   </p>
 );
 
-const CardContent: React.FC<SectionProps> = ({
-  className,
-  children,
-  ...props
-}) => (
-  <div className={cn('space-y-4', className)} {...props}>
-    {children}
-  </div>
+const CardContent = React.forwardRef<HTMLDivElement, SectionProps>(
+  ({ className, children, ...props }, ref) => (
+    <div ref={ref} className={cn('p-6 pt-0', className)} {...props}>
+      {children}
+    </div>
+  )
 );
+CardContent.displayName = 'CardContent';
 
 const CardFooter: React.FC<SectionProps> = ({
   className,

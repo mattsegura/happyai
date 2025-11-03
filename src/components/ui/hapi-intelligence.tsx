@@ -45,13 +45,13 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
             {/* Main heading with gradient */}
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-600 dark:from-sky-400 dark:via-blue-400 dark:to-sky-500 bg-clip-text text-transparent">
-                Hapi Intelligence
+                AI Assistant
               </span>
             </h2>
 
             {/* Description */}
             <p className="text-xl text-slate-700 dark:text-slate-300 leading-relaxed mb-8">
-              The engine behind Hapi—transforming millions of data points into insight that helps schools truly understand their students.
+              The AI companion helping every student plan, feel supported, and excel academically.
             </p>
 
             {/* AI Insights Subheading */}
@@ -116,28 +116,6 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
               </div>
             );
           })}
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mb-12">
-          <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-sky-400 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent mb-2">
-              99.7%
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">Accuracy Rate</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-sky-500 dark:from-blue-400 dark:to-sky-400 bg-clip-text text-transparent mb-2">
-              &lt;100ms
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">Response Time</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 bg-clip-text text-transparent mb-2">
-              24/7
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">Always Learning</div>
-          </div>
         </div>
       </div>
     </section>

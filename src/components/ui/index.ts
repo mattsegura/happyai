@@ -49,6 +49,8 @@ export { TiltedScroll } from './tilted-scroll';
 
 export { HapiIntelligence } from './hapi-intelligence';
 export type { HapiIntelligenceProps } from './hapi-intelligence';
+export { AIStudyPlanner } from './ai-study-planner';
+export type { AIStudyPlannerProps } from './ai-study-planner';
 
 export { default as DisplayCards } from './display-cards';
 export type { DisplayCardsProps, DisplayCardProps } from './display-cards';
@@ -72,3 +74,13 @@ export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 export type { CarouselApi } from './carousel';
 
 export { InteractiveHoverButton } from './interactive-hover-button';
+export { HeroSectionPerspective } from './hero-section-perspective';
+export type { HeroSectionPerspectiveProps } from './hero-section-perspective';
+
+export { LiquidButton, liquidbuttonVariants } from './liquid-glass-button';
+export { SectionToggle } from './section-toggle';
+export { Logo } from './logo';
+export type { LogoProps } from './logo';
+
+export { default as PricingSection } from './pricing-section';
+export { TimelineContent } from './timeline-animation';
