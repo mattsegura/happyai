@@ -15,7 +15,7 @@ import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp } from 'lucide-react';
+import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp, CreditCard } from 'lucide-react';
 import { AcademicsHub } from '../academics/AcademicsHub';
 import { AcademicViewWrapper } from '../academics/AcademicViewWrapper';
 import { SingleCourseView } from '../academics/SingleCourseView';
@@ -24,6 +24,8 @@ import { EnhancedStudyPlanner } from '../academics/EnhancedStudyPlanner';
 import { CourseTutorMode } from '../academics/CourseTutorMode';
 import { FeedbackHub } from '../academics/FeedbackHub';
 import { MoodGradeAnalytics } from '../academics/MoodGradeAnalytics';
+import { SubscriptionManagement } from '../payment/SubscriptionManagement';
+import { CheckoutFlow } from '../payment/CheckoutFlow';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
@@ -58,6 +60,7 @@ export function Dashboard() {
     { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
     { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Lab' },
     { id: 'classes', path: '/dashboard/classes', icon: Users, label: 'Classes' },
+    { id: 'subscription', path: '/dashboard/subscription', icon: CreditCard, label: 'Subscription' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
@@ -242,6 +245,7 @@ export function Dashboard() {
                   {location.pathname.includes('hapi') && 'Hapi AI'}
                   {location.pathname.includes('lab') && 'Hapi Lab'}
                   {location.pathname.includes('classes') && 'Classes'}
+                  {location.pathname.includes('subscription') && 'Subscription'}
                   {location.pathname.includes('profile') && 'Profile'}
                 </h1>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -251,6 +255,7 @@ export function Dashboard() {
                   {location.pathname.includes('hapi') && 'AI-powered assistant'}
                   {location.pathname.includes('lab') && 'Pulse checks & Hapi moments'}
                   {location.pathname.includes('classes') && 'Your enrolled classes'}
+                  {location.pathname.includes('subscription') && 'Manage your subscription & billing'}
                   {location.pathname.includes('profile') && 'Your account settings'}
                 </p>
               </div>
@@ -394,6 +399,10 @@ export function Dashboard() {
                     </AcademicViewWrapper>
                   </div>
                 } />
+              </Route>
+              <Route path="subscription">
+                <Route index element={<SubscriptionManagement />} />
+                <Route path="checkout" element={<CheckoutFlow />} />
               </Route>
             </Routes>
         </div>
