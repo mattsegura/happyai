@@ -72,3 +72,6 @@ export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 export type { CarouselApi } from './carousel';
 
 export { InteractiveHoverButton } from './interactive-hover-button';
+
+export { default as PricingSection } from './pricing-section';
+export { TimelineContent } from './timeline-animation';

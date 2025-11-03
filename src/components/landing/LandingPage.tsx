@@ -13,10 +13,7 @@ import {
   Server,
   Key,
   Shield,
-  Building2,
-  Zap,
-  HeadphonesIcon,
-  Settings
+  Building2
 } from 'lucide-react';
 import { AnimatedHero } from '../ui/animated-hero';
 import { TubelightNavBar } from '../ui/tubelight-navbar';
@@ -27,6 +24,7 @@ import { Footer } from '../ui/footer';
 import { ContactSection } from '../ui/contact-section';
 import { HapiMomentsCarousel } from '../ui/hapi-moments-carousel';
 import { ImageComparison, ImageComparisonContent, ImageComparisonSlider } from '../ui/image-comparison';
+import PricingSection from '../ui/pricing-section';
 import { useAuth } from '../../contexts/AuthContext';
 
 const securityFeatures = [
@@ -91,6 +89,11 @@ export function LandingPage() {
       icon: Sparkles,
     },
     {
+      name: 'Functions',
+      url: '#functions',
+      icon: Users,
+    },
+    {
       name: 'Intelligence',
       url: '#intelligence',
       icon: Brain,
@@ -101,21 +104,16 @@ export function LandingPage() {
       icon: GraduationCap,
     },
     {
-      name: 'Functions',
-      url: '#functions',
-      icon: Users,
-    },
-    {
-      name: 'Enterprise',
-      url: '#enterprise',
+      name: 'Pricing',
+      url: '#pricing',
       icon: Building2,
     },
     {
       name: 'Security',
       url: '#security',
-      icon: ShieldCheck,
-    },
-    {
+    icon: ShieldCheck,
+  },
+  {
       name: 'Contact',
       url: '#contact',
       icon: BookOpen,
@@ -152,15 +150,15 @@ export function LandingPage() {
                 
                 {/* Demo Login Button */}
                 <div className="mt-6">
-                  <button
+            <button
                     onClick={handleDemoLogin}
                     className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-                  >
+            >
                     <GraduationCap className="w-5 h-5" />
                     Try Student Demo
-                  </button>
-                </div>
-              </div>
+            </button>
+          </div>
+        </div>
 
               {/* Right side - App preview video */}
               <div className="w-full flex items-start justify-end pt-2">
@@ -202,7 +200,7 @@ export function LandingPage() {
                         Hapi
                       </span>
                       <span className="text-slate-900 dark:text-slate-100"> for teachers</span>
-                    </h2>
+              </h2>
                     <div className="relative">
                       <button
                         onClick={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
@@ -218,7 +216,7 @@ export function LandingPage() {
                         />
                       </button>
                     </div>
-                  </div>
+              </div>
                   <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                     Empower educators with AI-driven insights and comprehensive tools to support every student's journey
                   </p>
@@ -271,8 +269,8 @@ export function LandingPage() {
                     background={<div className="absolute inset-0 bg-blue-200 dark:bg-blue-900/40" />}
                   />
                 </BentoGrid>
-              </div>
-            </section>
+          </div>
+        </section>
           </ImageComparisonContent>
 
           {/* Left Side: Students Section (rendered second to be foreground) */}
@@ -287,7 +285,7 @@ export function LandingPage() {
                         Hapi
                       </span>
                       <span className="text-slate-900 dark:text-slate-100"> for students</span>
-                    </h2>
+              </h2>
                     <div className="relative">
                       <button
                         onClick={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
@@ -303,7 +301,7 @@ export function LandingPage() {
                         />
                       </button>
                     </div>
-                  </div>
+              </div>
                   <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                     Your personal companion for academic success and emotional well-being, all in one intelligent platform
                   </p>
@@ -356,7 +354,7 @@ export function LandingPage() {
                     background={<div />}
                   />
                 </BentoGrid>
-              </div>
+                </div>
             </section>
           </ImageComparisonContent>
 
@@ -370,7 +368,7 @@ export function LandingPage() {
             </div>
           </ImageComparisonSlider>
         </ImageComparison>
-        </div>
+          </div>
 
         <HapiIntelligence onCtaClick={() => {
           document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
@@ -378,153 +376,7 @@ export function LandingPage() {
 
         <HapiMomentsCarousel />
 
-        {/* Enterprise Section */}
-        <section id="enterprise" className="relative overflow-hidden bg-white dark:bg-slate-900 py-24 sm:py-32">
-          <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-            {/* Header */}
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/30 px-4 py-2 mb-6">
-                <Building2 className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                <span className="text-sm font-semibold text-sky-700 dark:text-sky-300">Enterprise Solutions</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">
-                Built for{' '}
-                <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-600 bg-clip-text text-transparent">
-                  Scale & Security
-                </span>
-              </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed">
-                Comprehensive solutions for schools, districts, and universities that need advanced features, dedicated support, and enterprise-grade security.
-              </p>
-            </div>
-
-            {/* Enterprise Features Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-8 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1 shadow-sm">
-                  <div className="flex flex-col gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30 w-fit">
-                      <Users className="w-6 h-6 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      Unlimited Users
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Scale seamlessly across your entire university with unlimited student, teacher, and administrator accounts.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-8 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1 shadow-sm">
-                  <div className="flex flex-col gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30 w-fit">
-                      <HeadphonesIcon className="w-6 h-6 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      Dedicated Support
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Priority support with dedicated account managers, onboarding specialists, and 24/7 technical assistance.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-8 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1 shadow-sm">
-                  <div className="flex flex-col gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30 w-fit">
-                      <Settings className="w-6 h-6 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      Custom Integration
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Seamless integration with your existing SIS, LMS, and data systems with custom API access and SSO.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-8 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1 shadow-sm">
-                  <div className="flex flex-col gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30 w-fit">
-                      <Shield className="w-6 h-6 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      Advanced Security
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Enhanced security features including SSO, advanced encryption, audit logs, and compliance reporting.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-8 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1 shadow-sm">
-                  <div className="flex flex-col gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30 w-fit">
-                      <BarChart3 className="w-6 h-6 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      Advanced Analytics
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      District-wide dashboards, custom reports, data exports, and predictive analytics for strategic planning.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500" />
-                <div className="relative h-full bg-white dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200 dark:border-slate-700/50 rounded-2xl p-8 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1 shadow-sm">
-                  <div className="flex flex-col gap-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30 w-fit">
-                      <Zap className="w-6 h-6 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                      Priority Features
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Early access to new features, custom feature development, and influence on product roadmap.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Section */}
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="bg-gradient-to-r from-sky-500/10 to-blue-500/10 backdrop-blur-sm border border-sky-500/30 rounded-2xl p-8 md:p-12">
-                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-4">
-                  Ready to transform your university?
-                </h3>
-                <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
-                  Let's discuss how Hapi can meet your specific needs and create a custom solution for your organization.
-                </p>
-                <button
-                  onClick={() => {
-                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold rounded-lg hover:from-sky-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                >
-                  <Building2 className="w-5 h-5" />
-                  Contact Sales
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PricingSection />
 
         <section id="security" className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-24 sm:py-32">
           {/* Background decorative elements */}
@@ -555,8 +407,8 @@ export function LandingPage() {
                     {stat.value}
                   </div>
                   <div className="text-sm text-slate-400">{stat.label}</div>
-                </div>
-              ))}
+                    </div>
+                ))}
             </div>
 
             {/* Security Features Grid */}
@@ -579,8 +431,8 @@ export function LandingPage() {
                       <div className="relative h-full flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 transition-all duration-300 group-hover:border-sky-500/50 group-hover:-translate-y-1">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/20 to-blue-500/20 border border-sky-500/30">
                           <Icon className="h-6 w-6 text-sky-400" />
-                        </div>
-                        <div>
+                      </div>
+                      <div>
                           <h4 className="text-lg font-semibold text-white mb-2">{feature.title}</h4>
                           <p className="text-sm text-slate-300 leading-relaxed">{feature.description}</p>
                         </div>

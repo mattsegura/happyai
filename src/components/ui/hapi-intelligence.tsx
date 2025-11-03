@@ -117,28 +117,6 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
             );
           })}
         </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mb-12">
-          <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-sky-400 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent mb-2">
-              99.7%
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">Accuracy Rate</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-sky-500 dark:from-blue-400 dark:to-sky-400 bg-clip-text text-transparent mb-2">
-              &lt;100ms
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">Response Time</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 bg-clip-text text-transparent mb-2">
-              24/7
-            </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">Always Learning</div>
-          </div>
-        </div>
       </div>
     </section>
   );
