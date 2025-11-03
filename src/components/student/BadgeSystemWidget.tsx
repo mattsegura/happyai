@@ -1,22 +1,76 @@
-import { useState } from 'react';
-import { mockBadges, mockUserBadges, Badge, mockCurrentUser, mockAssignmentsWithStatus, mockSentimentHistory } from '../../lib/mockData';
+import { useState, useEffect } from 'react';
 import { calculateBadgeProgress } from '../../lib/studentCalculations';
-import { Award, Lock, Sparkles, TrendingUp } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Award, Lock, Sparkles, TrendingUp, Loader2 } from 'lucide-react';
+
+interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: string;
+  rarity: string;
+  points: number;
+}
 
 export function BadgeSystemWidget() {
+  const { user, profile } = useAuth();
   const [filter, setFilter] = useState<'all' | 'earned' | 'in_progress' | 'locked'>('all');
+  const [badges, setBadges] = useState<Badge[]>([]);
+  const [userBadges, setUserBadges] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const earnedBadgeIds = mockUserBadges.filter(ub => !ub.progress || ub.progress === 100).map(ub => ub.badge_id);
-  const inProgressBadges = mockUserBadges.filter(ub => ub.progress && ub.progress < 100);
+  useEffect(() => {
+    async function fetchBadges() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
+      try {
+        // Fetch all badges
+        const { data: badgesData, error: badgesError } = await supabase
+          .from('achievements')
+          .select('*')
+          .order('points', { ascending: false });
+
+        if (badgesError) throw badgesError;
+
+        // Fetch user's badges
+        const { data: userBadgesData, error: userBadgesError } = await supabase
+          .from('user_achievements')
+          .select('*')
+          .eq('user_id', user.id);
+
+        if (userBadgesError) throw userBadgesError;
+
+        setBadges(badgesData || []);
+        setUserBadges(userBadgesData || []);
+      } catch (error) {
+        console.error('Error fetching badges:', error);
+        setBadges([]);
+        setUserBadges([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBadges();
+  }, [user]);
+
+  const earnedBadgeIds = userBadges.filter(ub => !ub.progress || ub.progress === 100).map(ub => ub.badge_id);
+  const inProgressBadges = userBadges.filter(ub => ub.progress && ub.progress < 100);
+
+  // Simplified user data for badge calculations (will use real data when available)
   const userData = {
-    assignments: mockAssignmentsWithStatus,
-    streak: mockCurrentUser.current_streak,
-    pulseResponses: 35,
-    hapiMomentsSent: 10,
-    aiTutorQuestions: 18,
-    studyPlanWeeks: 2,
-    moodHistory: mockSentimentHistory,
+    assignments: [],
+    streak: profile?.current_streak || 0,
+    pulseResponses: 0,
+    hapiMomentsSent: 0,
+    aiTutorQuestions: 0,
+    studyPlanWeeks: 0,
+    moodHistory: [],
   };
 
   const getBadgeStatus = (badge: Badge): 'earned' | 'in_progress' | 'locked' => {
@@ -27,13 +81,13 @@ export function BadgeSystemWidget() {
   };
 
   const getBadgeProgress = (badge: Badge): number => {
-    const userBadge = mockUserBadges.find(ub => ub.badge_id === badge.id);
+    const userBadge = userBadges.find(ub => ub.badge_id === badge.id);
     if (userBadge?.progress) return userBadge.progress;
     if (earnedBadgeIds.includes(badge.id)) return 100;
     return calculateBadgeProgress(badge.id, userData);
   };
 
-  const filteredBadges = mockBadges.filter(badge => {
+  const filteredBadges = badges.filter(badge => {
     const status = getBadgeStatus(badge);
     if (filter === 'all') return true;
     return status === filter;
@@ -67,10 +121,36 @@ export function BadgeSystemWidget() {
     }
   };
 
-  const earnedCount = mockBadges.filter(b => getBadgeStatus(b) === 'earned').length;
-  const totalPoints = mockBadges
+  const earnedCount = badges.filter(b => getBadgeStatus(b) === 'earned').length;
+  const totalPoints = badges
     .filter(b => earnedBadgeIds.includes(b.id))
     .reduce((sum, b) => sum + b.points, 0);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (badges.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="text-center py-8">
+          <Award className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No badges available</h3>
+          <p className="text-sm text-muted-foreground">
+            Start completing activities to earn achievements!
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
@@ -82,7 +162,7 @@ export function BadgeSystemWidget() {
             Badge Collection
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            {earnedCount} of {mockBadges.length} badges earned • {totalPoints} bonus points
+            {earnedCount} of {badges.length} badges earned • {totalPoints} bonus points
           </p>
         </div>
       </div>

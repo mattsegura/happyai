@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { GraduationCap, Heart, TrendingUp, AlertTriangle, Sparkles, ChevronRight } from 'lucide-react';
-import { mockClassRiskIndicators, mockClassWellbeingIndicators } from '../../lib/mockData';
 import { motion } from 'framer-motion';
+
+// TODO: Fetch from Supabase
+const mockClassRiskIndicators: any[] = [];
+const mockClassWellbeingIndicators: any[] = [];
 
 export function HealthCheckSection() {
   const [expandedSection, setExpandedSection] = useState<'academic' | 'wellbeing' | null>(null);

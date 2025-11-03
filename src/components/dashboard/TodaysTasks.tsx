@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockClassMembers, mockPulseCheckSets, mockOfficeHours, mockHapiMomentReferrals, mockClasses } from '../../lib/mockData';
+import { supabase } from '../../lib/supabase';
 import { Sunrise, MessageSquare, Video, Heart, Sparkles, ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Skeleton } from '../ui/Skeleton';
@@ -46,38 +46,46 @@ export function TodaysTasks({
     setLoading(true);
     const taskList: Task[] = [];
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Always show morning pulse
+      taskList.push({
+        id: 'morning-pulse',
+        type: 'morning_pulse',
+        title: 'Morning Pulse Check',
+        description: 'How are you feeling today?',
+        points: 15,
+        icon: Sunrise,
+        accentColor: 'text-amber-600',
+      });
 
-    const today = new Date().toISOString().split('T')[0];
+      // Get user's class memberships
+      const { data: classMemberships, error: memberError } = await supabase
+        .from('class_members')
+        .select('class_id')
+        .eq('user_id', user.id);
 
-    taskList.push({
-      id: 'morning-pulse',
-      type: 'morning_pulse',
-      title: 'Morning Pulse Check',
-      description: 'How are you feeling today?',
-      points: 15,
-      icon: Sunrise,
-      accentColor: 'text-amber-600',
-    });
+      if (!memberError && classMemberships && classMemberships.length > 0) {
+        const classIds = classMemberships.map(m => m.class_id);
 
-    const classMemberships = mockClassMembers.filter(m => m.user_id === user.id);
+        // Get active class pulses
+        const { data: pulseSets, error: pulseError } = await supabase
+          .from('pulse_check_sets')
+          .select(`
+            *,
+            classes!inner(name)
+          `)
+          .in('class_id', classIds)
+          .eq('is_active', true)
+          .eq('is_draft', false)
+          .gt('expires_at', new Date().toISOString())
+          .order('expires_at', { ascending: true })
+          .limit(1);
 
-    if (classMemberships && classMemberships.length > 0) {
-      const classIds = classMemberships.map(m => m.class_id);
-
-      const pulseSets = mockPulseCheckSets.filter(p =>
-        classIds.includes(p.class_id) &&
-        p.is_active &&
-        !p.is_draft &&
-        new Date(p.expires_at) > new Date()
-      );
-
-      if (pulseSets.length > 0) {
-        const nextPulse = pulseSets[0];
-        const classData = mockClasses.find(c => c.id === nextPulse.class_id);
-        const className = classData?.name || 'Class';
-        const abbreviatedTitle = `Class Pulse (${nextPulse.point_value || 20}pt)`;
-        const abbreviatedDesc = `${className}`;
+        if (!pulseError && pulseSets && pulseSets.length > 0) {
+          const nextPulse = pulseSets[0];
+          const className = (nextPulse.classes as any)?.name || 'Class';
+          const abbreviatedTitle = `Class Pulse (${nextPulse.point_value || 20}pt)`;
+          const abbreviatedDesc = `${className}`;
 
         taskList.push({
           id: 'class-pulse',
@@ -91,7 +99,8 @@ export function TodaysTasks({
         });
       }
 
-      const officeHoursToday = mockOfficeHours.filter(oh => oh.date === today && oh.is_active);
+      // TODO: Get office hours from database
+      const officeHoursToday: any[] = [];
 
       if (officeHoursToday.length > 0) {
         const relevantOfficeHours = officeHoursToday.filter(oh =>
@@ -121,9 +130,8 @@ export function TodaysTasks({
       }
     }
 
-    const unreadReferrals = mockHapiMomentReferrals.filter(r =>
-      r.referred_user_id === user.id && !r.is_read
-    );
+    // TODO: Get hapi moment referrals from database
+    const unreadReferrals: any[] = [];
 
     if (unreadReferrals.length > 0) {
       const referral = unreadReferrals[0];
@@ -140,8 +148,13 @@ export function TodaysTasks({
       });
     }
 
-    setTasks(taskList);
-    setLoading(false);
+      setTasks(taskList);
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleTaskClick = (task: Task) => {

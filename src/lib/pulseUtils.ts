@@ -1,4 +1,24 @@
-import { ClassPulse, StudentRoster } from './mockData';
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+// Note: These types will be consolidated into shared type files in Step 3.2
+
+export interface ClassPulse {
+  id: string;
+  class_id: string;
+  question: string;
+  question_type: string;
+  answer_choices?: string[];
+  is_active: boolean;
+  expires_at: string;
+  created_at: string;
+}
+
+export interface StudentRoster {
+  id: string;
+  name: string;
+  email: string;
+}
 
 export interface PulseStatistics {
   totalStudents: number;

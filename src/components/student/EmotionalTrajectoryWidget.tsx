@@ -1,10 +1,57 @@
-import { mockSentimentHistory } from '../../lib/mockData';
-import { generateEmotionalTrajectory } from '../../lib/studentCalculations';
-import { Brain, Sparkles, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { generateEmotionalTrajectory, SentimentHistory } from '../../lib/studentCalculations';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Brain, Sparkles, TrendingUp, Loader2 } from 'lucide-react';
 
 export function EmotionalTrajectoryWidget() {
-  const moodData = mockSentimentHistory.slice(-14); // Last 14 days
+  const { user } = useAuth();
+  const [moodData, setMoodData] = useState<SentimentHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMoodData() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const fourteenDaysAgo = new Date();
+        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+        const { data, error } = await supabase
+          .from('sentiment_history')
+          .select('date, emotion, intensity, sentiment')
+          .eq('user_id', user.id)
+          .gte('date', fourteenDaysAgo.toISOString())
+          .order('date', { ascending: true });
+
+        if (error) throw error;
+        setMoodData(data || []);
+      } catch (error) {
+        console.error('Error fetching mood data:', error);
+        setMoodData([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMoodData();
+  }, [user]);
+
   const { summary, dominantEmotions, recommendation } = generateEmotionalTrajectory(moodData);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950/20 dark:via-pink-950/20 dark:to-blue-950/20 shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[200px]">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950/20 dark:via-pink-950/20 dark:to-blue-950/20 shadow-lg p-6">

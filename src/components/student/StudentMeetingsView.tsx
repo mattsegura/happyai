@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockOfficeHours, mockClassMembers } from '../../lib/mockData';
-import { Video, Calendar, Clock, Users, ExternalLink, UserPlus, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { Video, Calendar, Clock, Users, ExternalLink, UserPlus, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 type OfficeHour = {
   id: string;
@@ -48,33 +48,61 @@ export function StudentMeetingsView() {
 
     try {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
 
-      const userClasses = mockClassMembers
-        .filter(m => m.user_id === user.id)
-        .map(m => m.class_id);
+      // Get user's classes
+      const { data: classMembers, error: classError } = await supabase
+        .from('class_members')
+        .select('class_id')
+        .eq('user_id', user.id);
 
-      const relevantOfficeHours = mockOfficeHours.filter(oh =>
-        oh.class_id === null || userClasses.includes(oh.class_id)
+      if (classError) throw classError;
+
+      const userClassIds = classMembers?.map(m => m.class_id) || [];
+
+      // Get office hours for user's classes or open office hours
+      const { data: officeHoursData, error: officeHoursError } = await supabase
+        .from('office_hours')
+        .select(`
+          *,
+          profiles!office_hours_teacher_id_fkey(full_name),
+          classes(name)
+        `)
+        .or(`class_id.is.null,class_id.in.(${userClassIds.join(',')})`);
+
+      if (officeHoursError) throw officeHoursError;
+
+      // Get queue information
+      const enrichedData: OfficeHour[] = await Promise.all(
+        (officeHoursData || []).map(async (oh: any) => {
+          // Get queue count
+          const { data: queueData, error: queueError } = await supabase
+            .from('office_hours_queue')
+            .select('id, user_id')
+            .eq('office_hour_id', oh.id)
+            .eq('status', 'waiting');
+
+          const queueCount = queueData?.length || 0;
+          const userQueue = queueData?.find(q => q.user_id === user.id);
+
+          return {
+            id: oh.id,
+            teacher_id: oh.teacher_id,
+            class_id: oh.class_id,
+            date: oh.date,
+            start_time: oh.start_time,
+            end_time: oh.end_time,
+            meeting_link: oh.meeting_link || '',
+            max_queue_size: oh.max_queue_size || 10,
+            is_active: oh.is_active,
+            notes: oh.notes,
+            teacher_name: oh.profiles?.full_name || 'Unknown Teacher',
+            class_name: oh.classes?.name || null,
+            queue_count: queueCount,
+            is_in_queue: !!userQueue,
+            queue_position: userQueue ? queueCount : null,
+          };
+        })
       );
-
-      const enrichedData: OfficeHour[] = relevantOfficeHours.map(oh => ({
-        id: oh.id,
-        teacher_id: oh.teacher_id,
-        class_id: oh.class_id,
-        date: oh.date,
-        start_time: oh.start_time,
-        end_time: oh.end_time,
-        meeting_link: oh.zoom_link,
-        max_queue_size: 10,
-        is_active: oh.is_active,
-        notes: null,
-        teacher_name: oh.teacher_name || 'Unknown Teacher',
-        class_name: oh.class_name || null,
-        queue_count: oh.student_queue?.length || 0,
-        is_in_queue: false,
-        queue_position: null,
-      }));
 
       setOfficeHours(enrichedData);
     } catch (error) {

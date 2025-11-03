@@ -1,20 +1,90 @@
-import { useState } from 'react';
-import { mockClassWellbeingIndicators } from '../../lib/mockData';
-import { Heart, ChevronDown, ChevronUp, Smile, Meh, Frown, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Heart, ChevronDown, ChevronUp, Smile, Meh, Frown, Sparkles, Loader2 } from 'lucide-react';
+
+type WellbeingLevel = 'thriving' | 'managing' | 'struggling';
+
+interface WellbeingIndicator {
+  class_name: string;
+  wellbeing_level: WellbeingLevel;
+  average_mood: number;
+  stress_level: number;
+}
 
 export function WellbeingSummaryCard() {
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
-  const wellbeingIndicators = mockClassWellbeingIndicators;
+  const [wellbeingIndicators, setWellbeingIndicators] = useState<WellbeingIndicator[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchWellbeingData();
+    }
+  }, [user]);
+
+  const fetchWellbeingData = async () => {
+    if (!user) return;
+
+    try {
+      // Get user's recent pulse checks
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const { data: pulses, error } = await supabase
+        .from('pulse_checks')
+        .select('sentiment')
+        .eq('user_id', user.id)
+        .gte('created_at', thirtyDaysAgo.toISOString());
+
+      if (error) throw error;
+
+      if (pulses && pulses.length > 0) {
+        const avgSentiment = pulses.reduce((sum, p) => sum + p.sentiment, 0) / pulses.length;
+        const avgStress = Math.max(1, Math.min(10, 11 - avgSentiment)); // Inverse
+
+        let wellbeingLevel: WellbeingLevel = 'managing';
+        if (avgSentiment >= 5) wellbeingLevel = 'thriving';
+        else if (avgSentiment < 3) wellbeingLevel = 'struggling';
+
+        setWellbeingIndicators([{
+          class_name: 'Overall',
+          wellbeing_level: wellbeingLevel,
+          average_mood: avgSentiment,
+          stress_level: avgStress,
+        }]);
+      }
+    } catch (error) {
+      console.error('Error fetching wellbeing data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const strugglingCount = wellbeingIndicators.filter(w => w.wellbeing_level === 'struggling').length;
   const managingCount = wellbeingIndicators.filter(w => w.wellbeing_level === 'managing').length;
   const thrivingCount = wellbeingIndicators.filter(w => w.wellbeing_level === 'thriving').length;
 
-  const avgMood = wellbeingIndicators.reduce((sum, w) => sum + w.average_mood, 0) / wellbeingIndicators.length;
-  const avgStress = wellbeingIndicators.reduce((sum, w) => sum + w.stress_level, 0) / wellbeingIndicators.length;
+  const avgMood = wellbeingIndicators.length > 0
+    ? wellbeingIndicators.reduce((sum, w) => sum + w.average_mood, 0) / wellbeingIndicators.length
+    : 0;
+  const avgStress = wellbeingIndicators.length > 0
+    ? wellbeingIndicators.reduce((sum, w) => sum + w.stress_level, 0) / wellbeingIndicators.length
+    : 0;
 
   const strugglingClasses = wellbeingIndicators.filter(w => w.wellbeing_level === 'struggling');
   const managingClasses = wellbeingIndicators.filter(w => w.wellbeing_level === 'managing');
+
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-border bg-card shadow-md p-4">
+        <div className="flex items-center justify-center h-24">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-md overflow-hidden hover:shadow-lg transition-shadow">

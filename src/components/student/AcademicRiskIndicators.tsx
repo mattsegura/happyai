@@ -1,8 +1,109 @@
-import { mockClassRiskIndicators, RiskLevel } from '../../lib/mockData';
-import { AlertTriangle, CheckCircle, AlertCircle, Lightbulb } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { AlertTriangle, CheckCircle, AlertCircle, Lightbulb, Loader2 } from 'lucide-react';
+
+type RiskLevel = 'low' | 'medium' | 'high';
+
+interface RiskIndicator {
+  class_id: string;
+  class_name: string;
+  risk_level: RiskLevel;
+  current_grade: number;
+  missing_assignments: number;
+  late_submissions: number;
+  recommendations: string[];
+}
 
 export function AcademicRiskIndicators() {
-  const riskIndicators = mockClassRiskIndicators;
+  const { user } = useAuth();
+  const [riskIndicators, setRiskIndicators] = useState<RiskIndicator[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRiskData() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Get user's courses from Canvas
+        const { data: courses, error: coursesError } = await supabase
+          .from('canvas_courses')
+          .select('*')
+          .eq('user_id', user.id);
+
+        if (coursesError) throw coursesError;
+
+        const risks: RiskIndicator[] = [];
+
+        for (const course of courses || []) {
+          // Get assignments for this course
+          const { data: assignments, error: assignmentsError } = await supabase
+            .from('canvas_assignments')
+            .select(`
+              *,
+              canvas_submissions(workflow_state, score, late)
+            `)
+            .eq('user_id', user.id)
+            .eq('course_id', course.id);
+
+          if (assignmentsError) continue;
+
+          // Calculate risk metrics
+          const totalAssignments = assignments?.length || 0;
+          const gradedAssignments = assignments?.filter(a => a.canvas_submissions?.[0]?.score !== undefined) || [];
+          const missingAssignments = assignments?.filter(a => !a.canvas_submissions?.[0]) || [];
+          const lateSubmissions = assignments?.filter(a => a.canvas_submissions?.[0]?.late) || [];
+
+          let currentGrade = 0;
+          if (gradedAssignments.length > 0) {
+            const totalScore = gradedAssignments.reduce((sum, a) => sum + (a.canvas_submissions?.[0]?.score || 0), 0);
+            const totalPossible = gradedAssignments.reduce((sum, a) => sum + (a.points_possible || 0), 0);
+            currentGrade = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+          }
+
+          // Determine risk level
+          let riskLevel: RiskLevel = 'low';
+          const recommendations: string[] = [];
+
+          if (currentGrade < 70 || missingAssignments.length >= 3) {
+            riskLevel = 'high';
+            if (currentGrade < 70) recommendations.push('Current grade is below passing');
+            if (missingAssignments.length >= 3) recommendations.push(`${missingAssignments.length} missing assignments`);
+            recommendations.push('Schedule office hours with instructor');
+          } else if (currentGrade < 80 || missingAssignments.length >= 1 || lateSubmissions.length >= 2) {
+            riskLevel = 'medium';
+            if (missingAssignments.length > 0) recommendations.push('Complete missing assignments');
+            if (lateSubmissions.length > 0) recommendations.push('Improve time management');
+            recommendations.push('Review challenging material');
+          } else {
+            recommendations.push('Maintain current performance');
+          }
+
+          risks.push({
+            class_id: course.id,
+            class_name: course.name,
+            risk_level: riskLevel,
+            current_grade: currentGrade,
+            missing_assignments: missingAssignments.length,
+            late_submissions: lateSubmissions.length,
+            recommendations,
+          });
+        }
+
+        setRiskIndicators(risks);
+      } catch (error) {
+        console.error('Error fetching risk data:', error);
+        setRiskIndicators([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRiskData();
+  }, [user]);
 
   const getRiskIcon = (level: RiskLevel) => {
     switch (level) {
@@ -50,6 +151,32 @@ export function AcademicRiskIndicators() {
 
   const highRiskCount = riskIndicators.filter(r => r.risk_level === 'high').length;
   const mediumRiskCount = riskIndicators.filter(r => r.risk_level === 'medium').length;
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (riskIndicators.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="text-center py-8">
+          <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No risk data yet</h3>
+          <p className="text-sm text-muted-foreground">
+            Sync your Canvas courses to see academic risk indicators.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">

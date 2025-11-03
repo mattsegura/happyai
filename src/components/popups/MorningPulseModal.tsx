@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { X, Sunrise, Sparkles } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockClassMembers, mockCurrentUser } from '../../lib/mockData';
+import { supabase } from '../../lib/supabase';
 import { EmotionSelector } from '../dashboard/EmotionSelector';
 import { getModalAnimation, getBackdropAnimation, createConfetti } from '../../lib/animations';
+import { EMOTION_SENTIMENT_MAP } from '../../lib/emotionConfig';
 
 interface MorningPulseModalProps {
   onComplete: () => void;
@@ -27,15 +28,19 @@ export function MorningPulseModal({ onComplete, onDismiss }: MorningPulseModalPr
   const fetchUserClasses = async () => {
     if (!user) return;
 
-    await new Promise(resolve => setTimeout(resolve, 200));
+    try {
+      const { data: memberships, error } = await supabase
+        .from('class_members')
+        .select('class_id, classes(id, name)')
+        .eq('user_id', user.id);
 
-    const memberships = mockClassMembers.filter(m => m.user_id === user.id);
-    const classData = memberships.map(m => ({
-      class_id: m.class_id,
-      classes: { id: m.class_id, name: 'Biology II' },
-    }));
+      if (error) throw error;
 
-    setUserClasses(classData);
+      setUserClasses(memberships || []);
+    } catch (error) {
+      console.error('Error fetching user classes:', error);
+      setUserClasses([]);
+    }
   };
 
   const handleClose = async () => {
@@ -50,31 +55,93 @@ export function MorningPulseModal({ onComplete, onDismiss }: MorningPulseModalPr
   };
 
   const handleSubmit = async () => {
-    if (!selectedEmotion || !user || userClasses.length === 0) return;
+    if (!selectedEmotion || !user) return;
 
     setLoading(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Find emotion sentiment value
+      const sentiment = EMOTION_SENTIMENT_MAP[selectedEmotion as keyof typeof EMOTION_SENTIMENT_MAP] || 4;
+      const intensity = 5; // Default intensity
 
-    const today = new Date().toISOString().split('T')[0];
-    const followupPointsAwarded = followupNotes.trim() ? 5 : 0;
-    const totalPointsEarned = 10 + followupPointsAwarded;
+      // Save pulse check to database
+      const { error: pulseError } = await supabase
+        .from('pulse_checks')
+        .insert({
+          user_id: user.id,
+          emotion: selectedEmotion,
+          sentiment: sentiment,
+          intensity: intensity,
+          notes: followupNotes.trim() || null,
+        });
 
-    mockCurrentUser.total_points += totalPointsEarned;
-    mockCurrentUser.current_streak += 1;
-    mockCurrentUser.last_pulse_check_date = today;
+      if (pulseError) {
+        console.error('Error saving pulse check:', pulseError);
+        throw pulseError;
+      }
 
-    await refreshProfile();
+      // Save to sentiment history
+      const today = new Date().toISOString().split('T')[0];
+      await supabase
+        .from('sentiment_history')
+        .upsert({
+          user_id: user.id,
+          date: today,
+          emotion: selectedEmotion,
+          sentiment: sentiment,
+          intensity: intensity,
+        }, { onConflict: 'user_id,date' });
 
-    createConfetti(document.body);
+      // Update user profile points and streak
+      const followupPointsAwarded = followupNotes.trim() ? 5 : 0;
+      const totalPointsEarned = 10 + followupPointsAwarded;
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('total_points, current_streak, last_pulse_check_date')
+        .eq('id', user.id)
+        .single();
 
-    setIsExiting(true);
-    await new Promise(resolve => setTimeout(resolve, 200));
-    setIsOpen(false);
-    onComplete();
-    setLoading(false);
+      if (profile) {
+        // Calculate new streak
+        const lastCheck = profile.last_pulse_check_date ? new Date(profile.last_pulse_check_date) : null;
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        let newStreak = profile.current_streak || 0;
+        if (!lastCheck || profile.last_pulse_check_date === yesterdayStr) {
+          newStreak += 1; // Continue streak
+        } else if (profile.last_pulse_check_date !== today) {
+          newStreak = 1; // Reset streak
+        }
+
+        await supabase
+          .from('profiles')
+          .update({
+            total_points: (profile.total_points || 0) + totalPointsEarned,
+            current_streak: newStreak,
+            last_pulse_check_date: today,
+          })
+          .eq('id', user.id);
+      }
+
+      await refreshProfile();
+
+      createConfetti(document.body);
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setIsExiting(true);
+      await new Promise(resolve => setTimeout(resolve, 200));
+      setIsOpen(false);
+      onComplete();
+    } catch (error) {
+      console.error('Error submitting pulse check:', error);
+      alert('Failed to save pulse check. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;

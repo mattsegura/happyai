@@ -1,31 +1,72 @@
-import { mockHapiMoments, MOCK_USER_ID } from '../../lib/mockData';
-import { Heart, Send, Inbox, TrendingUp, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Heart, Send, Inbox, TrendingUp, Sparkles, Loader2 } from 'lucide-react';
 
 export function HapiMomentsWidget() {
-  const sentMoments = mockHapiMoments.filter(m => m.sender_id === MOCK_USER_ID);
-  const receivedMoments = mockHapiMoments.filter(m => m.recipient_id === MOCK_USER_ID);
+  const { user } = useAuth();
+  const [moments, setMoments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMoments() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('hapi_moments')
+          .select('*')
+          .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setMoments(data || []);
+      } catch (error) {
+        console.error('Error fetching hapi moments:', error);
+        setMoments([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMoments();
+  }, [user]);
+
+  const sentMoments = moments.filter(m => m.sender_id === user?.id);
+  const receivedMoments = moments.filter(m => m.recipient_id === user?.id);
 
   const totalSent = sentMoments.length;
   const totalReceived = receivedMoments.length;
   const totalPoints = (totalSent * 5) + (totalReceived * 5); // 5 points each
 
-  // Get recent moments
-  const recentMoments = [...mockHapiMoments]
-    .filter(m => m.sender_id === MOCK_USER_ID || m.recipient_id === MOCK_USER_ID)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 5);
+  // Get recent moments (already sorted)
+  const recentMoments = moments.slice(0, 5);
 
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">

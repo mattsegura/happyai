@@ -1,8 +1,89 @@
-import { mockClassWellbeingIndicators, WellbeingLevel } from '../../lib/mockData';
-import { Heart, Smile, Meh, Frown, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Heart, Smile, Meh, Frown, Sparkles, Loader2 } from 'lucide-react';
+
+type WellbeingLevel = 'thriving' | 'managing' | 'struggling';
+
+interface WellbeingIndicator {
+  class_id: string;
+  class_name: string;
+  wellbeing_level: WellbeingLevel;
+  avg_sentiment: number;
+  stress_level: number;
+  support_needed: boolean;
+}
 
 export function WellbeingIndicators() {
-  const wellbeingIndicators = mockClassWellbeingIndicators;
+  const { user } = useAuth();
+  const [wellbeingIndicators, setWellbeingIndicators] = useState<WellbeingIndicator[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchWellbeingData() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Get user's classes
+        const { data: classMembers, error: classError } = await supabase
+          .from('class_members')
+          .select('class_id, classes(id, name)')
+          .eq('user_id', user.id);
+
+        if (classError) throw classError;
+
+        // Calculate wellbeing for each class based on pulse checks
+        const wellbeingData: WellbeingIndicator[] = [];
+
+        for (const member of classMembers || []) {
+          const classData = member.classes as any;
+          if (!classData) continue;
+
+          // Get recent pulse checks for this class
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+          const { data: pulses, error: pulseError } = await supabase
+            .from('pulse_checks')
+            .select('sentiment')
+            .eq('user_id', user.id)
+            .gte('created_at', thirtyDaysAgo.toISOString());
+
+          if (pulseError) continue;
+
+          if (pulses && pulses.length > 0) {
+            const avgSentiment = pulses.reduce((sum, p) => sum + p.sentiment, 0) / pulses.length;
+            const stressLevel = Math.max(1, Math.min(10, 11 - avgSentiment)); // Inverse of sentiment
+
+            let wellbeingLevel: WellbeingLevel = 'managing';
+            if (avgSentiment >= 5) wellbeingLevel = 'thriving';
+            else if (avgSentiment < 3) wellbeingLevel = 'struggling';
+
+            wellbeingData.push({
+              class_id: classData.id,
+              class_name: classData.name,
+              wellbeing_level: wellbeingLevel,
+              avg_sentiment: avgSentiment,
+              stress_level: stressLevel,
+              support_needed: avgSentiment < 3,
+            });
+          }
+        }
+
+        setWellbeingIndicators(wellbeingData);
+      } catch (error) {
+        console.error('Error fetching wellbeing data:', error);
+        setWellbeingIndicators([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchWellbeingData();
+  }, [user]);
 
   const getWellbeingIcon = (level: WellbeingLevel) => {
     switch (level) {
@@ -57,6 +138,32 @@ export function WellbeingIndicators() {
   const strugglingCount = wellbeingIndicators.filter(w => w.wellbeing_level === 'struggling').length;
   const managingCount = wellbeingIndicators.filter(w => w.wellbeing_level === 'managing').length;
   const thrivingCount = wellbeingIndicators.filter(w => w.wellbeing_level === 'thriving').length;
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (wellbeingIndicators.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="text-center py-8">
+          <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No wellbeing data yet</h3>
+          <p className="text-sm text-muted-foreground">
+            Complete your daily pulse checks to track your wellbeing across classes.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">

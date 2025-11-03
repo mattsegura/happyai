@@ -1,5 +1,10 @@
-import { mockTeacherClasses, mockClassRosters, mockClassPulses, StudentRoster } from '../../lib/mockData';
 import { AlertCircle } from 'lucide-react';
+
+// TODO: Fetch from Supabase
+const mockTeacherClasses: any[] = [];
+const mockClassRosters: any = {};
+const mockClassPulses: any[] = [];
+type StudentRoster = any;
 import { ClassSentimentDial } from './ClassSentimentDial';
 import { ClassAverageSentimentChart } from './ClassAverageSentimentChart';
 import { ClassPulseSummary } from './ClassPulseSummary';

@@ -1,20 +1,103 @@
-import { useState } from 'react';
-import { mockClassRiskIndicators } from '../../lib/mockData';
-import { GraduationCap, AlertTriangle, ChevronDown, ChevronUp, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { GraduationCap, AlertTriangle, ChevronDown, ChevronUp, TrendingUp, Loader2 } from 'lucide-react';
+
+type RiskLevel = 'low' | 'medium' | 'high';
+
+interface RiskIndicator {
+  class_id: string;
+  class_name: string;
+  risk_level: RiskLevel;
+  current_grade: number;
+}
 
 export function AcademicSummaryCard() {
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
-  const riskIndicators = mockClassRiskIndicators;
+  const [riskIndicators, setRiskIndicators] = useState<RiskIndicator[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchRiskData();
+    }
+  }, [user]);
+
+  const fetchRiskData = async () => {
+    if (!user) return;
+
+    try {
+      // Get user's courses from Canvas
+      const { data: courses, error } = await supabase
+        .from('canvas_courses')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      const risks: RiskIndicator[] = [];
+
+      for (const course of courses || []) {
+        // Get assignments with grades for this course
+        const { data: assignments } = await supabase
+          .from('canvas_assignments')
+          .select('points_possible, canvas_submissions(score)')
+          .eq('user_id', user.id)
+          .eq('course_id', course.id);
+
+        // Calculate grade
+        let currentGrade = 0;
+        const gradedAssignments = assignments?.filter(a => a.canvas_submissions?.[0]?.score !== undefined) || [];
+
+        if (gradedAssignments.length > 0) {
+          const totalScore = gradedAssignments.reduce((sum, a) => sum + (a.canvas_submissions?.[0]?.score || 0), 0);
+          const totalPossible = gradedAssignments.reduce((sum, a) => sum + (a.points_possible || 0), 0);
+          currentGrade = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+        }
+
+        // Determine risk level
+        let riskLevel: RiskLevel = 'low';
+        if (currentGrade < 70) riskLevel = 'high';
+        else if (currentGrade < 80) riskLevel = 'medium';
+
+        risks.push({
+          class_id: course.id,
+          class_name: course.name,
+          risk_level: riskLevel,
+          current_grade: currentGrade,
+        });
+      }
+
+      setRiskIndicators(risks);
+    } catch (error) {
+      console.error('Error fetching academic data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const highRiskCount = riskIndicators.filter(r => r.risk_level === 'high').length;
   const mediumRiskCount = riskIndicators.filter(r => r.risk_level === 'medium').length;
   const lowRiskCount = riskIndicators.filter(r => r.risk_level === 'low').length;
 
-  // Calculate overall GPA (mock calculation)
-  const overallGPA = 3.2;
+  // Calculate overall GPA from grades
+  const overallGPA = riskIndicators.length > 0
+    ? (riskIndicators.reduce((sum, r) => sum + r.current_grade, 0) / riskIndicators.length / 100 * 4).toFixed(2)
+    : '0.00';
 
   const highRiskClasses = riskIndicators.filter(r => r.risk_level === 'high');
   const mediumRiskClasses = riskIndicators.filter(r => r.risk_level === 'medium');
+
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-border bg-card shadow-md p-4">
+        <div className="flex items-center justify-center h-24">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-md overflow-hidden hover:shadow-lg transition-shadow">
@@ -45,7 +128,7 @@ export function AcademicSummaryCard() {
         <div className="flex items-center gap-3 mb-3">
           <div className="flex-1">
             <div className="text-xs text-muted-foreground mb-0.5">GPA</div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{overallGPA.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{overallGPA}</div>
           </div>
           
           {highRiskCount > 0 && (

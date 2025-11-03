@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockClassMembers, mockClassPulses } from '../../lib/mockData';
+import { supabase } from '../../lib/supabase';
 import { MorningPulseModal } from './MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from './ConsolidatedClassPulsesModal';
 import { PopupDebugPanel } from './PopupDebugPanel';
@@ -195,23 +195,33 @@ export function PopupQueueManager({ onAllComplete, resetTrigger }: PopupQueueMan
 
     console.log('[PopupQueue] Fetching classes for user:', user.id);
 
-    const userClasses = mockClassMembers.filter(m => m.user_id === user.id);
-    const userClassCount = userClasses.length;
-    console.log('[PopupQueue] User is enrolled in', userClassCount, 'classes');
+    // Fetch user's classes from database
+    const { data: userClasses, error: classError } = await supabase
+      .from('class_members')
+      .select('class_id')
+      .eq('user_id', user.id);
 
-    if (userClasses.length === 0) {
+    if (classError || !userClasses || userClasses.length === 0) {
       console.log('[PopupQueue] User not enrolled in any classes');
       return { incompletePulses: [], userClassCount: 0, activePulsesCount: 0 };
     }
 
+    const userClassCount = userClasses.length;
     const classIds = userClasses.map(c => c.class_id);
-    console.log('[PopupQueue] Class IDs:', classIds);
+    console.log('[PopupQueue] User is enrolled in', userClassCount, 'classes:', classIds);
 
     const now = new Date();
-    console.log('[PopupQueue] Current time:', now.toISOString());
 
-    const activePulses = mockClassPulses.filter(p =>
-      classIds.includes(p.class_id) &&
+    // Fetch active class pulses from database
+    const { data: activePulsesData, error: pulsesError } = await supabase
+      .from('class_pulses')
+      .select('*')
+      .in('class_id', classIds)
+      .eq('is_active', true)
+      .gt('expires_at', now.toISOString());
+
+    const activePulses = activePulsesData || [];
+    const filteredActivePulses = activePulses.filter(p =>
       p.is_active &&
       new Date(p.expires_at) > now
     );

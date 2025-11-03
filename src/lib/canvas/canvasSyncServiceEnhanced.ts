@@ -171,6 +171,36 @@ class CanvasSyncServiceEnhanced {
 
         onProgress?.(`Synced ${counts.courses} courses`, 30);
 
+        // Auto-create HapiAI classes from Canvas courses
+        onProgress?.('Creating classes from Canvas courses...', 35);
+        for (const course of courses) {
+          try {
+            // Check if a class already exists for this Canvas course
+            const { data: existingClass } = await this.supabase
+              .from('classes')
+              .select('id')
+              .or(`canvas_course_id.eq.${course.id},class_code.eq.${course.course_code}`)
+              .maybeSingle();
+
+            if (!existingClass) {
+              // Create a new HapiAI class linked to this Canvas course
+              const { data: user } = await this.supabase.auth.getUser();
+              await this.supabase
+                .from('classes')
+                .insert({
+                  name: course.name,
+                  description: 'Synced from Canvas LMS',
+                  teacher_id: user?.user?.id || null,
+                  class_code: course.course_code || `CANVAS-${course.id}`,
+                  is_active: true,
+                  canvas_course_id: course.id,
+                });
+            }
+          } catch (error) {
+            console.warn(`[Canvas Sync] Could not create class for ${course.name}:`, error);
+          }
+        }
+
         // 2. Sync assignments for each course
         onProgress?.('Fetching assignments...', 40);
 

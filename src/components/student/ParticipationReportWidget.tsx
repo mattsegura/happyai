@@ -1,8 +1,128 @@
-import { mockParticipationData, mockCombinedParticipation } from '../../lib/mockData';
-import { MessageSquare, Trophy, TrendingUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { MessageSquare, Trophy, TrendingUp, Loader2 } from 'lucide-react';
+
+interface ParticipationData {
+  class_id: string;
+  class_name: string;
+  total_pulses: number;
+  completed_pulses: number;
+  participation_rate: number;
+  points_earned: number;
+  rank: number;
+  total_students: number;
+}
+
+interface CombinedParticipation {
+  total_pulses: number;
+  completed_pulses: number;
+  participation_rate: number;
+  total_points_earned: number;
+  overall_rank: number;
+  total_students: number;
+}
 
 export function ParticipationReportWidget() {
-  const combined = mockCombinedParticipation;
+  const { user } = useAuth();
+  const [participationData, setParticipationData] = useState<ParticipationData[]>([]);
+  const [combined, setCombined] = useState<CombinedParticipation>({
+    total_pulses: 0,
+    completed_pulses: 0,
+    participation_rate: 0,
+    total_points_earned: 0,
+    overall_rank: 0,
+    total_students: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchParticipationData() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Get user's classes
+        const { data: classMembers, error: classError } = await supabase
+          .from('class_members')
+          .select('class_id, classes(id, name)')
+          .eq('user_id', user.id);
+
+        if (classError) throw classError;
+
+        const participationByClass: ParticipationData[] = [];
+        let totalPulses = 0;
+        let totalCompleted = 0;
+        let totalPoints = 0;
+
+        for (const member of classMembers || []) {
+          const classData = member.classes as any;
+          if (!classData) continue;
+
+          // Get total pulses for this class
+          const { data: classPulses, error: pulsesError } = await supabase
+            .from('class_pulses')
+            .select('id')
+            .eq('class_id', classData.id)
+            .eq('is_active', true);
+
+          if (pulsesError) continue;
+
+          const classTotalPulses = classPulses?.length || 0;
+
+          // Get user's responses for this class
+          const { data: userResponses, error: responsesError } = await supabase
+            .from('class_pulse_responses')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('class_id', classData.id);
+
+          if (responsesError) continue;
+
+          const classCompleted = userResponses?.length || 0;
+          const classRate = classTotalPulses > 0 ? Math.round((classCompleted / classTotalPulses) * 100) : 0;
+          const classPoints = classCompleted * 10; // 10 points per response
+
+          participationByClass.push({
+            class_id: classData.id,
+            class_name: classData.name,
+            total_pulses: classTotalPulses,
+            completed_pulses: classCompleted,
+            participation_rate: classRate,
+            points_earned: classPoints,
+            rank: 1, // TODO: Calculate actual rank
+            total_students: 1, // TODO: Get actual class size
+          });
+
+          totalPulses += classTotalPulses;
+          totalCompleted += classCompleted;
+          totalPoints += classPoints;
+        }
+
+        const overallRate = totalPulses > 0 ? Math.round((totalCompleted / totalPulses) * 100) : 0;
+
+        setCombined({
+          total_pulses: totalPulses,
+          completed_pulses: totalCompleted,
+          participation_rate: overallRate,
+          total_points_earned: totalPoints,
+          overall_rank: 1, // TODO: Calculate actual rank
+          total_students: 1, // TODO: Get actual student count
+        });
+
+        setParticipationData(participationByClass);
+      } catch (error) {
+        console.error('Error fetching participation data:', error);
+        setParticipationData([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchParticipationData();
+  }, [user]);
 
   const getParticipationColor = (rate: number) => {
     if (rate >= 90) return 'text-green-600 dark:text-green-400';
@@ -10,6 +130,32 @@ export function ParticipationReportWidget() {
     if (rate >= 60) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (participationData.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="text-center py-8">
+          <MessageSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No participation data yet</h3>
+          <p className="text-sm text-muted-foreground">
+            Start responding to class pulses to track your participation.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
@@ -59,7 +205,7 @@ export function ParticipationReportWidget() {
           Per-Class Breakdown
         </div>
 
-        {mockParticipationData.map((classData) => (
+        {participationData.map((classData) => (
           <div
             key={classData.class_id}
             className="p-4 rounded-xl bg-muted/30 border border-border hover:shadow-md transition-shadow"

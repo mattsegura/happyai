@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { CreateHapiMoment } from './CreateHapiMoment';
-import { mockHapiMomentReferrals } from '../../lib/mockData';
 import { Heart, Send, Inbox, Sparkles } from 'lucide-react';
 
 type MomentType = {
@@ -46,20 +45,8 @@ export function HapiMomentsView() {
     },
   ];
 
-  const referralMoments: MomentType[] = mockHapiMomentReferrals
-    .filter(r => r.referred_user_id === user?.id)
-    .map(referral => ({
-      id: referral.id,
-      sender_id: 'sender-unknown',
-      recipient_id: user?.id || '',
-      message: referral.hapi_moments.message,
-      created_at: referral.created_at,
-      sender: { full_name: referral.hapi_moments.sender.full_name },
-      recipient: { full_name: 'You' },
-      classes: { name: referral.hapi_moments.classes.name },
-      isReferral: true,
-      points: referral.points_awarded,
-    }));
+  // TODO: Implement referral moments from Supabase
+  const referralMoments: MomentType[] = [];
 
   const allMoments = [...directMoments, ...referralMoments].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()

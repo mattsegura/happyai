@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { mockClassPulses } from '../../lib/mockData';
 import { MessageSquare, Clock, CheckCircle, Calendar, Filter, ChevronDown, Send } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';

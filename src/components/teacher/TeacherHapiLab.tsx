@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
-import { mockTeacherClasses, mockClassPulses, mockOfficeHours, mockClassRosters } from '../../lib/mockData';
 import { Beaker, Plus, MessageSquare, Clock, Video, Edit, Trash2, Calendar, Users, ExternalLink, BookTemplate, CheckCircle, BarChart3 } from 'lucide-react';
+
+// TODO: Fetch from Supabase
+const mockTeacherClasses: any[] = [];
+const mockClassPulses: any[] = [];
+const mockOfficeHours: any[] = [];
+const mockClassRosters: any = {};
 import { calculatePulseStatistics, getTimeRemaining, getQuestionTypeLabel } from '../../lib/pulseUtils';
 import { CreatePulseWizard } from './CreatePulseWizard';
 import { TemplateLibrary } from './TemplateLibrary';

@@ -1,16 +1,80 @@
-import { useState } from 'react';
-import { mockAssignmentsWithStatus } from '../../lib/mockData';
-import { getAssignmentStatusCounts } from '../../lib/studentCalculations';
-import { Clock, AlertCircle, CheckCircle2, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { getAssignmentStatusCounts, AssignmentWithStatus } from '../../lib/studentCalculations';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Clock, AlertCircle, CheckCircle2, Calendar, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
 export function AssignmentStatusWidget() {
+  const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
   const [filter, setFilter] = useState<'all' | 'due_soon' | 'late' | 'missing'>('all');
+  const [assignments, setAssignments] = useState<AssignmentWithStatus[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const assignments = mockAssignmentsWithStatus;
+  useEffect(() => {
+    async function fetchAssignments() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch assignments with submissions
+        const { data: assignmentsData, error } = await supabase
+          .from('canvas_assignments')
+          .select(`
+            *,
+            canvas_submissions(workflow_state, submitted_at, score)
+          `)
+          .eq('user_id', user.id)
+          .order('due_at', { ascending: true });
+
+        if (error) throw error;
+
+        // Calculate status for each assignment
+        const now = new Date();
+        const assignmentsWithStatus: AssignmentWithStatus[] = (assignmentsData || []).map((assignment: any) => {
+          const dueDate = new Date(assignment.due_at);
+          const submission = assignment.canvas_submissions?.[0];
+          const daysToDue = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+          let status: AssignmentWithStatus['status'] = 'upcoming';
+
+          if (submission?.workflow_state === 'graded') {
+            status = 'completed';
+          } else if (daysToDue < 0) {
+            status = submission?.submitted_at ? 'late' : 'missing';
+          } else if (daysToDue <= 3) {
+            status = 'due_soon';
+          }
+
+          return {
+            id: assignment.id,
+            name: assignment.name,
+            due_at: assignment.due_at,
+            points_possible: assignment.points_possible || 0,
+            score: submission?.score,
+            graded_at: submission?.workflow_state === 'graded' ? assignment.updated_at : undefined,
+            submitted_at: submission?.submitted_at,
+            status,
+          };
+        });
+
+        setAssignments(assignmentsWithStatus);
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
+        setAssignments([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAssignments();
+  }, [user]);
+
   const counts = getAssignmentStatusCounts(assignments);
 
-  const filteredAssignments = filter === 'all' 
+  const filteredAssignments = filter === 'all'
     ? assignments.filter(a => a.status !== 'completed')
     : assignments.filter(a => a.status === filter);
 
@@ -57,12 +121,38 @@ export function AssignmentStatusWidget() {
     const due = new Date(dueDate);
     const diffTime = due.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays < 0) return `${Math.abs(diffDays)} days overdue`;
     if (diffDays === 0) return 'Due today';
     if (diffDays === 1) return 'Due tomorrow';
     return `Due in ${diffDays} days`;
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (assignments.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="text-center py-8">
+          <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No assignments yet</h3>
+          <p className="text-sm text-muted-foreground">
+            Your assignments from Canvas will appear here once synced.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg">

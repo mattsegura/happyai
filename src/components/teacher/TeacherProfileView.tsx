@@ -1,6 +1,10 @@
 import { useAuth } from '../../contexts/AuthContext';
-import { mockTeacherClasses, mockClassRosters, mockOfficeHours } from '../../lib/mockData';
 import { User, Mail, Calendar, Users, MessageSquare, TrendingUp, LogOut } from 'lucide-react';
+
+// TODO: Fetch from Supabase
+const mockTeacherClasses: any[] = [];
+const mockClassRosters: any = {};
+const mockOfficeHours: any[] = [];
 
 export function TeacherProfileView() {
   const { profile, signOut } = useAuth();

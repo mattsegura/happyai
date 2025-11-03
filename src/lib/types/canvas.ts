@@ -1,10 +1,14 @@
 /**
- * Official Canvas LMS API Type Definitions
+ * Consolidated Canvas LMS API Type Definitions
  *
  * Based on official Canvas API documentation at https://canvas.instructure.com/doc/api/
  * These types match the Canvas API v1 response structures exactly.
  *
- * Last Updated: 2025-10-25
+ * This file consolidates:
+ * - src/lib/canvas/canvasTypes.ts
+ * - src/lib/canvas/canvasTypesOfficial.ts
+ *
+ * Last Updated: 2025-11-04
  * Canvas API Version: v1
  */
 
@@ -146,7 +150,7 @@ export type CanvasCourse = {
   account_id: number;
   root_account_id: number;
   enrollment_term_id: number;
-  grading_periods?: any[]; // GradingPeriod type
+  grading_periods?: any[];
   grading_standard_id?: number | null;
   grade_passback_setting?: string | null;
   created_at: string;
@@ -162,7 +166,7 @@ export type CanvasCourse = {
   syllabus_body?: string | null;
   needs_grading_count?: number;
   term?: CanvasTerm | null;
-  course_progress?: any; // CourseProgress type
+  course_progress?: any;
   apply_assignment_group_weights?: boolean;
   permissions?: Record<string, boolean>;
   is_public?: boolean;
@@ -228,7 +232,7 @@ export type CanvasAssignment = {
   lock_at: string | null;
   unlock_at: string | null;
   has_overrides: boolean;
-  all_dates?: any[]; // AssignmentDate type
+  all_dates?: any[];
   course_id: number;
   html_url: string;
   submissions_download_url?: string;
@@ -273,12 +277,12 @@ export type CanvasAssignment = {
   freeze_on_copy?: boolean;
   frozen?: boolean;
   frozen_attributes?: string[];
-  submission?: any; // Submission type
+  submission?: any;
   use_rubric_for_grading?: boolean;
   rubric_settings?: Record<string, any>;
-  rubric?: any[]; // RubricCriterion type
+  rubric?: any[];
   assignment_visibility?: number[];
-  overrides?: any[]; // AssignmentOverride type
+  overrides?: any[];
   omit_from_final_grade?: boolean;
   moderated_grading?: boolean;
   grader_count?: number;
@@ -450,7 +454,7 @@ export type CanvasCalendarEvent = {
   participants_per_appointment?: number | null;
   available_slots?: number | null;
   user?: CanvasUser;
-  group?: any; // Group type
+  group?: any;
   important_dates?: boolean;
   series_natural_language?: string | null;
   rrule?: string | null;
@@ -521,6 +525,29 @@ export type CanvasModuleItem = {
     lock_info?: any;
   };
   published: boolean;
+};
+
+// ============================================================================
+// CANVAS ANALYTICS TYPES
+// ============================================================================
+
+export type CanvasStudentSummary = {
+  id: string;
+  page_views: number;
+  participations: number;
+  tardiness_breakdown: {
+    total: number;
+    on_time: number;
+    late: number;
+    missing: number;
+    floating: number;
+  };
+};
+
+export type CanvasStudentActivity = {
+  date: string;
+  views: number;
+  participations: number;
 };
 
 // ============================================================================

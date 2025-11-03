@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, Calendar, X } from 'lucide-react';
-import { mockTeacherClasses } from '../../lib/mockData';
 import { getStaticClassWeekData, getStaticClassMonthData, getStaticClassCustomData } from '../../lib/staticAnalyticsData';
+
+// TODO: Fetch from Supabase
+const mockTeacherClasses: any[] = [];
 
 type TimeRange = 'week' | 'month' | 'custom';
 

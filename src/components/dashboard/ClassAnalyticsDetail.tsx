@@ -8,7 +8,9 @@ import {
   getClassAnalyticsData,
   ClassAnalyticsData
 } from '../../lib/classAnalyticsData';
-import { mockOfficeHours } from '../../lib/mockData';
+
+// TODO: Fetch office hours from Supabase
+const mockOfficeHours: any[] = [];
 
 type ClassAnalyticsDetailProps = {
   classId: string;

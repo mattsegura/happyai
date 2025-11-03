@@ -1,5 +1,8 @@
 import { TrendingUp, TrendingDown, Flame, Star, Trophy, Heart } from 'lucide-react';
-import { mockClassRiskIndicators, mockClassWellbeingIndicators } from '../../lib/mockData';
+
+// TODO: Fetch from Supabase
+const mockClassRiskIndicators: any[] = [];
+const mockClassWellbeingIndicators: any[] = [];
 
 interface QuickStatusBarProps {
   streak: number;

@@ -1,60 +1,97 @@
-import { useState } from 'react';
-import { X, Hash, Check, AlertCircle } from 'lucide-react';
-import { mockClasses, mockClassMembers } from '../../lib/mockData';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState } from "react";
+import { X, Hash, Check, AlertCircle } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabase";
 
 type JoinClassModalProps = {
   onClose: () => void;
   onClassJoined: () => void;
 };
 
-export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) {
+export function JoinClassModal({
+  onClose,
+  onClassJoined,
+}: JoinClassModalProps) {
   const { user } = useAuth();
-  const [classCode, setClassCode] = useState('');
+  const [classCode, setClassCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+
+    if (!user) {
+      setError("You must be logged in to join a class.");
+      return;
+    }
+
+    setError("");
     setLoading(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Find class by code
+      const { data: classData, error: classError } = await supabase
+        .from("classes")
+        .select("*")
+        .eq("class_code", classCode.trim().toUpperCase())
+        .eq("is_active", true)
+        .single();
 
-    const classData = mockClasses.find(c => c.class_code === classCode.trim().toUpperCase());
+      if (classError || !classData) {
+        setError("Invalid class code. Please check with your teacher.");
+        setLoading(false);
+        return;
+      }
 
-    if (!classData) {
-      setError('Invalid class code. Please check with your teacher.');
+      // Check if already enrolled
+      const { data: existingMember, error: memberCheckError } = await supabase
+        .from("class_members")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("class_id", classData.id)
+        .maybeSingle();
+
+      if (memberCheckError) {
+        console.error("Error checking enrollment:", memberCheckError);
+        setError("An error occurred. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      if (existingMember) {
+        setError("You are already enrolled in this class.");
+        setLoading(false);
+        return;
+      }
+
+      // Join the class
+      const { error: joinError } = await supabase.from("class_members").insert({
+        user_id: user.id,
+        class_id: classData.id,
+        class_points: 0,
+        joined_at: new Date().toISOString(),
+      });
+
+      if (joinError) {
+        console.error("Error joining class:", joinError);
+        setError("Failed to join class. Please try again.");
+        setLoading(false);
+        return;
+      }
+
       setLoading(false);
-      return;
-    }
+      setSuccess(true);
 
-    const alreadyEnrolled = mockClassMembers.some(
-      m => m.user_id === user?.id && m.class_id === classData.id
-    );
-
-    if (alreadyEnrolled) {
-      setError('You are already enrolled in this class.');
+      setTimeout(() => {
+        onClassJoined();
+        onClose();
+      }, 1500);
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      setError("An unexpected error occurred. Please try again.");
       setLoading(false);
-      return;
     }
-
-    mockClassMembers.push({
-      id: `member-${Date.now()}`,
-      user_id: user?.id || '',
-      class_id: classData.id,
-      class_points: 0,
-      joined_at: new Date().toISOString(),
-    });
-
-    setLoading(false);
-    setSuccess(true);
-
-    setTimeout(() => {
-      onClassJoined();
-      onClose();
-    }, 1500);
   };
 
   return (
@@ -77,7 +114,9 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
             <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Check className="w-10 h-10 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">Successfully Joined!</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-2">
+              Successfully Joined!
+            </h3>
             <p className="text-muted-foreground">Welcome to your new class</p>
           </div>
         ) : (
@@ -88,9 +127,12 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
                   <Hash className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-foreground mb-2">Enter Class Code</h3>
+                  <h3 className="font-bold text-lg text-foreground mb-2">
+                    Enter Class Code
+                  </h3>
                   <p className="text-muted-foreground text-sm">
-                    Ask your teacher for the unique class code and enter it below to join.
+                    Ask your teacher for the unique class code and enter it
+                    below to join.
                   </p>
                 </div>
               </div>
@@ -103,7 +145,7 @@ export function JoinClassModal({ onClose, onClassJoined }: JoinClassModalProps) 
                 value={classCode}
                 onChange={(e) => {
                   setClassCode(e.target.value.toUpperCase());
-                  setError('');
+                  setError("");
                 }}
                 required
                 className="w-full px-6 py-4 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground text-center text-xl font-semibold tracking-wider"

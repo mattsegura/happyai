@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { mockSentimentHistory } from '../../lib/mockData';
-import { calculateMoodVariability } from '../../lib/studentCalculations';
-import { Heart, TrendingUp, TrendingDown, Minus, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { calculateMoodVariability, SentimentHistory } from '../../lib/studentCalculations';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Heart, TrendingUp, TrendingDown, Minus, Calendar, Loader2 } from 'lucide-react';
 
 type TimeRange = '7' | '30' | 'custom';
 
 export function MoodTrackerWidget() {
+  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState<TimeRange>('7');
   const [customDays, setCustomDays] = useState(14);
+  const [moodData, setMoodData] = useState<SentimentHistory[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const getDaysToShow = () => {
     if (timeRange === 'custom') return customDays;
@@ -15,8 +19,42 @@ export function MoodTrackerWidget() {
   };
 
   const daysToShow = getDaysToShow();
-  const moodData = mockSentimentHistory.slice(-daysToShow);
-  const { stability, trend } = calculateMoodVariability(moodData);
+
+  useEffect(() => {
+    async function fetchMoodData() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - daysToShow);
+
+        const { data, error } = await supabase
+          .from('sentiment_history')
+          .select('date, emotion, intensity, sentiment')
+          .eq('user_id', user.id)
+          .gte('date', daysAgo.toISOString())
+          .order('date', { ascending: true });
+
+        if (error) throw error;
+        setMoodData(data || []);
+      } catch (error) {
+        console.error('Error fetching mood data:', error);
+        setMoodData([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMoodData();
+  }, [user, daysToShow]);
+
+  const { stability, trend } = moodData.length > 0
+    ? calculateMoodVariability(moodData)
+    : { stability: 0, trend: 'stable' as const };
 
   const avgIntensity = moodData.length > 0
     ? moodData.reduce((sum, m) => sum + m.intensity, 0) / moodData.length
@@ -74,6 +112,32 @@ export function MoodTrackerWidget() {
   };
 
   const maxIntensity = Math.max(...moodData.map(m => m.intensity), 7);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[300px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (moodData.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="text-center py-8">
+          <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No mood data yet</h3>
+          <p className="text-sm text-muted-foreground">
+            Complete your daily morning pulse to start tracking your emotional wellbeing.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">

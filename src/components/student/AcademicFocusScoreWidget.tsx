@@ -1,17 +1,77 @@
-import { mockAssignmentsWithStatus, mockParticipationData } from '../../lib/mockData';
-import { calculateAcademicFocusScore, calculateGradeAverage, getAssignmentCompletionRate, calculateOverallParticipation } from '../../lib/studentCalculations';
-import { Target, TrendingUp, Award } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { calculateAcademicFocusScore, calculateGradeAverage, getAssignmentCompletionRate, AssignmentWithStatus, ParticipationData } from '../../lib/studentCalculations';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { Target, TrendingUp, Award, Loader2 } from 'lucide-react';
 
 export function AcademicFocusScoreWidget() {
-  const gradeAverage = calculateGradeAverage(mockAssignmentsWithStatus);
-  const completionRate = getAssignmentCompletionRate(mockAssignmentsWithStatus);
-  const { averageRate } = calculateOverallParticipation(mockParticipationData);
-  const studyPlanAdherence = 75; // Mock value
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [gradeAverage, setGradeAverage] = useState(0);
+  const [completionRate, setCompletionRate] = useState(0);
+  const [participationRate, setParticipationRate] = useState(0);
+
+  useEffect(() => {
+    async function fetchAcademicData() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch assignments for grade calculations
+        const { data: assignmentsData, error: assignmentsError } = await supabase
+          .from('canvas_assignments')
+          .select(`
+            *,
+            canvas_submissions(workflow_state, score)
+          `)
+          .eq('user_id', user.id);
+
+        if (assignmentsError) throw assignmentsError;
+
+        // Calculate assignment stats
+        const assignments: AssignmentWithStatus[] = (assignmentsData || []).map((a: any) => ({
+          id: a.id,
+          name: a.name,
+          due_at: a.due_at,
+          points_possible: a.points_possible || 0,
+          score: a.canvas_submissions?.[0]?.score,
+          status: a.canvas_submissions?.[0]?.workflow_state === 'graded' ? 'completed' : 'upcoming',
+        }));
+
+        const avgGrade = calculateGradeAverage(assignments);
+        const completion = getAssignmentCompletionRate(assignments);
+
+        // Fetch pulse participation
+        const { data: pulsesData, error: pulsesError } = await supabase
+          .from('class_pulse_responses')
+          .select('id')
+          .eq('user_id', user.id);
+
+        if (!pulsesError && pulsesData) {
+          const participation = Math.min(100, (pulsesData.length / 30) * 100); // Normalize to 30 responses
+          setParticipationRate(participation);
+        }
+
+        setGradeAverage(avgGrade);
+        setCompletionRate(completion);
+      } catch (error) {
+        console.error('Error fetching academic data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAcademicData();
+  }, [user]);
+
+  const studyPlanAdherence = 75; // TODO: Calculate from study planner usage
 
   const { score, breakdown, level } = calculateAcademicFocusScore({
     gradeAverage,
     assignmentCompletionRate: completionRate,
-    participationScore: averageRate,
+    participationScore: participationRate,
     studyPlanAdherence,
   });
 
@@ -47,6 +107,17 @@ export function AcademicFocusScoreWidget() {
     if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="rounded-2xl border border-border bg-card shadow-lg p-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-card shadow-lg p-6">

@@ -1,6 +1,11 @@
 import { useState } from 'react';
-import { mockTeacherClasses, mockClassRosters, mockJoinRequests, JoinRequest } from '../../lib/mockData';
 import { Users, Search, Plus, Hash, UserCheck, UserX, ChevronLeft, Clock, Copy } from 'lucide-react';
+
+// TODO: Fetch from Supabase
+const mockTeacherClasses: any[] = [];
+const mockClassRosters: any = {};
+type JoinRequest = any;
+const mockJoinRequests: JoinRequest[] = [];
 
 type SelectedClass = {
   id: string;

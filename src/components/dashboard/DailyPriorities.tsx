@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockClassMembers, mockPulseCheckSets, mockOfficeHours, mockHapiMomentReferrals, mockClasses, mockAssignmentsWithStatus } from '../../lib/mockData';
 import { Sunrise, MessageSquare, Video, Heart, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+
+// TODO: Fetch from Supabase
+const mockClassMembers: any[] = [];
+const mockPulseCheckSets: any[] = [];
+const mockOfficeHours: any[] = [];
+const mockAssignmentsWithStatus: any[] = [];
 
 interface Priority {
   id: string;
@@ -71,7 +76,7 @@ export function DailyPriorities({
 
       if (pulseSets.length > 0) {
         const nextPulse = pulseSets[0];
-        const classData = mockClasses.find(c => c.id === nextPulse.class_id);
+        const classData = (nextPulse as any).classes || { name: 'Class' };
         priorityList.push({
           id: 'class-pulse',
           type: 'class_pulse',
@@ -140,10 +145,8 @@ export function DailyPriorities({
       });
     }
 
-    // Hapi Moment Referrals
-    const unreadReferrals = mockHapiMomentReferrals.filter(r =>
-      r.referred_user_id === user.id && !r.is_read
-    );
+    // Hapi Moment Referrals (query from database if needed)
+    const unreadReferrals: any[] = [];
 
     if (unreadReferrals.length > 0) {
       const referral = unreadReferrals[0];

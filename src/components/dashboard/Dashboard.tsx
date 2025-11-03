@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { mockPulseCheckSets } from '../../lib/mockData';
 import { OverviewView } from './OverviewView';
 import { MeetingDetailsModal } from './MeetingDetailsModal';
 import { StudentHapiLab } from '../student/StudentHapiLab';
@@ -108,7 +107,8 @@ export function Dashboard() {
 
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    const activePulses = mockPulseCheckSets.filter(p => p.is_active && !p.is_draft);
+    // Active pulses fetched from database by components
+    const activePulses: any[] = [];
 
     if (activePulses.length > 0) {
       const pulse = {

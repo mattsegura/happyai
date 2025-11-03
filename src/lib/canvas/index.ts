@@ -7,7 +7,7 @@
 // Configuration
 export { CANVAS_CONFIG, CANVAS_ENDPOINTS, CANVAS_OAUTH_ENDPOINTS, CANVAS_SYNC_INTERVALS } from './canvasConfig';
 
-// Official Canvas API Types (matches Canvas API v1 exactly)
+// Consolidated Canvas API Types (from shared types directory)
 export type {
   CanvasCourse,
   CanvasEnrollment,
@@ -29,18 +29,12 @@ export type {
   CanvasApiResponse,
   CanvasApiError,
   CanvasPaginationParams,
-} from './canvasTypesOfficial';
-
-// Legacy types (for backward compatibility with mock data)
-export type {
   CanvasStudentSummary,
   CanvasStudentActivity,
-} from './canvasTypes';
+} from '../types/canvas';
 
-// Services
-export { canvasService, CanvasService } from './canvasService';
+// Services (Enhanced versions - recommended for all new code)
 export { canvasServiceEnhanced, CanvasServiceEnhanced } from './canvasServiceEnhanced';
-export { canvasSyncService, CanvasSyncService } from './canvasSyncService';
 export { canvasSyncServiceEnhanced, CanvasSyncServiceEnhanced } from './canvasSyncServiceEnhanced';
 export type { SyncStatus, SyncType, SyncProgressCallback } from './canvasSyncServiceEnhanced';
 

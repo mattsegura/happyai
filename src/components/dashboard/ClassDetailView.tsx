@@ -1,5 +1,7 @@
 import { ArrowLeft, TrendingUp, Users } from 'lucide-react';
-import { mockClassPulses } from '../../lib/mockData';
+
+// TODO: Fetch class pulses from Supabase
+const mockClassPulses: any[] = [];
 
 type ClassDetailViewProps = {
   classId: string;

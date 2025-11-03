@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
-import { mockPulseCheckSets, mockClassMembers, mockPulseResponses, mockClasses } from '../../lib/mockData';
 import { MessageSquare, Clock, CheckCircle, Sparkles } from 'lucide-react';
+
+// TODO: Fetch from Supabase
+const mockPulseCheckSets: any[] = [];
+const mockClassMembers: any[] = [];
+const mockPulseResponses: any[] = [];
+const mockClasses: any[] = [];
 import { ClassPulseAnswerModal } from './ClassPulseAnswerModal';
 import { useAuth } from '../../contexts/AuthContext';
 
