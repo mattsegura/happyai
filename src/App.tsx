@@ -1,7 +1,9 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LandingPage } from './components/landing/LandingPage';
+import { LoginPage } from './components/auth/LoginPage';
+import { SignupPage } from './components/auth/SignupPage';
 import { ToastProvider } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/tooltip-radix';
 
@@ -9,6 +11,17 @@ import { TooltipProvider } from './components/ui/tooltip-radix';
 const Dashboard = lazy(() => import('./components/dashboard/Dashboard').then(module => ({ default: module.Dashboard })));
 const TeacherDashboard = lazy(() => import('./components/teacher/TeacherDashboard').then(module => ({ default: module.TeacherDashboard })));
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+
+// Wrapper components for auth pages with navigation
+function LoginPageWrapper() {
+  const navigate = useNavigate();
+  return <LoginPage onToggleMode={() => navigate('/signup')} />;
+}
+
+function SignupPageWrapper() {
+  const navigate = useNavigate();
+  return <SignupPage onToggleMode={() => navigate('/login')} />;
+}
 
 function AppContent() {
   const { user, loading, role } = useAuth();
@@ -33,7 +46,14 @@ function AppContent() {
   }
 
   if (!user) {
-    return <LandingPage />;
+    return (
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPageWrapper />} />
+        <Route path="/signup" element={<SignupPageWrapper />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
   }
 
   // Suspense fallback for lazy-loaded components

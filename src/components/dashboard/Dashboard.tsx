@@ -15,9 +15,19 @@ import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp } from 'lucide-react';
+import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp, CreditCard } from 'lucide-react';
 import { AcademicsHub } from '../academics/AcademicsHub';
+import { AcademicViewWrapper } from '../academics/AcademicViewWrapper';
+import { SingleCourseView } from '../academics/SingleCourseView';
+import { EnhancedGradesView } from '../academics/EnhancedGradesView';
+import { EnhancedStudyPlanner } from '../academics/EnhancedStudyPlanner';
+import { CourseTutorMode } from '../academics/CourseTutorMode';
+import { FeedbackHub } from '../academics/FeedbackHub';
+import { MoodGradeAnalytics } from '../academics/MoodGradeAnalytics';
+import { SubscriptionManagement } from '../payment/SubscriptionManagement';
+import { CheckoutFlow } from '../payment/CheckoutFlow';
 import { ThemeToggle } from '../common/ThemeToggle';
+import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
 
 
@@ -50,6 +60,7 @@ export function Dashboard() {
     { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
     { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Lab' },
     { id: 'classes', path: '/dashboard/classes', icon: Users, label: 'Classes' },
+    { id: 'subscription', path: '/dashboard/subscription', icon: CreditCard, label: 'Subscription' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
@@ -202,7 +213,10 @@ export function Dashboard() {
         </nav>
 
         <div className="space-y-3 px-4 pb-6">
-          <ThemeToggle />
+          <div className="flex items-center justify-center gap-2">
+            <NotificationCenter />
+            <ThemeToggle />
+          </div>
           <button
             onClick={() => setSidebarCollapsed((prev) => !prev)}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-primary/40 hover:text-primary"
@@ -231,6 +245,7 @@ export function Dashboard() {
                   {location.pathname.includes('hapi') && 'Hapi AI'}
                   {location.pathname.includes('lab') && 'Hapi Lab'}
                   {location.pathname.includes('classes') && 'Classes'}
+                  {location.pathname.includes('subscription') && 'Subscription'}
                   {location.pathname.includes('profile') && 'Profile'}
                 </h1>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -240,9 +255,16 @@ export function Dashboard() {
                   {location.pathname.includes('hapi') && 'AI-powered assistant'}
                   {location.pathname.includes('lab') && 'Pulse checks & Hapi moments'}
                   {location.pathname.includes('classes') && 'Your enrolled classes'}
+                  {location.pathname.includes('subscription') && 'Manage your subscription & billing'}
                   {location.pathname.includes('profile') && 'Your account settings'}
                 </p>
               </div>
+
+              {/* Notification Center - Shows on all screen sizes */}
+              <div className="flex items-center gap-3">
+                <NotificationCenter />
+              </div>
+
               <div className="md:hidden">
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                   {navigationItems.map((item) => {
@@ -333,10 +355,55 @@ export function Dashboard() {
                   </div>
                 }
               />
-              <Route
-                path="academics"
-                element={<AcademicsHub />}
-              />
+              <Route path="academics">
+                <Route index element={<AcademicsHub />} />
+                <Route path="course/:courseId" element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicViewWrapper title="Course Details">
+                      <SingleCourseView />
+                    </AcademicViewWrapper>
+                  </div>
+                } />
+                <Route path="grades" element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicViewWrapper title="All Grades & Projections">
+                      <EnhancedGradesView />
+                    </AcademicViewWrapper>
+                  </div>
+                } />
+                <Route path="planner" element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicViewWrapper title="Study Planner">
+                      <EnhancedStudyPlanner />
+                    </AcademicViewWrapper>
+                  </div>
+                } />
+                <Route path="tutor" element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicViewWrapper title="AI Course Tutor">
+                      <CourseTutorMode />
+                    </AcademicViewWrapper>
+                  </div>
+                } />
+                <Route path="feedback" element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicViewWrapper title="Instructor Feedback Hub">
+                      <FeedbackHub />
+                    </AcademicViewWrapper>
+                  </div>
+                } />
+                <Route path="analytics" element={
+                  <div className={cn(SURFACE_BASE, 'p-6')}>
+                    <AcademicViewWrapper title="Mood & Grade Analytics">
+                      <MoodGradeAnalytics />
+                    </AcademicViewWrapper>
+                  </div>
+                } />
+              </Route>
+              <Route path="subscription">
+                <Route index element={<SubscriptionManagement />} />
+                <Route path="checkout" element={<CheckoutFlow />} />
+              </Route>
             </Routes>
         </div>
       </div>

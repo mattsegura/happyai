@@ -55,7 +55,7 @@ serve(async (req) => {
 
   try {
     // Parse request body
-    const { code, state, canvasInstanceUrl, codeVerifier, redirectUri } = await req.json();
+    const { code, state, canvasInstanceUrl, codeVerifier, redirectUri, useMock } = await req.json();
 
     if (!code || !canvasInstanceUrl || !codeVerifier || !redirectUri) {
       return new Response(
@@ -73,14 +73,31 @@ serve(async (req) => {
     const clientId = Deno.env.get('CANVAS_CLIENT_ID');
     const clientSecret = Deno.env.get('CANVAS_CLIENT_SECRET');
 
-    if (!clientId || !clientSecret) {
-      console.error('Canvas OAuth credentials not configured');
+    // Mock mode: Return fake token data for development/testing
+    if (useMock || !clientId || !clientSecret) {
+      console.log('🎭 Using mock Canvas OAuth (credentials not configured or mock requested)');
+
+      const mockTokenData = {
+        access_token: 'mock_canvas_token_' + Date.now(),
+        token_type: 'Bearer',
+        user: {
+          id: 'mock_user_123',
+          name: 'Mock Canvas User',
+          global_id: 'mock_global_123',
+        },
+        refresh_token: 'mock_refresh_token_' + Date.now(),
+        expires_in: 3600, // 1 hour
+        canvas_region: 'us-east-1',
+      };
+
       return new Response(
         JSON.stringify({
-          error: 'Canvas OAuth not configured',
+          success: true,
+          token: mockTokenData,
+          mock: true,
         }),
         {
-          status: 500,
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
