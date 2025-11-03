@@ -26,6 +26,7 @@ import { FeedbackHub } from '../academics/FeedbackHub';
 import { MoodGradeAnalytics } from '../academics/MoodGradeAnalytics';
 import { SubscriptionManagement } from '../payment/SubscriptionManagement';
 import { CheckoutFlow } from '../payment/CheckoutFlow';
+import { SubscriptionGate } from '../payment/SubscriptionGate';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
@@ -356,48 +357,64 @@ export function Dashboard() {
                 }
               />
               <Route path="academics">
-                <Route index element={<AcademicsHub />} />
+                <Route index element={
+                  <SubscriptionGate featureName="Academics Hub">
+                    <AcademicsHub />
+                  </SubscriptionGate>
+                } />
                 <Route path="course/:courseId" element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicViewWrapper title="Course Details">
-                      <SingleCourseView />
-                    </AcademicViewWrapper>
-                  </div>
+                  <SubscriptionGate featureName="Course Details">
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AcademicViewWrapper title="Course Details">
+                        <SingleCourseView />
+                      </AcademicViewWrapper>
+                    </div>
+                  </SubscriptionGate>
                 } />
                 <Route path="grades" element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicViewWrapper title="All Grades & Projections">
-                      <EnhancedGradesView />
-                    </AcademicViewWrapper>
-                  </div>
+                  <SubscriptionGate featureName="Grades & Projections">
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AcademicViewWrapper title="All Grades & Projections">
+                        <EnhancedGradesView />
+                      </AcademicViewWrapper>
+                    </div>
+                  </SubscriptionGate>
                 } />
                 <Route path="planner" element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicViewWrapper title="Study Planner">
-                      <EnhancedStudyPlanner />
-                    </AcademicViewWrapper>
-                  </div>
+                  <SubscriptionGate featureName="Study Planner">
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AcademicViewWrapper title="Study Planner">
+                        <EnhancedStudyPlanner />
+                      </AcademicViewWrapper>
+                    </div>
+                  </SubscriptionGate>
                 } />
                 <Route path="tutor" element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicViewWrapper title="AI Course Tutor">
-                      <CourseTutorMode />
-                    </AcademicViewWrapper>
-                  </div>
+                  <SubscriptionGate featureName="AI Course Tutor">
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AcademicViewWrapper title="AI Course Tutor">
+                        <CourseTutorMode />
+                      </AcademicViewWrapper>
+                    </div>
+                  </SubscriptionGate>
                 } />
                 <Route path="feedback" element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicViewWrapper title="Instructor Feedback Hub">
-                      <FeedbackHub />
-                    </AcademicViewWrapper>
-                  </div>
+                  <SubscriptionGate featureName="Instructor Feedback Hub">
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AcademicViewWrapper title="Instructor Feedback Hub">
+                        <FeedbackHub />
+                      </AcademicViewWrapper>
+                    </div>
+                  </SubscriptionGate>
                 } />
                 <Route path="analytics" element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <AcademicViewWrapper title="Mood & Grade Analytics">
-                      <MoodGradeAnalytics />
-                    </AcademicViewWrapper>
-                  </div>
+                  <SubscriptionGate featureName="Mood & Grade Analytics">
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AcademicViewWrapper title="Mood & Grade Analytics">
+                        <MoodGradeAnalytics />
+                      </AcademicViewWrapper>
+                    </div>
+                  </SubscriptionGate>
                 } />
               </Route>
               <Route path="subscription">
