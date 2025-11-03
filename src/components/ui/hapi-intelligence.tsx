@@ -45,13 +45,13 @@ export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
             {/* Main heading with gradient */}
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-600 dark:from-sky-400 dark:via-blue-400 dark:to-sky-500 bg-clip-text text-transparent">
-                Hapi Intelligence
+                AI Assistant
               </span>
             </h2>
 
             {/* Description */}
             <p className="text-xl text-slate-700 dark:text-slate-300 leading-relaxed mb-8">
-              The engine behind Hapi—transforming millions of data points into insight that helps schools truly understand their students.
+              The AI companion helping every student plan, feel supported, and excel academically.
             </p>
 
             {/* AI Insights Subheading */}

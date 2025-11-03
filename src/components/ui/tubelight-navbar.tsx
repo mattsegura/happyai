@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { LucideIcon } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { Logo } from "./logo"
 
 export interface NavItem {
   name: string
@@ -134,14 +135,36 @@ export function TubelightNavBar({ items, className, activeItem, onItemClick, sho
   }
 
   return (
-    <div
-      className={cn(
-        "fixed top-0 left-1/2 -translate-x-1/2 z-50 pt-6",
-        className,
-      )}
-    >
-      <div className="flex items-center gap-2 bg-background/80 border border-border backdrop-blur-lg py-1.5 px-1.5 rounded-full shadow-lg">
-        {items.map((item) => {
+    <>
+      {/* Logo - Fixed top left */}
+      <div className="fixed top-6 left-6 z-50">
+        <a 
+          href="#platform" 
+          onClick={(e) => {
+            e.preventDefault();
+            const element = document.getElementById('platform');
+            if (element) {
+              const offset = 100;
+              const elementPosition = element.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.pageYOffset - offset;
+              window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+          }}
+          className="cursor-pointer"
+        >
+          <Logo />
+        </a>
+      </div>
+
+      {/* Navigation Bar - Fixed center */}
+      <div
+        className={cn(
+          "fixed top-0 left-1/2 -translate-x-1/2 z-50 pt-6",
+          className,
+        )}
+      >
+        <div className="flex items-center gap-2 bg-background/80 border border-border backdrop-blur-lg py-1.5 px-1.5 rounded-full shadow-lg">
+          {items.map((item) => {
           const Icon = item.icon
           const isActive = activeTab === item.name
 
@@ -180,8 +203,9 @@ export function TubelightNavBar({ items, className, activeItem, onItemClick, sho
             </button>
           )
         })}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

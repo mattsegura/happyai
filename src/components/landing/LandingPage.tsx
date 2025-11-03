@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   BarChart3,
   BookOpen,
@@ -15,17 +15,17 @@ import {
   Shield,
   Building2
 } from 'lucide-react';
-import { AnimatedHero } from '../ui/animated-hero';
+import { HeroSectionPerspective } from '../ui/hero-section-perspective';
+import { SectionToggle } from '../ui/section-toggle';
 import { TubelightNavBar } from '../ui/tubelight-navbar';
 import type { NavItem } from '../ui/tubelight-navbar';
 import { BentoCard, BentoGrid } from '../ui/bento-grid';
-import { HapiIntelligence } from '../ui/hapi-intelligence';
+import { AIStudyPlanner } from '../ui/ai-study-planner';
 import { Footer } from '../ui/footer';
 import { ContactSection } from '../ui/contact-section';
 import { HapiMomentsCarousel } from '../ui/hapi-moments-carousel';
-import { ImageComparison, ImageComparisonContent, ImageComparisonSlider } from '../ui/image-comparison';
+import { motion } from 'framer-motion';
 import PricingSection from '../ui/pricing-section';
-import { useAuth } from '../../contexts/AuthContext';
 
 const securityFeatures = [
   {
@@ -68,19 +68,7 @@ const complianceStats = [
 ];
 
 export function LandingPage() {
-  const { signIn } = useAuth();
   const [viewMode, setViewMode] = useState<'students' | 'teachers'>('students');
-  const [sliderPosition, setSliderPosition] = useState(100); // Start with students visible (100 = left side)
-
-  // Demo login function
-  const handleDemoLogin = async () => {
-    await signIn('student@demo.com', 'demo123');
-  };
-
-  // Update slider position when viewMode changes
-  useEffect(() => {
-    setSliderPosition(viewMode === 'students' ? 100 : 0);
-  }, [viewMode]);
 
   const navItems: NavItem[] = [
     {
@@ -128,68 +116,32 @@ export function LandingPage() {
       />
 
       <main>
-        <section id="platform" className="relative overflow-hidden bg-[#FFFDF8] dark:bg-slate-900">
-          <div className="relative max-w-[1400px] mx-auto px-6 py-20 lg:py-28">
-            <div className="grid lg:grid-cols-[0.85fr,1.15fr] gap-4 lg:gap-8 items-start">
-              {/* Left side - Text content */}
-              <div className="w-full pt-2">
-                <AnimatedHero
-                  titles={["Artificial Intelligence", "Connection", "Hapi-ness"]}
-                  headingPrefix="Where education meets"
-                  description="Hapi pairs daily mood pulses with classroom data so students feel heard, teachers see what matters, and leaders act with clarity."
-                  primaryCtaText="Contact Us"
-                  onPrimaryCtaClick={() => {
-                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  secondaryCtaText="Explore the platform"
-                  onSecondaryCtaClick={() => {
-                    document.getElementById('students')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  badgeText=""
-                />
-                
-                {/* Demo Login Button */}
-                <div className="mt-6">
-            <button
-                    onClick={handleDemoLogin}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-            >
-                    <GraduationCap className="w-5 h-5" />
-                    Try Student Demo
-            </button>
-          </div>
-        </div>
-
-              {/* Right side - App preview video */}
-              <div className="w-full flex items-start justify-end pt-2">
-                <div className="relative w-full rounded-lg overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-[0.5px] border-gray-300/30 dark:border-gray-600 bg-white dark:bg-slate-800">
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-auto block"
-                    key="/app-preview.mp4"
-                  >
-                    <source src="/app-preview.mp4" type="video/mp4" />
-                  </video>
-                </div>
-              </div>
-            </div>
-          </div>
+        <section id="platform" className="relative overflow-hidden">
+          <HeroSectionPerspective
+            title="Hapi Dashboard"
+            subtitle="A powerful AI system that integrates with any learning platform to deliver the most intelligent academic and emotional assistant."
+            dashboardImage="/dashboard3.png"
+          />
         </section>
 
         {/* Interactive Toggle: Students vs Teachers */}
-        <div id="functions" className="relative w-full">
-          <ImageComparison 
-            className="w-full"
-            enableHover={false}
-            toggleMode={true}
-            externalPosition={sliderPosition}
-            springOptions={{ bounce: 0.1, duration: 800 }}
-          >
-          {/* Right Side: Teachers Section (rendered first to be background) */}
-          <ImageComparisonContent position="right">
+        <div id="functions" className="relative w-full perspective-1000">
+          <div className="relative w-full" style={{ transformStyle: 'preserve-3d' }}>
+            <motion.div
+              initial={false}
+              animate={{ rotateY: viewMode === 'students' ? 0 : 180 }}
+              transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+              style={{ transformStyle: 'preserve-3d' }}
+              className="relative w-full"
+            >
+              {/* Front Side: Students Section */}
+              <div 
+                className="w-full"
+                style={{ 
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden'
+                }}
+              >
             <section id="teachers" className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 sm:px-6 lg:px-8 bg-blue-50/30 dark:bg-blue-950/10">
               <div className="relative space-y-8">
                 {/* Section Header */}
@@ -202,19 +154,10 @@ export function LandingPage() {
                       <span className="text-slate-900 dark:text-slate-100"> for teachers</span>
               </h2>
                     <div className="relative">
-                      <button
-                        onClick={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
-                        className={`relative h-10 w-20 rounded-full transition-all duration-300 shadow-lg ${
-                          viewMode === 'students' ? 'bg-sky-500' : 'bg-blue-500'
-                        }`}
-                        aria-label={`Switch to ${viewMode === 'students' ? 'Teachers' : 'Students'}`}
-                      >
-                        <div
-                          className={`absolute top-1 h-8 w-8 rounded-full bg-white shadow-md transition-all duration-300 ${
-                            viewMode === 'students' ? 'left-1' : 'left-11'
-                          }`}
-                        />
-                      </button>
+                      <SectionToggle
+                        isStudents={viewMode === 'students'}
+                        onToggle={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
+                      />
                     </div>
               </div>
                   <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -271,10 +214,17 @@ export function LandingPage() {
                 </BentoGrid>
           </div>
         </section>
-          </ImageComparisonContent>
+              </div>
 
-          {/* Left Side: Students Section (rendered second to be foreground) */}
-          <ImageComparisonContent position="left">
+              {/* Back Side: Teachers Section */}
+              <div 
+                className="w-full absolute top-0 left-0"
+                style={{ 
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)'
+                }}
+              >
             <section id="students" className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 sm:px-6 lg:px-8 bg-[#FFFDF8] dark:bg-background">
               <div className="relative space-y-8">
                 {/* Section Header */}
@@ -287,19 +237,10 @@ export function LandingPage() {
                       <span className="text-slate-900 dark:text-slate-100"> for students</span>
               </h2>
                     <div className="relative">
-                      <button
-                        onClick={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
-                        className={`relative h-10 w-20 rounded-full transition-all duration-300 shadow-lg ${
-                          viewMode === 'students' ? 'bg-sky-500' : 'bg-blue-500'
-                        }`}
-                        aria-label={`Switch to ${viewMode === 'students' ? 'Teachers' : 'Students'}`}
-                      >
-                        <div
-                          className={`absolute top-1 h-8 w-8 rounded-full bg-white shadow-md transition-all duration-300 ${
-                            viewMode === 'students' ? 'left-1' : 'left-11'
-                          }`}
-                        />
-                      </button>
+                      <SectionToggle
+                        isStudents={viewMode === 'students'}
+                        onToggle={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
+                      />
                     </div>
               </div>
                   <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -356,21 +297,12 @@ export function LandingPage() {
                 </BentoGrid>
                 </div>
             </section>
-          </ImageComparisonContent>
-
-          {/* Custom Slider with Gradient Handle */}
-          <ImageComparisonSlider className="w-1 bg-gradient-to-b from-sky-400 via-blue-500 to-sky-400 shadow-lg z-20">
-            <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white dark:bg-slate-800 shadow-xl border-4 border-sky-500 flex items-center justify-center">
-              <div className="flex gap-0.5">
-                <div className="w-0.5 h-4 bg-sky-500 rounded-full" />
-                <div className="w-0.5 h-4 bg-sky-500 rounded-full" />
               </div>
-            </div>
-          </ImageComparisonSlider>
-        </ImageComparison>
+            </motion.div>
           </div>
+        </div>
 
-        <HapiIntelligence onCtaClick={() => {
+        <AIStudyPlanner onCtaClick={() => {
           document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
         }} />
 
