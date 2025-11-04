@@ -20,7 +20,7 @@ import { SectionToggle } from '../ui/section-toggle';
 import { TubelightNavBar } from '../ui/tubelight-navbar';
 import type { NavItem } from '../ui/tubelight-navbar';
 import { BentoCard, BentoGrid } from '../ui/bento-grid';
-import { AIStudyPlanner } from '../ui/ai-study-planner';
+import { Link } from 'react-router-dom';
 import { Footer } from '../ui/footer';
 import { ContactSection } from '../ui/contact-section';
 import { HapiMomentsCarousel } from '../ui/hapi-moments-carousel';
@@ -302,9 +302,112 @@ export function LandingPage() {
           </div>
         </div>
 
-        <AIStudyPlanner onCtaClick={() => {
-          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-        }} />
+        {/* AI Tutor Teaser Section */}
+        <section id="intelligence" className="relative overflow-hidden bg-gradient-to-br from-[#FFFDF8] via-blue-50/30 to-[#FFFDF8] dark:bg-slate-900 py-24 sm:py-32">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-20 left-10 w-72 h-72 bg-sky-400/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-sky-500/10 to-blue-500/10 border border-sky-500/30 mb-6"
+              >
+                <Sparkles className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                <span className="text-sm font-semibold text-sky-700 dark:text-sky-300">Powered by AI</span>
+                <BarChart3 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </motion.div>
+
+              <motion.h2
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+              >
+                <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-600 dark:from-sky-400 dark:via-blue-400 dark:to-sky-500 bg-clip-text text-transparent">
+                  AI Tutor
+                </span>
+              </motion.h2>
+
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-xl text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed mb-12"
+              >
+                Your personal academic assistant that analyzes workload, syncs with Google Calendar, 
+                generates study materials from any file, and helps you reach your GPA goals.
+              </motion.p>
+
+              {/* Feature Grid */}
+              <div className="grid md:grid-cols-3 gap-6 mb-12">
+                {[
+                  {
+                    icon: Brain,
+                    title: 'Workload Gauge™',
+                    description: 'Real-time analysis of assignments and point concentration',
+                    color: 'from-red-500 to-orange-500'
+                  },
+                  {
+                    icon: BookOpen,
+                    title: 'AutoLearn Engine™',
+                    description: 'Upload any file and get instant flashcards and quizzes',
+                    color: 'from-purple-500 to-pink-500'
+                  },
+                  {
+                    icon: GraduationCap,
+                    title: 'GPA Pathway™',
+                    description: 'Set goals and get strategic feedback to reach them',
+                    color: 'from-green-500 to-emerald-500'
+                  }
+                ].map((feature, i) => {
+                  const Icon = feature.icon;
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
+                      whileHover={{ y: -4, scale: 1.02 }}
+                      className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700"
+                    >
+                      <div className={`w-12 h-12 mx-auto mb-4 bg-gradient-to-br ${feature.color} rounded-lg flex items-center justify-center`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="font-bold text-slate-900 dark:text-white mb-2">{feature.title}</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{feature.description}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <Link to="/ai-tutor">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all inline-flex items-center gap-2"
+                  >
+                    <span>Explore AI Tutor</span>
+                    <Brain className="w-5 h-5" />
+                  </motion.button>
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
         <HapiMomentsCarousel />
 
