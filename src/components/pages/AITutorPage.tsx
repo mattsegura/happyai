@@ -189,8 +189,7 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
 
       {/* Premium Chat Messages */}
       <div className="relative h-[400px] overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-        <AnimatePresence>
-          {messages.map((message, index) => (
+        {messages.map((message, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -233,7 +232,6 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
               </div>
             </motion.div>
           ))}
-        </AnimatePresence>
 
         {isSending && (
           <motion.div
