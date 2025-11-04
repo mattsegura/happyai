@@ -1,0 +1,55 @@
+name: Canvas Data Sync
+
+# =====================================================
+# CANVAS SYNC SCHEDULER
+# =====================================================
+# Purpose: Trigger Canvas data sync for all connected users
+# Schedule: Every 15 minutes
+# Edge Function: canvas-sync
+# =====================================================
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync-canvas:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Canvas Sync Edge Function
+        run: |
+          echo "🚀 Triggering Canvas sync..."
+
+          response=$(curl -X POST ${{ secrets.SUPABASE_FUNCTION_URL }}/canvas-sync \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -w "\n%{http_code}" \
+            -s)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Canvas sync failed with status $http_code"
+            exit 1
+          fi
+
+          echo "✅ Canvas sync completed successfully"
+
+# =====================================================
+# GITHUB SECRETS REQUIRED:
+# =====================================================
+# SUPABASE_FUNCTION_URL: https://YOUR-PROJECT.supabase.co/functions/v1
+# SUPABASE_SERVICE_ROLE_KEY: Your service role key from Supabase
+#
+# To add secrets:
+# 1. Go to GitHub repo → Settings → Secrets → Actions
+# 2. Click "New repository secret"
+# 3. Add both secrets above
+# =====================================================

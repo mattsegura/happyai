@@ -1,0 +1,67 @@
+name: Track Achievements
+
+# =====================================================
+# ACHIEVEMENT TRACKER SCHEDULER
+# =====================================================
+# Purpose: Check for new achievements earned by users
+# Actions: Award badges, send congratulations, update streaks
+# Schedule: Daily at midnight UTC
+# Edge Function: track-achievements
+# =====================================================
+
+on:
+  schedule:
+    # Run daily at midnight UTC (adjust for your timezone)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  track-achievements:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check and Award Achievements
+        run: |
+          echo "🏆 Checking achievements..."
+
+          response=$(curl -X POST ${{ secrets.SUPABASE_FUNCTION_URL }}/track-achievements \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -w "\n%{http_code}" \
+            -s)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Achievement tracking failed with status $http_code"
+            exit 1
+          fi
+
+          # Parse and display results
+          echo "$body" | jq -r '"✅ Achievement tracking completed\n   Users checked: \(.users_checked)\n   Achievements awarded: \(.achievements_awarded)\n   Notifications sent: \(.notifications_sent)"'
+
+      - name: Update Study Streaks
+        run: |
+          echo "📈 Study streaks updated as part of achievement tracking"
+
+# =====================================================
+# WHAT THIS WORKFLOW DOES:
+# =====================================================
+# 1. Checks all users for new achievements earned
+# 2. Awards badges when criteria are met
+# 3. Sends congratulations notifications
+# 4. Updates study streaks (consecutive days)
+# 5. Resets streaks if users missed a day
+#
+# Achievement Types Checked:
+# - Streak achievements (7-day, 30-day, 100-day streaks)
+# - Points achievements (100, 500, 1000 points)
+# - Assignment achievements (10, 25, 50 completed)
+# - Grade achievements (3.0, 3.5, 4.0 GPA)
+# - Pulse achievements (daily check-ins)
+# - Hapi Moment achievements (peer recognition)
+# =====================================================

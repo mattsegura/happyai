@@ -1,0 +1,138 @@
+name: Send Notifications
+
+# =====================================================
+# NOTIFICATION SCHEDULER
+# =====================================================
+# Purpose: Send scheduled notifications to users
+# Types: Morning reminders, deadline alerts, weekly summaries
+# Edge Function: send-notifications
+# =====================================================
+
+on:
+  schedule:
+    # Morning reminders at 8:00 AM UTC (adjust for your timezone)
+    - cron: '0 8 * * *'
+
+    # Deadline reminders at 6:00 PM UTC (once daily)
+    - cron: '0 18 * * *'
+
+    # Weekly summaries on Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+
+  workflow_dispatch: # Allow manual trigger
+    inputs:
+      notification_type:
+        description: 'Type of notification to send'
+        required: true
+        default: 'check_all'
+        type: choice
+        options:
+          - morning_reminders
+          - deadline_reminders
+          - weekly_summaries
+          - grade_alerts
+          - check_all
+
+jobs:
+  # =====================================================
+  # MORNING REMINDERS (8am daily)
+  # =====================================================
+  morning-reminders:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 8 * * *' || github.event.inputs.notification_type == 'morning_reminders' || github.event.inputs.notification_type == 'check_all'
+
+    steps:
+      - name: Send Morning Reminders
+        run: |
+          echo "🌅 Sending morning reminders..."
+
+          response=$(curl -X POST ${{ secrets.SUPABASE_FUNCTION_URL }}/send-notifications \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type": "morning_reminders"}' \
+            -w "\n%{http_code}" \
+            -s)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Morning reminders failed with status $http_code"
+            exit 1
+          fi
+
+          echo "✅ Morning reminders sent successfully"
+
+  # =====================================================
+  # DEADLINE REMINDERS (6pm daily)
+  # =====================================================
+  deadline-reminders:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 18 * * *' || github.event.inputs.notification_type == 'deadline_reminders' || github.event.inputs.notification_type == 'check_all'
+
+    steps:
+      - name: Send Deadline Reminders
+        run: |
+          echo "⏰ Sending deadline reminders..."
+
+          response=$(curl -X POST ${{ secrets.SUPABASE_FUNCTION_URL }}/send-notifications \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type": "deadline_reminders"}' \
+            -w "\n%{http_code}" \
+            -s)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Deadline reminders failed with status $http_code"
+            exit 1
+          fi
+
+          echo "✅ Deadline reminders sent successfully"
+
+  # =====================================================
+  # WEEKLY SUMMARIES (Monday 9am)
+  # =====================================================
+  weekly-summaries:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 9 * * 1' || github.event.inputs.notification_type == 'weekly_summaries' || github.event.inputs.notification_type == 'check_all'
+
+    steps:
+      - name: Send Weekly Summaries
+        run: |
+          echo "📊 Sending weekly summaries..."
+
+          response=$(curl -X POST ${{ secrets.SUPABASE_FUNCTION_URL }}/send-notifications \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type": "weekly_summaries"}' \
+            -w "\n%{http_code}" \
+            -s)
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Weekly summaries failed with status $http_code"
+            exit 1
+          fi
+
+          echo "✅ Weekly summaries sent successfully"
+
+# =====================================================
+# MANUAL TRIGGER USAGE:
+# =====================================================
+# Go to: Actions → Send Notifications → Run workflow
+# Select notification type and click "Run workflow"
+# =====================================================
