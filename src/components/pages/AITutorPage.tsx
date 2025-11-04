@@ -398,7 +398,6 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
     { id: 'hero', name: 'Overview', icon: Brain },
     { id: 'workload', name: 'Workload Gauge™', icon: Gauge },
     { id: 'calendar', name: 'Smart Calendar™', icon: Calendar },
-    { id: 'autolearn', name: 'AutoLearn™', icon: Sparkles },
     { id: 'gpa', name: 'GPA Pathway™', icon: Target },
     { id: 'studyshare', name: 'Study Share™', icon: Share2 },
     { id: 'insights', name: 'Performance Insights™', icon: TrendingUp },
@@ -724,70 +723,6 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                 onResetFlow={() => setFlowResetKey(prev => prev + 1)}
                 isFlowComplete={isFlowComplete}
               />
-            </div>
-          </motion.section>
-
-          {/* AutoLearn Engine Section */}
-          <motion.section
-            id="autolearn"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            onViewportEnter={() => setActiveSection('autolearn')}
-            className="mb-32"
-          >
-            <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100/50 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 rounded-3xl p-12 md:p-16">
-              <div className="text-center mb-16">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                  <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
-                    AutoLearn Engine™
-                  </h2>
-                </div>
-                <p className="text-lg text-slate-700 dark:text-slate-300 max-w-3xl mx-auto">
-                  Upload any study material and let AI transform it into personalized study tools—summaries, flashcards, and practice quizzes—in seconds.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-sky-500 rounded-xl flex items-center justify-center mb-4">
-                    <FileUp className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    Upload Content
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-400">
-                    PDF, videos, presentations, or audio—our AI handles any format you throw at it.
-                  </p>
-                </div>
-
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl">
-                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 animate-pulse">
-                    <Brain className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    AI Analysis
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-400">
-                    Extract key concepts, identify relationships, and structure content for optimal learning.
-                  </p>
-                </div>
-
-                <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl">
-                  <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-4">
-                    <CheckCircle2 className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-                    Study Tools
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-400">
-                    Get instant summaries, flashcards, and practice quizzes tailored to your content.
-                  </p>
-                </div>
-              </div>
             </div>
           </motion.section>
 
