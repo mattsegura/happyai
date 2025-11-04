@@ -23,7 +23,8 @@ import {
   GraduationCap,
   Activity,
   Send,
-  Layers
+  Layers,
+  Lock
 } from 'lucide-react';
 import { Logo } from '../ui/logo';
 import { FullScreenCalendar } from '../ui/fullscreen-calendar';
