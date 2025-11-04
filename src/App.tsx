@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LandingPage } from './components/landing/LandingPage';
+import { AITutorPage } from './components/pages/AITutorPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { SignupPage } from './components/auth/SignupPage';
 import { ToastProvider } from './components/ui/Toast';
@@ -49,6 +50,7 @@ function AppContent() {
     return (
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/ai-tutor" element={<AITutorPage onNavigateHome={() => window.location.href = '/'} />} />
         <Route path="/login" element={<LoginPageWrapper />} />
         <Route path="/signup" element={<SignupPageWrapper />} />
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -51,6 +51,13 @@ export { HapiIntelligence } from './hapi-intelligence';
 export type { HapiIntelligenceProps } from './hapi-intelligence';
 export { AIStudyPlanner } from './ai-study-planner';
 export type { AIStudyPlannerProps } from './ai-study-planner';
+export { AnimatedAICalendar } from './animated-ai-calendar';
+export { ScrollAnimatedCalendar } from './scroll-animated-calendar';
+export { FullScreenCalendar } from './fullscreen-calendar';
+export { Separator } from './separator';
+export { PromptBox } from './chatgpt-prompt-input';
+export { AIStudyFlow } from './ai-study-flow';
+export type { AIStudyFlowProps } from './ai-study-flow';
 
 export { default as DisplayCards } from './display-cards';
 export type { DisplayCardsProps, DisplayCardProps } from './display-cards';
