@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import {
   BookOpen,
   TrendingUp,
@@ -33,7 +33,7 @@ type AssignmentWithSubmission = CanvasAssignment & {
 
 type FilterType = 'all' | 'pending' | 'completed' | 'overdue' | 'high-impact';
 
-export function EnhancedGradesView() {
+function EnhancedGradesViewComponent() {
   const [courses, setCourses] = useState<CanvasCourse[]>([]);
   const [assignments, setAssignments] = useState<AssignmentWithSubmission[]>([]);
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
@@ -43,108 +43,138 @@ export function EnhancedGradesView() {
   const [showWhatIf, setShowWhatIf] = useState(false);
 
   useEffect(() => {
+    let isCancelled = false;
+
+    const loadData = async () => {
+      setLoading(true);
+
+      // Set a timeout to prevent infinite loading (20 seconds max)
+      const timeoutId = setTimeout(() => {
+        if (!isCancelled) {
+          console.warn('⏱️ Grades view data fetch timed out after 20 seconds');
+          setLoading(false);
+        }
+      }, 20000);
+
+      try {
+        const coursesData = await canvasApi.getCourses();
+        const assignmentsData = await canvasApi.getAssignments();
+
+        if (isCancelled) {
+          clearTimeout(timeoutId);
+          return;
+        }
+
+        // Enrich assignments with submission data and course info
+        const enrichedAssignments = await Promise.all(
+          assignmentsData.map(async (assignment) => {
+            const submissions = await canvasApi.getSubmissions(assignment.id);
+            const submission = submissions[0];
+            const course = coursesData.find((c) => c.id === assignment.course_id);
+
+            // Calculate status
+            let status: AssignmentWithSubmission['status'] = 'pending';
+            let daysUntilDue: number | undefined;
+
+            if (assignment.due_at) {
+              const dueDate = new Date(assignment.due_at);
+              const now = new Date();
+              const diffTime = dueDate.getTime() - now.getTime();
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              daysUntilDue = diffDays;
+
+              if (submission && submission.workflow_state === 'graded') {
+                status = 'completed';
+              } else if (diffDays < 0) {
+                status = 'overdue';
+              } else if (diffDays <= 7) {
+                status = 'pending';
+              }
+            }
+
+            // Calculate impact score for incomplete assignments
+            let impact: ImpactScore | undefined;
+            if (status !== 'completed' && course) {
+              const currentScore = course.enrollments[0]?.current_score || 0;
+              const totalPoints = assignmentsData
+                .filter((a) => a.course_id === course.id)
+                .reduce((sum, a) => sum + a.points_possible, 0);
+              const earnedPoints = assignmentsData
+                .filter((a) => a.course_id === course.id)
+                .reduce((sum, a) => {
+                  const sub = submissions.find((s) => s.assignment_id === a.id);
+                  return sum + (sub?.score || 0);
+                }, 0);
+
+              const completedWeight = totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
+
+              const courseContext: CourseGradeContext = {
+                currentGrade: currentScore,
+                totalPoints,
+                earnedPoints,
+                completedWeight,
+              };
+
+              impact = impactCalculator.calculateImpact(assignment.points_possible, courseContext);
+            }
+
+            return {
+              ...assignment,
+              submission,
+              course_name: course?.name || 'Unknown Course',
+              status,
+              daysUntilDue,
+              impact,
+            };
+          })
+        );
+
+        if (!isCancelled) {
+          setCourses(coursesData);
+          setAssignments(enrichedAssignments);
+
+          // Auto-select first course for projection
+          if (coursesData.length > 0) {
+            setSelectedCourseForProjection(coursesData[0].id);
+          }
+        }
+
+        clearTimeout(timeoutId);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        if (!isCancelled) {
+          clearTimeout(timeoutId);
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
     loadData();
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const coursesData = await canvasApi.getCourses();
-      const assignmentsData = await canvasApi.getAssignments();
-
-      // Enrich assignments with submission data and course info
-      const enrichedAssignments = await Promise.all(
-        assignmentsData.map(async (assignment) => {
-          const submissions = await canvasApi.getSubmissions(assignment.id);
-          const submission = submissions[0];
-          const course = coursesData.find((c) => c.id === assignment.course_id);
-
-          // Calculate status
-          let status: AssignmentWithSubmission['status'] = 'pending';
-          let daysUntilDue: number | undefined;
-
-          if (assignment.due_at) {
-            const dueDate = new Date(assignment.due_at);
-            const now = new Date();
-            const diffTime = dueDate.getTime() - now.getTime();
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            daysUntilDue = diffDays;
-
-            if (submission && submission.workflow_state === 'graded') {
-              status = 'completed';
-            } else if (diffDays < 0) {
-              status = 'overdue';
-            } else if (diffDays <= 7) {
-              status = 'pending';
-            }
-          }
-
-          // Calculate impact score for incomplete assignments
-          let impact: ImpactScore | undefined;
-          if (status !== 'completed' && course) {
-            const currentScore = course.enrollments[0]?.current_score || 0;
-            const totalPoints = assignmentsData
-              .filter((a) => a.course_id === course.id)
-              .reduce((sum, a) => sum + a.points_possible, 0);
-            const earnedPoints = assignmentsData
-              .filter((a) => a.course_id === course.id)
-              .reduce((sum, a) => {
-                const sub = submissions.find((s) => s.assignment_id === a.id);
-                return sum + (sub?.score || 0);
-              }, 0);
-
-            const completedWeight = totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
-
-            const courseContext: CourseGradeContext = {
-              currentGrade: currentScore,
-              totalPoints,
-              earnedPoints,
-              completedWeight,
-            };
-
-            impact = impactCalculator.calculateImpact(assignment.points_possible, courseContext);
-          }
-
-          return {
-            ...assignment,
-            submission,
-            course_name: course?.name || 'Unknown Course',
-            status,
-            daysUntilDue,
-            impact,
-          };
-        })
-      );
-
-      setCourses(coursesData);
-      setAssignments(enrichedAssignments);
-
-      // Auto-select first course for projection
-      if (coursesData.length > 0) {
-        setSelectedCourseForProjection(coursesData[0].id);
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getGradeColor = (score: number) => {
+  const getGradeColor = useCallback((score: number) => {
     if (score >= 90) return 'text-green-600 dark:text-green-400';
     if (score >= 80) return 'text-blue-600 dark:text-blue-400';
     if (score >= 70) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
-  };
+  }, []);
 
-  const getGradeBgColor = (score: number) => {
+  const getGradeBgColor = useCallback((score: number) => {
     if (score >= 90) return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
     if (score >= 80) return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
     if (score >= 70) return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
     return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
-  };
+  }, []);
 
-  const getStatusBadge = (assignment: AssignmentWithSubmission) => {
+  const getStatusBadge = useCallback((assignment: AssignmentWithSubmission) => {
     switch (assignment.status) {
       case 'completed':
         return (
@@ -175,7 +205,7 @@ export function EnhancedGradesView() {
           </span>
         );
     }
-  };
+  }, []);
 
   const filteredAssignments = useMemo(() => {
     let filtered = assignments;
@@ -524,3 +554,6 @@ export function EnhancedGradesView() {
     </div>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const EnhancedGradesView = memo(EnhancedGradesViewComponent);

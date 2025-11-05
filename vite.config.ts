@@ -37,7 +37,7 @@ export default defineConfig({
               return 'vendor-react';
             }
 
-            // Charts
+            // Charts - separate chunk since they're large
             if (id.includes('recharts')) {
               return 'vendor-charts';
             }
@@ -45,6 +45,16 @@ export default defineConfig({
             // Supabase
             if (id.includes('@supabase')) {
               return 'vendor-supabase';
+            }
+
+            // AI libraries (OpenAI, Anthropic) - separate chunk
+            if (id.includes('openai') || id.includes('@anthropic-ai')) {
+              return 'vendor-ai';
+            }
+
+            // Stripe - separate chunk
+            if (id.includes('@stripe') || id.includes('stripe')) {
+              return 'vendor-stripe';
             }
 
             // Other node_modules
@@ -67,9 +77,24 @@ export default defineConfig({
             return 'student-components';
           }
 
-          // Academics components
+          // Academics components - split into smaller chunks
           if (id.includes('/academics/')) {
-            return 'academics-components';
+            // Split academics into sub-chunks to avoid large bundle
+            if (id.includes('EnhancedStudyPlanner') || id.includes('StudyPlanner') || id.includes('UnifiedCalendar')) {
+              return 'academics-planner';
+            }
+            if (id.includes('CourseTutorMode') || id.includes('FeedbackHub')) {
+              return 'academics-ai-features';
+            }
+            if (id.includes('MoodGradeAnalytics') || id.includes('GradeProjection')) {
+              return 'academics-analytics';
+            }
+            return 'academics-core';
+          }
+
+          // Payment components
+          if (id.includes('/payment/')) {
+            return 'payment-components';
           }
 
           // Leaderboard components
@@ -81,17 +106,37 @@ export default defineConfig({
           if (id.includes('/moments/')) {
             return 'moments-components';
           }
+
+          // Wellbeing components
+          if (id.includes('/wellbeing/')) {
+            return 'wellbeing-components';
+          }
+
+          // Progress components
+          if (id.includes('/progress/')) {
+            return 'progress-components';
+          }
         },
+        // Optimize chunk names for better caching
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
 
-    // Increase chunk size warning limit
-    chunkSizeWarningLimit: 800,
+    // Reduce chunk size warning limit to catch issues earlier
+    chunkSizeWarningLimit: 500,
 
     // Use esbuild for minification (faster and built-in)
     minify: 'esbuild',
 
-    // Source maps for production debugging (can disable for smaller builds)
+    // Disable source maps for smaller builds
     sourcemap: false,
+
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+
+    // Target modern browsers for smaller output
+    target: 'es2020',
   },
 });

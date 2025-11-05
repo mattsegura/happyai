@@ -1,34 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { OverviewView } from './OverviewView';
 import { MeetingDetailsModal } from './MeetingDetailsModal';
-import { StudentHapiLab } from '../student/StudentHapiLab';
-import { EnhancedHapiChat } from '../student/EnhancedHapiChat';
 import { ClassesView } from './ClassesView';
 import { ProfileView } from './ProfileView';
-import { WellbeingView } from '../wellbeing/WellbeingView';
-import { ProgressView } from '../progress/ProgressView';
 import { PopupQueueManager } from '../popups/PopupQueueManager';
 import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
 import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp, CreditCard } from 'lucide-react';
-import { AcademicsHub } from '../academics/AcademicsHub';
-import { AcademicViewWrapper } from '../academics/AcademicViewWrapper';
-import { SingleCourseView } from '../academics/SingleCourseView';
-import { EnhancedGradesView } from '../academics/EnhancedGradesView';
-import { EnhancedStudyPlanner } from '../academics/EnhancedStudyPlanner';
-import { CourseTutorMode } from '../academics/CourseTutorMode';
-import { FeedbackHub } from '../academics/FeedbackHub';
-import { MoodGradeAnalytics } from '../academics/MoodGradeAnalytics';
-import { SubscriptionManagement } from '../payment/SubscriptionManagement';
-import { CheckoutFlow } from '../payment/CheckoutFlow';
-import { SubscriptionGate } from '../payment/SubscriptionGate';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
+
+// Lazy load heavy components for better performance
+const StudentHapiLab = lazy(() => import('../student/StudentHapiLab').then(m => ({ default: m.StudentHapiLab })));
+const EnhancedHapiChat = lazy(() => import('../student/EnhancedHapiChat').then(m => ({ default: m.EnhancedHapiChat })));
+const WellbeingView = lazy(() => import('../wellbeing/WellbeingView').then(m => ({ default: m.WellbeingView })));
+const ProgressView = lazy(() => import('../progress/ProgressView').then(m => ({ default: m.ProgressView })));
+
+// Lazy load all academics components (largest bundle)
+const AcademicsHub = lazy(() => import('../academics/AcademicsHub').then(m => ({ default: m.AcademicsHub })));
+const AcademicViewWrapper = lazy(() => import('../academics/AcademicViewWrapper').then(m => ({ default: m.AcademicViewWrapper })));
+const SingleCourseView = lazy(() => import('../academics/SingleCourseView').then(m => ({ default: m.SingleCourseView })));
+const EnhancedGradesView = lazy(() => import('../academics/EnhancedGradesView').then(m => ({ default: m.EnhancedGradesView })));
+const EnhancedStudyPlanner = lazy(() => import('../academics/EnhancedStudyPlanner').then(m => ({ default: m.EnhancedStudyPlanner })));
+const CourseTutorMode = lazy(() => import('../academics/CourseTutorMode').then(m => ({ default: m.CourseTutorMode })));
+const FeedbackHub = lazy(() => import('../academics/FeedbackHub').then(m => ({ default: m.FeedbackHub })));
+const MoodGradeAnalytics = lazy(() => import('../academics/MoodGradeAnalytics').then(m => ({ default: m.MoodGradeAnalytics })));
+
+// Lazy load payment components
+const SubscriptionManagement = lazy(() => import('../payment/SubscriptionManagement').then(m => ({ default: m.SubscriptionManagement })));
+const CheckoutFlow = lazy(() => import('../payment/CheckoutFlow').then(m => ({ default: m.CheckoutFlow })));
+const SubscriptionGate = lazy(() => import('../payment/SubscriptionGate').then(m => ({ default: m.SubscriptionGate })));
 
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
@@ -292,136 +298,145 @@ export function Dashboard() {
             </header>
           )}
 
-            <Routes>
-              <Route index element={<Navigate to="/dashboard/overview" replace />} />
-              <Route
-                path="overview"
-                element={
-                  <>
-                    <OverviewView onNavigate={(view) => navigate(`/dashboard/${view}`)} />
-                    {showPopups && (
-                      <PopupQueueManager
-                        onAllComplete={handleAllPopupsComplete}
-                        resetTrigger={popupResetTrigger}
-                      />
-                    )}
-                  </>
-                }
-              />
-              <Route
-                path="wellbeing"
-                element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <WellbeingView />
-                  </div>
-                }
-              />
-              <Route
-                path="progress"
-                element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <ProgressView />
-                  </div>
-                }
-              />
-              <Route
-                path="lab"
-                element={
-                  <div className="space-y-6">
-                    <StudentHapiLab />
-                  </div>
-                }
-              />
-              <Route
-                path="hapi"
-                element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <EnhancedHapiChat />
-                  </div>
-                }
-              />
-              <Route
-                path="classes"
-                element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <ClassesView />
-                  </div>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <div className={cn(SURFACE_BASE, 'p-6')}>
-                    <ProfileView />
-                  </div>
-                }
-              />
-              <Route path="academics">
-                <Route index element={
-                  <SubscriptionGate featureName="Academics Hub">
-                    <AcademicsHub />
-                  </SubscriptionGate>
-                } />
-                <Route path="course/:courseId" element={
-                  <SubscriptionGate featureName="Course Details">
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading...</p>
+                </div>
+              </div>
+            }>
+              <Routes>
+                <Route index element={<Navigate to="/dashboard/overview" replace />} />
+                <Route
+                  path="overview"
+                  element={
+                    <>
+                      <OverviewView onNavigate={(view) => navigate(`/dashboard/${view}`)} />
+                      {showPopups && (
+                        <PopupQueueManager
+                          onAllComplete={handleAllPopupsComplete}
+                          resetTrigger={popupResetTrigger}
+                        />
+                      )}
+                    </>
+                  }
+                />
+                <Route
+                  path="wellbeing"
+                  element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AcademicViewWrapper title="Course Details">
-                        <SingleCourseView />
-                      </AcademicViewWrapper>
+                      <WellbeingView />
                     </div>
-                  </SubscriptionGate>
-                } />
-                <Route path="grades" element={
-                  <SubscriptionGate featureName="Grades & Projections">
+                  }
+                />
+                <Route
+                  path="progress"
+                  element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AcademicViewWrapper title="All Grades & Projections">
-                        <EnhancedGradesView />
-                      </AcademicViewWrapper>
+                      <ProgressView />
                     </div>
-                  </SubscriptionGate>
-                } />
-                <Route path="planner" element={
-                  <SubscriptionGate featureName="Study Planner">
+                  }
+                />
+                <Route
+                  path="lab"
+                  element={
+                    <div className="space-y-6">
+                      <StudentHapiLab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="hapi"
+                  element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AcademicViewWrapper title="Study Planner">
-                        <EnhancedStudyPlanner />
-                      </AcademicViewWrapper>
+                      <EnhancedHapiChat />
                     </div>
-                  </SubscriptionGate>
-                } />
-                <Route path="tutor" element={
-                  <SubscriptionGate featureName="AI Course Tutor">
+                  }
+                />
+                <Route
+                  path="classes"
+                  element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AcademicViewWrapper title="AI Course Tutor">
-                        <CourseTutorMode />
-                      </AcademicViewWrapper>
+                      <ClassesView />
                     </div>
-                  </SubscriptionGate>
-                } />
-                <Route path="feedback" element={
-                  <SubscriptionGate featureName="Instructor Feedback Hub">
+                  }
+                />
+                <Route
+                  path="profile"
+                  element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AcademicViewWrapper title="Instructor Feedback Hub">
-                        <FeedbackHub />
-                      </AcademicViewWrapper>
+                      <ProfileView />
                     </div>
-                  </SubscriptionGate>
-                } />
-                <Route path="analytics" element={
-                  <SubscriptionGate featureName="Mood & Grade Analytics">
-                    <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AcademicViewWrapper title="Mood & Grade Analytics">
-                        <MoodGradeAnalytics />
-                      </AcademicViewWrapper>
-                    </div>
-                  </SubscriptionGate>
-                } />
-              </Route>
-              <Route path="subscription">
-                <Route index element={<SubscriptionManagement />} />
-                <Route path="checkout" element={<CheckoutFlow />} />
-              </Route>
-            </Routes>
+                  }
+                />
+                <Route path="academics">
+                  <Route index element={
+                    <SubscriptionGate featureName="Academics Hub">
+                      <AcademicsHub />
+                    </SubscriptionGate>
+                  } />
+                  <Route path="course/:courseId" element={
+                    <SubscriptionGate featureName="Course Details">
+                      <div className={cn(SURFACE_BASE, 'p-6')}>
+                        <AcademicViewWrapper title="Course Details">
+                          <SingleCourseView />
+                        </AcademicViewWrapper>
+                      </div>
+                    </SubscriptionGate>
+                  } />
+                  <Route path="grades" element={
+                    <SubscriptionGate featureName="Grades & Projections">
+                      <div className={cn(SURFACE_BASE, 'p-6')}>
+                        <AcademicViewWrapper title="All Grades & Projections">
+                          <EnhancedGradesView />
+                        </AcademicViewWrapper>
+                      </div>
+                    </SubscriptionGate>
+                  } />
+                  <Route path="planner" element={
+                    <SubscriptionGate featureName="Study Planner">
+                      <div className={cn(SURFACE_BASE, 'p-6')}>
+                        <AcademicViewWrapper title="Study Planner">
+                          <EnhancedStudyPlanner />
+                        </AcademicViewWrapper>
+                      </div>
+                    </SubscriptionGate>
+                  } />
+                  <Route path="tutor" element={
+                    <SubscriptionGate featureName="AI Course Tutor">
+                      <div className={cn(SURFACE_BASE, 'p-6')}>
+                        <AcademicViewWrapper title="AI Course Tutor">
+                          <CourseTutorMode />
+                        </AcademicViewWrapper>
+                      </div>
+                    </SubscriptionGate>
+                  } />
+                  <Route path="feedback" element={
+                    <SubscriptionGate featureName="Instructor Feedback Hub">
+                      <div className={cn(SURFACE_BASE, 'p-6')}>
+                        <AcademicViewWrapper title="Instructor Feedback Hub">
+                          <FeedbackHub />
+                        </AcademicViewWrapper>
+                      </div>
+                    </SubscriptionGate>
+                  } />
+                  <Route path="analytics" element={
+                    <SubscriptionGate featureName="Mood & Grade Analytics">
+                      <div className={cn(SURFACE_BASE, 'p-6')}>
+                        <AcademicViewWrapper title="Mood & Grade Analytics">
+                          <MoodGradeAnalytics />
+                        </AcademicViewWrapper>
+                      </div>
+                    </SubscriptionGate>
+                  } />
+                </Route>
+                <Route path="subscription">
+                  <Route index element={<SubscriptionManagement />} />
+                  <Route path="checkout" element={<CheckoutFlow />} />
+                </Route>
+              </Routes>
+            </Suspense>
         </div>
       </div>
 
