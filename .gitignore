@@ -22,3 +22,11 @@ dist-ssr
 *.sw?
 .env
 videos/
+
+# Testing artifacts (generated, never commit)
+coverage/
+*.lcov
+.nyc_output
+test-results/
+playwright-report/
+playwright/.cache/
