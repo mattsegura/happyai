@@ -166,7 +166,7 @@ export function WellbeingView() {
         </div>
 
         {/* Quick Stats */}
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
           <Card className="flex items-center gap-3 px-4 py-2">
             <Heart className={cn('h-5 w-5', moodColors[mockMoodLevel].replace('bg-', 'text-'))} />
             <div>
@@ -205,7 +205,7 @@ export function WellbeingView() {
       </div>
 
       {/* Main Content - All on one screen */}
-      <div className="flex flex-1 gap-4">
+      <div className="flex flex-col lg:flex-row flex-1 gap-4">
         {/* Left Side - Enhanced Mood Tracker */}
         <Card className="flex-1 overflow-hidden p-6">
           <div className="flex h-full flex-col">

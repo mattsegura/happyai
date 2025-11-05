@@ -48,8 +48,8 @@ export function ClassSentimentChart({ className }: ClassSentimentChartProps) {
       </div>
 
       <div className="flex flex-col items-center mb-6">
-        <div className="relative w-48 h-48 mb-4">
-          <svg className="transform -rotate-90 w-48 h-48">
+        <div className="relative w-full max-w-[192px] aspect-square mb-4">
+          <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 192 192" preserveAspectRatio="xMidYMid meet">
             <circle
               cx="96"
               cy="96"

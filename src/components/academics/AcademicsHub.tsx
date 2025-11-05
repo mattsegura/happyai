@@ -488,7 +488,7 @@ export function AcademicsHub() {
       </div>
 
       {/* Top Stats Bar - Always Visible */}
-      <div className="grid grid-cols-4 gap-2 flex-shrink-0">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 flex-shrink-0">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 rounded-lg p-2.5 border border-blue-200/50 dark:border-blue-800/50">
           <div className="flex items-center justify-between">
             <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />

@@ -7,6 +7,7 @@ import { LoginPage } from './components/auth/LoginPage';
 import { SignupPage } from './components/auth/SignupPage';
 import { ToastProvider } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/tooltip-radix';
+import { PWAInstallPrompt } from './components/common/PWAInstallPrompt';
 
 // Lazy load dashboards for code splitting
 const Dashboard = lazy(() => import('./components/dashboard/Dashboard').then(module => ({ default: module.Dashboard })));
@@ -109,6 +110,7 @@ function App() {
         <ToastProvider>
           <AuthProvider>
             <AppContent />
+            <PWAInstallPrompt />
           </AuthProvider>
         </ToastProvider>
       </TooltipProvider>

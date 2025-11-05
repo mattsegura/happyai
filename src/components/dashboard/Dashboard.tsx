@@ -237,13 +237,14 @@ export function Dashboard() {
 
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          {!location.pathname.includes('/overview') && (
-            <header
-              className={cn(
-                SURFACE_BASE,
-                'flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between'
-              )}
-            >
+          <header
+            className={cn(
+              SURFACE_BASE,
+              'flex flex-col gap-4 px-5 py-4'
+            )}
+          >
+            {/* Page Title - Hide on overview to avoid duplication */}
+            {!location.pathname.includes('/overview') && (
               <div>
                 <h1 className="text-xl font-semibold text-foreground md:text-2xl">
                   {location.pathname.includes('academics') && 'Academics'}
@@ -266,37 +267,38 @@ export function Dashboard() {
                   {location.pathname.includes('profile') && 'Your account settings'}
                 </p>
               </div>
+            )}
 
-              {/* Notification Center - Shows on all screen sizes */}
-              <div className="flex items-center gap-3">
-                <NotificationCenter />
+            {/* Mobile Navigation - ALWAYS VISIBLE - At the top */}
+            <div className="md:hidden w-full">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                {navigationItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => navigate(item.path)}
+                      className={cn(
+                        'flex min-w-fit items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all whitespace-nowrap touch-manipulation active:scale-95',
+                        isActive
+                          ? 'bg-primary text-primary-foreground shadow'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="h-5 w-5" />
+                      {item.label}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
-              <div className="md:hidden">
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {navigationItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = location.pathname === item.path;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => navigate(item.path)}
-                        className={cn(
-                          'flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all whitespace-nowrap',
-                          isActive
-                            ? 'bg-primary text-primary-foreground shadow'
-                            : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {item.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </header>
-          )}
+            {/* Notification Center - Shows on desktop */}
+            <div className="hidden md:flex items-center gap-3 ml-auto">
+              <NotificationCenter />
+            </div>
+          </header>
 
             <Suspense fallback={
               <div className="flex items-center justify-center h-[calc(100vh-200px)]">
