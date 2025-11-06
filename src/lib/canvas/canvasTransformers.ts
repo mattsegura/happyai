@@ -10,7 +10,7 @@ import type {
   CanvasAssignment,
   CanvasSubmission,
   CanvasCalendarEvent,
-} from './canvasTypes';
+} from '../types/canvas';
 
 import type { Class } from '../supabase';
 

@@ -4,11 +4,12 @@ import { TeacherHomeView } from './TeacherHomeView';
 import { TeacherClassesView } from './TeacherClassesView';
 import { TeacherHapiLab } from './TeacherHapiLab';
 import { TeacherProfileView } from './TeacherProfileView';
-import { Home, Users, Beaker, User, Smile, ChevronLeft } from 'lucide-react';
+import { AcademicDashboard } from './analytics/AcademicDashboard';
+import { Home, Users, Beaker, User, GraduationCap, Smile, ChevronLeft } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
 
-type View = 'home' | 'classes' | 'lab' | 'profile';
+type View = 'home' | 'classes' | 'academics' | 'lab' | 'profile';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
@@ -26,6 +27,7 @@ export function TeacherDashboard() {
   const navigationItems = [
     { id: 'home', icon: Home, label: 'Overview' },
     { id: 'classes', icon: Users, label: 'Classes' },
+    { id: 'academics', icon: GraduationCap, label: 'Academics' },
     { id: 'lab', icon: Beaker, label: 'Hapi Lab' },
     { id: 'profile', icon: User, label: 'Profile' },
   ] as const;
@@ -156,6 +158,11 @@ export function TeacherDashboard() {
             {currentView === 'classes' && (
               <div className={cn(SURFACE_BASE, 'p-5')}>
                 <TeacherClassesView />
+              </div>
+            )}
+            {currentView === 'academics' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <AcademicDashboard />
               </div>
             )}
             {currentView === 'lab' && (

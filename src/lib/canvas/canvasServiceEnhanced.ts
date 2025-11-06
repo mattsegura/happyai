@@ -23,7 +23,7 @@ import {
   CanvasStudentSummary,
   CanvasApiResponse,
   CanvasPaginationParams,
-} from './canvasTypes';
+} from '../types/canvas';
 import { CANVAS_CONFIG, CANVAS_ENDPOINTS } from './canvasConfig';
 import { canvasOAuth } from './canvasOAuth';
 import { canvasRateLimiter, RequestPriority } from './canvasRateLimiter';
