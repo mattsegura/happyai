@@ -1,14 +1,117 @@
-import { AlertCircle } from 'lucide-react';
-
-// TODO: Fetch from Supabase
-const mockTeacherClasses: any[] = [];
-const mockClassRosters: any = {};
-const mockClassPulses: any[] = [];
-type StudentRoster = any;
+import React, { useState, useEffect } from 'react';
+import { AlertCircle, TrendingUp } from 'lucide-react';
 import { ClassSentimentDial } from './ClassSentimentDial';
 import { ClassAverageSentimentChart } from './ClassAverageSentimentChart';
 import { ClassPulseSummary } from './ClassPulseSummary';
 import { calculatePulseStatistics, getActivePulses } from '../../lib/pulseUtils';
+import { useAuth } from '../../contexts/AuthContext';
+import { getAtRiskCounts } from '../../lib/alerts/atRiskDetection';
+import { MOCK_STUDENT_IDS, MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
+
+// TODO: Fetch from Supabase - Using mock data for now
+const mockTeacherClasses: any[] = [
+  {
+    id: MOCK_CLASS_IDS.PSYCHOLOGY,
+    name: 'Introduction to Psychology',
+    description: 'PSYCH 101 - Fall 2024',
+    teacher_name: 'You',
+    class_code: 'PSYCH101',
+  },
+  {
+    id: MOCK_CLASS_IDS.ENGLISH,
+    name: 'English Literature',
+    description: 'ENG 201 - Fall 2024',
+    teacher_name: 'You',
+    class_code: 'ENG201',
+  },
+  {
+    id: MOCK_CLASS_IDS.HISTORY,
+    name: 'World History',
+    description: 'HIST 101 - Fall 2024',
+    teacher_name: 'You',
+    class_code: 'HIST101',
+  },
+];
+
+const mockClassRosters: any = {
+  [MOCK_CLASS_IDS.PSYCHOLOGY]: [
+    {
+      user_id: MOCK_STUDENT_IDS.ALEX_JOHNSON,
+      full_name: 'Alex Johnson',
+      email: 'alex.j@school.edu',
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString().split('T')[0], // 2 hours ago
+      recent_emotions: ['happy', 'hopeful', 'calm'],
+    },
+    {
+      user_id: MOCK_STUDENT_IDS.SARAH_MARTINEZ,
+      full_name: 'Sarah Martinez',
+      email: 'sarah.m@school.edu',
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['excited', 'grateful', 'happy'],
+    },
+    {
+      user_id: MOCK_STUDENT_IDS.MICHAEL_CHEN,
+      full_name: 'Michael Chen',
+      email: 'michael.c@school.edu',
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4).toISOString().split('T')[0], // 4 days ago
+      recent_emotions: ['stressed', 'anxious', 'tired'],
+    },
+    {
+      user_id: MOCK_STUDENT_IDS.EMILY_RODRIGUEZ,
+      full_name: 'Emily Rodriguez',
+      email: 'emily.r@school.edu',
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['calm', 'hopeful', 'happy'],
+    },
+  ],
+  [MOCK_CLASS_IDS.ENGLISH]: [
+    {
+      user_id: MOCK_STUDENT_IDS.DAVID_KIM,
+      full_name: 'David Kim',
+      email: 'david.k@school.edu',
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['energized', 'excited', 'grateful'],
+    },
+    {
+      user_id: MOCK_STUDENT_IDS.JESSICA_THOMPSON,
+      full_name: 'Jessica Thompson',
+      email: 'jessica.t@school.edu',
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0], // 1 day ago
+      recent_emotions: ['tired', 'bored', 'nervous'],
+    },
+  ],
+  [MOCK_CLASS_IDS.HISTORY]: [
+    {
+      user_id: MOCK_STUDENT_IDS.MARCUS_WILLIAMS,
+      full_name: 'Marcus Williams',
+      email: 'marcus.w@school.edu',
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['happy', 'calm', 'hopeful'],
+    },
+    {
+      user_id: MOCK_STUDENT_IDS.SOPHIA_LEE,
+      full_name: 'Sophia Lee',
+      email: 'sophia.l@school.edu',
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString().split('T')[0], // 5 days ago
+      recent_emotions: ['sad', 'stressed', 'anxious'],
+    },
+  ],
+};
+
+const mockClassPulses: any[] = [
+  {
+    id: 'pulse-1',
+    class_id: MOCK_CLASS_IDS.PSYCHOLOGY,
+    question: 'How are you feeling about the upcoming exam?',
+    question_type: 'multiple_choice',
+    answer_choices: ['Confident', 'Nervous', 'Not sure'],
+    expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // expires tomorrow
+    is_active: true,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+  },
+];
+
+type StudentRoster = any;
 
 const emotionValues: Record<string, number> = {
   'happy': 5, 'excited': 5, 'grateful': 4.5, 'hopeful': 4.5,
@@ -22,6 +125,36 @@ interface TeacherHomeViewProps {
 }
 
 export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) {
+  const { user } = useAuth();
+  const [alertCounts, setAlertCounts] = useState({
+    total: 0,
+    critical: 0,
+    high: 0,
+    medium: 0,
+    emotional: 0,
+    academic: 0,
+    crossRisk: 0,
+  });
+  const [isLoadingAlerts, setIsLoadingAlerts] = useState(true);
+
+  useEffect(() => {
+    loadAlertCounts();
+  }, [user]);
+
+  async function loadAlertCounts() {
+    if (!user) return;
+
+    setIsLoadingAlerts(true);
+    try {
+      const counts = await getAtRiskCounts(user.id);
+      setAlertCounts(counts);
+    } catch (error) {
+      console.error('Error loading alert counts:', error);
+    } finally {
+      setIsLoadingAlerts(false);
+    }
+  }
+
   const getClassSentiment = (classId: string) => {
     const roster = mockClassRosters[classId] || [];
     if (roster.length === 0) return { avg: 0, studentCount: 0, topEmotions: [] };
@@ -104,8 +237,6 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
     return atRisk;
   };
 
-  const atRiskStudents = getAtRiskStudents();
-
   return (
     <div className="space-y-5 sm:space-y-8">
       <div>
@@ -163,48 +294,53 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
         </div>
       </div>
 
-      {atRiskStudents.length > 0 && (
-        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">
-              <AlertCircle className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">Students flagged for follow up</h3>
-              <p className="text-xs text-muted-foreground">Review recent patterns and consider outreach.</p>
+      {/* Care Alerts Summary Card */}
+      {!isLoadingAlerts && alertCounts.total > 0 && (
+        <div className="rounded-2xl border-2 border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 p-6 shadow-lg">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-600 text-white shadow-lg">
+                <AlertCircle className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground">Care Alerts Active</h3>
+                <p className="text-sm text-muted-foreground">Students requiring attention</p>
+              </div>
             </div>
           </div>
 
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            {atRiskStudents.map(student => (
-              <div key={`${student.user_id}-${student.className}`} className="rounded-xl border border-border bg-muted/30 p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="text-sm font-semibold text-foreground">{student.full_name}</h4>
-                    <p className="text-xs text-muted-foreground">{student.className}</p>
-                  </div>
-                  <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">At risk</span>
-                </div>
-                <dl className="mt-3 space-y-2 text-xs text-muted-foreground">
-                  <div className="flex items-center justify-between">
-                    <dt>Focus area</dt>
-                    <dd className="max-w-[60%] text-right font-semibold text-foreground">{student.riskType}</dd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <dt>Last pulse</dt>
-                    <dd className="font-semibold text-foreground">
-                      {student.last_pulse_check
-                        ? Math.floor((Date.now() - new Date(student.last_pulse_check).getTime()) / (1000 * 60 * 60 * 24)) + 'd ago'
-                        : 'Never'}
-                    </dd>
-                  </div>
-                </dl>
-                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-semibold text-muted-foreground transition hover:border-primary-200 hover:text-primary-600 dark:hover:border-primary-800 dark:hover:text-primary-400">
-                  Reach out
-                </button>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+              <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.total}</p>
+              <p className="text-xs text-muted-foreground mt-1">Total Alerts</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+              <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.critical}</p>
+              <p className="text-xs text-muted-foreground mt-1">Critical</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{alertCounts.emotional}</p>
+              <p className="text-xs text-muted-foreground mt-1">Emotional</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+              <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{alertCounts.academic}</p>
+              <p className="text-xs text-muted-foreground mt-1">Academic</p>
+            </div>
           </div>
+
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              // This will trigger the parent to change view to 'alerts'
+              // For now, just show a message
+              window.alert('Navigate to Care Alerts dashboard to view all alerts');
+            }}
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition shadow-md"
+          >
+            <TrendingUp className="h-5 w-5" />
+            View All Care Alerts
+          </a>
         </div>
       )}
     </div>

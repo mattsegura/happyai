@@ -8,6 +8,7 @@ import {
   getClassAnalyticsData,
   ClassAnalyticsData
 } from '../../lib/classAnalyticsData';
+import { SafeBoxSubmission } from '../student/SafeBoxSubmission';
 
 // TODO: Fetch office hours from Supabase
 const mockOfficeHours: any[] = [];
@@ -431,6 +432,18 @@ export function ClassAnalyticsDetail({ classId, className, teacherName, descript
           </div>
         </div>
       )}
+
+      {/* SafeBox Anonymous Feedback */}
+      <div className="bg-white dark:bg-card rounded-3xl p-6 border-2 border-indigo-200 dark:border-indigo-800 shadow-lg">
+        <SafeBoxSubmission
+          classId={classId}
+          className={className}
+          onSubmitted={() => {
+            // Optional: Show success message or refresh
+            console.log('SafeBox message submitted successfully');
+          }}
+        />
+      </div>
     </div>
   );
 }

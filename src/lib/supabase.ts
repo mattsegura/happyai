@@ -166,6 +166,21 @@ export type CanvasToken = {
   updated_at: string;
 };
 
+export type TeacherStudentNote = {
+  id: string;
+  teacher_id: string;
+  student_id: string;
+  class_id: string | null;
+  note_text: string;
+  note_type: 'general' | 'academic' | 'wellbeing' | 'behavioral' | 'intervention' | 'meeting';
+  is_private: boolean;
+  is_flagged: boolean;
+  tags: string[];
+  university_id: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export * from './pulseTypes';
 
 // Initialize Supabase client

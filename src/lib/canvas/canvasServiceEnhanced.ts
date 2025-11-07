@@ -40,8 +40,8 @@ import {
   mockCanvasCalendarEvents,
   mockCanvasModules,
   mockCanvasModuleItems,
-  mockCanvasAnalytics,
-} from '../canvasApiMock';
+  mockCanvasStudentSummaries,
+} from './mockCanvasData';
 
 /**
  * Enhanced Canvas Service Class

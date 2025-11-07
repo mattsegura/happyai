@@ -38,7 +38,12 @@ export type AIFeatureType =
   | 'feedback_analyzer'
   | 'chat'
   | 'quiz_generator'
-  | 'summarizer';
+  | 'summarizer'
+  // Teacher-specific features (Phase 6)
+  | 'weekly_summary'
+  | 'student_brief'
+  | 'teacher_assistant'
+  | 'proactive_suggestion';
 
 // =====================================================
 // COMPLETION OPTIONS
@@ -280,6 +285,11 @@ export const DEFAULT_CACHE_TTLS: Record<AIFeatureType, number> = {
   chat: 0, // No caching
   quiz_generator: 7 * 24 * 60 * 60, // 7 days
   summarizer: 7 * 24 * 60 * 60, // 7 days
+  // Teacher-specific features
+  weekly_summary: 7 * 24 * 60 * 60, // 7 days (summaries are stable)
+  student_brief: 24 * 60 * 60, // 1 day (briefs may change daily)
+  teacher_assistant: 0, // No caching (always fresh conversation)
+  proactive_suggestion: 60 * 60, // 1 hour (suggestions change throughout day)
 };
 
 // =====================================================
