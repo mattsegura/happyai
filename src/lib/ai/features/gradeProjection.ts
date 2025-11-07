@@ -300,7 +300,7 @@ export class GradeProjectionService {
 
       // Get remaining assignments
       remaining = courseAssignments
-        .filter(a => {
+        .filter(() => {
           // Check if has no submission
           return true; // Simplified for mock
         })
