@@ -13,24 +13,24 @@ interface DemoAccount {
 
 const demoAccounts: DemoAccount[] = [
   {
-    email: 'student@demo.com',
-    password: 'demo123',
+    email: 'demo@student.com',
+    password: 'qwerty123',
     role: 'Student',
     description: 'Access student dashboard, pulse checks, leaderboard',
     icon: <GraduationCap className="w-4 h-4" />,
     color: 'from-blue-500 to-cyan-500'
   },
   {
-    email: 'teacher@demo.com',
-    password: 'demo123',
+    email: 'demo@teacher.com',
+    password: 'qwerty123',
     role: 'Teacher',
     description: 'View class analytics, create pulses, manage students',
     icon: <Users className="w-4 h-4" />,
     color: 'from-purple-500 to-pink-500'
   },
   {
-    email: 'admin@demo.com',
-    password: 'demo123',
+    email: 'demo@admin.com',
+    password: 'qwerty123',
     role: 'Admin',
     description: 'System administration, user management, reports',
     icon: <Shield className="w-4 h-4" />,
@@ -63,7 +63,7 @@ export function DemoAccounts({ onSelectAccount }: DemoAccountsProps) {
             <User className="w-4 h-4 text-white" />
           </div>
           <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-            Demo Accounts Available
+            Quick Login Options
           </span>
         </div>
         <ChevronDown
@@ -92,7 +92,7 @@ export function DemoAccounts({ onSelectAccount }: DemoAccountsProps) {
                       {account.role}
                     </h3>
                     <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-full">
-                      Demo
+                      Test Account
                     </span>
                   </div>
 
@@ -154,7 +154,7 @@ export function DemoAccounts({ onSelectAccount }: DemoAccountsProps) {
 
           <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
             <p className="text-xs text-amber-700 dark:text-amber-300">
-              <strong>Note:</strong> These are demo accounts for testing. You'll need to create them first or have them set up in your Supabase database with the appropriate roles.
+              <strong>Note:</strong> These test accounts are pre-configured for quick access. Contact your administrator if you need assistance setting up your own account.
             </p>
           </div>
         </div>

@@ -65,7 +65,7 @@ export function PaymentMethodManager() {
           <h2 className="text-2xl font-bold">Payment Methods</h2>
           {isMockMode && (
             <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded mt-1 inline-block">
-              Mock Mode
+              Test Mode
             </span>
           )}
         </div>
@@ -226,7 +226,7 @@ function AddPaymentMethodForm({
 
       {isMockMode && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-sm text-yellow-800 dark:text-yellow-200">
-          Mock Mode: Use any test card number (e.g., 4242 4242 4242 4242)
+          Test Mode: Use any test card number (e.g., 4242 4242 4242 4242)
         </div>
       )}
 

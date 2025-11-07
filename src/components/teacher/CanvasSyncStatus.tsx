@@ -91,8 +91,8 @@ export function CanvasSyncStatus() {
           <div className="flex-1">
             <h3 className="text-xl font-bold text-foreground mb-2">Canvas Sync Status</h3>
             <p className="text-muted-foreground mb-4">
-              Automatic sync is active with <span className="font-semibold text-purple-600 dark:text-purple-400">mock data</span>.
-              Canvas data is simulated and updates automatically.
+              Automatic sync is active with <span className="font-semibold text-purple-600 dark:text-purple-400">preview data</span>.
+              Canvas data is populated and updates automatically.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-card rounded-xl p-4 border border-purple-200 dark:border-purple-800">

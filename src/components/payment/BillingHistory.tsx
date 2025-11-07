@@ -41,7 +41,7 @@ export function BillingHistory() {
         <h2 className="text-2xl font-bold">Billing History</h2>
         {isMockMode && (
           <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">
-            Mock Mode
+            Test Mode
           </span>
         )}
       </div>

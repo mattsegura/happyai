@@ -144,11 +144,10 @@ export function LoginPage({ onToggleMode }: LoginPageProps) {
         <div className="rounded-2xl border border-accent/40 bg-accent/10 p-4 backdrop-blur-sm shadow-lg dark:border-accent/30 dark:bg-accent/15">
           <p className="mb-2 flex items-center text-sm font-semibold text-accent">
             <Sparkles className="w-4 h-4 mr-2" />
-            Try the Demo!
+            New to HapiAI?
           </p>
           <p className="text-sm text-muted-foreground">
-            Select {role === 'student' ? 'Student' : 'Teacher'} role and click "Sign up" to create a
-            demo account with sample data!
+            Select {role === 'student' ? 'Student' : 'Teacher'} role and click "Sign up" to create your account and get started!
           </p>
         </div>
         <p className="text-center text-sm text-muted-foreground">

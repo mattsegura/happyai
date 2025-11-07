@@ -72,10 +72,10 @@ export function CanvasSetup() {
             <AlertCircle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
           </div>
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-foreground mb-2">Canvas Integration - Demo Mode</h3>
+            <h3 className="text-xl font-bold text-foreground mb-2">Canvas Integration - Preview Mode</h3>
             <p className="text-muted-foreground mb-4">
-              Canvas integration is currently in <span className="font-semibold text-amber-600 dark:text-amber-400">mock data mode</span>.
-              You're seeing sample courses and assignments for demonstration purposes.
+              Canvas integration is currently in <span className="font-semibold text-amber-600 dark:text-amber-400">preview mode</span>.
+              You're seeing example courses and assignments to explore the features.
             </p>
             <div className="bg-card rounded-xl p-4 mb-4 border border-amber-200 dark:border-amber-800">
               <h4 className="font-semibold text-foreground mb-2">To connect to real Canvas:</h4>
@@ -90,7 +90,7 @@ export function CanvasSetup() {
             <div className="flex items-center space-x-2 text-sm">
               <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
               <span className="text-muted-foreground">
-                All Canvas features are functional with mock data. No API connection needed.
+                All Canvas features are functional in preview mode. No API connection needed.
               </span>
             </div>
           </div>

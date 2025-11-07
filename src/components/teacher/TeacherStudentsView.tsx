@@ -60,9 +60,9 @@ function TeacherStudentsView() {
               onChange={(e) => setSelectedClassId(e.target.value)}
               className="w-full rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value={MOCK_CLASS_IDS.PSYCHOLOGY}>Introduction to Psychology (Demo)</option>
-              <option value={MOCK_CLASS_IDS.ENGLISH}>English Literature (Demo)</option>
-              <option value={MOCK_CLASS_IDS.HISTORY}>World History (Demo)</option>
+              <option value={MOCK_CLASS_IDS.PSYCHOLOGY}>Introduction to Psychology</option>
+              <option value={MOCK_CLASS_IDS.ENGLISH}>English Literature</option>
+              <option value={MOCK_CLASS_IDS.HISTORY}>World History</option>
             </select>
           </div>
 

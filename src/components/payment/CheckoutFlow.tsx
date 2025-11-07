@@ -94,7 +94,7 @@ export function CheckoutFlow() {
           {isMockMode && (
             <div className="mt-4 inline-block px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
               <p className="text-sm text-blue-700 dark:text-blue-400">
-                🧪 Mock Mode - No real payment required
+                🧪 Test Mode - No payment required
               </p>
             </div>
           )}
@@ -131,12 +131,12 @@ export function CheckoutFlow() {
             <div className="flex items-start gap-3">
               <CreditCard className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Mock Payment Mode</h3>
+                <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Test Payment Mode</h3>
                 <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
-                  You're in mock mode - no real payment information is required. Clicking "Start Free Trial" will instantly create a subscription.
+                  You're in test mode - no payment information is required. Clicking "Start Free Trial" will instantly create a subscription.
                 </p>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  To enable real Stripe payments, set <code className="px-1 py-0.5 bg-blue-100 dark:bg-blue-900 rounded">VITE_USE_PAYMENT_MOCK=false</code> in your .env file and add your Stripe API keys.
+                  To enable Stripe payments, set <code className="px-1 py-0.5 bg-blue-100 dark:bg-blue-900 rounded">VITE_USE_PAYMENT_MOCK=false</code> in your .env file and add your Stripe API keys.
                 </p>
               </div>
             </div>
