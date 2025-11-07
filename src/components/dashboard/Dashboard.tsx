@@ -221,7 +221,6 @@ export function Dashboard() {
 
         <div className="space-y-3 px-4 pb-6">
           <div className="flex items-center justify-center gap-2">
-            <NotificationCenter />
             <ThemeToggle />
           </div>
           <button
