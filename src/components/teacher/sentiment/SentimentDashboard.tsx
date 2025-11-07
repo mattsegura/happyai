@@ -27,7 +27,7 @@ interface SentimentDashboardProps {
   }>;
 }
 
-export function SentimentDashboard({
+function SentimentDashboard({
   selectedClass,
   allClasses = [],
   timelineData = []
@@ -205,3 +205,4 @@ export function SentimentDashboard({
     </div>
   );
 }
+export default SentimentDashboard;

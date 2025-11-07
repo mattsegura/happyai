@@ -159,7 +159,7 @@ type SelectedClass = {
   code: string;
 } | null;
 
-export function TeacherClassesView() {
+function TeacherClassesView() {
   const [selectedClass, setSelectedClass] = useState<SelectedClass>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewClassModal, setShowNewClassModal] = useState(false);
@@ -438,3 +438,4 @@ export function TeacherClassesView() {
     </div>
   );
 }
+export default TeacherClassesView;

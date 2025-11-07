@@ -21,7 +21,7 @@ import { cn } from '../../../lib/utils';
 
 type TabType = 'balance' | 'stress';
 
-export function WorkloadDashboard() {
+function WorkloadDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('balance');
   const [semesterStart, setSemesterStart] = useState<string>('');
@@ -189,3 +189,4 @@ export function WorkloadDashboard() {
     </div>
   );
 }
+export default WorkloadDashboard;

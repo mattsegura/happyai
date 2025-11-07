@@ -10,7 +10,7 @@ import { Heart, Info } from 'lucide-react';
 import { HapiMomentsOversight } from './moments/HapiMomentsOversight';
 import { TeacherMomentsMetrics } from './moments/TeacherMomentsMetrics';
 
-export function HapiMomentsView() {
+function HapiMomentsView() {
   // For demo/mock purposes, using a sample class
   // In production, this would come from selected class state
   const [selectedClass] = useState({
@@ -92,3 +92,4 @@ export function HapiMomentsView() {
     </div>
   );
 }
+export default HapiMomentsView;

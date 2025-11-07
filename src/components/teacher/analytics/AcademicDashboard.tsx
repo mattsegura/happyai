@@ -31,7 +31,7 @@ import { SubmissionTracker } from './SubmissionTracker';
 import { ParticipationReport } from './ParticipationReport';
 import { MoodPerformanceScatter } from './MoodPerformanceScatter';
 
-export function AcademicDashboard() {
+function AcademicDashboard() {
   const { user } = useAuth();
   const [classes, setClasses] = useState<any[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
@@ -270,3 +270,4 @@ export function AcademicDashboard() {
     </div>
   );
 }
+export default AcademicDashboard;

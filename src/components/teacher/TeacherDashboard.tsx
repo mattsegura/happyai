@@ -1,19 +1,20 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { TeacherHomeView } from './TeacherHomeView';
 
-// Code splitting: Lazy load major dashboard components
-const TeacherClassesView = lazy(() => import('./TeacherClassesView').then(m => ({ default: m.TeacherClassesView })));
-const TeacherHapiLab = lazy(() => import('./TeacherHapiLab').then(m => ({ default: m.TeacherHapiLab })));
-const TeacherProfileView = lazy(() => import('./TeacherProfileView').then(m => ({ default: m.TeacherProfileView })));
-const AcademicDashboard = lazy(() => import('./analytics/AcademicDashboard').then(m => ({ default: m.AcademicDashboard })));
-const TeacherStudentsView = lazy(() => import('./TeacherStudentsView').then(m => ({ default: m.TeacherStudentsView })));
-const SentimentDashboard = lazy(() => import('./sentiment/SentimentDashboard').then(m => ({ default: m.SentimentDashboard })));
-const CareAlertsDashboard = lazy(() => import('./alerts/CareAlertsDashboard').then(m => ({ default: m.CareAlertsDashboard })));
-const WorkloadDashboard = lazy(() => import('./workload/WorkloadDashboard').then(m => ({ default: m.WorkloadDashboard })));
-const SafeBoxView = lazy(() => import('./SafeBoxView').then(m => ({ default: m.SafeBoxView })));
-const HapiMomentsView = lazy(() => import('./HapiMomentsView').then(m => ({ default: m.HapiMomentsView })));
-const ReportsHub = lazy(() => import('./ReportsHub').then(m => ({ default: m.ReportsHub })));
+// Code splitting: Lazy load major dashboard components (using default imports)
+const TeacherClassesView = lazy(() => import('./TeacherClassesView'));
+const TeacherHapiLab = lazy(() => import('./TeacherHapiLab'));
+const TeacherProfileView = lazy(() => import('./TeacherProfileView'));
+const AcademicDashboard = lazy(() => import('./analytics/AcademicDashboard'));
+const TeacherStudentsView = lazy(() => import('./TeacherStudentsView'));
+const SentimentDashboard = lazy(() => import('./sentiment/SentimentDashboard'));
+const CareAlertsDashboard = lazy(() => import('./alerts/CareAlertsDashboard'));
+const WorkloadDashboard = lazy(() => import('./workload/WorkloadDashboard'));
+const SafeBoxView = lazy(() => import('./SafeBoxView'));
+const HapiMomentsView = lazy(() => import('./HapiMomentsView'));
+const ReportsHub = lazy(() => import('./ReportsHub'));
 import { Home, Users, Beaker, User, GraduationCap, Smile, ChevronLeft, UserSearch, Heart, AlertCircle, BarChart3, Shield, Sparkles, FileText } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationBell } from '../common/NotificationBell';
@@ -37,13 +38,25 @@ function ViewLoading() {
 
 export function TeacherDashboard() {
   const { profile } = useAuth();
-  const [currentView, setCurrentView] = useState<View>('home');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [labState, setLabState] = useState<{ tab?: 'pulses' | 'office-hours'; pulseId?: string }>({});
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // Determine current view from URL
+  const currentPath = location.pathname.split('/teacher/')[1] || '';
+  const currentView = currentPath.split('/')[0] || 'home';
+
   const handleNavigateToLab = (pulseId?: string) => {
     setLabState({ tab: 'pulses', pulseId });
-    setCurrentView('lab');
+    navigate('/teacher/lab');
+  };
+
+  const handleNavigate = (view: string) => {
+    if (view !== 'lab') {
+      setLabState({});
+    }
+    navigate(`/teacher/${view === 'home' ? '' : view}`);
   };
 
   const navigationItems = [
@@ -95,12 +108,7 @@ export function TeacherDashboard() {
             return (
               <button
                 key={item.id}
-                onClick={() => {
-                  setCurrentView(item.id as View);
-                  if (item.id !== 'lab') {
-                    setLabState({});
-                  }
-                }}
+                onClick={() => handleNavigate(item.id)}
                 className={cn(
                   'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                   isActive
@@ -163,12 +171,7 @@ export function TeacherDashboard() {
                     return (
                       <button
                         key={item.id}
-                        onClick={() => {
-                          setCurrentView(item.id as View);
-                          if (item.id !== 'lab') {
-                            setLabState({});
-                          }
-                        }}
+                        onClick={() => handleNavigate(item.id)}
                         className={cn(
                           'flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold transition',
                           isActive
@@ -186,84 +189,102 @@ export function TeacherDashboard() {
           </header>
 
           <div className="space-y-5">
-            {currentView === 'home' && <TeacherHomeView onNavigateToLab={handleNavigateToLab} />}
-            {currentView === 'classes' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <TeacherClassesView />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'academics' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <AcademicDashboard />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'wellbeing' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <SentimentDashboard />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'students' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <TeacherStudentsView />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'alerts' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <CareAlertsDashboard />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'workload' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <WorkloadDashboard />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'reports' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <ReportsHub />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'safebox' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <SafeBoxView />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'moments' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <HapiMomentsView />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'lab' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <TeacherHapiLab initialTab={labState.tab} highlightPulseId={labState.pulseId} />
-                </div>
-              </Suspense>
-            )}
-            {currentView === 'profile' && (
-              <Suspense fallback={<ViewLoading />}>
-                <div className={cn(SURFACE_BASE, 'p-5')}>
-                  <TeacherProfileView />
-                </div>
-              </Suspense>
-            )}
+            <Routes>
+              {/* Default route - Home */}
+              <Route index element={<TeacherHomeView onNavigateToLab={handleNavigateToLab} />} />
+
+              {/* All tab routes */}
+              <Route path="classes" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <TeacherClassesView />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="academics" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <AcademicDashboard />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="wellbeing" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <SentimentDashboard />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="students" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <TeacherStudentsView />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="alerts" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <CareAlertsDashboard />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="workload" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <WorkloadDashboard />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="reports" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <ReportsHub />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="safebox" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <SafeBoxView />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="moments" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <HapiMomentsView />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="lab" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <TeacherHapiLab initialTab={labState.tab} highlightPulseId={labState.pulseId} />
+                  </div>
+                </Suspense>
+              } />
+
+              <Route path="profile" element={
+                <Suspense fallback={<ViewLoading />}>
+                  <div className={cn(SURFACE_BASE, 'p-5')}>
+                    <TeacherProfileView />
+                  </div>
+                </Suspense>
+              } />
+
+              {/* Redirect unknown routes to home */}
+              <Route path="*" element={<Navigate to="/teacher" replace />} />
+            </Routes>
           </div>
         </div>
       </div>

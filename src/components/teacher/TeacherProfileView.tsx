@@ -8,7 +8,7 @@ const mockTeacherClasses: any[] = [];
 const mockClassRosters: any = {};
 const mockOfficeHours: any[] = [];
 
-export function TeacherProfileView() {
+function TeacherProfileView() {
   const { profile, signOut } = useAuth();
 
   if (!profile) {
@@ -186,3 +186,4 @@ export function TeacherProfileView() {
     </div>
   );
 }
+export default TeacherProfileView;

@@ -16,7 +16,7 @@ import { StudentLookup } from './students/StudentLookup';
 import { StudentReportPage } from './students/StudentReportPage';
 import { MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
 
-export function TeacherStudentsView() {
+function TeacherStudentsView() {
   const { user } = useAuth();
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedClassId, setSelectedClassId] = useState<string>(MOCK_CLASS_IDS.PSYCHOLOGY); // Default class ID
@@ -75,3 +75,4 @@ export function TeacherStudentsView() {
     </div>
   );
 }
+export default TeacherStudentsView;

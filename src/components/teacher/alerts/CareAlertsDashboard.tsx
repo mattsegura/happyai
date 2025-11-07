@@ -17,7 +17,7 @@ interface CareAlertsDashboardProps {
 
 type SortOption = 'severity' | 'daysAtRisk' | 'name';
 
-export function CareAlertsDashboard({ classId }: CareAlertsDashboardProps) {
+function CareAlertsDashboard({ classId }: CareAlertsDashboardProps) {
   const { user } = useAuth();
   const [atRiskStudents, setAtRiskStudents] = useState<AtRiskStudent[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<AtRiskStudent[]>([]);
@@ -323,3 +323,4 @@ export function CareAlertsDashboard({ classId }: CareAlertsDashboardProps) {
     </div>
   );
 }
+export default CareAlertsDashboard;

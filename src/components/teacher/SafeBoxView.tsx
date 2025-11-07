@@ -11,7 +11,7 @@ import { SafeBoxFeed } from './safebox/SafeBoxFeed';
 import { SafeBoxMetrics } from './safebox/SafeBoxMetrics';
 import { SafeBoxResponse } from './safebox/SafeBoxResponse';
 
-export function SafeBoxView() {
+function SafeBoxView() {
   // For demo/mock purposes, using a sample class
   // In production, this would come from selected class state
   const [selectedClass] = useState({
@@ -69,3 +69,4 @@ export function SafeBoxView() {
     </div>
   );
 }
+export default SafeBoxView;

@@ -105,7 +105,7 @@ export function GradeDistributionChart({ data, onClick }: GradeDistributionChart
       {/* Chart */}
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <BarChart data={chartData} margin={{ top: 10, right: 10, left: 40, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} />
             <XAxis
               dataKey="grade"

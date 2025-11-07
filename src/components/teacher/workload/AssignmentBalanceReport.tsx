@@ -259,7 +259,7 @@ export function AssignmentBalanceReport({
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Semester Timeline - Weekly Distribution</h3>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={weeklyData}>
+          <BarChart data={weeklyData} margin={{ top: 20, right: 30, bottom: 80, left: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="weekLabel"

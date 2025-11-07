@@ -18,7 +18,7 @@ interface TeacherHapiLabProps {
   highlightPulseId?: string;
 }
 
-export function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapiLabProps = {}) {
+function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapiLabProps = {}) {
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [showNewPulseModal, setShowNewPulseModal] = useState(false);
   const [showTemplateLibrary, setShowTemplateLibrary] = useState(false);
@@ -459,3 +459,4 @@ export function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: Teac
     </div>
   );
 }
+export default TeacherHapiLab;

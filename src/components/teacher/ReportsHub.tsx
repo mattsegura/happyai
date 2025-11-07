@@ -17,7 +17,7 @@ import { cn } from '../../lib/utils';
 
 type ReportTab = 'weekly' | 'students' | 'custom' | 'archive';
 
-export function ReportsHub() {
+function ReportsHub() {
   const { user } = useAuth();
   const [currentTab, setCurrentTab] = useState<ReportTab>('weekly');
   const [loading, setLoading] = useState(false);
@@ -508,3 +508,4 @@ function ArchiveView() {
     </div>
   );
 }
+export default ReportsHub;
