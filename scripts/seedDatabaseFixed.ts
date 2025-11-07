@@ -76,7 +76,7 @@ async function seedDatabase() {
 
     // Step 3: Get current user (for student)
     console.log('\n👤 Getting current user...');
-    const { data: currentUser, error: userError } = await supabase.auth.getUser();
+    const { data: currentUser, error: _userError } = await supabase.auth.getUser();
 
     let studentId: string;
     if (currentUser?.user) {

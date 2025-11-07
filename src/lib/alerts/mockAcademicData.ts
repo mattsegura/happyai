@@ -206,6 +206,6 @@ export function getMockClassAcademics(
 /**
  * Check if mock data is enabled
  */
-export function useMockAcademicData(): boolean {
+export function shouldUseMockAcademicData(): boolean {
   return import.meta.env.VITE_USE_CARE_ALERTS_MOCK === 'true';
 }

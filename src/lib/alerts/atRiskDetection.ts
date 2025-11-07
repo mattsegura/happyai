@@ -13,7 +13,7 @@ import { supabase } from '../supabase';
 import {
   getMockAcademicData,
   detectAcademicRiskFlags,
-  useMockAcademicData,
+  shouldUseMockAcademicData,
   type AcademicRiskFlags,
 } from './mockAcademicData';
 
@@ -218,7 +218,7 @@ export async function detectAcademicRisk(
 
   try {
     // Check if using mock data
-    if (useMockAcademicData()) {
+    if (shouldUseMockAcademicData()) {
       const mockData = getMockAcademicData(userId, classId);
       if (mockData) {
         details.currentGrade = mockData.currentGrade;

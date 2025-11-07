@@ -18,7 +18,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABAS
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const MOCK_STUDENT_ID = 'mock-student-1';
-const MOCK_TEACHER_ID = 'mock-teacher-1';
+const _MOCK_TEACHER_ID = 'mock-teacher-1'; // Unused but kept for reference
 
 async function clearDatabase() {
   console.log('🗑️  Clearing database...\n');

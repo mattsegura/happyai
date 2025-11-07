@@ -44,7 +44,7 @@ async function seedDatabase() {
   try {
     // 1. Seed Classes
     console.log('📚 Seeding classes...');
-    const { data: classes, error: classError } = await supabase
+    const { data: classes, error: _classError } = await supabase
       .from('classes')
       .upsert([
         {
@@ -86,7 +86,7 @@ async function seedDatabase() {
 
     // 2. Seed Class Members
     console.log('👥 Seeding class members...');
-    const { data: members, error: memberError } = await supabase
+    const { data: members, error: _memberError } = await supabase
       .from('class_members')
       .upsert([
         {
@@ -138,7 +138,7 @@ async function seedDatabase() {
       });
     }
 
-    const { data: pulses, error: pulseError } = await supabase
+    const { data: pulses, error: _pulseError } = await supabase
       .from('pulse_checks')
       .upsert(pulseChecks)
       .select();
@@ -155,7 +155,7 @@ async function seedDatabase() {
       intensity: pc.intensity,
     }));
 
-    const { data: sentiment, error: sentimentError } = await supabase
+    const { data: sentiment, error: _sentimentError } = await supabase
       .from('sentiment_history')
       .upsert(sentimentHistory, { onConflict: 'user_id,date' })
       .select();
@@ -165,7 +165,7 @@ async function seedDatabase() {
     // 5. Seed Class Pulses (Teacher questions)
     console.log('❓ Seeding class pulses...');
     const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const { data: classPulses, error: classPulseError } = await supabase
+    const { data: classPulses, error: _classPulseError } = await supabase
       .from('class_pulses')
       .upsert([
         {
@@ -191,7 +191,7 @@ async function seedDatabase() {
 
     // 6. Seed Hapi Moments
     console.log('💝 Seeding hapi moments...');
-    const { data: moments, error: momentsError } = await supabase
+    const { data: moments, error: _momentsError } = await supabase
       .from('hapi_moments')
       .upsert([
         {
@@ -219,7 +219,7 @@ async function seedDatabase() {
 
     // 7. Seed Achievements
     console.log('🏆 Seeding achievements...');
-    const { data: achievements, error: achievementsError } = await supabase
+    const { data: achievements, error: _achievementsError } = await supabase
       .from('achievements')
       .upsert([
         {
@@ -262,7 +262,7 @@ async function seedDatabase() {
 
     // 8. Seed User Achievements
     console.log('🎖️ Seeding user achievements...');
-    const { data: userAchievements, error: userAchievementsError } = await supabase
+    const { data: userAchievements, error: _userAchievementsError } = await supabase
       .from('user_achievements')
       .upsert([
         {
@@ -278,7 +278,7 @@ async function seedDatabase() {
     // 9. Seed Office Hours
     console.log('🕐 Seeding office hours...');
     const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    const { data: officeHours, error: officeHoursError } = await supabase
+    const { data: officeHours, error: _officeHoursError } = await supabase
       .from('office_hours')
       .upsert([
         {
