@@ -17,7 +17,6 @@ import type {
   FunctionCallRequest,
   FunctionCallResult,
   AIProvider,
-  AIModel,
   AIFeatureType,
   QuotaCheckResult,
   AIUsageStats,
@@ -27,7 +26,7 @@ import * as aiCache from './aiCache';
 import * as anthropicProvider from './providers/anthropicProvider';
 import * as openaiProvider from './providers/openaiProvider';
 import * as chatbaseProvider from './providers/chatbaseProvider';
-import { AIServiceError, QuotaExceededError, RateLimitError } from './aiTypes';
+import { AIServiceError, QuotaExceededError } from './aiTypes';
 
 // =====================================================
 // MAIN AI SERVICE CLASS

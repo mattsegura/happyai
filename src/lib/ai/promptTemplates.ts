@@ -202,7 +202,7 @@ Respond ONLY with valid JSON.`,
 export const COURSE_TUTOR_PROMPT: PromptTemplate = {
   version: 'v1.0',
   featureType: 'course_tutor',
-  model: 'chatbase',
+  model: 'gpt-3.5-turbo',
   systemPrompt: 'You are a patient, knowledgeable AI tutor helping students understand their course material.',
   template: `**Course Context:**
 Course: {courseName} ({courseCode})

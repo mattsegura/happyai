@@ -19,7 +19,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Cell,
 } from 'recharts';
 import { assignmentCalendarService, WorkloadMetrics } from '../../../lib/workload/assignmentCalendarService';
 import {
@@ -53,7 +52,7 @@ export function AssignmentBalanceReport({
   semesterStart,
   semesterEnd,
 }: AssignmentBalanceReportProps) {
-  const [assignments, setAssignments] = useState<WorkloadAssignment[]>([]);
+  const [, setAssignments] = useState<WorkloadAssignment[]>([]);
   const [metrics, setMetrics] = useState<WorkloadMetrics | null>(null);
   const [weeklyData, setWeeklyData] = useState<WeeklyData[]>([]);
   const [loading, setLoading] = useState(true);

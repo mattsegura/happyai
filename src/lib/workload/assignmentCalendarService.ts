@@ -210,7 +210,7 @@ export class AssignmentCalendarService {
    * Get cross-class workload for students (assignments from all their classes)
    */
   async getStudentWorkloadCalendar(
-    studentIds: string[],
+    _studentIds: string[],
     semesterStart: string,
     semesterEnd: string
   ): Promise<CrossClassAssignment[]> {
@@ -434,8 +434,8 @@ export class AssignmentCalendarService {
     });
 
     // Find busiest and lightest weeks
-    let busiestWeek = { weekStart: new Date(), weekEnd: new Date(), assignmentCount: 0, totalHours: 0 };
-    let lightestWeek = { weekStart: new Date(), weekEnd: new Date(), assignmentCount: Number.MAX_VALUE, totalHours: Number.MAX_VALUE };
+    let busiestWeek = { weekStart: '', weekEnd: '', assignmentCount: 0, totalHours: 0 };
+    let lightestWeek = { weekStart: '', weekEnd: '', assignmentCount: Number.MAX_VALUE, totalHours: Number.MAX_VALUE };
 
     weekMap.forEach((week) => {
       if (week.count > busiestWeek.assignmentCount) {

@@ -35,7 +35,7 @@ export function WhatIfCalculator({
   // Calculate hypothetical final grade
   const hypotheticalFinalGrade = useMemo(() => {
     let hypotheticalEarned = earnedPoints;
-    let hypotheticalTotal = totalPoints;
+    const hypotheticalTotal = totalPoints;
 
     pendingAssignments.forEach((assignment) => {
       const hypotheticalScore = hypotheticalGrades[assignment.id];

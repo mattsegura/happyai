@@ -2,10 +2,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import NumberFlow from "@number-flow/react";
-import { GraduationCap, Users, Building2, CheckCheck, Brain, Calendar, Heart, TrendingUp, BarChart3, Shield, Bell, MessageSquare, Sparkles } from "lucide-react";
+import { GraduationCap, Users, Building2, CheckCheck, Brain, Calendar, Heart, TrendingUp, BarChart3, Shield, Bell, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 const plans = [
@@ -396,7 +396,7 @@ export default function PricingSection() {
                                 {category}
                               </h4>
                               <ul className="space-y-2">
-                                {features.map((feature, idx) => (
+                                {features.map((feature: string, idx: number) => (
                                   <li key={idx} className="flex items-start gap-2 group">
                                     <div className="h-1.5 w-1.5 rounded-full bg-sky-500 mt-1.5 flex-shrink-0" />
                                     <span className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">

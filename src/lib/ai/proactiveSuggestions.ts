@@ -41,7 +41,7 @@ export interface GenerateProactiveSuggestionsOptions {
 // MOCK DATA GENERATOR
 // =====================================================
 
-function generateMockProactiveSuggestions(teacherId: string): ProactiveSuggestion[] {
+function generateMockProactiveSuggestions(_teacherId: string): ProactiveSuggestion[] {
   const now = new Date();
 
   const suggestions: ProactiveSuggestion[] = [

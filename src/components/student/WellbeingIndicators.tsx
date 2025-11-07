@@ -10,8 +10,10 @@ interface WellbeingIndicator {
   class_name: string;
   wellbeing_level: WellbeingLevel;
   avg_sentiment: number;
+  average_mood?: number;
   stress_level: number;
   support_needed: boolean;
+  factors?: string[];
 }
 
 export function WellbeingIndicators() {
@@ -216,7 +218,7 @@ export function WellbeingIndicators() {
               <div className="p-3 rounded-lg bg-background/50">
                 <div className="text-xs font-medium text-muted-foreground mb-1">Average Mood</div>
                 <div className="text-2xl font-bold text-foreground">
-                  {indicator.average_mood.toFixed(1)}<span className="text-sm text-muted-foreground">/7</span>
+                  {(indicator.average_mood ?? indicator.avg_sentiment).toFixed(1)}<span className="text-sm text-muted-foreground">/7</span>
                 </div>
               </div>
               <div className="p-3 rounded-lg bg-background/50">
@@ -234,13 +236,13 @@ export function WellbeingIndicators() {
             </div>
 
             {/* Factors */}
-            {indicator.factors.length > 0 && (
+            {(indicator.factors || []).length > 0 && (
               <div className="mb-4">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   Contributing Factors
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {indicator.factors.map((factor, index) => (
+                  {(indicator.factors || []).map((factor, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 rounded-full text-xs font-medium bg-background/70 text-foreground border border-border"

@@ -6,10 +6,12 @@ import { Heart, ChevronDown, ChevronUp, Smile, Meh, Frown, Sparkles, Loader2 } f
 type WellbeingLevel = 'thriving' | 'managing' | 'struggling';
 
 interface WellbeingIndicator {
+  class_id?: string;
   class_name: string;
   wellbeing_level: WellbeingLevel;
   average_mood: number;
   stress_level: number;
+  factors?: string[];
 }
 
 export function WellbeingSummaryCard() {
@@ -190,7 +192,7 @@ export function WellbeingSummaryCard() {
               </div>
               
               <div className="flex flex-wrap gap-2 mb-3">
-                {indicator.factors.map((factor, idx) => (
+                {(indicator.factors || []).map((factor, idx) => (
                   <span
                     key={idx}
                     className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700"
@@ -226,9 +228,9 @@ export function WellbeingSummaryCard() {
                   <div className="text-lg font-bold text-foreground">{indicator.average_mood.toFixed(1)}/7</div>
                 </div>
               </div>
-              
+
               <div className="flex flex-wrap gap-2">
-                {indicator.factors.map((factor, idx) => (
+                {(indicator.factors || []).map((factor, idx) => (
                   <span
                     key={idx}
                     className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700"

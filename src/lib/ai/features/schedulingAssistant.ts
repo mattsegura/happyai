@@ -156,7 +156,7 @@ export class AISchedulingAssistant {
    */
   async chat(
     message: string,
-    conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }>
+    _conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }>
   ): Promise<string> {
     try {
       // For conversational flow, we process the request and return explanation
@@ -232,7 +232,7 @@ export class AISchedulingAssistant {
         id: a.id,
         name: a.name,
         dueAt: a.due_at,
-        courseName: (a.canvas_courses as { name: string })?.name || 'Unknown',
+        courseName: (a.canvas_courses as unknown as { name: string })?.name || 'Unknown',
       })),
     };
   }
@@ -338,7 +338,7 @@ export class AISchedulingAssistant {
     return { success: true, message: 'Study session deleted successfully' };
   }
 
-  private async rescheduleMultiple(params: Record<string, unknown>): Promise<{
+  private async rescheduleMultiple(_params: Record<string, unknown>): Promise<{
     success: boolean;
     message: string;
   }> {

@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import { getEmotionSentimentValue, EmotionName, EMOTIONS_BY_SENTIMENT } from '../emotionConfig';
+import { getEmotionSentimentValue, EmotionName } from '../emotionConfig';
 
 /**
  * Advanced Sentiment Analytics Service
@@ -335,7 +335,7 @@ export async function calculateEmotionalVolatility(
  * Get low-mood alerts for this week across all teacher's classes
  */
 export async function getLowMoodAlertsThisWeek(
-  teacherId: string
+  _teacherId: string
 ): Promise<LowMoodAlertsResult> {
   if (USE_MOCK_DATA) {
     return getMockLowMoodAlerts();

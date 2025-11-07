@@ -12,7 +12,7 @@
  * Phase 3: Student Search & Reports
  */
 
-import { Target, MessageCircle, Heart, Calendar, TrendingUp } from 'lucide-react';
+import { Target, MessageCircle, Heart, Calendar } from 'lucide-react';
 import type { StudentEngagementData } from '../../../lib/students/studentDataService';
 
 interface StudentEngagementCardProps {

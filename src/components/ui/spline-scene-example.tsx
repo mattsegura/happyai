@@ -1,5 +1,5 @@
 // Example usage of SplineScene component
-import { SplineScene } from '../components/ui'
+import { SplineScene } from './spline-scene'
 
 export function ExampleSplineUsage() {
   return (

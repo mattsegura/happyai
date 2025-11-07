@@ -144,7 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Set user context for error tracking with university
-      setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id);
+      setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id ?? undefined);
     }
   };
 
@@ -196,7 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
 
               // Set user context for error tracking with university
-              setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id);
+              setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id ?? undefined);
               // If profile fetch fails, keep existing cached role
               // Don't reset to 'student' - prevents role flickering
             }
@@ -254,7 +254,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
 
               // Set user context for error tracking with university
-              setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id);
+              setUserContext(profileData.id, profileData.email, profileData.role, profileData.university_id ?? undefined);
               // If profile fetch fails, keep existing cached role
             }
           } catch (err) {

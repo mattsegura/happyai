@@ -15,7 +15,6 @@ import {
   detectAcademicRiskFlags,
   useMockAcademicData,
   type AcademicRiskFlags,
-  type MockStudentAcademics,
 } from './mockAcademicData';
 
 export type RiskSeverity = 'medium' | 'high' | 'critical';
@@ -72,7 +71,7 @@ export interface AtRiskStudent {
  */
 export async function detectEmotionalRisk(
   userId: string,
-  classId: string
+  _classId: string
 ): Promise<EmotionalRiskDetails> {
   const details: EmotionalRiskDetails = {
     hasEmotionalRisk: false,
@@ -437,10 +436,9 @@ export async function detectAtRiskStudents(
           academicRisk: {
             hasAcademicRisk: true,
             flags: {
-              hasAnyRisk: true,
-              gradeDrop: true,
-              failingGrade: false,
-              excessiveMissing: true,
+              lowGrade: true,
+              missingWork: true,
+              gradeDecline: true,
               lowParticipation: true,
             },
             currentGrade: 75,

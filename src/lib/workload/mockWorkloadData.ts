@@ -42,18 +42,18 @@ const getDate = (daysFromNow: number): string => {
 };
 
 // Helper to get start of semester (16 weeks ago)
-const getSemesterStart = (): string => {
-  const date = new Date();
-  date.setDate(date.getDate() - 112); // 16 weeks ago
-  return date.toISOString();
-};
+// const _getSemesterStart = (): string => {
+//   const date = new Date();
+//   date.setDate(date.getDate() - 112); // 16 weeks ago
+//   return date.toISOString();
+// };
 
 // Helper to get end of semester (4 weeks from now)
-const getSemesterEnd = (): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + 28); // 4 weeks from now
-  return date.toISOString();
-};
+// const _getSemesterEnd = (): string => {
+//   const date = new Date();
+//   date.setDate(date.getDate() + 28); // 4 weeks from now
+//   return date.toISOString();
+// };
 
 /**
  * Mock assignments for the current teacher (3 courses)

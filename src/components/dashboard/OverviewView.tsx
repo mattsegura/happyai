@@ -1,4 +1,4 @@
-import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, Clock, ArrowRight, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Circle, Sparkles } from 'lucide-react';
+import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, ArrowRight, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Circle, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useState } from 'react';
 
@@ -257,7 +257,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                     <div className="mt-auto pt-2">
                       {action.preview.type === 'assignments' && (
                         <div className="space-y-2 min-h-[80px]">
-                          {action.preview.items.slice(0, 3).map((item: any, idx: number) => (
+                          {(action.preview.items || []).slice(0, 3).map((item: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-2 text-xs">
                               {item.status === 'in-progress' ? (
                                 <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
@@ -288,7 +288,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                                   key={level}
                                   className={cn(
                                     'w-1.5 h-6 rounded-full transition-all',
-                                    level <= action.preview.sentiment
+                                    level <= (action.preview.sentiment || 0)
                                       ? 'bg-gradient-to-t from-rose-500 to-pink-500'
                                       : 'bg-muted-foreground/20'
                                   )}
@@ -306,7 +306,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
 
                       {action.preview.type === 'suggestions' && (
                         <div className="space-y-1.5 min-h-[80px]">
-                          {action.preview.items.slice(0, 2).map((item: any, idx: number) => (
+                          {(action.preview.items || []).slice(0, 2).map((item: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-2 text-xs text-foreground/70 group-hover:text-foreground/90 transition-colors">
                               <Sparkles className="h-3 w-3 text-purple-500 flex-shrink-0" />
                               <span className="truncate">{item}</span>
@@ -317,7 +317,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
 
                       {action.preview.type === 'moments' && (
                         <div className="space-y-2 min-h-[80px]">
-                          {action.preview.items.map((item: any, idx: number) => (
+                          {(action.preview.items || []).map((item: any, idx: number) => (
                             <div key={idx} className="flex items-start gap-2">
                               <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0">
                                 {item.from[0]}

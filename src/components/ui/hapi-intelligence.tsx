@@ -4,7 +4,7 @@ export interface HapiIntelligenceProps {
   onCtaClick?: () => void;
 }
 
-export function HapiIntelligence({ onCtaClick }: HapiIntelligenceProps) {
+export function HapiIntelligence(): JSX.Element {
   const capabilities = [
     {
       icon: Brain,

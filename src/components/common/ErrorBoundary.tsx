@@ -3,7 +3,7 @@ import { handleError } from '../../lib/errorHandler';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
   fallback?: ReactNode;
 }
 

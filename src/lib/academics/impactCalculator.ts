@@ -35,7 +35,7 @@ export class AssignmentImpactCalculator {
     assignmentPoints: number,
     courseContext: CourseGradeContext
   ): ImpactScore {
-    const { currentGrade, totalPoints, earnedPoints, completedWeight } = courseContext;
+    const { currentGrade, totalPoints, earnedPoints } = courseContext;
 
     // Calculate assignment weight in course
     const assignmentWeight = (assignmentPoints / totalPoints) * 100;

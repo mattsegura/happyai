@@ -266,20 +266,16 @@ function getMockComprehensiveStudentData(studentId: string, classId: string): Co
       gradePercentile: isAtRisk ? 25 : 75,
       sentimentPercentile: isAtRisk ? 20 : 80,
       engagementPercentile: isAtRisk ? 30 : 85,
-      participationPercentile: isAtRisk ? 30 : 85,
       studentValues: {
         grade: currentGrade,
         sentiment: isAtRisk ? 2 : 5,
         engagement: isAtRisk ? 45 : 85,
-        participation: isAtRisk ? 45 : 85,
       },
       classAverage: {
         grade: 78.5,
         sentiment: 3.8,
         engagement: 72,
-        participation: 72,
       },
-      lastUpdated: new Date().toISOString(),
     },
     riskLevel: isAtRisk ? 'high' : 'low',
     generatedAt: new Date().toISOString(),
@@ -568,7 +564,7 @@ async function getStudentAcademicData(studentId: string, classId: string): Promi
   }
 }
 
-async function getStudentWellbeingData(studentId: string, classId: string): Promise<StudentWellbeingData> {
+async function getStudentWellbeingData(studentId: string, _classId: string): Promise<StudentWellbeingData> {
   // Get pulse checks for last 30 days
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -1002,7 +998,7 @@ export type StudentSearchResult = {
 };
 
 export async function searchStudents(
-  teacherId: string,
+  _teacherId: string,
   classId: string,
   query: string
 ): Promise<StudentSearchResult[]> {

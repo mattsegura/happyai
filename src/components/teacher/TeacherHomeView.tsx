@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertCircle, TrendingUp } from 'lucide-react';
 import { ClassSentimentDial } from './ClassSentimentDial';
 import { ClassAverageSentimentChart } from './ClassAverageSentimentChart';
@@ -111,8 +111,6 @@ const mockClassPulses: any[] = [
   },
 ];
 
-type StudentRoster = any;
-
 const emotionValues: Record<string, number> = {
   'happy': 5, 'excited': 5, 'grateful': 4.5, 'hopeful': 4.5,
   'calm': 4, 'energized': 4, 'neutral': 3,
@@ -160,7 +158,7 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
     if (roster.length === 0) return { avg: 0, studentCount: 0, topEmotions: [] };
 
     const todayStr = new Date().toISOString().split('T')[0];
-    const todayChecks = roster.filter(s => s.last_pulse_check === todayStr);
+    const todayChecks = roster.filter((s: any) => s.last_pulse_check === todayStr);
 
     if (todayChecks.length === 0) {
       return { avg: 0, studentCount: roster.length, topEmotions: [] };
@@ -169,7 +167,7 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
     const emotionCounts: Record<string, number> = {};
     let totalValue = 0;
 
-    todayChecks.forEach(student => {
+    todayChecks.forEach((student: any) => {
       if (student.recent_emotions && student.recent_emotions.length > 0) {
         const latestEmotion = student.recent_emotions[0];
         emotionCounts[latestEmotion] = (emotionCounts[latestEmotion] || 0) + 1;
@@ -203,38 +201,6 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
       missing: statistics.missing,
       topAnswers: statistics.topAnswers,
     };
-  };
-
-  const getAtRiskStudents = (): (StudentRoster & { className: string; riskType: string })[] => {
-    const atRisk: (StudentRoster & { className: string; riskType: string })[] = [];
-
-    mockTeacherClasses.forEach(cls => {
-      const roster = mockClassRosters[cls.id] || [];
-      roster.forEach(student => {
-        const daysSinceCheck = student.last_pulse_check
-          ? Math.floor((Date.now() - new Date(student.last_pulse_check).getTime()) / (1000 * 60 * 60 * 24))
-          : 999;
-
-        const negativeEmotions = ['sad', 'anxious', 'stressed', 'nervous'];
-        const recentNegative = student.recent_emotions.filter(e => negativeEmotions.includes(e)).length;
-
-        if (daysSinceCheck >= 3) {
-          atRisk.push({
-            ...student,
-            className: cls.name,
-            riskType: 'Missing Pulse Checks',
-          });
-        } else if (recentNegative >= 3) {
-          atRisk.push({
-            ...student,
-            className: cls.name,
-            riskType: 'Negative Sentiment Pattern',
-          });
-        }
-      });
-    });
-
-    return atRisk;
   };
 
   return (

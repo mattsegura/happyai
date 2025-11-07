@@ -40,7 +40,6 @@ import {
   mockCanvasCalendarEvents,
   mockCanvasModules,
   mockCanvasModuleItems,
-  mockCanvasStudentSummaries,
 } from './mockCanvasData';
 
 /**
@@ -445,10 +444,10 @@ class CanvasServiceEnhanced {
     const allSubmissions: CanvasSubmission[] = [];
 
     for (const course of courses) {
-      const assignments = await this.getAssignments(course.id);
+      const assignments = await this.getAssignments(course.id.toString());
       for (const assignment of assignments) {
         try {
-          const submissions = await this.getSubmissions(course.id, assignment.id);
+          const submissions = await this.getSubmissions(course.id.toString(), assignment.id.toString());
           const userSubmission = submissions.find((s: any) => s.user_id === userId);
           if (userSubmission) {
             allSubmissions.push(userSubmission);
@@ -567,8 +566,8 @@ class CanvasServiceEnhanced {
    */
   async getCourseAnalytics(courseId: string): Promise<CanvasStudentSummary[]> {
     if (this.useMockData) {
-      const analytics = mockCanvasAnalytics[courseId];
-      return analytics ? [analytics as unknown as CanvasStudentSummary] : [];
+      // Mock analytics not available
+      return [];
     }
 
     const endpoint = CANVAS_ENDPOINTS.COURSE_ANALYTICS(courseId);

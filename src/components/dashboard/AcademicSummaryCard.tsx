@@ -10,6 +10,7 @@ interface RiskIndicator {
   class_name: string;
   risk_level: RiskLevel;
   current_grade: number;
+  factors?: string[];
 }
 
 export function AcademicSummaryCard() {
@@ -183,7 +184,7 @@ export function AcademicSummaryCard() {
                 </div>
               </div>
               <div className="text-sm text-muted-foreground space-y-1">
-                {indicator.factors.slice(0, 2).map((factor, idx) => (
+                {(indicator.factors || []).slice(0, 2).map((factor, idx) => (
                   <div key={idx} className="flex items-start gap-2">
                     <span className="text-red-500">•</span>
                     <span>{factor}</span>
@@ -208,7 +209,7 @@ export function AcademicSummaryCard() {
                 </div>
               </div>
               <div className="text-sm text-muted-foreground space-y-1">
-                {indicator.factors.slice(0, 2).map((factor, idx) => (
+                {(indicator.factors || []).slice(0, 2).map((factor, idx) => (
                   <div key={idx} className="flex items-start gap-2">
                     <span className="text-yellow-500">•</span>
                     <span>{factor}</span>

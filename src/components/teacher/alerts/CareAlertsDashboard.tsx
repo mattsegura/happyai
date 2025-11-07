@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertCircle, Filter, Search, TrendingDown, TrendingUp, Activity } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import {

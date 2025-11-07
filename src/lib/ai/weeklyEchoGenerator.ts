@@ -98,8 +98,6 @@ function generateMockWeeklySummary(
   weekStartDate: Date,
   weekEndDate: Date
 ): WeeklySummary {
-  const mockClassNames = ['Period 1 - Biology', 'Period 3 - Chemistry', 'Period 5 - Physics'];
-
   return {
     teacherId,
     weekStartDate,

@@ -31,7 +31,6 @@ import {
   mockSubmissionStats,
   mockParticipationRates,
   mockMoodPerformanceData,
-  mockClasses,
 } from './mockAnalyticsData';
 
 // Check if we should use mock data

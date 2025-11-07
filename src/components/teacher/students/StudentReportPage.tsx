@@ -14,7 +14,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, Loader2, AlertCircle, User, Mail, Award, TrendingUp, RefreshCw } from 'lucide-react';
+import { ChevronLeft, Loader2, AlertCircle, User, Mail, Award, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import {
   getStudentComprehensiveData,

@@ -32,8 +32,9 @@ export function transformCanvasCourseToClass(canvasCourse: CanvasCourse): Class 
     name: canvasCourse.name,
     description: canvasCourse.course_code,
     teacher_name: teacherEnrollment?.user?.name || 'Unknown Teacher',
-    teacher_id: teacherEnrollment?.user_id || null,
+    teacher_id: teacherEnrollment?.user_id?.toString() || null,
     class_code: canvasCourse.course_code,
+    university_id: '', // Will be set when class is created in database
     created_at: canvasCourse.start_at || new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -79,8 +80,8 @@ export function transformCanvasSubmissionToGrade(
   course: CanvasCourse
 ): HapiGrade {
   const percentage =
-    submission.score !== null && assignment.points_possible > 0
-      ? (submission.score / assignment.points_possible) * 100
+    submission.score !== null && submission.score !== undefined && assignment.points_possible > 0
+      ? ((submission.score ?? 0) / assignment.points_possible) * 100
       : null;
 
   return {
@@ -88,16 +89,16 @@ export function transformCanvasSubmissionToGrade(
     class_id: `canvas-${assignment.course_id}`,
     class_name: course.name,
     assignment_name: assignment.name,
-    score: submission.score,
+    score: submission.score ?? null,
     points_possible: assignment.points_possible,
     percentage,
-    letter_grade: submission.grade,
-    submitted_at: submission.submitted_at,
-    graded_at: submission.graded_at,
+    letter_grade: submission.grade ?? null,
+    submitted_at: submission.submitted_at ?? null,
+    graded_at: submission.graded_at ?? null,
     due_at: assignment.due_at,
     is_late: submission.late,
     is_missing: submission.missing,
-    is_excused: submission.excused,
+    is_excused: submission.excused ?? false,
   };
 }
 

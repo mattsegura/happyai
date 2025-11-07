@@ -213,7 +213,7 @@ export function PopupQueueManager({ onAllComplete, resetTrigger }: PopupQueueMan
     const now = new Date();
 
     // Fetch active class pulses from database
-    const { data: activePulsesData, error: pulsesError } = await supabase
+    const { data: activePulsesData } = await supabase
       .from('class_pulses')
       .select('*')
       .in('class_id', classIds)
@@ -221,10 +221,6 @@ export function PopupQueueManager({ onAllComplete, resetTrigger }: PopupQueueMan
       .gt('expires_at', now.toISOString());
 
     const activePulses = activePulsesData || [];
-    const filteredActivePulses = activePulses.filter(p =>
-      p.is_active &&
-      new Date(p.expires_at) > now
-    );
 
     const activePulsesCount = activePulses.length;
     console.log('[PopupQueue] Active pulses found:', activePulsesCount);

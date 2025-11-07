@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useEffect } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { TeacherHomeView } from './TeacherHomeView';
@@ -19,8 +19,6 @@ import { Home, Users, Beaker, User, GraduationCap, Smile, ChevronLeft, UserSearc
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationBell } from '../common/NotificationBell';
 import { cn } from '../../lib/utils';
-
-type View = 'home' | 'classes' | 'academics' | 'wellbeing' | 'students' | 'alerts' | 'workload' | 'reports' | 'safebox' | 'moments' | 'lab' | 'profile';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 

@@ -93,7 +93,6 @@ export function PositiveRatioCard({ classId, className }: PositiveRatioCardProps
   const positiveAngle = (ratio.positivePercentage / 100) * 360;
   const circumference = 2 * Math.PI * 45; // radius = 45
   const positiveDash = (positiveAngle / 360) * circumference;
-  const negativeDash = circumference - positiveDash;
 
   return (
     <div className={`bg-gradient-to-br ${getLevelBg(ratio.level)} rounded-2xl p-6 border-2 border-border shadow-lg relative overflow-hidden`}>

@@ -57,7 +57,7 @@ export function SafeBoxFeed({ classId, className }: SafeBoxFeedProps) {
       // Apply date filter
       if (dateFilter !== 'all') {
         const now = new Date();
-        let startDate = new Date();
+        const startDate = new Date();
 
         if (dateFilter === 'today') {
           startDate.setHours(0, 0, 0, 0);

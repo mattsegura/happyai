@@ -27,7 +27,6 @@ export type {
   CanvasModuleItemType,
   CanvasTerm,
   CanvasApiResponse,
-  CanvasApiError,
   CanvasPaginationParams,
   CanvasStudentSummary,
   CanvasStudentActivity,
@@ -95,3 +94,7 @@ export type { RateLimitStatus } from './canvasRateLimiter';
 
 // Caching
 export { canvasCache } from './canvasCache';
+
+// Department Mapping
+export { departmentMapper, mapCourseToDepartment, getDepartmentLabel, isValidDepartment, DEPARTMENT_LABELS } from './departmentMapper';
+export type { DepartmentType, DepartmentMapping } from './departmentMapper';

@@ -59,7 +59,7 @@ export class OverSchedulingDetector {
     const overScheduledDays: OverScheduledDay[] = [];
 
     // Check each day in range
-    let currentDate = new Date(dateRange.start);
+    const currentDate = new Date(dateRange.start);
     while (currentDate <= dateRange.end) {
       const dayEvents = events.filter((e) =>
         this.isSameDay(e.startTime, currentDate)
@@ -217,7 +217,7 @@ export class OverSchedulingDetector {
   ): DailyLoad[] {
     const dailyLoads: DailyLoad[] = [];
 
-    let currentDate = new Date(dateRange.start);
+    const currentDate = new Date(dateRange.start);
     while (currentDate <= dateRange.end) {
       if (!this.isSameDay(currentDate, excludeDate)) {
         const dailyLoad = this.loadMeterService.calculateDailyLoad(allEvents, currentDate);

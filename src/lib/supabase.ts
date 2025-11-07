@@ -19,7 +19,7 @@ export type Profile = {
   total_points: number;
   current_streak: number;
   last_pulse_check_date: string | null;
-  university_id: string;
+  university_id: string | null;
   created_at: string;
   updated_at: string;
 };

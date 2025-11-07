@@ -10,6 +10,10 @@
 import { getAIService } from '../aiService';
 import { GRADE_PROJECTION_INSIGHTS_PROMPT, fillTemplate } from '../promptTemplates';
 import { supabase } from '../../supabase';
+import { canvasApi } from '../../canvasApiMock';
+
+// Check if we're using mock data
+const USE_ACADEMICS_MOCK = import.meta.env.VITE_USE_ACADEMICS_MOCK === 'true';
 
 // =====================================================
 // TYPES
@@ -82,12 +86,28 @@ export class GradeProjectionService {
   ): Promise<GradeProjection> {
     try {
       // 1. Get course data
-      const { data: course } = await supabase
-        .from('canvas_courses')
-        .select('name, current_score')
-        .eq('id', courseId)
-        .eq('user_id', this.userId)
-        .single();
+      let course: { name: string; current_score?: number } | null = null;
+
+      if (USE_ACADEMICS_MOCK) {
+        // Use mock data
+        const courses = await canvasApi.getCourses();
+        const mockCourse = courses.find(c => c.id === courseId);
+        if (mockCourse) {
+          course = {
+            name: mockCourse.name,
+            current_score: mockCourse.enrollments[0]?.current_score || 0
+          };
+        }
+      } else {
+        // Use real database
+        const { data } = await supabase
+          .from('canvas_courses')
+          .select('name, current_score')
+          .eq('id', courseId)
+          .eq('user_id', this.userId)
+          .single();
+        course = data;
+      }
 
       if (!course) {
         throw new Error('Course not found');
@@ -142,16 +162,43 @@ export class GradeProjectionService {
     totalPointsPossible: number;
   }> {
     // Get all assignments for this course
-    const { data: assignments } = await supabase
-      .from('canvas_assignments')
-      .select(`
-        id,
-        name,
-        points_possible,
-        canvas_assignment_group_id,
-        canvas_submissions (score)
-      `)
-      .eq('course_id', courseId);
+    let assignments: AssignmentWithSubmission[] = [];
+
+    if (USE_ACADEMICS_MOCK) {
+      // Use mock data
+      const allAssignments = await canvasApi.getAssignments();
+      const courseAssignments = allAssignments.filter(a => a.course_id === courseId);
+
+      // Get submissions for each assignment
+      assignments = await Promise.all(
+        courseAssignments.map(async (assignment) => {
+          const submissions = await canvasApi.getSubmissions(assignment.id);
+          const submission = submissions[0];
+          return {
+            id: assignment.id,
+            name: assignment.name,
+            points_possible: assignment.points_possible,
+            canvas_assignment_group_id: assignment.assignment_group_id,
+            submission: submission && submission.score !== null && submission.score !== undefined
+              ? { score: submission.score }
+              : undefined
+          };
+        })
+      );
+    } else {
+      // Use real database
+      const { data } = await supabase
+        .from('canvas_assignments')
+        .select(`
+          id,
+          name,
+          points_possible,
+          canvas_assignment_group_id,
+          canvas_submissions (score)
+        `)
+        .eq('course_id', courseId);
+      assignments = (data as unknown as AssignmentWithSubmission[]) || [];
+    }
 
     if (!assignments || assignments.length === 0) {
       return {
@@ -170,10 +217,10 @@ export class GradeProjectionService {
     let completedPoints = 0;
     let completedPossible = 0;
 
-    (assignments as unknown as AssignmentWithSubmission[]).forEach((assignment) => {
+    assignments.forEach((assignment) => {
       totalPointsPossible += assignment.points_possible;
 
-      if (assignment.submission && assignment.submission.score !== null) {
+      if (assignment.submission && assignment.submission.score !== null && assignment.submission.score !== undefined) {
         totalPointsEarned += assignment.submission.score;
         completedPoints += assignment.submission.score;
         completedPossible += assignment.points_possible;
@@ -219,46 +266,95 @@ export class GradeProjectionService {
       remainingWeight: number;
     }
   ): Promise<Record<string, string>> {
-    const { data: course } = await supabase
-      .from('canvas_courses')
-      .select('name')
-      .eq('id', courseId)
-      .single();
+    let courseName = 'Unknown';
+    let submissions: any[] = [];
+    let remaining: any[] = [];
 
-    // Get recent grades
-    const { data: submissions } = await supabase
-      .from('canvas_submissions')
-      .select(`
-        score,
-        graded_at,
-        canvas_assignments (name, points_possible)
-      `)
-      .eq('course_id', courseId)
-      .eq('user_id', this.userId)
-      .not('score', 'is', null)
-      .order('graded_at', { ascending: false })
-      .limit(5);
+    if (USE_ACADEMICS_MOCK) {
+      // Use mock data
+      const courses = await canvasApi.getCourses();
+      const course = courses.find(c => c.id === courseId);
+      courseName = course?.name || 'Unknown';
 
-    // Get remaining assignments
-    const { data: remaining } = await supabase
-      .from('canvas_assignments')
-      .select('name, points_possible, due_at')
-      .eq('course_id', courseId)
-      .is('canvas_submissions.score', null)
-      .order('due_at');
+      // Get all assignments and submissions
+      const allAssignments = await canvasApi.getAssignments();
+      const courseAssignments = allAssignments.filter(a => a.course_id === courseId);
+
+      // Get recent graded submissions
+      const gradedSubmissions = [];
+      for (const assignment of courseAssignments) {
+        const subs = await canvasApi.getSubmissions(assignment.id);
+        const sub = subs[0];
+        if (sub && sub.score !== null && sub.score !== undefined) {
+          gradedSubmissions.push({
+            score: sub.score,
+            graded_at: sub.graded_at,
+            canvas_assignments: {
+              name: assignment.name,
+              points_possible: assignment.points_possible
+            }
+          });
+        }
+      }
+      submissions = gradedSubmissions.slice(0, 5);
+
+      // Get remaining assignments
+      remaining = courseAssignments
+        .filter(a => {
+          // Check if has no submission
+          return true; // Simplified for mock
+        })
+        .map(a => ({
+          name: a.name,
+          points_possible: a.points_possible,
+          due_at: a.due_at
+        }));
+    } else {
+      // Use real database
+      const { data: course } = await supabase
+        .from('canvas_courses')
+        .select('name')
+        .eq('id', courseId)
+        .single();
+      courseName = course?.name || 'Unknown';
+
+      // Get recent grades
+      const { data: subs } = await supabase
+        .from('canvas_submissions')
+        .select(`
+          score,
+          graded_at,
+          canvas_assignments (name, points_possible)
+        `)
+        .eq('course_id', courseId)
+        .eq('user_id', this.userId)
+        .not('score', 'is', null)
+        .order('graded_at', { ascending: false })
+        .limit(5);
+      submissions = subs || [];
+
+      // Get remaining assignments
+      const { data: rem } = await supabase
+        .from('canvas_assignments')
+        .select('name, points_possible, due_at')
+        .eq('course_id', courseId)
+        .is('canvas_submissions.score', null)
+        .order('due_at');
+      remaining = rem || [];
+    }
 
     // Determine trend
-    const scores = (submissions || []).map((s) => s.score);
+    const scores = submissions.map((s: any) => s.score);
     const trend = this.calculateTrend(scores);
 
     return {
-      courseName: course?.name || 'Unknown',
+      courseName,
       currentGrade: String(algorithmicProjection.currentGrade),
       completedWeight: String(algorithmicProjection.completedWeight),
       remainingWeight: String(algorithmicProjection.remainingWeight),
-      recentGrades: JSON.stringify(submissions || []),
+      recentGrades: JSON.stringify(submissions),
       trend,
-      remainingAssignments: JSON.stringify(remaining || []),
+      remainingAssignments: JSON.stringify(remaining),
       projectedGrade: String(algorithmicProjection.currentGrade), // simplified
       targetGrade: '90',
     };
@@ -393,6 +489,12 @@ export class GradeProjectionService {
   }
 
   private async cacheProjection(projection: GradeProjection): Promise<void> {
+    if (USE_ACADEMICS_MOCK) {
+      // Skip caching in mock mode
+      console.log('[Grade Projection] Skipping cache in mock mode');
+      return;
+    }
+
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 1); // 1-hour cache
 

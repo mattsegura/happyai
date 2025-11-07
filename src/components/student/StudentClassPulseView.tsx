@@ -133,31 +133,8 @@ export function StudentClassPulseView({ showOverflowOnly = false, maxVisibleOnDa
   };
 
   const loadMockPulses = () => {
-    const classNames: Record<string, string> = {
-      'class-1': 'Biology II',
-      'class-2': 'Economics 101',
-      'class-3': 'English Literature',
-    };
-
-    const mockResponses: Record<string, { response: string; answered_at: string; points_earned: number }> = {
-      'pulse-1': {
-        response: 'DNA replication is a semi-conservative process where the double helix unwinds and each strand serves as a template for a new complementary strand. Key enzymes include helicase, primase, and DNA polymerase.',
-        answered_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-        points_earned: 10,
-      },
-    };
-
-    const allPulses: ClassPulseWithDetails[] = mockClassPulses.map(pulse => {
-      const response = mockResponses[pulse.id];
-      return {
-        ...pulse,
-        classes: { name: classNames[pulse.class_id] || 'Unknown Class' },
-        hasResponded: !!response,
-        response: response?.response,
-        points_earned: response?.points_earned,
-        answered_at: response?.answered_at,
-      };
-    });
+    // Mock data commented out - using real data from Supabase
+    const allPulses: ClassPulseWithDetails[] = [];
 
     const additionalPulses: ClassPulseWithDetails[] = [
       {

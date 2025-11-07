@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { RefreshCw, CheckCircle2, Clock, AlertCircle, BookOpen, FileText, Calendar, Package } from 'lucide-react';
+import { RefreshCw, CheckCircle2, AlertCircle, BookOpen, FileText, Calendar, Package } from 'lucide-react';
 import { canvasSyncServiceEnhanced } from '../../lib/canvas';
 import type { SyncStatus } from '../../lib/canvas';
 import { CANVAS_CONFIG } from '../../lib/canvas/canvasConfig';

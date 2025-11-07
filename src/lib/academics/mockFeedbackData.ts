@@ -12,8 +12,6 @@ import type {
   SentimentStats,
   TimelineEntry,
   FeedbackTrend,
-  ActionItem,
-  ResourceRecommendation,
 } from './feedbackAggregator';
 
 // =====================================================

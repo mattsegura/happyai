@@ -183,8 +183,8 @@ export async function functionCall(
     // Check if function was called
     if (message?.tool_calls && message.tool_calls.length > 0) {
       const toolCall = message.tool_calls[0];
-      const functionName = toolCall.function.name;
-      const args = JSON.parse(toolCall.function.arguments);
+      const functionName = (toolCall as any).function?.name || '';
+      const args = JSON.parse((toolCall as any).function?.arguments || '{}');
 
       return {
         functionName,

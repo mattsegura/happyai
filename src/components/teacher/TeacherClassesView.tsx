@@ -179,7 +179,7 @@ function TeacherClassesView() {
 
   if (selectedClass) {
     const roster = mockClassRosters[selectedClass.id] || [];
-    const filteredRoster = roster.filter(student =>
+    const filteredRoster = roster.filter((student: any) =>
       student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -232,7 +232,7 @@ function TeacherClassesView() {
           </div>
 
           <div className="space-y-3">
-            {filteredRoster.map(student => {
+            {filteredRoster.map((student: any) => {
               const daysSinceCheck = student.last_pulse_check
                 ? Math.floor((Date.now() - new Date(student.last_pulse_check).getTime()) / (1000 * 60 * 60 * 24))
                 : 999;
@@ -276,7 +276,7 @@ function TeacherClassesView() {
                         <div>
                           <p className="text-xs text-muted-foreground">Recent Emotions</p>
                           <div className="flex space-x-1 mt-1">
-                            {student.recent_emotions.slice(0, 3).map((emotion, idx) => (
+                            {student.recent_emotions.slice(0, 3).map((emotion: string, idx: number) => (
                               <span
                                 key={idx}
                                 className={`px-2 py-0.5 rounded text-xs font-semibold ${

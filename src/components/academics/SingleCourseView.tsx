@@ -7,9 +7,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Calendar,
-  Award,
   Target,
-  ChevronDown,
   FileText,
   Sparkles,
 } from 'lucide-react';
@@ -28,12 +26,18 @@ type AssignmentWithSubmission = CanvasAssignment & {
 
 // Mock data for development/testing
 function getMockCourseData(courseId: string) {
-  const mockCourses: CanvasCourse[] = [
+  const mockCourses = [
     {
-      id: '1',
+      id: 1,
+      uuid: 'uuid-1',
       name: 'Introduction to Computer Science',
       course_code: 'CS 101',
-      term: { name: 'Fall 2024' },
+      workflow_state: 'available',
+      account_id: 1,
+      root_account_id: 1,
+      enrollment_term_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      term: { id: 1, name: 'Fall 2024', created_at: '2024-01-01T00:00:00Z', workflow_state: 'active' },
       start_at: '2024-09-01T00:00:00Z',
       end_at: '2024-12-15T00:00:00Z',
       enrollments: [{
@@ -45,10 +49,16 @@ function getMockCourseData(courseId: string) {
       }],
     },
     {
-      id: '2',
+      id: 2,
+      uuid: 'uuid-2',
       name: 'Calculus II',
       course_code: 'MATH 202',
-      term: { name: 'Fall 2024' },
+      workflow_state: 'available',
+      account_id: 1,
+      root_account_id: 1,
+      enrollment_term_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      term: { id: 1, name: 'Fall 2024', created_at: '2024-01-01T00:00:00Z', workflow_state: 'active' },
       start_at: '2024-09-01T00:00:00Z',
       end_at: '2024-12-15T00:00:00Z',
       enrollments: [{
@@ -60,10 +70,16 @@ function getMockCourseData(courseId: string) {
       }],
     },
     {
-      id: '3',
+      id: 3,
+      uuid: 'uuid-3',
       name: 'English Literature',
       course_code: 'ENG 201',
-      term: { name: 'Fall 2024' },
+      workflow_state: 'available',
+      account_id: 1,
+      root_account_id: 1,
+      enrollment_term_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      term: { id: 1, name: 'Fall 2024', created_at: '2024-01-01T00:00:00Z', workflow_state: 'active' },
       start_at: '2024-09-01T00:00:00Z',
       end_at: '2024-12-15T00:00:00Z',
       enrollments: [{
@@ -75,10 +91,16 @@ function getMockCourseData(courseId: string) {
       }],
     },
     {
-      id: '4',
+      id: 4,
+      uuid: 'uuid-4',
       name: 'Physics I',
       course_code: 'PHYS 101',
-      term: { name: 'Fall 2024' },
+      workflow_state: 'available',
+      account_id: 1,
+      root_account_id: 1,
+      enrollment_term_id: 1,
+      created_at: '2024-01-01T00:00:00Z',
+      term: { id: 1, name: 'Fall 2024', created_at: '2024-01-01T00:00:00Z', workflow_state: 'active' },
       start_at: '2024-09-01T00:00:00Z',
       end_at: '2024-12-15T00:00:00Z',
       enrollments: [{
@@ -207,32 +229,36 @@ function getMockCourseData(courseId: string) {
     ],
   };
 
-  const mockSubmissions: Record<string, CanvasSubmission[]> = {
+  const mockSubmissions: Record<string, any[]> = {
     'a1': [{
-      id: 's1',
-      assignment_id: 'a1',
-      user_id: 'user1',
+      id: 1,
+      assignment_id: 1,
+      user_id: 1001,
       score: 60,
       grade: '60',
       workflow_state: 'submitted',
       submitted_at: new Date().toISOString(),
       graded_at: null,
       late: false,
+      missing: false,
+      excused: false,
     }],
     'a8': [{
-      id: 's2',
-      assignment_id: 'a8',
-      user_id: 'user1',
+      id: 2,
+      assignment_id: 8,
+      user_id: 1001,
       score: 20,
       grade: '20',
       workflow_state: 'submitted',
       submitted_at: new Date().toISOString(),
       graded_at: null,
       late: false,
+      missing: false,
+      excused: false,
     }],
   };
 
-  const course = mockCourses.find((c) => c.id === courseId);
+  const course = mockCourses.find((c) => String(c.id) === courseId);
   const assignments = mockAssignments[courseId] || [];
 
   return {
@@ -267,7 +293,7 @@ export function SingleCourseView() {
         // Use mock data for development/testing
         console.log('📚 Using mock course data (VITE_USE_ACADEMICS_MOCK=true)');
         const mockData = getMockCourseData(courseId || '');
-        foundCourse = mockData.course;
+        foundCourse = mockData.course as any;
         courseAssignments = mockData.assignments;
         submissionsData = mockData.submissions;
       } else {
@@ -505,7 +531,14 @@ export function SingleCourseView() {
           </div>
           <WhatIfCalculator
             courseId={course.id}
-            assignments={assignments}
+            assignments={assignments.map(a => ({
+              id: a.id,
+              name: a.name,
+              points_possible: a.points_possible,
+              due_at: a.due_at || undefined,
+              status: a.status,
+              score: a.submission?.score ?? undefined
+            }))}
             currentGrade={currentScore}
             totalPoints={totalPoints}
             earnedPoints={earnedPoints}
@@ -562,7 +595,7 @@ export function SingleCourseView() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {assignment.impact && <ImpactIndicatorBadge impact={assignment.impact} size="sm" />}
+                  {assignment.impact && <ImpactIndicatorBadge impact={assignment.impact} />}
                   {getStatusBadge(assignment)}
                 </div>
               </div>

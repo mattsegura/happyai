@@ -51,7 +51,7 @@ export function Dashboard() {
   const [showClassPulseDetailModal, setShowClassPulseDetailModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [showHapiReferralModal, setShowHapiReferralModal] = useState(false);
-  const [meetingData, setMeetingData] = useState<any>(null);
+  const [meetingData] = useState<any>(null);
   const [classPulses] = useState<any[]>([]);
   const [selectedPulse, setSelectedPulse] = useState<any>(null);
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
@@ -102,46 +102,6 @@ export function Dashboard() {
   const handleAllPopupsComplete = () => {
     setShowPopups(false);
     setRefreshTrigger(prev => prev + 1);
-  };
-
-  const handleMorningPulseClick = async () => {
-    setShowMorningPulseModal(true);
-  };
-
-  const handleClassPulseClick = async () => {
-    if (!user) return;
-
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    // Active pulses fetched from database by components
-    const activePulses: any[] = [];
-
-    if (activePulses.length > 0) {
-      const pulse = {
-        id: activePulses[0].id,
-        question: activePulses[0].title,
-        class_id: activePulses[0].class_id,
-        expires_at: activePulses[0].expires_at,
-        point_value: activePulses[0].point_value || 20,
-        classes: { name: 'Biology II' },
-      };
-      setSelectedPulse(pulse);
-      setShowClassPulseDetailModal(true);
-    }
-  };
-
-  const handleHapiMomentClick = (data: any) => {
-    if (data && data.id) {
-      setSelectedReferral(data);
-      setShowHapiReferralModal(true);
-    } else {
-      navigate('/dashboard/lab');
-    }
-  };
-
-  const handleMeetingClick = (meeting: any) => {
-    setMeetingData(Array.isArray(meeting) ? meeting : [meeting]);
-    setShowMeetingModal(true);
   };
 
   const handleMorningPulseComplete = () => {

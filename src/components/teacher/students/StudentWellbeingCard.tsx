@@ -11,7 +11,7 @@
  * Phase 3: Student Search & Reports
  */
 
-import { Heart, AlertCircle, TrendingUp, Activity } from 'lucide-react';
+import { Heart, AlertCircle, Activity } from 'lucide-react';
 import type { StudentWellbeingData } from '../../../lib/students/studentDataService';
 
 interface StudentWellbeingCardProps {

@@ -6,28 +6,18 @@ import {
   Target,
   Share2,
   TrendingUp,
-  FileUp,
   Gauge,
   Clock,
   Users,
   BarChart3,
-  Sparkles,
   ArrowLeft,
-  ArrowRight,
   CheckCircle2,
   Zap,
   BookOpen,
-  MessageSquare,
-  PenTool,
-  Upload,
-  GraduationCap,
   Activity,
-  Send,
-  Layers,
   Lock
 } from 'lucide-react';
 import { Logo } from '../ui/logo';
-import { FullScreenCalendar } from '../ui/fullscreen-calendar';
 import { PromptBox } from '../ui/chatgpt-prompt-input';
 import { AIStudyFlow } from '../ui/ai-study-flow';
 
@@ -310,8 +300,8 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
 // Study Tools Section Component with Toggle
 export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) {
   const [activeSection, setActiveSection] = useState<string>('hero');
-  const [studyBlocks, setStudyBlocks] = useState<StudyBlock[]>([]);
-  const [animatedBlocks, setAnimatedBlocks] = useState<Array<{id: number, name: string, time: string, datetime: string, color: string}>>([]);
+  const [, setStudyBlocks] = useState<StudyBlock[]>([]);
+  const [, setAnimatedBlocks] = useState<Array<{id: number, name: string, time: string, datetime: string, color: string}>>([]);
   const [isFlowGenerating, setIsFlowGenerating] = useState(false);
   const [isFlowComplete, setIsFlowComplete] = useState(false);
   const [flowResetKey, setFlowResetKey] = useState(0);
@@ -343,57 +333,57 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
     });
   };
 
-  // Sample calendar events
-  const calendarEvents = [
-    {
-      day: new Date("2025-08-11"),
-      events: [
-        { 
-          id: 1, 
-          name: "Biology Research Paper", 
-          time: "Due 11:59 PM", 
-          datetime: "2025-08-11T23:59",
-          color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
-        },
-      ],
-    },
-    {
-      day: new Date("2025-08-16"),
-      events: [
-        { 
-          id: 2, 
-          name: "History Project", 
-          time: "Due 11:59 PM", 
-          datetime: "2025-08-16T23:59",
-          color: "bg-amber-400 dark:bg-amber-500 border-amber-500 dark:border-amber-400 text-white"
-        },
-      ],
-    },
-    {
-      day: new Date("2025-08-20"),
-      events: [
-        { 
-          id: 3, 
-          name: "Calculus Exam", 
-          time: "10:00 AM", 
-          datetime: "2025-08-20T10:00",
-          color: "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500 text-white"
-        },
-      ],
-    },
-    {
-      day: new Date("2025-08-26"),
-      events: [
-        { 
-          id: 4, 
-          name: "AP Biology Exam", 
-          time: "9:00 AM", 
-          datetime: "2025-08-26T09:00",
-          color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
-        },
-      ],
-    },
-  ];
+  // // Sample calendar events
+  // const calendarEvents = [
+  //   {
+  //     day: new Date("2025-08-11"),
+  //     events: [
+  //       { 
+  //         id: 1, 
+  //         name: "Biology Research Paper", 
+  //         time: "Due 11:59 PM", 
+  //         datetime: "2025-08-11T23:59",
+  //         color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     day: new Date("2025-08-16"),
+  //     events: [
+  //       { 
+  //         id: 2, 
+  //         name: "History Project", 
+  //         time: "Due 11:59 PM", 
+  //         datetime: "2025-08-16T23:59",
+  //         color: "bg-amber-400 dark:bg-amber-500 border-amber-500 dark:border-amber-400 text-white"
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     day: new Date("2025-08-20"),
+  //     events: [
+  //       { 
+  //         id: 3, 
+  //         name: "Calculus Exam", 
+  //         time: "10:00 AM", 
+  //         datetime: "2025-08-20T10:00",
+  //         color: "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500 text-white"
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     day: new Date("2025-08-26"),
+  //     events: [
+  //       { 
+  //         id: 4, 
+  //         name: "AP Biology Exam", 
+  //         time: "9:00 AM", 
+  //         datetime: "2025-08-26T09:00",
+  //         color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
+  //       },
+  //     ],
+  //   },
+  // ];
 
   const sections = [
     { id: 'hero', name: 'Overview', icon: Brain },
@@ -557,7 +547,6 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                     { label: 'Class-by-class breakdowns', icon: BookOpen },
                     { label: 'Stress level indicators', icon: Gauge },
                   ].map((item, i) => {
-                    const Icon = item.icon;
                     return (
                       <motion.div
                         key={i}

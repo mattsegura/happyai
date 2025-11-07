@@ -71,7 +71,7 @@ function AcademicDashboard() {
 
       // Auto-select first class
       if (courses.length > 0 && !selectedClassId) {
-        setSelectedClassId(courses[0].id);
+        setSelectedClassId(String(courses[0].id));
       }
     } catch (err: any) {
       console.error('[AcademicDashboard] Failed to load classes:', err);

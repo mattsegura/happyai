@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { calculateAcademicFocusScore, calculateGradeAverage, getAssignmentCompletionRate, AssignmentWithStatus, ParticipationData } from '../../lib/studentCalculations';
+import { calculateAcademicFocusScore, calculateGradeAverage, getAssignmentCompletionRate, AssignmentWithStatus } from '../../lib/studentCalculations';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Target, TrendingUp, Award, Loader2 } from 'lucide-react';

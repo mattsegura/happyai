@@ -14,7 +14,6 @@
 
 import { useState, useEffect } from 'react';
 import { Heart, Search, Filter, TrendingUp, Users, AlertCircle } from 'lucide-react';
-import { supabase } from '../../../lib/supabase';
 
 interface HapiMoment {
   id: string;

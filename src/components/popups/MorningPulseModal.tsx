@@ -19,7 +19,7 @@ export function MorningPulseModal({ onComplete, onDismiss }: MorningPulseModalPr
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
-  const [userClasses, setUserClasses] = useState<any[]>([]);
+  const [, setUserClasses] = useState<any[]>([]);
 
   useEffect(() => {
     fetchUserClasses();

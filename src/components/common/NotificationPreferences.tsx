@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, Mail, Moon, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import {

@@ -125,7 +125,7 @@ function PaymentMethodCard({
   onSetDefault: (id: string) => void;
   isDeleting: boolean;
 }) {
-  const getBrandIcon = (brand: string) => {
+  const getBrandIcon = () => {
     // In a real app, you'd use brand-specific logos
     return <CreditCard className="w-6 h-6" />;
   };
@@ -134,7 +134,7 @@ function PaymentMethodCard({
     <div className="bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {getBrandIcon(method.card_brand || 'unknown')}
+          {getBrandIcon()}
           <div>
             <div className="flex items-center gap-2">
               <p className="font-medium">
@@ -204,10 +204,20 @@ function AddPaymentMethodForm({
     try {
       await stripeClient.createPaymentMethod({
         user_id: user.id,
+        type: 'card',
         card_number: cardNumber,
-        exp_month: parseInt(expMonth),
-        exp_year: parseInt(expYear),
-        cvc: cvc,
+        card_exp_month: parseInt(expMonth),
+        card_exp_year: parseInt(expYear),
+        card_cvc: cvc,
+        billing_name: (user.user_metadata?.full_name as string) || 'Unknown',
+        billing_email: user.email || '',
+        billing_address: {
+          line1: '',
+          city: '',
+          state: '',
+          postal_code: '',
+          country: 'US',
+        },
       });
 
       toast.success('Payment method added successfully');

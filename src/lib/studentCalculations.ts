@@ -4,6 +4,7 @@
 // Note: These types will be consolidated into shared type files in Step 3.2
 
 export interface SentimentHistory {
+  id?: string;
   date: string;
   emotion: string;
   intensity: number;
@@ -13,6 +14,7 @@ export interface SentimentHistory {
 export interface AssignmentWithStatus {
   id: string;
   name: string;
+  course_name?: string;
   due_at: string;
   points_possible: number;
   score?: number;

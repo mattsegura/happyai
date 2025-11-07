@@ -29,7 +29,7 @@ interface MoodPerformanceScatterProps {
   onStudentClick?: (studentId: string) => void;
 }
 
-export function MoodPerformanceScatter({ data, onStudentClick }: MoodPerformanceScatterProps) {
+export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
   // Generate regression line data points
   const regressionLineData = [
     {
@@ -44,8 +44,6 @@ export function MoodPerformanceScatter({ data, onStudentClick }: MoodPerformance
 
   // Color config based on correlation strength
   const getCorrelationConfig = () => {
-    const abs = Math.abs(data.correlation);
-
     if (data.correlationStrength === 'strong') {
       return {
         color: data.correlation > 0 ? 'green' : 'red',

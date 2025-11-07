@@ -189,7 +189,7 @@ export async function sendCareAlertNotification(
     }
 
     // Call database function to create notification
-    const { data, error } = await supabase.rpc('create_care_alert_notification', {
+    const { error } = await supabase.rpc('create_care_alert_notification', {
       teacher_id_param: teacherId,
       student_id_param: studentId,
       student_name_param: studentName,
@@ -313,7 +313,7 @@ export async function markNotificationRead(
  */
 export async function markAllNotificationsRead(userId: string): Promise<boolean> {
   try {
-    const { data, error } = await supabase.rpc('mark_all_notifications_read', {
+    const { error } = await supabase.rpc('mark_all_notifications_read', {
       user_id_param: userId,
     });
 

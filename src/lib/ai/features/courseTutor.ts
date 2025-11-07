@@ -263,7 +263,7 @@ Return as JSON with keys: keyRequirements, deliverables, estimatedTimeHours, tip
    */
   async generateQuickReview(
     courseId: string,
-    moduleIds: string[]
+    _moduleIds: string[]
   ): Promise<ReviewMaterials> {
     try {
       // Get course info
@@ -353,7 +353,7 @@ Return as JSON with keys: summary, keyPoints, flashcards, practiceProblems`;
 
   private async findResources(
     courseId: string,
-    question: string
+    _question: string
   ): Promise<string[]> {
     // In a full implementation, this would search Canvas pages/files
     // For now, return generic resources

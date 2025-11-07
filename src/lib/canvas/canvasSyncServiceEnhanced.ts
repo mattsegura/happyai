@@ -176,7 +176,7 @@ class CanvasSyncServiceEnhanced {
         for (const course of courses) {
           try {
             // Check if a class already exists for this Canvas course
-            const { data: existingClass } = await this.supabase
+            const { data: existingClass } = await supabase
               .from('classes')
               .select('id')
               .or(`canvas_course_id.eq.${course.id},class_code.eq.${course.course_code}`)
@@ -184,8 +184,8 @@ class CanvasSyncServiceEnhanced {
 
             if (!existingClass) {
               // Create a new HapiAI class linked to this Canvas course
-              const { data: user } = await this.supabase.auth.getUser();
-              await this.supabase
+              const { data: user } = await supabase.auth.getUser();
+              await supabase
                 .from('classes')
                 .insert({
                   name: course.name,
@@ -206,7 +206,7 @@ class CanvasSyncServiceEnhanced {
 
         for (const course of courses) {
           try {
-            const assignments = await canvasServiceEnhanced.getAssignments(course.id);
+            const assignments = await canvasServiceEnhanced.getAssignments(course.id.toString());
 
             for (const assignment of assignments) {
               // Always count as synced (fetched from Canvas)
@@ -214,7 +214,7 @@ class CanvasSyncServiceEnhanced {
 
               // Try to save to database
               try {
-                await this.syncAssignment(assignment, course.id);
+                await this.syncAssignment(assignment, course.id.toString());
               } catch (error) {
                 console.warn(`[Canvas Sync] Could not save assignment ${assignment.id}:`, error);
               }
@@ -231,13 +231,13 @@ class CanvasSyncServiceEnhanced {
 
         for (const course of courses) {
           try {
-            const assignments = await canvasServiceEnhanced.getAssignments(course.id);
+            const assignments = await canvasServiceEnhanced.getAssignments(course.id.toString());
 
             for (const assignment of assignments) {
               try {
                 const submissions = await canvasServiceEnhanced.getSubmissions(
-                  course.id,
-                  assignment.id,
+                  course.id.toString(),
+                  assignment.id.toString(),
                   { include: ['user'] }
                 );
 
@@ -247,7 +247,7 @@ class CanvasSyncServiceEnhanced {
 
                   // Try to save to database
                   try {
-                    await this.syncSubmission(submission, assignment.id, course.id);
+                    await this.syncSubmission(submission, assignment.id.toString(), course.id.toString());
                   } catch (error) {
                     console.warn(`[Canvas Sync] Could not save submission:`, error);
                   }

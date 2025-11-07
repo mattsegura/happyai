@@ -12,7 +12,6 @@
 import { getAIService } from '../aiService';
 import { STUDY_PLAN_PROMPT, ADJUST_STUDY_PLAN_PROMPT, fillTemplate } from '../promptTemplates';
 import { supabase } from '../../supabase';
-import type { User } from '@supabase/supabase-js';
 
 // =====================================================
 // TYPES
@@ -398,8 +397,8 @@ export class AIStudyCoach {
   }
 
   private analyzeOptimalStudyTimes(
-    moodHistory: Array<{ emotion: string; created_at: string; check_date: string }>,
-    assignment: unknown
+    _moodHistory: Array<{ emotion: string; created_at: string; check_date: string }>,
+    _assignment: unknown
   ): Array<{ date: string; startTime: string; reason: string }> {
     // Simple heuristic: recommend morning times if user typically feels good in mornings
     // This could be enhanced with more sophisticated ML analysis

@@ -92,7 +92,7 @@ export class FeedbackAnalyzer {
       }
 
       // 2. Build context
-      const assignment = submission.canvas_assignments as { name: string; canvas_courses: { name: string } };
+      const assignment = submission.canvas_assignments as unknown as { name: string; canvas_courses: { name: string } };
       const promptContext = {
         assignmentName: assignment.name,
         courseName: assignment.canvas_courses.name,
@@ -308,7 +308,7 @@ export class FeedbackAnalyzer {
       .order('graded_at', { ascending: false });
 
     return (data || []).map((item) => {
-      const assignment = item.canvas_assignments as { name: string; canvas_courses: { name: string } };
+      const assignment = item.canvas_assignments as unknown as { name: string; canvas_courses: { name: string } };
       return {
         assignment: assignment.name,
         course: assignment.canvas_courses.name,

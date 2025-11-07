@@ -9,7 +9,6 @@ import {
   GraduationCap,
   Plus,
   Edit2,
-  Trash2,
   Search,
   Building2,
   Globe,
@@ -86,9 +85,9 @@ export function UniversityManagement() {
 
       setUniversities(universitiesWithCounts);
     } catch (error) {
-      handleError(error, {
-        context: 'Loading universities',
-        userMessage: 'Failed to load universities',
+      handleError(error instanceof Error ? error : new Error('Failed to load universities'), {
+        component: 'UniversityManagement',
+        action: 'Loading universities',
       });
     } finally {
       setLoading(false);
@@ -112,7 +111,7 @@ export function UniversityManagement() {
 
         if (error) throw error;
 
-        handleSuccess('University updated', `${universityData.name} has been updated successfully.`);
+        handleSuccess(`${universityData.name} has been updated successfully.`);
       } else {
         // Create new university
         const { error } = await supabase.from('universities').insert({
@@ -125,18 +124,16 @@ export function UniversityManagement() {
 
         if (error) throw error;
 
-        handleSuccess('University created', `${universityData.name} has been created successfully.`);
+        handleSuccess(`${universityData.name} has been created successfully.`);
       }
 
       setShowModal(false);
       setEditingUniversity(null);
       loadUniversities();
     } catch (error) {
-      handleError(error, {
-        context: editingUniversity ? 'Updating university' : 'Creating university',
-        userMessage: editingUniversity
-          ? 'Failed to update university'
-          : 'Failed to create university',
+      handleError(error instanceof Error ? error : new Error(editingUniversity ? 'Failed to update university' : 'Failed to create university'), {
+        component: 'UniversityManagement',
+        action: editingUniversity ? 'Updating university' : 'Creating university',
       });
     }
   };
@@ -151,15 +148,14 @@ export function UniversityManagement() {
       if (error) throw error;
 
       handleSuccess(
-        university.is_active ? 'University deactivated' : 'University activated',
         `${university.name} has been ${university.is_active ? 'deactivated' : 'activated'}.`
       );
 
       loadUniversities();
     } catch (error) {
-      handleError(error, {
-        context: 'Toggling university status',
-        userMessage: 'Failed to update university status',
+      handleError(error instanceof Error ? error : new Error('Failed to update university status'), {
+        component: 'UniversityManagement',
+        action: 'Toggling university status',
       });
     }
   };

@@ -54,17 +54,20 @@ CREATE INDEX IF NOT EXISTS idx_notification_preferences_user_id
 -- Enable RLS
 ALTER TABLE public.notification_preferences ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
+-- RLS Policies (drop if exists to avoid conflicts)
+DROP POLICY IF EXISTS "Users can view their own notification preferences" ON public.notification_preferences;
 CREATE POLICY "Users can view their own notification preferences"
   ON public.notification_preferences
   FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert their own notification preferences" ON public.notification_preferences;
 CREATE POLICY "Users can insert their own notification preferences"
   ON public.notification_preferences
   FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update their own notification preferences" ON public.notification_preferences;
 CREATE POLICY "Users can update their own notification preferences"
   ON public.notification_preferences
   FOR UPDATE
@@ -129,23 +132,27 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
 -- Enable RLS
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
+-- RLS Policies (drop if exists to avoid conflicts)
+DROP POLICY IF EXISTS "Users can view their own notifications" ON public.notifications;
 CREATE POLICY "Users can view their own notifications"
   ON public.notifications
   FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "System can insert notifications for users" ON public.notifications;
 CREATE POLICY "System can insert notifications for users"
   ON public.notifications
   FOR INSERT
   WITH CHECK (true);  -- Allow system/teachers to create notifications
 
+DROP POLICY IF EXISTS "Users can update their own notifications" ON public.notifications;
 CREATE POLICY "Users can update their own notifications"
   ON public.notifications
   FOR UPDATE
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can delete their own notifications" ON public.notifications;
 CREATE POLICY "Users can delete their own notifications"
   ON public.notifications
   FOR DELETE

@@ -164,7 +164,7 @@ function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapi
                         </p>
                         {pulse.answer_choices && (
                           <div className="flex flex-wrap gap-2 mt-2">
-                            {pulse.answer_choices.map((choice, idx) => (
+                            {pulse.answer_choices.map((choice: string, idx: number) => (
                               <span key={idx} className="px-2 py-1 bg-muted text-foreground rounded text-xs">
                                 {choice}
                               </span>
@@ -359,7 +359,7 @@ function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapi
                         <h4 className="font-bold text-foreground">Student Queue ({oh.student_queue.length})</h4>
                       </div>
                       <div className="space-y-2">
-                        {oh.student_queue.map((student, idx) => (
+                        {oh.student_queue.map((student: any, idx: number) => (
                           <div key={student.student_id} className="flex items-center justify-between p-3 bg-card rounded-lg border border-border">
                             <div className="flex items-center space-x-3">
                               <div className="w-8 h-8 bg-blue-500 dark:bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
