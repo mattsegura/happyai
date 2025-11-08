@@ -160,9 +160,19 @@ export function LandingPage() {
                       />
           </div>
               </div>
-                  <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                  <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-6">
                     Empower educators with AI-driven insights and comprehensive tools to support every student's journey
                   </p>
+                  <Link to="/teacher-features">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
+                    >
+                      <span>Explore Teacher Features</span>
+                      <Users className="w-5 h-5" />
+                    </motion.button>
+                  </Link>
                 </div>
 
                 {/* Bento Grid - Different Layout */}

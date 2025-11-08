@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-route
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { AITutorPage } from './components/pages/AITutorPage';
+import { TeacherFeaturesPage } from './components/pages/TeacherFeaturesPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { SignupPage } from './components/auth/SignupPage';
 import { ToastProvider } from './components/ui/Toast';
@@ -52,6 +53,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/ai-tutor" element={<AITutorPage onNavigateHome={() => window.location.href = '/'} />} />
+        <Route path="/teacher-features" element={<TeacherFeaturesPage />} />
         <Route path="/login" element={<LoginPageWrapper />} />
         <Route path="/signup" element={<SignupPageWrapper />} />
         <Route path="*" element={<Navigate to="/" replace />} />
