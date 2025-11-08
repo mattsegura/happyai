@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
   Calendar,
@@ -15,7 +15,8 @@ import {
   Zap,
   BookOpen,
   Activity,
-  Lock
+  Lock,
+  Send
 } from 'lucide-react';
 import { Logo } from '../ui/logo';
 import { PromptBox } from '../ui/chatgpt-prompt-input';
@@ -180,7 +181,8 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
 
       {/* Premium Chat Messages */}
       <div className="relative h-[400px] overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-        {messages.map((message, index) => (
+        <AnimatePresence>
+          {messages.map((message, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -223,6 +225,7 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
               </div>
             </motion.div>
           ))}
+        </AnimatePresence>
 
         {isSending && (
           <motion.div
@@ -297,7 +300,6 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
   );
 }
 
-// Study Tools Section Component with Toggle
 export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) {
   const [activeSection, setActiveSection] = useState<string>('hero');
   const [, setStudyBlocks] = useState<StudyBlock[]>([]);
@@ -389,6 +391,7 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
     { id: 'hero', name: 'Overview', icon: Brain },
     { id: 'workload', name: 'Workload Gauge™', icon: Gauge },
     { id: 'calendar', name: 'Smart Calendar™', icon: Calendar },
+    { id: 'autolearn', name: 'AutoLearn™', icon: Sparkles },
     { id: 'gpa', name: 'GPA Pathway™', icon: Target },
     { id: 'studyshare', name: 'Study Share™', icon: Share2 },
     { id: 'insights', name: 'Performance Insights™', icon: TrendingUp },
@@ -716,6 +719,74 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
             </div>
           </motion.section>
 
+          {/* AutoLearn Engine Section */}
+          <motion.section
+            id="autolearn"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            onViewportEnter={() => setActiveSection('autolearn')}
+            className="mb-32"
+          >
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
+                  AutoLearn Engine™
+                </h2>
+              </div>
+
+              <p className="text-lg text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+                Upload any file — PDF, lecture video, or audio recording — and watch as our AI instantly 
+                generates flashcards, quizzes, and comprehensive study materials tailored to your learning style.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: Upload,
+                  title: 'Upload Any File',
+                  description: 'PDFs, videos, audio recordings, lecture notes — we handle it all',
+                  color: 'from-blue-500 to-sky-500'
+                },
+                {
+                  icon: Brain,
+                  title: 'AI Processing',
+                  description: 'Advanced algorithms extract key concepts and learning objectives',
+                  color: 'from-purple-500 to-pink-500'
+                },
+                {
+                  icon: FileUp,
+                  title: 'Instant Materials',
+                  description: 'Get flashcards, quizzes, and study guides in seconds',
+                  color: 'from-green-500 to-emerald-500'
+                },
+              ].map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700"
+                  >
+                    <div className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center mb-6`}>
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{item.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{item.description}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.section>
+
           {/* GPA Pathway Planner Section */}
           <motion.section
             id="gpa"
@@ -750,21 +821,23 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                   ].map((item, i) => {
                     const Icon = item.icon;
                     return (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                          <Icon className="w-5 h-5 text-green-600 dark:text-green-400" />
-                        </div>
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex items-center gap-3"
+                      >
+                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                         <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
               </div>
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
                 whileHover={{ scale: 1.02 }}
                 className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-200 dark:border-slate-700"
               >
@@ -840,28 +913,36 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                 {
                   icon: Users,
                   title: 'Study Groups',
-                  description: 'Create and manage collaborative learning spaces'
+                  description: 'Create and manage collaborative study groups'
                 },
                 {
-                  icon: TrendingUp,
-                  title: 'Track Progress',
-                  description: 'Monitor group performance and engagement levels'
+                  icon: MessageSquare,
+                  title: 'Group Chat',
+                  description: 'Real-time messaging for study discussions'
                 },
                 {
-                  icon: Lock,
-                  title: 'Secure Sharing',
-                  description: 'End-to-end encryption for all shared materials'
-                }
-              ].map((feature, idx) => {
-                const Icon = feature.icon;
+                  icon: PenTool,
+                  title: 'Shared Whiteboard',
+                  description: 'Collaborative whiteboard for visual learning'
+                },
+              ].map((item, i) => {
+                const Icon = item.icon;
                 return (
-                  <div key={idx} className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:border-pink-300 dark:hover:border-pink-700 transition-colors">
-                    <div className="p-3 bg-pink-100 dark:bg-pink-900/30 rounded-xl w-fit mb-4">
-                      <Icon className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ y: -8, scale: 1.05 }}
+                    className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700"
+                  >
+                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{feature.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm">{feature.description}</p>
-                  </div>
+                    <h3 className="font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{item.description}</p>
+                  </motion.div>
                 );
               })}
             </div>
@@ -878,7 +959,7 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
           >
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl">
+                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl">
                   <TrendingUp className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
@@ -898,26 +979,110 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
             >
               <div className="grid md:grid-cols-3 gap-8 mb-8">
                 {[
-                  { label: 'Avg Quiz Score', value: '87%', icon: Target, color: 'text-green-600 dark:text-green-400' },
-                  { label: 'Study Streak', value: '12 days', icon: TrendingUp, color: 'text-purple-600 dark:text-purple-400' },
-                  { label: 'Total Study Time', value: '24.5 hrs', icon: Clock, color: 'text-blue-600 dark:text-blue-400' }
-                ].map((stat, idx) => {
+                  { label: 'Quiz Average', value: '87%', color: 'from-blue-500 to-sky-500', icon: BookOpen },
+                  { label: 'Study Hours', value: '24.5', color: 'from-purple-500 to-pink-500', icon: Clock },
+                  { label: 'GPA Trend', value: '+0.3', color: 'from-green-500 to-emerald-500', icon: TrendingUp },
+                ].map((stat, i) => {
                   const Icon = stat.icon;
                   return (
-                    <div key={idx} className="text-center">
-                      <div className="flex items-center justify-center gap-2 mb-2">
-                        <Icon className={`w-5 h-5 ${stat.color}`} />
-                        <p className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</p>
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
+                      className="text-center"
+                    >
+                      <div className={`w-16 h-16 mx-auto mb-4 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}>
+                        <Icon className="w-8 h-8 text-white" />
                       </div>
-                      <p className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
-                    </div>
+                      <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{stat.value}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</p>
+                    </motion.div>
                   );
                 })}
               </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <GraduationCap className="w-5 h-5 text-sky-500" />
+                    Recent Performance
+                  </h3>
+                  <div className="space-y-3">
+                    {[
+                      { subject: 'Biology Quiz', score: 92, date: 'Nov 3' },
+                      { subject: 'Math Test', score: 85, date: 'Nov 1' },
+                      { subject: 'History Essay', score: 88, date: 'Oct 28' },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-900 dark:text-white text-sm">{item.subject}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{item.date}</p>
+                        </div>
+                        <span className="text-lg font-bold text-sky-600 dark:text-sky-400">{item.score}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-purple-500" />
+                    Study Efficiency
+                  </h3>
+                  <div className="space-y-4">
+                    {[
+                      { metric: 'Focus Time', value: '85%' },
+                      { metric: 'Retention Rate', value: '78%' },
+                      { metric: 'Completion Rate', value: '92%' },
+                    ].map((item, i) => (
+                      <div key={i}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-slate-600 dark:text-slate-400">{item.metric}</span>
+                          <span className="text-sm font-semibold text-slate-900 dark:text-white">{item.value}</span>
+                        </div>
+                        <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: item.value }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: i * 0.1 }}
+                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </motion.div>
+          </motion.section>
+
+          {/* CTA Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center py-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">
+              Ready to transform your academic journey?
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+              Join thousands of students using AI Tutor to achieve their academic goals
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all"
+            >
+              Get Started Free
+            </motion.button>
           </motion.section>
         </div>
       </main>
     </div>
   );
 }
+

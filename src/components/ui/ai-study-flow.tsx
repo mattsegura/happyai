@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Brain, BookOpen, Calendar, CheckCircle2, AlertCircle, TrendingUp, Zap, Clock, Target } from 'lucide-react';
 
@@ -348,25 +348,29 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
       </div>
 
       {/* Subtle Thinking Animation - Corner Indicator */}
-      {step > 0 && step < 4 && (
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="absolute top-6 right-6 z-20"
-        >
-          <div className="flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-full px-4 py-2 shadow-lg border border-slate-200 dark:border-slate-700">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              className="w-4 h-4 border-2 border-sky-500 border-t-transparent rounded-full"
-            />
-            <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Analyzing...</span>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {step > 0 && step < 4 && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="absolute top-6 right-6 z-20"
+          >
+            <div className="flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-lg rounded-full px-4 py-2 shadow-lg border border-slate-200 dark:border-slate-700">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="w-4 h-4 border-2 border-sky-500 border-t-transparent rounded-full"
+              />
+              <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Analyzing...</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* STEP 1: Classes with Grades */}
-      {step === 1 && (
+      <AnimatePresence>
+        {step === 1 && (
           <div className="absolute inset-0 flex items-center justify-center p-8 z-10">
             <div className="grid grid-cols-2 gap-6 max-w-2xl w-full">
               {mockClasses.map((cls) => {
@@ -408,9 +412,11 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
             </div>
           </div>
         )}
+      </AnimatePresence>
 
       {/* STEP 2: Assignments with Due Dates & Points */}
-      {step === 2 && (
+      <AnimatePresence>
+        {step === 2 && (
           <div className="absolute inset-0 flex items-center justify-center p-8 z-10">
             <div className="grid grid-cols-1 gap-4 max-w-xl w-full">
               {mockAssignments.map((assignment) => {
@@ -458,9 +464,11 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
             </div>
           </div>
         )}
+      </AnimatePresence>
 
       {/* STEP 3: Priority Hierarchy */}
-      {step === 3 && (
+      <AnimatePresence>
+        {step === 3 && (
           <div className="absolute inset-0 flex items-center justify-center p-8 z-10">
             <div className="space-y-4 max-w-2xl w-full">
               <motion.h3
@@ -516,9 +524,11 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
             </div>
           </div>
         )}
+      </AnimatePresence>
 
       {/* STEP 4: Sequential Day-by-Day Study Plan */}
-      {step === 4 && (
+      <AnimatePresence>
+        {step === 4 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -643,16 +653,19 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
             )}
           </motion.div>
         )}
+      </AnimatePresence>
 
       {/* Status Message at Bottom */}
       <div className="absolute bottom-6 left-6 right-6 z-30">
-        {step > 0 && step < 4 && (
-          <motion.div
-            key={step}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-slate-200 dark:border-slate-700"
-          >
+        <AnimatePresence mode="wait">
+          {step > 0 && step < 4 && (
+            <motion.div
+              key={step}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-slate-200 dark:border-slate-700"
+            >
               <div className="flex items-center gap-3">
                 {step === 1 && (
                   <>
@@ -695,6 +708,7 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
               </div>
             </motion.div>
           )}
+        </AnimatePresence>
       </div>
 
       {/* Custom Scrollbar Styles */}

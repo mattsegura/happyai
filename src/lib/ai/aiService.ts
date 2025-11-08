@@ -23,10 +23,27 @@ import type {
 } from './aiTypes';
 import { AI_CONFIG, getModelForFeature, getProviderForModel } from './aiConfig';
 import * as aiCache from './aiCache';
-import * as anthropicProvider from './providers/anthropicProvider';
-import * as openaiProvider from './providers/openaiProvider';
-import * as chatbaseProvider from './providers/chatbaseProvider';
-import { AIServiceError, QuotaExceededError } from './aiTypes';
+// Lazy load providers to avoid loading SDKs unnecessarily
+// import * as anthropicProvider from './providers/anthropicProvider';
+// import * as openaiProvider from './providers/openaiProvider';
+// import * as chatbaseProvider from './providers/chatbaseProvider';
+import { AIServiceError, QuotaExceededError, RateLimitError } from './aiTypes';
+
+// =====================================================
+// LAZY PROVIDER LOADING
+// =====================================================
+
+async function getAnthropicProvider() {
+  return await import('./providers/anthropicProvider');
+}
+
+async function getOpenaiProvider() {
+  return await import('./providers/openaiProvider');
+}
+
+async function getChatbaseProvider() {
+  return await import('./providers/chatbaseProvider');
+}
 
 // =====================================================
 // MAIN AI SERVICE CLASS
@@ -237,13 +254,19 @@ export class AIService {
     provider: AIProvider
   ): Promise<CompletionResponse> {
     switch (provider) {
-      case 'anthropic':
+      case 'anthropic': {
+        const anthropicProvider = await getAnthropicProvider();
         return await anthropicProvider.complete(request);
-      case 'openai':
+      }
+      case 'openai': {
+        const openaiProvider = await getOpenaiProvider();
         return await openaiProvider.complete(request);
-      case 'local':
+      }
+      case 'local': {
         // Use Chatbase for local provider
+        const chatbaseProvider = await getChatbaseProvider();
         return await chatbaseProvider.complete(request);
+      }
       default:
         throw new AIServiceError(
           `Unsupported provider: ${provider}`,
@@ -258,15 +281,21 @@ export class AIService {
     provider: AIProvider
   ): AsyncIterableIterator<StreamChunk> {
     switch (provider) {
-      case 'anthropic':
+      case 'anthropic': {
+        const anthropicProvider = await getAnthropicProvider();
         yield* anthropicProvider.streamComplete(request);
         break;
-      case 'openai':
+      }
+      case 'openai': {
+        const openaiProvider = await getOpenaiProvider();
         yield* openaiProvider.streamComplete(request);
         break;
-      case 'local':
+      }
+      case 'local': {
+        const chatbaseProvider = await getChatbaseProvider();
         yield* chatbaseProvider.streamComplete(request);
         break;
+      }
       default:
         throw new AIServiceError(
           `Unsupported provider: ${provider}`,
@@ -281,10 +310,14 @@ export class AIService {
     provider: AIProvider
   ): Promise<FunctionCallResult> {
     switch (provider) {
-      case 'anthropic':
+      case 'anthropic': {
+        const anthropicProvider = await getAnthropicProvider();
         return await anthropicProvider.functionCall(request);
-      case 'openai':
+      }
+      case 'openai': {
+        const openaiProvider = await getOpenaiProvider();
         return await openaiProvider.functionCall(request);
+      }
       case 'local':
         throw new AIServiceError(
           'Chatbase does not support function calling',

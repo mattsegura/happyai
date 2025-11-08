@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { Calendar, Brain, Sparkles, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface CalendarEvent {
@@ -264,9 +264,10 @@ export function AnimatedAICalendar() {
               ))}
 
               {/* Events */}
-              {allEvents
-                .filter(event => event.day === dayIndex && visibleEvents.has(event.id))
-                .map((event) => {
+              <AnimatePresence>
+                {allEvents
+                  .filter(event => event.day === dayIndex && visibleEvents.has(event.id))
+                  .map((event) => {
                     const position = getEventPosition(event);
                     const isAIEvent = event.type === 'ai-study';
                     
@@ -349,6 +350,7 @@ export function AnimatedAICalendar() {
                       </motion.div>
                     );
                   })}
+              </AnimatePresence>
             </div>
           ))}
         </div>

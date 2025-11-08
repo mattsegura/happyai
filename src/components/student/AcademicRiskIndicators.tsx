@@ -12,6 +12,7 @@ interface RiskIndicator {
   current_grade: number;
   missing_assignments: number;
   late_submissions: number;
+  factors: string[];
   recommendations: string[];
   factors?: string[];
 }
@@ -67,18 +68,33 @@ export function AcademicRiskIndicators() {
           // Determine risk level
           let riskLevel: RiskLevel = 'low';
           const recommendations: string[] = [];
+          const factors: string[] = [];
 
           if (currentGrade < 70 || missingAssignments.length >= 3) {
             riskLevel = 'high';
-            if (currentGrade < 70) recommendations.push('Current grade is below passing');
-            if (missingAssignments.length >= 3) recommendations.push(`${missingAssignments.length} missing assignments`);
+            if (currentGrade < 70) {
+              factors.push(`Current grade: ${currentGrade}%`);
+              recommendations.push('Current grade is below passing');
+            }
+            if (missingAssignments.length >= 3) {
+              factors.push(`${missingAssignments.length} missing assignments`);
+              recommendations.push(`${missingAssignments.length} missing assignments`);
+            }
             recommendations.push('Schedule office hours with instructor');
           } else if (currentGrade < 80 || missingAssignments.length >= 1 || lateSubmissions.length >= 2) {
             riskLevel = 'medium';
-            if (missingAssignments.length > 0) recommendations.push('Complete missing assignments');
-            if (lateSubmissions.length > 0) recommendations.push('Improve time management');
+            if (currentGrade < 80) factors.push(`Current grade: ${currentGrade}%`);
+            if (missingAssignments.length > 0) {
+              factors.push(`${missingAssignments.length} missing assignment(s)`);
+              recommendations.push('Complete missing assignments');
+            }
+            if (lateSubmissions.length > 0) {
+              factors.push(`${lateSubmissions.length} late submission(s)`);
+              recommendations.push('Improve time management');
+            }
             recommendations.push('Review challenging material');
           } else {
+            factors.push(`Current grade: ${currentGrade}%`);
             recommendations.push('Maintain current performance');
           }
 
@@ -89,6 +105,7 @@ export function AcademicRiskIndicators() {
             current_grade: currentGrade,
             missing_assignments: missingAssignments.length,
             late_submissions: lateSubmissions.length,
+            factors,
             recommendations,
           });
         }

@@ -5,7 +5,7 @@
  * Supports Claude 3 Opus, Sonnet, and Haiku.
  */
 
-import Anthropic from '@anthropic-ai/sdk';
+import type Anthropic from '@anthropic-ai/sdk';
 import type {
   CompletionRequest,
   CompletionResponse,
@@ -17,15 +17,23 @@ import type {
 import { calculateCost } from '../aiTypes';
 import { AI_CONFIG } from '../aiConfig';
 
-// Initialize Anthropic client
+// Initialize Anthropic client (lazy loaded)
 let anthropicClient: Anthropic | null = null;
+let AnthropicSDK: typeof Anthropic | null = null;
 
-function getAnthropicClient(): Anthropic {
+async function getAnthropicClient(): Promise<Anthropic> {
   if (!anthropicClient) {
     if (!AI_CONFIG.anthropicApiKey) {
       throw new Error('Anthropic API key not configured');
     }
-    anthropicClient = new Anthropic({
+    
+    // Lazy load the SDK only when needed
+    if (!AnthropicSDK) {
+      const module = await import('@anthropic-ai/sdk');
+      AnthropicSDK = module.default;
+    }
+    
+    anthropicClient = new AnthropicSDK({
       apiKey: AI_CONFIG.anthropicApiKey,
       dangerouslyAllowBrowser: true, // Enable browser usage
     });
@@ -39,7 +47,7 @@ function getAnthropicClient(): Anthropic {
 
 export async function complete(request: CompletionRequest): Promise<CompletionResponse> {
   const startTime = Date.now();
-  const client = getAnthropicClient();
+  const client = await getAnthropicClient();
 
   const model = request.options?.model || 'claude-3-sonnet-20240229';
   const maxTokens = request.options?.maxTokens || 2000;
@@ -92,7 +100,7 @@ export async function complete(request: CompletionRequest): Promise<CompletionRe
 export async function* streamComplete(
   request: CompletionRequest
 ): AsyncIterableIterator<StreamChunk> {
-  const client = getAnthropicClient();
+  const client = await getAnthropicClient();
 
   const model = request.options?.model || 'claude-3-sonnet-20240229';
   const maxTokens = request.options?.maxTokens || 2000;
@@ -140,7 +148,7 @@ export async function* streamComplete(
 export async function functionCall(
   request: FunctionCallRequest
 ): Promise<FunctionCallResult> {
-  const client = getAnthropicClient();
+  const client = await getAnthropicClient();
 
   const model = request.options?.model || 'claude-3-sonnet-20240229';
   const maxTokens = request.options?.maxTokens || 2000;

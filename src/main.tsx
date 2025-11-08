@@ -7,11 +7,12 @@ import { initSentry, SentryErrorBoundary } from './lib/monitoring/sentry';
 import { initAnalytics } from './lib/monitoring/analytics';
 import { registerSW } from 'virtual:pwa-register';
 import './index.css';
-import 'preline';
+// import 'preline';
 
 // Initialize monitoring (only in production)
-initSentry();
-initAnalytics();
+// Temporarily disabled due to script injection issues
+// initSentry();
+// initAnalytics();
 
 // Register service worker for PWA
 const updateSW = registerSW({
@@ -36,11 +37,9 @@ const updateSW = registerSW({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SentryErrorBoundary fallback={<ErrorBoundary />}>
-      <ErrorBoundary>
-        <App />
-        <Toaster />
-      </ErrorBoundary>
-    </SentryErrorBoundary>
+    <ErrorBoundary>
+      <App />
+      <Toaster />
+    </ErrorBoundary>
   </StrictMode>
 );
