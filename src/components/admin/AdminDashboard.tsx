@@ -8,6 +8,19 @@ import { ReportsView } from './ReportsView';
 import { SettingsView } from './SettingsView';
 import { ErrorLogsView } from './ErrorLogsView';
 import { UniversityManagement } from './UniversityManagement';
+import { AcademicPerformanceView } from './AcademicPerformanceView';
+import { SentimentTrendsView } from './SentimentTrendsView';
+import { EngagementMetricsView } from './EngagementMetricsView';
+import { TeacherEffectivenessView } from './TeacherEffectivenessView';
+import { OfficeHoursAnalyticsView } from './OfficeHoursAnalyticsView';
+import { RiskDetectionView } from './RiskDetectionView';
+import { AIInsightsView } from './AIInsightsView';
+import { SuccessIndicesView } from './SuccessIndicesView';
+import { TemporalAnalyticsView } from './TemporalAnalyticsView';
+import { ComparativeAnalyticsView } from './ComparativeAnalyticsView';
+import { ForecastingView } from './ForecastingView';
+import { LeaderboardsView } from './LeaderboardsView';
+import { PlatformHealthView } from './PlatformHealthView';
 import {
   Home,
   Users,
@@ -19,12 +32,24 @@ import {
   Shield,
   AlertTriangle,
   Building2,
-  LogOut
+  LogOut,
+  BookOpen,
+  TrendingUp,
+  Target,
+  Award,
+  Calendar,
+  Brain,
+  Sparkles,
+  Clock,
+  BarChart3,
+  Zap,
+  Trophy,
+  Server,
 } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { cn } from '../../lib/utils';
 
-type View = 'home' | 'users' | 'classes' | 'sentiment' | 'reports' | 'errors' | 'settings' | 'universities';
+type View = 'home' | 'users' | 'classes' | 'sentiment' | 'trends' | 'academic' | 'engagement' | 'teacher-effectiveness' | 'office-hours' | 'risk-detection' | 'ai-insights' | 'success-indices' | 'temporal-analytics' | 'comparative-analytics' | 'forecasting' | 'leaderboards' | 'platform-health' | 'reports' | 'errors' | 'settings' | 'universities';
 
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
@@ -40,7 +65,20 @@ export function AdminDashboard() {
     ...(isSuperAdmin ? [{ id: 'universities', icon: Building2, label: 'Universities' }] : []),
     { id: 'users', icon: Users, label: 'Users' },
     { id: 'classes', icon: GraduationCap, label: 'Classes' },
+    { id: 'academic', icon: BookOpen, label: 'Academics' },
     { id: 'sentiment', icon: Activity, label: 'Sentiment' },
+    { id: 'trends', icon: TrendingUp, label: 'Trends' },
+    { id: 'engagement', icon: Target, label: 'Engagement' },
+    { id: 'teacher-effectiveness', icon: Award, label: 'Teacher Metrics' },
+    { id: 'office-hours', icon: Calendar, label: 'Office Hours' },
+    { id: 'risk-detection', icon: AlertTriangle, label: 'Risk Detection' },
+    { id: 'ai-insights', icon: Brain, label: 'AI Insights' },
+    { id: 'success-indices', icon: Sparkles, label: 'Success Indices' },
+    { id: 'temporal-analytics', icon: Clock, label: 'Temporal Analytics' },
+    { id: 'comparative-analytics', icon: BarChart3, label: 'Comparative' },
+    { id: 'forecasting', icon: Zap, label: 'Forecasting' },
+    { id: 'leaderboards', icon: Trophy, label: 'Leaderboards' },
+    { id: 'platform-health', icon: Server, label: 'Platform Health' },
     { id: 'reports', icon: FileText, label: 'Reports' },
     { id: 'errors', icon: AlertTriangle, label: 'Error Logs' },
     { id: 'settings', icon: Settings, label: 'Settings' },
@@ -199,6 +237,71 @@ export function AdminDashboard() {
             {currentView === 'sentiment' && (
               <div className={cn(SURFACE_BASE, 'p-5')}>
                 <SentimentMonitoring />
+              </div>
+            )}
+            {currentView === 'academic' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <AcademicPerformanceView />
+              </div>
+            )}
+            {currentView === 'trends' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <SentimentTrendsView />
+              </div>
+            )}
+            {currentView === 'engagement' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <EngagementMetricsView />
+              </div>
+            )}
+            {currentView === 'teacher-effectiveness' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <TeacherEffectivenessView />
+              </div>
+            )}
+            {currentView === 'office-hours' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <OfficeHoursAnalyticsView />
+              </div>
+            )}
+            {currentView === 'risk-detection' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <RiskDetectionView />
+              </div>
+            )}
+            {currentView === 'ai-insights' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <AIInsightsView />
+              </div>
+            )}
+            {currentView === 'success-indices' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <SuccessIndicesView />
+              </div>
+            )}
+            {currentView === 'temporal-analytics' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <TemporalAnalyticsView />
+              </div>
+            )}
+            {currentView === 'comparative-analytics' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <ComparativeAnalyticsView />
+              </div>
+            )}
+            {currentView === 'forecasting' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <ForecastingView />
+              </div>
+            )}
+            {currentView === 'leaderboards' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <LeaderboardsView />
+              </div>
+            )}
+            {currentView === 'platform-health' && (
+              <div className={cn(SURFACE_BASE, 'p-5')}>
+                <PlatformHealthView />
               </div>
             )}
             {currentView === 'reports' && (
