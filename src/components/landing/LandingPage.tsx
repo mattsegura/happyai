@@ -158,7 +158,7 @@ export function LandingPage() {
                         isStudents={viewMode === 'students'}
                         onToggle={() => setViewMode(viewMode === 'students' ? 'teachers' : 'students')}
                       />
-                    </div>
+          </div>
               </div>
                   <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                     Empower educators with AI-driven insights and comprehensive tools to support every student's journey
@@ -299,8 +299,8 @@ export function LandingPage() {
             </section>
               </div>
             </motion.div>
-          </div>
-        </div>
+              </div>
+            </div>
 
         {/* AI Tutor Teaser Section */}
         <section id="intelligence" className="relative overflow-hidden bg-gradient-to-br from-[#FFFDF8] via-blue-50/30 to-[#FFFDF8] dark:bg-slate-900 py-24 sm:py-32">
