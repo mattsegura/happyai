@@ -178,7 +178,7 @@ export function TubelightNavBar({ items, className, activeItem, onItemClick, sho
                 isActive && "bg-muted text-primary scale-105",
               )}
             >
-              <span className="hidden md:inline">{item.name}</span>
+              <span className="hidden md:inline whitespace-nowrap">{item.name}</span>
               <span className="md:hidden">
                 <Icon size={18} strokeWidth={2.5} />
               </span>

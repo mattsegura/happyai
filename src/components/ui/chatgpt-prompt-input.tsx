@@ -41,8 +41,8 @@ const MicIcon = (props: React.SVGProps<SVGSVGElement>) => ( <svg width="24" heig
 const toolsList = [ { id: 'createImage', name: 'Create an image', shortName: 'Image', icon: PaintBrushIcon }, { id: 'searchWeb', name: 'Search the web', shortName: 'Search', icon: GlobeIcon }, { id: 'writeCode', name: 'Write or code', shortName: 'Write', icon: PencilIcon }, { id: 'deepResearch', name: 'Run deep research', shortName: 'Deep Search', icon: TelescopeIcon, extra: '5 left' }, { id: 'thinkLonger', name: 'Think for longer', shortName: 'Think', icon: LightbulbIcon }, ];
 
 // --- The Final, Self-Contained PromptBox Component ---
-export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
-  ({ className, ...props }, ref) => {
+export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement> & { disableExtras?: boolean }>(
+  ({ className, disableExtras = false, ...props }, ref) => {
     // ... all state and handlers are unchanged ...
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -92,19 +92,19 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
         <div className="mt-0.5 p-1 pt-0">
           <TooltipProvider delayDuration={100}>
             <div className="flex items-center gap-2">
-              <Tooltip> <TooltipTrigger asChild><button type="button" onClick={handlePlusClick} className="flex h-8 w-8 items-center justify-center rounded-full text-foreground dark:text-white transition-colors hover:bg-accent dark:hover:bg-[#515151] focus-visible:outline-none"><PlusIcon className="h-6 w-6" /><span className="sr-only">Attach image</span></button></TooltipTrigger> <TooltipContent side="top" showArrow={true}><p>Attach image</p></TooltipContent> </Tooltip>
+              <Tooltip> <TooltipTrigger asChild><button type="button" onClick={disableExtras ? undefined : handlePlusClick} disabled={disableExtras} className={cn("flex h-8 w-8 items-center justify-center rounded-full text-foreground dark:text-white transition-colors focus-visible:outline-none", disableExtras ? "opacity-40 cursor-not-allowed" : "hover:bg-accent dark:hover:bg-[#515151]")}><PlusIcon className="h-6 w-6" /><span className="sr-only">Attach image</span></button></TooltipTrigger> {!disableExtras && <TooltipContent side="top" showArrow={true}><p>Attach image</p></TooltipContent>} </Tooltip>
               
-              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+              <Popover open={!disableExtras && isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <PopoverTrigger asChild>
-                      <button type="button" className="flex h-8 items-center gap-2 rounded-full p-2 text-sm text-foreground dark:text-white transition-colors hover:bg-accent dark:hover:bg-[#515151] focus-visible:outline-none focus-visible:ring-ring">
+                      <button type="button" disabled={disableExtras} className={cn("flex h-8 items-center gap-2 rounded-full p-2 text-sm text-foreground dark:text-white transition-colors focus-visible:outline-none focus-visible:ring-ring", disableExtras ? "opacity-40 cursor-not-allowed" : "hover:bg-accent dark:hover:bg-[#515151]")}>
                         <Settings2Icon className="h-4 w-4" />
                         {!selectedTool && 'Tools'}
                       </button>
                     </PopoverTrigger>
                   </TooltipTrigger>
-                  <TooltipContent side="top" showArrow={true}><p>Explore Tools</p></TooltipContent>
+                  {!disableExtras && <TooltipContent side="top" showArrow={true}><p>Explore Tools</p></TooltipContent>}
                 </Tooltip>
                 <PopoverContent side="top" align="start">
                   <div className="flex flex-col gap-1">
@@ -128,12 +128,12 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
               <div className="ml-auto flex items-center gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full text-foreground dark:text-white transition-colors hover:bg-accent dark:hover:bg-[#515151] focus-visible:outline-none">
+                    <button type="button" disabled={disableExtras} className={cn("flex h-8 w-8 items-center justify-center rounded-full text-foreground dark:text-white transition-colors focus-visible:outline-none", disableExtras ? "opacity-40 cursor-not-allowed" : "hover:bg-accent dark:hover:bg-[#515151]")}>
                       <MicIcon className="h-5 w-5" />
                       <span className="sr-only">Record voice</span>
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side="top" showArrow={true}><p>Record voice</p></TooltipContent>
+                  {!disableExtras && <TooltipContent side="top" showArrow={true}><p>Record voice</p></TooltipContent>}
                 </Tooltip>
 
                 <Tooltip>

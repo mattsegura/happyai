@@ -1,3 +1,5 @@
+"use client";
+
 import { memo, useCallback, useEffect, useRef } from "react";
 import { cn } from "../../lib/utils";
 import { animate } from "motion/react";
@@ -157,7 +159,7 @@ const GlowingEffect = memo(
             } as React.CSSProperties
           }
           className={cn(
-            "pointer-events-none absolute inset-0 rounded-[inherit] opacity-100 transition-opacity z-[1]",
+            "pointer-events-none absolute inset-0 rounded-[inherit] opacity-100 transition-opacity",
             glow && "opacity-100",
             blur > 0 && "blur-[var(--blur)] ",
             className,
@@ -166,7 +168,7 @@ const GlowingEffect = memo(
         >
           <div
             className={cn(
-              "glow h-full w-full",
+              "glow",
               "rounded-[inherit]",
               'after:content-[""] after:rounded-[inherit] after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))]',
               "after:[border:var(--glowingeffect-border-width)_solid_transparent]",
@@ -186,4 +188,3 @@ const GlowingEffect = memo(
 GlowingEffect.displayName = "GlowingEffect";
 
 export { GlowingEffect };
-

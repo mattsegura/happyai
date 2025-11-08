@@ -1,7 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TimelineContent } from "@/components/ui/timeline-animation";
-import NumberFlow from "@number-flow/react";
 import { GraduationCap, Users, Building2, CheckCheck, Brain, Calendar, Heart, TrendingUp, BarChart3, Shield, Bell, MessageSquare, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
@@ -298,11 +297,7 @@ export default function PricingSection() {
                   {plan.price !== null ? (
                     <>
                       <span className="text-4xl font-bold text-slate-900 dark:text-white">
-                        $
-                        <NumberFlow
-                          value={isYearly ? plan.yearlyPrice : plan.price}
-                          className="text-4xl font-bold"
-                        />
+                        ${isYearly ? plan.yearlyPrice : plan.price}
                       </span>
                       <span className="text-slate-600 dark:text-slate-400 ml-2">
                         /{isYearly ? "year" : (plan.priceLabel || "month")}
@@ -366,7 +361,7 @@ export default function PricingSection() {
                             {plan.price !== null ? (
                               <>
                                 <span className="text-4xl font-semibold text-slate-900 dark:text-white">
-                                  $<NumberFlow value={isYearly ? plan.yearlyPrice : plan.price} className="text-4xl font-semibold" />
+                                  ${isYearly ? plan.yearlyPrice : plan.price}
                                 </span>
                                 <span className="text-base text-slate-600 dark:text-slate-400">
                                   /{isYearly ? "year" : (plan.priceLabel || "month")}

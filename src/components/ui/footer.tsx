@@ -134,22 +134,25 @@ export function Footer({ className, onNavigate }: FooterProps) {
               <h3 className="text-sm font-semibold text-white mb-4">Solutions</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <button 
+                    onClick={() => handleNavClick('solutions')}
+                    className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200"
+                  >
                     For Students
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/teacher-features" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     For Teachers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/enterprise-features" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     For Schools
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/enterprise-features" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     Universities
                   </a>
                 </li>
@@ -161,24 +164,27 @@ export function Footer({ className, onNavigate }: FooterProps) {
               <h3 className="text-sm font-semibold text-white mb-4">Company</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/about" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     About Us
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/careers" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     Careers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/blog" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     Blog
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <button 
+                    onClick={() => handleNavClick('contact')}
+                    className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200"
+                  >
                     Contact
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -188,22 +194,22 @@ export function Footer({ className, onNavigate }: FooterProps) {
               <h3 className="text-sm font-semibold text-white mb-4">Legal</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/privacy" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/terms" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     Terms of Service
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/ferpa" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     FERPA Compliance
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
+                  <a href="/accessibility" className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-200">
                     Accessibility
                   </a>
                 </li>
