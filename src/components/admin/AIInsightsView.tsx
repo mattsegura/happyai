@@ -452,6 +452,16 @@ export function AIInsightsView() {
   );
 }
 
+function getRiskLevelColor(level: string): string {
+  switch (level) {
+    case 'Critical': return 'text-red-700 dark:text-red-400';
+    case 'High': return 'text-orange-700 dark:text-orange-400';
+    case 'Medium': return 'text-yellow-700 dark:text-yellow-400';
+    case 'Low': return 'text-green-700 dark:text-green-400';
+    default: return 'text-gray-700 dark:text-gray-400';
+  }
+}
+
 function getRiskLevelBgColor(level: string): string {
   switch (level) {
     case 'Critical': return 'bg-red-100 dark:bg-red-900/20';

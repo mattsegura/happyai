@@ -88,7 +88,7 @@ export function AdminDashboard() {
     <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
       {/* Sidebar */}
       <aside
-        className={`hidden h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
+        className={`hidden min-h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
           sidebarCollapsed ? 'w-20' : 'w-72'
         }`}
       >
@@ -111,7 +111,7 @@ export function AdminDashboard() {
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
+        <nav className="mt-10 flex-1 space-y-1 px-3 pb-4 text-sm font-medium text-muted-foreground">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
