@@ -1,10 +1,32 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true
+      },
+      manifest: {
+        name: 'HapiAI',
+        short_name: 'HapiAI',
+        description: 'Educational wellbeing platform',
+        theme_color: '#ffffff',
+        icons: [
+          {
+            src: '/icons/icon-72x72.png',
+            sizes: '72x72',
+            type: 'image/png'
+          }
+        ]
+      }
+    })
+  ],
   server: {
     host: '127.0.0.1',
     port: 3000,
