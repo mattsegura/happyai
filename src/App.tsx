@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { AITutorPage } from './components/pages/AITutorPage';
@@ -28,6 +28,35 @@ function SignupPageWrapper() {
 
 function AppContent() {
   const { user, loading, role } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Debug logging
+  if (import.meta.env.DEV) {
+    console.log('[AppContent] Render -', { user: user?.email, loading, role, path: location.pathname });
+  }
+
+  // Force correct dashboard based on role when user is authenticated
+  useEffect(() => {
+    if (!loading && user && role) {
+      const currentPath = location.pathname;
+      const isOnDashboard = currentPath.startsWith('/dashboard');
+      const isOnTeacher = currentPath.startsWith('/teacher');
+      const isOnAdmin = currentPath.startsWith('/admin');
+
+      // Redirect if user is on wrong dashboard
+      if (role === 'teacher' && !isOnTeacher && (isOnDashboard || currentPath === '/')) {
+        if (import.meta.env.DEV) console.log('[AppContent] Redirecting teacher from', currentPath, 'to /teacher');
+        navigate('/teacher', { replace: true });
+      } else if ((role === 'admin' || role === 'super_admin') && !isOnAdmin && (isOnDashboard || isOnTeacher || currentPath === '/')) {
+        if (import.meta.env.DEV) console.log('[AppContent] Redirecting admin from', currentPath, 'to /admin');
+        navigate('/admin', { replace: true });
+      } else if (role === 'student' && !isOnDashboard && (isOnTeacher || isOnAdmin || currentPath === '/')) {
+        if (import.meta.env.DEV) console.log('[AppContent] Redirecting student from', currentPath, 'to /dashboard');
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [user, loading, role, location.pathname, navigate]);
 
   if (loading) {
     return (
@@ -78,13 +107,17 @@ function AppContent() {
     <Suspense fallback={DashboardLoadingFallback}>
       <Routes>
         <Route path="/" element={
-          (role === 'admin' || role === 'super_admin') ? (
-            <Navigate to="/admin" replace />
-          ) : role === 'teacher' ? (
-            <Navigate to="/teacher" replace />
-          ) : (
-            <Navigate to="/dashboard" replace />
-          )
+          (() => {
+            const redirectPath = (role === 'admin' || role === 'super_admin')
+              ? '/admin'
+              : role === 'teacher'
+                ? '/teacher'
+                : '/dashboard';
+            if (import.meta.env.DEV) {
+              console.log('[AppContent] Root redirect -', { role, redirectPath });
+            }
+            return <Navigate to={redirectPath} replace />;
+          })()
         } />
 
         {/* Student Dashboard Routes */}
