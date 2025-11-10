@@ -17,6 +17,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { designSystem } from '../../lib/design-system';
 import { Card } from '../ui/card';
 
 // Mock data for wellbeing features
@@ -25,22 +26,32 @@ const mockMoodLevel = 5;
 
 const mockMoodHistory = {
   '7days': [
-    { date: 'Mon', fullDate: 'Monday, Oct 24', score: 8, logged: true, note: 'Great start to the week!' },
-    { date: 'Tue', fullDate: 'Tuesday, Oct 25', score: 7, logged: true, note: 'Productive day' },
-    { date: 'Wed', fullDate: 'Wednesday, Oct 26', score: 4, logged: true, note: 'Midweek slump' },
-    { date: 'Thu', fullDate: 'Thursday, Oct 27', score: 6, logged: true, note: 'Feeling better!' },
-    { date: 'Fri', fullDate: 'Friday, Oct 28', score: 9, logged: true, note: 'TGIF!' },
-    { date: 'Sat', fullDate: 'Saturday, Oct 29', score: 7, logged: true, note: 'Relaxing weekend' },
-    { date: 'Today', fullDate: 'Sunday, Oct 30', score: 0, logged: false, note: '' }
+    { date: 'Mon', fullDate: 'Monday, Oct 24', score: 5, logged: true, note: 'Great start to the week!', emoji: '😊' },
+    { date: 'Tue', fullDate: 'Tuesday, Oct 25', score: 4, logged: true, note: 'Productive day', emoji: '🙂' },
+    { date: 'Wed', fullDate: 'Wednesday, Oct 26', score: 2, logged: true, note: 'Midweek slump', emoji: '😔' },
+    { date: 'Thu', fullDate: 'Thursday, Oct 27', score: 3, logged: true, note: 'Feeling better!', emoji: '😐' },
+    { date: 'Fri', fullDate: 'Friday, Oct 28', score: 5, logged: true, note: 'TGIF!', emoji: '😊' },
+    { date: 'Sat', fullDate: 'Saturday, Oct 29', score: 4, logged: true, note: 'Relaxing weekend', emoji: '🙂' },
+    { date: 'Today', fullDate: 'Sunday, Oct 30', score: 0, logged: false, note: '', emoji: '' }
   ],
   '30days': Array.from({ length: 30 }, (_, i) => ({
     date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en', { day: 'numeric' }),
     fullDate: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' }),
-    score: i === 29 ? 0 : Math.floor(Math.random() * 7) + 3,
+    score: i === 29 ? 0 : Math.floor(Math.random() * 4) + 1, // 1-5 scale
     logged: i !== 29,
-    note: i === 29 ? '' : ''
+    note: i === 29 ? '' : '',
+    emoji: i === 29 ? '' : ['😢', '😔', '😐', '🙂', '😊'][Math.floor(Math.random() * 5)]
   }))
 };
+
+// Mood level configuration with emojis (1-5 scale)
+const moodLevels = [
+  { value: 1, emoji: '😢', label: 'Very Sad', color: designSystem.emotions[1] },
+  { value: 2, emoji: '😔', label: 'Sad', color: designSystem.emotions[2] },
+  { value: 3, emoji: '😐', label: 'Neutral', color: designSystem.emotions[3] },
+  { value: 4, emoji: '🙂', label: 'Happy', color: designSystem.emotions[5] },
+  { value: 5, emoji: '😊', label: 'Very Happy', color: designSystem.emotions[6] },
+];
 
 const mockMoodVariability = {
   stability: 78,
@@ -135,14 +146,17 @@ export function WellbeingView() {
   const [selectedClass, setSelectedClass] = useState<any>(null);
   const [showClassDetails, setShowClassDetails] = useState(false);
   const [showMoodInput, setShowMoodInput] = useState(false);
-  const [hoveredDay, setHoveredDay] = useState<any>(null);
+  const [selectedDay, setSelectedDay] = useState<any>(null); // Changed from hoveredDay for tap-to-reveal
   const selectedMoodData = mockMoodHistory[moodTimeframe];
 
-  // Calculate average mood and trend
+  // Calculate average mood and trend (1-5 scale)
   const loggedDays = selectedMoodData.filter(d => d.logged);
   const avgMood = loggedDays.length > 0
     ? (loggedDays.reduce((sum, d) => sum + d.score, 0) / loggedDays.length).toFixed(1)
     : 0;
+
+  // Helper to get mood level config by score
+  const getMoodLevel = (score: number) => moodLevels.find(m => m.value === score) || moodLevels[2];
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -241,93 +255,75 @@ export function WellbeingView() {
               </div>
             </div>
 
-            {/* Enhanced Chart Area - 0-10 Scale */}
+            {/* Simplified Chart Area - 1-5 Scale with Emojis */}
             <div className="relative flex-1 rounded-lg border bg-gradient-to-b from-muted/10 to-transparent p-6">
               <div className="flex h-full gap-6">
-                {/* Y-axis labels */}
-                <div className="flex flex-col justify-between text-sm text-muted-foreground">
-                  {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].map((num) => (
-                    <div key={num} className="h-8 flex items-center">
-                      <span className="font-medium">{num}</span>
-                    </div>
-                  ))}
+                {/* Y-axis labels with emojis */}
+                <div className="flex flex-col justify-between text-sm">
+                  {[5, 4, 3, 2, 1].map((num) => {
+                    const level = getMoodLevel(num);
+                    return (
+                      <div key={num} className="h-12 flex items-center gap-2">
+                        <span className="text-2xl">{level.emoji}</span>
+                        <span className="font-medium text-muted-foreground">{num}</span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Chart Area */}
                 <div className="relative flex-1">
                   {/* Horizontal grid lines */}
                   <div className="absolute inset-0 flex flex-col justify-between">
-                    {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].map((num) => (
-                      <div key={num} className="h-8 border-t border-dashed border-muted-foreground/20" />
+                    {[5, 4, 3, 2, 1].map((num) => (
+                      <div key={num} className="h-12 border-t border-dashed border-muted-foreground/20" />
                     ))}
                   </div>
 
-                  {/* Mood level labels on right */}
-                  <div className="absolute -right-24 inset-y-0 flex flex-col justify-around text-xs">
-                    <span className="text-green-600 font-semibold">Very Happy</span>
-                    <span className="text-blue-600 font-medium">Happy</span>
-                    <span className="text-yellow-600 font-medium">Neutral</span>
-                    <span className="text-orange-600 font-medium">Sad</span>
-                    <span className="text-red-600 font-semibold">Not Happy</span>
-                  </div>
-
                   {/* Bars Container */}
-                  <div className="absolute inset-0 pt-4 pb-8">
-                    <div className="flex h-full items-end justify-around gap-4">
+                  <div className="absolute inset-0 pt-6 pb-8">
+                    <div className="flex h-full items-end justify-around gap-2 sm:gap-4">
                       {selectedMoodData.slice(0, moodTimeframe === '7days' ? 7 : 15).map((data, index) => (
                         <div
                           key={index}
-                          className="group relative flex flex-1 flex-col justify-end items-center h-full"
-                          onMouseEnter={() => setHoveredDay(data)}
-                          onMouseLeave={() => setHoveredDay(null)}
+                          className="group relative flex flex-1 flex-col justify-end items-center h-full max-w-[80px]"
                         >
                           {data.logged ? (
-                            <>
-                              {/* Score label above bar */}
-                              <div className="mb-1 text-sm font-bold">
-                                {data.score}
+                            <button
+                              onClick={() => setSelectedDay(selectedDay === data ? null : data)}
+                              className={cn(
+                                'flex flex-col items-center gap-2 w-full',
+                                designSystem.interactive.focus
+                              )}
+                            >
+                              {/* Emoji above bar */}
+                              <div className="text-2xl transition-transform group-hover:scale-110">
+                                {data.emoji}
                               </div>
 
-                              {/* Bar */}
+                              {/* Bar with gradient from design system */}
                               <div
                                 className={cn(
-                                  'w-full max-w-[60px] rounded-t-lg transition-all duration-300 shadow-md',
-                                  data.score >= 8 ? 'bg-gradient-to-t from-green-500 to-green-400' :
-                                  data.score >= 6 ? 'bg-gradient-to-t from-blue-500 to-blue-400' :
-                                  data.score >= 4 ? 'bg-gradient-to-t from-yellow-500 to-yellow-400' :
-                                  data.score >= 2 ? 'bg-gradient-to-t from-orange-500 to-orange-400' :
-                                  'bg-gradient-to-t from-red-500 to-red-400',
-                                  'hover:opacity-80 cursor-pointer relative'
+                                  'w-full rounded-t-lg transition-all duration-300 shadow-md cursor-pointer',
+                                  `bg-gradient-to-t ${getMoodLevel(data.score).color.gradient}`,
+                                  'hover:shadow-lg hover:scale-x-105'
                                 )}
                                 style={{
-                                  height: `${(data.score / 10) * 100}%`,
-                                  minHeight: data.score > 0 ? '30px' : '0'
+                                  height: `${(data.score / 5) * 100}%`,
+                                  minHeight: '40px'
                                 }}
-                              >
-                                {/* Hover Tooltip */}
-                                {hoveredDay === data && (
-                                  <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
-                                    <div className="rounded-lg bg-popover px-4 py-3 shadow-xl border min-w-[180px]">
-                                      <p className="text-xs font-medium text-muted-foreground">{data.fullDate}</p>
-                                      <p className="mt-1 text-2xl font-bold">{data.score}/10</p>
-                                      <p className="mt-1 text-sm">
-                                        {data.score >= 8 ? 'Very Happy 😊' :
-                                         data.score >= 6 ? 'Happy 🙂' :
-                                         data.score >= 4 ? 'Neutral 😐' :
-                                         data.score >= 2 ? 'Sad 😔' :
-                                         'Not Happy 😢'}
-                                      </p>
-                                      {data.note && <p className="mt-2 text-xs italic text-muted-foreground">"{data.note}"</p>}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </>
+                              />
+                            </button>
                           ) : (
                             /* Empty state for today */
                             <button
                               onClick={() => setShowMoodInput(true)}
-                              className="group/add flex h-full min-h-[100px] w-full max-w-[60px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 transition-all hover:border-primary/60 hover:bg-primary/10"
+                              className={cn(
+                                'flex h-full min-h-[100px] w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/30 bg-primary/5',
+                                'hover:border-primary/60 hover:bg-primary/10',
+                                designSystem.transition.default,
+                                designSystem.interactive.focus
+                              )}
                             >
                               <Plus className="h-5 w-5 text-primary" />
                               <span className="mt-2 text-xs font-medium text-primary">Log</span>
@@ -345,6 +341,43 @@ export function WellbeingView() {
                 </div>
               </div>
             </div>
+
+            {/* Selected Day Details Panel - Tap to reveal */}
+            {selectedDay && (
+              <div className={cn(
+                'mt-4 rounded-lg border p-4 bg-gradient-to-br',
+                `${getMoodLevel(selectedDay.score).color.bg}`,
+                `${getMoodLevel(selectedDay.score).color.border}`,
+                designSystem.transition.default
+              )}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="text-4xl">{selectedDay.emoji}</div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{selectedDay.fullDate}</p>
+                      <p className="mt-1 text-2xl font-bold">{getMoodLevel(selectedDay.score).label}</p>
+                      <p className={cn('mt-1 text-sm font-medium', getMoodLevel(selectedDay.score).color.text)}>
+                        Mood level: {selectedDay.score}/5
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedDay(null)}
+                    className={cn(
+                      'rounded-lg p-1 hover:bg-muted',
+                      designSystem.transition.default,
+                      designSystem.interactive.focus
+                    )}
+                    aria-label="Close details"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                {selectedDay.note && (
+                  <p className="mt-3 text-sm italic text-foreground/80 pl-14">"{selectedDay.note}"</p>
+                )}
+              </div>
+            )}
 
             {/* Mood Summary Bar */}
             <div className="mt-4 flex items-center justify-between rounded-lg bg-muted/50 px-4 py-3">
@@ -592,48 +625,32 @@ export function WellbeingView() {
             </button>
 
             <div className="mb-6">
-              <h2 className="text-xl font-semibold">How happy are you today?</h2>
-              <p className="text-sm text-muted-foreground">Rate your mood from 0 (not happy) to 10 (very happy)</p>
+              <h2 className={designSystem.typography.cardTitle}>How are you feeling today?</h2>
+              <p className={designSystem.typography.caption}>Select your mood level</p>
             </div>
 
-            {/* Mood Scale Slider */}
+            {/* Simplified 1-5 Mood Scale with Emojis */}
             <div className="mb-6">
-              <p className="mb-3 text-sm font-medium">Select your happiness level:</p>
-              <div className="space-y-4">
-                {/* Number buttons */}
-                <div className="grid grid-cols-11 gap-1">
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <button
-                      key={num}
-                      className={cn(
-                        "h-12 rounded-lg border-2 font-bold transition-all hover:scale-105",
-                        num >= 8 ? 'border-green-500/30 bg-green-500/10 hover:bg-green-500/20 text-green-600' :
-                        num >= 6 ? 'border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600' :
-                        num >= 4 ? 'border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600' :
-                        num >= 2 ? 'border-orange-500/30 bg-orange-500/10 hover:bg-orange-500/20 text-orange-600' :
-                        'border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-600'
-                      )}
-                    >
-                      {num}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Labels */}
-                <div className="flex justify-between text-xs text-muted-foreground px-2">
-                  <span className="text-red-500 font-medium">Not Happy</span>
-                  <span className="text-yellow-500">Neutral</span>
-                  <span className="text-green-500 font-medium">Very Happy</span>
-                </div>
-
-                {/* Emoji indicators */}
-                <div className="flex justify-around text-2xl">
-                  <span>😢</span>
-                  <span>😔</span>
-                  <span>😐</span>
-                  <span>🙂</span>
-                  <span>😊</span>
-                </div>
+              <p className="mb-4 text-sm font-medium">Tap to select your mood:</p>
+              <div className="grid grid-cols-5 gap-3">
+                {moodLevels.map((level) => (
+                  <button
+                    key={level.value}
+                    className={cn(
+                      'flex flex-col items-center gap-3 rounded-xl border-2 p-4 transition-all',
+                      'hover:scale-105 hover:shadow-lg',
+                      `${level.color.border} ${level.color.bg}`,
+                      designSystem.transition.default,
+                      designSystem.interactive.focus
+                    )}
+                  >
+                    <div className="text-4xl">{level.emoji}</div>
+                    <div className="text-center">
+                      <p className="text-lg font-bold">{level.value}</p>
+                      <p className={cn('text-xs font-medium mt-1', level.color.text)}>{level.label}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 
