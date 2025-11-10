@@ -6,13 +6,12 @@ import { MeetingDetailsModal } from './MeetingDetailsModal';
 import { ClassesView } from './ClassesView';
 import { ProfileView } from './ProfileView';
 import { CalendarView } from './CalendarView';
-import { StudyBuddyView } from './StudyBuddyView';
 import { PopupQueueManager } from '../popups/PopupQueueManager';
 import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp, CreditCard, Calendar, BookOpen } from 'lucide-react';
+import { Home, Beaker, User, Smile, GraduationCap, ChevronLeft, Calendar, BookOpen } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
@@ -60,13 +59,13 @@ export function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
 
-  // Updated navigation structure - 6 primary items
+  // Updated navigation structure - New organization
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
+    { id: 'calendar', path: '/dashboard/calendar', icon: Calendar, label: 'Calendar' },
+    { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Study Planner' },
     { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
-    { id: 'calendar', path: '/dashboard/calendar', icon: Calendar, label: 'AI Calendar' },
-    { id: 'study-buddy', path: '/dashboard/study-buddy', icon: BookOpen, label: 'Study Buddy' },
-    { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
+    { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Hapi Lab' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
@@ -210,8 +209,8 @@ export function Dashboard() {
               <div>
                 <h1 className="text-xl font-semibold text-foreground md:text-2xl">
                   {location.pathname.includes('classes') && 'Classes'}
-                  {location.pathname.includes('calendar') && 'AI Calendar'}
-                  {location.pathname.includes('study-buddy') && 'Study Buddy'}
+                  {location.pathname.includes('calendar') && 'Calendar'}
+                  {location.pathname.includes('planner') && 'Study Planner'}
                   {location.pathname.includes('hapi') && !location.pathname.includes('lab') && 'Hapi AI'}
                   {location.pathname.includes('profile') && 'Profile'}
                   {location.pathname.includes('academics') && 'Academics'}
@@ -222,8 +221,8 @@ export function Dashboard() {
                 </h1>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {location.pathname.includes('classes') && 'Your courses, grades & class overview'}
-                  {location.pathname.includes('calendar') && 'Schedule & AI study plan assistant'}
-                  {location.pathname.includes('study-buddy') && 'Study tools & planner'}
+                  {location.pathname.includes('calendar') && 'Full calendar with AI study planning'}
+                  {location.pathname.includes('planner') && 'AI-powered study plan generator'}
                   {location.pathname.includes('hapi') && !location.pathname.includes('lab') && 'AI-powered assistant'}
                   {location.pathname.includes('profile') && 'Your account settings'}
                   {location.pathname.includes('academics') && 'Grades, assignments & study tools'}
@@ -339,10 +338,10 @@ export function Dashboard() {
                   }
                 />
                 <Route
-                  path="study-buddy"
+                  path="planner"
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <StudyBuddyView />
+                      <EnhancedStudyPlanner />
                     </div>
                   }
                 />

@@ -1,4 +1,4 @@
-import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, ArrowRight, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Circle, Sparkles, GraduationCap, Bell } from 'lucide-react';
+import { BookOpen, Heart, MessageSquare, Activity, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Sparkles, GraduationCap, Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { designSystem } from '../../lib/design-system';
 import { useState } from 'react';
@@ -149,7 +149,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Notifications Section - Takes 2 columns */}
-        <div className="lg:col-span-2 flex flex-col">
+        <div className="lg:col-span-2 flex flex-col space-y-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Bell className="h-5 w-5 text-primary" />
@@ -218,6 +218,67 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                 <p className="text-sm font-semibold text-foreground">Study Plan Reminder</p>
                 <p className="text-xs text-muted-foreground mt-1">Remember, you're supposed to allocate 45 minutes for Calculus review today.</p>
                 <p className="text-[10px] text-muted-foreground/70 mt-1">Today at 2:00 PM</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Mood Tracker - Last 30 Days */}
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                <h3 className={designSystem.typography.sectionTitle}>Mood Tracker</h3>
+              </div>
+              <span className="text-xs text-muted-foreground">Last 30 days</span>
+            </div>
+
+            <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4">
+              {/* Simplified mood visualization */}
+              <div className="space-y-3">
+                {/* Average mood this month */}
+                <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200/50 dark:border-green-800/50">
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Average Mood</p>
+                    <p className="text-lg font-bold text-foreground mt-0.5">Good</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                      <span className="text-lg">😊</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mood trend bars - simple horizontal bars */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs w-16 text-muted-foreground">Happy</span>
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500" style={{ width: '75%' }}></div>
+                    </div>
+                    <span className="text-xs text-muted-foreground w-8 text-right">75%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs w-16 text-muted-foreground">Neutral</span>
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500" style={{ width: '15%' }}></div>
+                    </div>
+                    <span className="text-xs text-muted-foreground w-8 text-right">15%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs w-16 text-muted-foreground">Stressed</span>
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-amber-500 to-orange-500" style={{ width: '10%' }}></div>
+                    </div>
+                    <span className="text-xs text-muted-foreground w-8 text-right">10%</span>
+                  </div>
+                </div>
+
+                {/* Quick insight */}
+                <div className="pt-2 border-t border-border/40">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="text-primary font-semibold">Trend:</span> Your mood has been consistently positive this month! Keep it up.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
