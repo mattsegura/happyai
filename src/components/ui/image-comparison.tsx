@@ -175,17 +175,11 @@ const ImageComparisonContent = ({
   position: 'left' | 'right';
 }) => {
   const { motionSliderPosition } = useContext(ImageComparisonContext)!;
-  
+
   // For left side: show from left edge to slider position
   const leftClipPath = useTransform(
     motionSliderPosition,
     (value) => `inset(0 ${100 - value}% 0 0)`
-  );
-  
-  // For right side: show from slider position to right edge
-  const rightClipPath = useTransform(
-    motionSliderPosition,
-    (value) => `inset(0 0 0 ${value}%)`
   );
 
   // First child (position="right") should be the base layer

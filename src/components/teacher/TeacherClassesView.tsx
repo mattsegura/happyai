@@ -1,11 +1,157 @@
 import { useState } from 'react';
 import { Users, Search, Plus, Hash, UserCheck, UserX, ChevronLeft, Clock, Copy } from 'lucide-react';
+import { MOCK_STUDENT_IDS, MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
 
-// TODO: Fetch from Supabase
-const mockTeacherClasses: any[] = [];
-const mockClassRosters: any = {};
+// TODO: Fetch from Supabase - Using mock data for now
+const mockTeacherClasses: any[] = [
+  {
+    id: MOCK_CLASS_IDS.PSYCHOLOGY,
+    name: 'Introduction to Psychology',
+    description: 'PSYCH 101 - Fall 2024',
+    teacher_name: 'You',
+    class_code: 'PSYCH101',
+    code: 'PSYCH101',
+  },
+  {
+    id: MOCK_CLASS_IDS.ENGLISH,
+    name: 'English Literature',
+    description: 'ENG 201 - Fall 2024',
+    teacher_name: 'You',
+    class_code: 'ENG201',
+    code: 'ENG201',
+  },
+  {
+    id: MOCK_CLASS_IDS.HISTORY,
+    name: 'World History',
+    description: 'HIST 101 - Fall 2024',
+    teacher_name: 'You',
+    class_code: 'HIST101',
+    code: 'HIST101',
+  },
+];
+
+const mockClassRosters: any = {
+  [MOCK_CLASS_IDS.PSYCHOLOGY]: [
+    {
+      id: MOCK_STUDENT_IDS.ALEX_JOHNSON,
+      user_id: MOCK_STUDENT_IDS.ALEX_JOHNSON,
+      full_name: 'Alex Johnson',
+      email: 'alex.j@school.edu',
+      avatar_url: null,
+      class_points: 150,
+      total_points: 150,
+      current_streak: 5,
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['happy', 'hopeful', 'calm'],
+    },
+    {
+      id: MOCK_STUDENT_IDS.SARAH_MARTINEZ,
+      user_id: MOCK_STUDENT_IDS.SARAH_MARTINEZ,
+      full_name: 'Sarah Martinez',
+      email: 'sarah.m@school.edu',
+      avatar_url: null,
+      class_points: 200,
+      total_points: 200,
+      current_streak: 8,
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['excited', 'grateful', 'happy'],
+    },
+    {
+      id: MOCK_STUDENT_IDS.MICHAEL_CHEN,
+      user_id: MOCK_STUDENT_IDS.MICHAEL_CHEN,
+      full_name: 'Michael Chen',
+      email: 'michael.c@school.edu',
+      avatar_url: null,
+      class_points: 75,
+      total_points: 75,
+      current_streak: 0,
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4).toISOString().split('T')[0],
+      recent_emotions: ['stressed', 'anxious', 'tired'],
+    },
+    {
+      id: MOCK_STUDENT_IDS.EMILY_RODRIGUEZ,
+      user_id: MOCK_STUDENT_IDS.EMILY_RODRIGUEZ,
+      full_name: 'Emily Rodriguez',
+      email: 'emily.r@school.edu',
+      avatar_url: null,
+      class_points: 180,
+      total_points: 180,
+      current_streak: 6,
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['calm', 'hopeful', 'happy'],
+    },
+  ],
+  [MOCK_CLASS_IDS.ENGLISH]: [
+    {
+      id: MOCK_STUDENT_IDS.DAVID_KIM,
+      user_id: MOCK_STUDENT_IDS.DAVID_KIM,
+      full_name: 'David Kim',
+      email: 'david.k@school.edu',
+      avatar_url: null,
+      class_points: 190,
+      total_points: 190,
+      current_streak: 7,
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['energized', 'excited', 'grateful'],
+    },
+    {
+      id: MOCK_STUDENT_IDS.JESSICA_THOMPSON,
+      user_id: MOCK_STUDENT_IDS.JESSICA_THOMPSON,
+      full_name: 'Jessica Thompson',
+      email: 'jessica.t@school.edu',
+      avatar_url: null,
+      class_points: 120,
+      total_points: 120,
+      current_streak: 3,
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0],
+      recent_emotions: ['tired', 'bored', 'nervous'],
+    },
+  ],
+  [MOCK_CLASS_IDS.HISTORY]: [
+    {
+      id: MOCK_STUDENT_IDS.MARCUS_WILLIAMS,
+      user_id: MOCK_STUDENT_IDS.MARCUS_WILLIAMS,
+      full_name: 'Marcus Williams',
+      email: 'marcus.w@school.edu',
+      avatar_url: null,
+      class_points: 165,
+      total_points: 165,
+      current_streak: 4,
+      last_pulse_check: new Date().toISOString().split('T')[0],
+      recent_emotions: ['happy', 'calm', 'hopeful'],
+    },
+    {
+      id: MOCK_STUDENT_IDS.SOPHIA_LEE,
+      user_id: MOCK_STUDENT_IDS.SOPHIA_LEE,
+      full_name: 'Sophia Lee',
+      email: 'sophia.l@school.edu',
+      avatar_url: null,
+      class_points: 50,
+      total_points: 50,
+      current_streak: 0,
+      last_pulse_check: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString().split('T')[0],
+      recent_emotions: ['sad', 'stressed', 'anxious'],
+    },
+  ],
+};
+
 type JoinRequest = any;
-const mockJoinRequests: JoinRequest[] = [];
+const mockJoinRequests: JoinRequest[] = [
+  {
+    id: 'req-1',
+    student_name: 'Jennifer Davis',
+    student_email: 'jennifer.d@school.edu',
+    class_name: 'Introduction to Psychology',
+    requested_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+  },
+  {
+    id: 'req-2',
+    student_name: 'Robert Brown',
+    student_email: 'robert.b@school.edu',
+    class_name: 'English Literature',
+    requested_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+  },
+];
 
 type SelectedClass = {
   id: string;
@@ -13,7 +159,7 @@ type SelectedClass = {
   code: string;
 } | null;
 
-export function TeacherClassesView() {
+function TeacherClassesView() {
   const [selectedClass, setSelectedClass] = useState<SelectedClass>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewClassModal, setShowNewClassModal] = useState(false);
@@ -33,7 +179,7 @@ export function TeacherClassesView() {
 
   if (selectedClass) {
     const roster = mockClassRosters[selectedClass.id] || [];
-    const filteredRoster = roster.filter(student =>
+    const filteredRoster = roster.filter((student: any) =>
       student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -86,7 +232,7 @@ export function TeacherClassesView() {
           </div>
 
           <div className="space-y-3">
-            {filteredRoster.map(student => {
+            {filteredRoster.map((student: any) => {
               const daysSinceCheck = student.last_pulse_check
                 ? Math.floor((Date.now() - new Date(student.last_pulse_check).getTime()) / (1000 * 60 * 60 * 24))
                 : 999;
@@ -130,7 +276,7 @@ export function TeacherClassesView() {
                         <div>
                           <p className="text-xs text-muted-foreground">Recent Emotions</p>
                           <div className="flex space-x-1 mt-1">
-                            {student.recent_emotions.slice(0, 3).map((emotion, idx) => (
+                            {student.recent_emotions.slice(0, 3).map((emotion: string, idx: number) => (
                               <span
                                 key={idx}
                                 className={`px-2 py-0.5 rounded text-xs font-semibold ${
@@ -292,3 +438,4 @@ export function TeacherClassesView() {
     </div>
   );
 }
+export default TeacherClassesView;

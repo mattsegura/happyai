@@ -5,7 +5,7 @@ export interface AIStudyPlannerProps {
   onCtaClick?: () => void;
 }
 
-export function AIStudyPlanner({ onCtaClick }: AIStudyPlannerProps) {
+export function AIStudyPlanner(): JSX.Element {
   const upcomingAssignments = [
     { 
       title: "Biology Exam", 

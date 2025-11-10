@@ -17,7 +17,6 @@ import type {
   FunctionCallRequest,
   FunctionCallResult,
   AIProvider,
-  AIModel,
   AIFeatureType,
   QuotaCheckResult,
   AIUsageStats,

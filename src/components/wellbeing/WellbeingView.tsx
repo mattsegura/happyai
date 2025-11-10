@@ -2,8 +2,6 @@ import { useState } from 'react';
 import {
   Heart,
   TrendingUp,
-  TrendingDown,
-  Minus,
   Activity,
   Brain,
   Sparkles,
@@ -23,7 +21,6 @@ import { Card } from '../ui/card';
 
 // Mock data for wellbeing features
 const mockDailyPulseScore = 85;
-const mockCurrentMood = 'hopeful';
 const mockMoodLevel = 5;
 
 const mockMoodHistory = {
@@ -132,15 +129,6 @@ const moodColors: Record<number, string> = {
   6: 'bg-purple-500'
 };
 
-const moodGradients: Record<number, string> = {
-  1: 'from-red-500/20 to-red-500/5',
-  2: 'from-orange-500/20 to-orange-500/5',
-  3: 'from-yellow-500/20 to-yellow-500/5',
-  4: 'from-green-500/20 to-green-500/5',
-  5: 'from-blue-500/20 to-blue-500/5',
-  6: 'from-purple-500/20 to-purple-500/5'
-};
-
 export function WellbeingView() {
   const [moodTimeframe, setMoodTimeframe] = useState<'7days' | '30days'>('7days');
   const [showInsights, setShowInsights] = useState(false);
@@ -166,7 +154,7 @@ export function WellbeingView() {
         </div>
 
         {/* Quick Stats */}
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
           <Card className="flex items-center gap-3 px-4 py-2">
             <Heart className={cn('h-5 w-5', moodColors[mockMoodLevel].replace('bg-', 'text-'))} />
             <div>
@@ -205,7 +193,7 @@ export function WellbeingView() {
       </div>
 
       {/* Main Content - All on one screen */}
-      <div className="flex flex-1 gap-4">
+      <div className="flex flex-col lg:flex-row flex-1 gap-4">
         {/* Left Side - Enhanced Mood Tracker */}
         <Card className="flex-1 overflow-hidden p-6">
           <div className="flex h-full flex-col">
@@ -521,7 +509,7 @@ export function WellbeingView() {
                 <div>
                   <p className="mb-2 font-medium">Contributing Factors:</p>
                   <ul className="space-y-1">
-                    {selectedClass.factors.map((factor, i) => (
+                    {selectedClass.factors.map((factor: string, i: number) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Info className="h-3 w-3" />
                         {factor}

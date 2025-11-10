@@ -70,6 +70,19 @@ export const DEFAULT_MODELS: Record<AIFeatureType, AIModel> = {
 
   // Summarizer: Simple task, use cheapest model
   summarizer: 'claude-3-haiku-20240307',
+
+  // Teacher-specific features (Phase 6)
+  // Weekly Summary: Complex analysis and synthesis, use Sonnet
+  weekly_summary: 'claude-3-sonnet-20240229',
+
+  // Student Brief: Detailed analysis requires strong reasoning
+  student_brief: 'claude-3-sonnet-20240229',
+
+  // Teacher Assistant: Conversational + complex queries, use Sonnet
+  teacher_assistant: 'claude-3-sonnet-20240229',
+
+  // Proactive Suggestions: Simple recommendations, use Haiku
+  proactive_suggestion: 'claude-3-haiku-20240307',
 };
 
 // =====================================================
@@ -207,6 +220,24 @@ export const DEFAULT_COMPLETION_OPTIONS: Record<
     temperature: 0.3, // Low for accurate summaries
     maxTokens: 1000,
   },
+  // Teacher-specific features (Phase 6)
+  weekly_summary: {
+    temperature: 0.4, // Moderate for balanced insights
+    maxTokens: 3000, // Longer summaries (500-800 words)
+  },
+  student_brief: {
+    temperature: 0.4, // Moderate for accurate analysis
+    maxTokens: 2000, // Medium length (300-500 words)
+  },
+  teacher_assistant: {
+    temperature: 0.6, // Conversational but focused
+    maxTokens: 2000,
+    topP: 0.9,
+  },
+  proactive_suggestion: {
+    temperature: 0.5, // Balanced for helpful suggestions
+    maxTokens: 800, // Shorter, concise suggestions
+  },
 };
 
 // =====================================================
@@ -293,6 +324,11 @@ export const DEFAULT_CACHE_TTLS: Record<AIFeatureType, number> = {
   chat: 0, // No caching for chat (always fresh)
   quiz_generator: 7200, // 2 hours (quizzes can be reused)
   summarizer: 3600, // 1 hour (summaries are relatively stable)
+  // Teacher-specific features (Phase 6)
+  weekly_summary: 7 * 24 * 60 * 60, // 7 days (summaries are stable)
+  student_brief: 24 * 60 * 60, // 1 day (briefs may change daily)
+  teacher_assistant: 0, // No caching (always fresh conversation)
+  proactive_suggestion: 60 * 60, // 1 hour (suggestions change throughout day)
 };
 
 // =====================================================

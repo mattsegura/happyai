@@ -1,12 +1,14 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { User, Mail, Calendar, Users, MessageSquare, TrendingUp, LogOut } from 'lucide-react';
+import { CanvasSetup } from './CanvasSetup';
+import { CanvasSyncStatus } from './CanvasSyncStatus';
 
 // TODO: Fetch from Supabase
 const mockTeacherClasses: any[] = [];
 const mockClassRosters: any = {};
 const mockOfficeHours: any[] = [];
 
-export function TeacherProfileView() {
+function TeacherProfileView() {
   const { profile, signOut } = useAuth();
 
   if (!profile) {
@@ -81,6 +83,17 @@ export function TeacherProfileView() {
             <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400">{totalPulsesCreated}</p>
           </div>
         </div>
+      </div>
+
+      {/* Canvas Integration Section */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-foreground">Canvas Integration</h2>
+
+        {/* Canvas Setup Component */}
+        <CanvasSetup />
+
+        {/* Canvas Sync Status Component */}
+        <CanvasSyncStatus />
       </div>
 
       <div className="bg-card rounded-3xl p-8 shadow-lg">
@@ -173,3 +186,4 @@ export function TeacherProfileView() {
     </div>
   );
 }
+export default TeacherProfileView;

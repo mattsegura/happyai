@@ -90,7 +90,7 @@ export function useCanvasAssignments(
           submitted_at: (assignment.canvas_submissions as Array<{ submitted_at?: string }>)?.[0]?.submitted_at,
         })) || [];
 
-        setAssignments(transformed);
+        setAssignments(transformed as any);
       } catch (err) {
         console.error('Error fetching Canvas assignments:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch assignments'));

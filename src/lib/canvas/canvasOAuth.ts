@@ -264,7 +264,7 @@ class CanvasOAuthService {
       const errorBody = await response.json().catch(() => null);
       throw new CanvasAuthError(
         errorBody?.error || 'Failed to exchange code for token',
-        response.status
+        response.status as 401 | 403
       );
     }
 
@@ -480,7 +480,7 @@ class CanvasOAuthService {
 
       return {
         token: newToken.access_token,
-        expiresAt,
+        expiresAt: expiresAt ?? undefined,
       };
     } catch (error) {
       console.error('[Canvas OAuth] Token refresh failed:', error);

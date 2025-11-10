@@ -5,7 +5,7 @@
  * quiz generation, assignment summaries, flashcards, and Q&A
  */
 
-import type { CanvasModule, CanvasModuleItem, CanvasAssignment } from '../../canvasApiMock';
+import type { CanvasModuleItem } from '../../canvasApiMock';
 
 // =====================================================
 // TUTOR CONTEXT & RESPONSES

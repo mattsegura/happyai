@@ -105,7 +105,7 @@ export function EnhancedHapiChat() {
 Based on your current workload, here's an optimized schedule:
 
 ### 🚨 Priority Tasks (Next 48 hours)
-${academicContext.assignments
+${(academicContext.assignments || [])
   .filter((a: any) => a.priority === 'high')
   .map((a: any) => `• **${a.title}** - ${a.course} (Due: ${a.due})`)
   .join('\n')}

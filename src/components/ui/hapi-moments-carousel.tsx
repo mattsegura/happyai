@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
-  CarouselApi,
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
@@ -97,8 +95,6 @@ const hapiMoments: HapiMoment[] = [
 ];
 
 export function HapiMomentsCarousel() {
-  const [api, setApi] = useState<CarouselApi>();
-  
   const autoplayPlugin = Autoplay({
     delay: 3000,
     stopOnInteraction: false,
@@ -155,8 +151,7 @@ export function HapiMomentsCarousel() {
           </div>
 
           {/* Carousel */}
-          <Carousel 
-            setApi={setApi} 
+          <Carousel
             className="w-full"
             plugins={[autoplayPlugin]}
             opts={{

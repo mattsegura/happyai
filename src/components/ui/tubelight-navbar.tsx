@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { LucideIcon } from "lucide-react"
 import { cn } from "../../lib/utils"
@@ -22,19 +22,8 @@ export interface NavBarProps {
   onSignInClick?: () => void
 }
 
-export function TubelightNavBar({ items, className, activeItem, onItemClick, showSignIn = false, onSignInClick }: NavBarProps) {
+export function TubelightNavBar({ items, className, activeItem, onItemClick }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(activeItem || items[0]?.name)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
 
   useEffect(() => {
     if (activeItem) {

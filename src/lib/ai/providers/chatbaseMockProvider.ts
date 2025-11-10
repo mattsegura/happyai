@@ -523,7 +523,7 @@ export async function* streamComplete(
 
 export async function chatWithContext(
   messages: Array<{ role: 'user' | 'assistant'; content: string }>,
-  temperature = 0.7
+  _temperature = 0.7
 ): Promise<CompletionResponse> {
   const startTime = Date.now();
   await simulateDelay(800, 1500);

@@ -157,7 +157,7 @@ export function ClassAverageSentimentChart() {
         </div>
       </div>
 
-      <div className="relative h-48 mb-2">
+      <div className="relative h-48 mb-2 ml-8">
         <div className="absolute inset-0 flex items-end justify-between gap-1">
           {currentData.map((point, index) => {
             const heightPixels = ((point.avgSentiment - minValue) / (maxValue - minValue)) * 192;
@@ -183,7 +183,7 @@ export function ClassAverageSentimentChart() {
           })}
         </div>
 
-        <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground -ml-8">
+        <div className="absolute -left-7 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground">
           <span>6</span>
           <span>5</span>
           <span>4</span>

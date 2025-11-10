@@ -103,7 +103,7 @@ export function ClassHapiInsightsSection({ classId, className }: ClassHapiInsigh
           </div>
         </div>
 
-        <div className="relative h-40 mb-2">
+        <div className="relative h-40 mb-2 ml-6">
           <div className="absolute inset-0 flex items-end justify-between gap-0.5">
             {currentData.map((point, index) => {
               const heightPixels = ((point.avgSentiment - minValue) / (maxValue - minValue)) * 160;
@@ -130,7 +130,7 @@ export function ClassHapiInsightsSection({ classId, className }: ClassHapiInsigh
             })}
           </div>
 
-          <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground -ml-6">
+          <div className="absolute -left-5 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground">
             <span>6</span>
             <span>5</span>
             <span>4</span>

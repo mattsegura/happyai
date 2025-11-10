@@ -62,39 +62,6 @@ class GoogleCalendarService {
   }
 
   /**
-   * Exchange authorization code for tokens
-   *
-   * SECURITY NOTE: This should NOT be called from client code.
-   * Token exchange happens in the Edge Function (google-calendar-oauth-callback)
-   * to keep the client secret secure on the server side.
-   *
-   * This method is kept for reference but should not be used.
-   * @deprecated Use Edge Function for OAuth flow
-   */
-  private async exchangeCodeForTokens(code: string): Promise<never> {
-    throw new Error(
-      'Token exchange must happen server-side. ' +
-      'Use the google-calendar-oauth-callback Edge Function instead.'
-    );
-  }
-
-  /**
-   * Refresh access token using refresh token
-   *
-   * SECURITY NOTE: Token refresh happens server-side via Edge Function
-   * to keep the client secret secure. The database function get_google_calendar_token()
-   * handles token refresh automatically when needed.
-   *
-   * @deprecated Token refresh is handled automatically by the database
-   */
-  private async refreshAccessToken(refreshToken: string): Promise<never> {
-    throw new Error(
-      'Token refresh happens server-side automatically. ' +
-      'The database function handles this transparently.'
-    );
-  }
-
-  /**
    * Get access token for user and calendar
    */
   private async getAccessToken(calendarId: string): Promise<string> {
@@ -126,25 +93,13 @@ class GoogleCalendarService {
     const tokenData = data[0];
 
     // Check if token needs refresh
+    // NOTE: Token refresh is handled automatically server-side via database function
+    // The deprecated refreshAccessToken method should not be called
     if (tokenData.needs_refresh && tokenData.decrypted_refresh_token) {
-      console.log('[Google Calendar] Refreshing expired token');
-      const refreshed = await this.refreshAccessToken(
-        tokenData.decrypted_refresh_token
+      throw new GoogleCalendarAuthError(
+        'Token refresh required. Please reconnect your Google Calendar.',
+        401
       );
-
-      // Update token in database
-      await supabase
-        .from('calendar_connections')
-        .update({
-          access_token: refreshed.access_token, // Will be encrypted by trigger
-          token_expires_at: new Date(
-            Date.now() + refreshed.expires_in * 1000
-          ).toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', tokenData.connection_id);
-
-      return refreshed.access_token;
     }
 
     return tokenData.decrypted_access_token;

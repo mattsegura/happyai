@@ -100,6 +100,30 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
           <span className="font-semibold text-foreground">{checkedInCount}</span>
         </div>
 
+        {/* Most Popular Emotion Display */}
+        {topEmotions.length > 0 && (
+          <div className="p-3 bg-gradient-to-r from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 rounded-lg border border-primary-200 dark:border-primary-500/30">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+              Most students feel
+            </p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-primary-600 dark:text-primary-400 capitalize">
+                  {topEmotions[0].emotion}
+                </span>
+              </div>
+              <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+                {((topEmotions[0].count / checkedInCount) * 100).toFixed(0)}%
+              </span>
+            </div>
+            {topEmotions.length > 1 && (
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Second: {topEmotions[1].emotion} ({((topEmotions[1].count / checkedInCount) * 100).toFixed(0)}%)
+              </p>
+            )}
+          </div>
+        )}
+
         <div>
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Top emotions</p>
           <div className="space-y-2">

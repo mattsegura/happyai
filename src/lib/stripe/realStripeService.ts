@@ -5,7 +5,6 @@
  * Requires Stripe API keys configured in environment variables.
  */
 
-import { loadStripe, Stripe as StripeClient } from '@stripe/stripe-js';
 import { supabase } from '../supabase';
 import type {
   CreateSubscriptionParams,
@@ -20,22 +19,22 @@ import type {
 const DEBUG = import.meta.env.DEV;
 
 // Initialize Stripe client
-let stripePromise: Promise<StripeClient | null> | null = null;
+// let stripePromise: Promise<StripeClient | null> | null = null;
 
-function getStripe(): Promise<StripeClient | null> {
-  if (!stripePromise) {
-    const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-
-    if (!publishableKey) {
-      console.error('[Stripe] Publishable key not configured');
-      return Promise.resolve(null);
-    }
-
-    stripePromise = loadStripe(publishableKey);
-  }
-
-  return stripePromise;
-}
+// function _getStripe(): Promise<StripeClient | null> {
+//   if (!stripePromise) {
+//     const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+//
+//     if (!publishableKey) {
+//       console.error('[Stripe] Publishable key not configured');
+//       return Promise.resolve(null);
+//     }
+//
+//     stripePromise = loadStripe(publishableKey);
+//   }
+//
+//   return stripePromise;
+// }
 
 // =====================================================
 // SUBSCRIPTION OPERATIONS

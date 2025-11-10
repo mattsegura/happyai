@@ -65,7 +65,7 @@ export function GoogleCalendarConnect() {
       setError(null);
 
       // Call Edge Function with the code
-      const { data, error: functionError } = await supabase.functions.invoke(
+      const { error: functionError } = await supabase.functions.invoke(
         'google-calendar-oauth-callback',
         {
           body: { code, state },

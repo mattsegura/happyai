@@ -19,7 +19,7 @@ export type Profile = {
   total_points: number;
   current_streak: number;
   last_pulse_check_date: string | null;
-  university_id: string;
+  university_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -141,6 +141,44 @@ export type OfficeHoursQueue = {
   started_at: string | null;
   completed_at: string | null;
   position: number | null;
+};
+
+export type CanvasToken = {
+  id: string;
+  user_id: string;
+  university_id: string;
+  canvas_instance_url: string;
+  canvas_user_id: string | null;
+  access_token: string; // Encrypted
+  refresh_token: string | null; // Encrypted
+  token_type: string;
+  expires_at: string | null;
+  scope: string | null;
+  is_valid: boolean;
+  last_validated_at: string | null;
+  encryption_key_id: string;
+  encrypted_at: string;
+  token_hash: string | null;
+  rotation_count: number;
+  last_rotation_at: string | null;
+  force_rotation: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TeacherStudentNote = {
+  id: string;
+  teacher_id: string;
+  student_id: string;
+  class_id: string | null;
+  note_text: string;
+  note_type: 'general' | 'academic' | 'wellbeing' | 'behavioral' | 'intervention' | 'meeting';
+  is_private: boolean;
+  is_flagged: boolean;
+  tags: string[];
+  university_id: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export * from './pulseTypes';

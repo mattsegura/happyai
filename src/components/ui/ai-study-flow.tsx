@@ -163,11 +163,10 @@ export function AIStudyFlow({ isGenerating, onComplete, onProgressUpdate, resetK
       const prioritized: PriorityClass[] = mockClasses
         .map(cls => {
           const classAssignments = mockAssignments.filter(a => a.className === cls.name);
-          const soonestDue = classAssignments.length > 0 
+          const soonestDue = classAssignments.length > 0
             ? Math.min(...classAssignments.map(a => a.dueDateFull.getTime()))
             : Infinity;
-          const totalPoints = classAssignments.reduce((sum, a) => sum + a.points, 0);
-          
+
           // Priority score: lower grade = higher priority, sooner deadline = higher priority
           const priorityScore = (100 - cls.grade) * 10 + (soonestDue !== Infinity ? (30 - Math.floor((soonestDue - Date.now()) / (1000 * 60 * 60 * 24))) : 0);
           

@@ -207,7 +207,7 @@ export async function* streamComplete(
                   done: false,
                 };
               }
-            } catch (e) {
+            } catch (_e) {
               // Skip invalid JSON
               console.warn('[Chatbase] Invalid JSON in stream:', jsonStr);
             }

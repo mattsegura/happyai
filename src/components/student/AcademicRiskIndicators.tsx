@@ -14,6 +14,7 @@ interface RiskIndicator {
   late_submissions: number;
   factors: string[];
   recommendations: string[];
+  factors?: string[];
 }
 
 export function AcademicRiskIndicators() {
@@ -243,13 +244,13 @@ export function AcademicRiskIndicators() {
             </div>
 
             {/* Risk Factors */}
-            {indicator.factors.length > 0 && (
+            {(indicator.factors || []).length > 0 && (
               <div className="mb-4">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                   Risk Factors
                 </div>
                 <ul className="space-y-1">
-                  {indicator.factors.map((factor, index) => (
+                  {(indicator.factors || []).map((factor, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm">
                       <span className="text-muted-foreground mt-0.5">•</span>
                       <span className="text-foreground">{factor}</span>

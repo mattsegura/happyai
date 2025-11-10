@@ -5,7 +5,6 @@ import {
   TrendingDown,
   Minus,
   Award,
-  Target,
   Zap,
   Star,
   AlertTriangle,
@@ -14,7 +13,6 @@ import {
   Users,
   BarChart3,
   Calendar,
-  Clock,
   Flame,
   Medal,
   Brain,
@@ -147,7 +145,7 @@ export function ProgressView() {
       </div>
 
       {/* Top Stats Row */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
         {/* Academic Focus Score */}
         <Card className="p-4">
           <div className="flex items-center justify-between">

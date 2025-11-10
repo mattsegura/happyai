@@ -122,7 +122,7 @@ export class LoadMeterService {
   calculateAcademicLoad(events: UnifiedEvent[], startDate: Date, endDate: Date): LoadMetrics {
     // Get daily loads for each day in range
     const dailyLoads: DailyLoad[] = [];
-    let currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
 
     while (currentDate <= endDate) {
       dailyLoads.push(this.calculateDailyLoad(events, new Date(currentDate)));

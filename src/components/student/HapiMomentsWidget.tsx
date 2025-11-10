@@ -123,7 +123,7 @@ export function HapiMomentsWidget() {
         ) : (
           <div className="space-y-3">
             {recentMoments.map((moment) => {
-              const isSent = moment.sender_id === MOCK_USER_ID;
+              const isSent = moment.sender_id === user?.id;
               
               return (
                 <div

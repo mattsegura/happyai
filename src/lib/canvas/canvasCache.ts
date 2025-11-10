@@ -171,7 +171,7 @@ class CanvasCache {
 
     // Enforce max cache size (LRU eviction)
     if (this.memoryCache.size > this.maxMemoryCacheSize) {
-      const oldestKey = this.memoryCache.keys().next().value;
+      const oldestKey = this.memoryCache.keys().next().value as string;
       this.memoryCache.delete(oldestKey);
     }
 

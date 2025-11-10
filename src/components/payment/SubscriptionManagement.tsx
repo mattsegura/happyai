@@ -84,7 +84,7 @@ export function SubscriptionManagement() {
           <p className="text-muted-foreground">Manage your HapiAI subscription and billing</p>
           {isMockMode && (
             <div className="mt-3 inline-block px-3 py-1 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded text-sm text-blue-700 dark:text-blue-400">
-              🧪 Mock Mode
+              🧪 Test Mode
             </div>
           )}
         </div>

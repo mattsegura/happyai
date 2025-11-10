@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { Video, Calendar, Clock, Users, ExternalLink, UserPlus, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Video, Calendar, Clock, Users, ExternalLink, UserPlus, X, CheckCircle, AlertCircle } from 'lucide-react';
 
 type OfficeHour = {
   id: string;
@@ -75,7 +75,7 @@ export function StudentMeetingsView() {
       const enrichedData: OfficeHour[] = await Promise.all(
         (officeHoursData || []).map(async (oh: any) => {
           // Get queue count
-          const { data: queueData, error: queueError } = await supabase
+          const { data: queueData } = await supabase
             .from('office_hours_queue')
             .select('id, user_id')
             .eq('office_hour_id', oh.id)

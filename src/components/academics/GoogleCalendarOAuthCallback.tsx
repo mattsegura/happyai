@@ -57,7 +57,7 @@ export function GoogleCalendarOAuthCallback() {
       }
 
       // Call Edge Function with authentication
-      const { data, error: functionError } = await supabase.functions.invoke(
+      const { error: functionError } = await supabase.functions.invoke(
         'google-calendar-oauth-callback',
         {
           body: {

@@ -83,15 +83,25 @@ function calculateDaysLeft(dueAt: string): number {
   return Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-function getAssignmentStatus(assignmentId: string, submissions: any[]): 'completed' | 'in-progress' | 'not-started' {
-  const submission = submissions?.find((s: any) => s.assignment_id === assignmentId);
+type Submission = {
+  assignment_id: string;
+  workflow_state: string;
+};
+
+type AssignmentData = {
+  due_at: string;
+  points_possible: number;
+};
+
+function getAssignmentStatus(assignmentId: string, submissions: Submission[]): 'completed' | 'in-progress' | 'not-started' {
+  const submission = submissions?.find((s) => s.assignment_id === assignmentId);
   if (!submission) return 'not-started';
   if (submission.workflow_state === 'graded') return 'completed';
   if (submission.workflow_state === 'submitted') return 'in-progress';
   return 'not-started';
 }
 
-function calculatePriority(assignment: any): 'high' | 'medium' | 'low' {
+function calculatePriority(assignment: AssignmentData): 'high' | 'medium' | 'low' {
   const daysLeft = calculateDaysLeft(assignment.due_at);
   const points = assignment.points_possible || 0;
 
@@ -100,8 +110,8 @@ function calculatePriority(assignment: any): 'high' | 'medium' | 'low' {
   return 'low';
 }
 
-function calculateCompletion(assignmentId: string, submissions: any[]): number {
-  const submission = submissions?.find((s: any) => s.assignment_id === assignmentId);
+function calculateCompletion(assignmentId: string, submissions: Submission[]): number {
+  const submission = submissions?.find((s) => s.assignment_id === assignmentId);
   if (!submission) return 0;
   if (submission.workflow_state === 'graded') return 100;
   if (submission.workflow_state === 'submitted') return 75;
@@ -217,9 +227,21 @@ export function AcademicsHub() {
   useEffect(() => {
     if (!user) return;
 
+    let timeoutId: NodeJS.Timeout;
+    let isCancelled = false;
+
     async function fetchAcademicData() {
       setLoading(true);
       setError(null);
+
+      // Set a timeout to prevent infinite loading (30 seconds max)
+      timeoutId = setTimeout(() => {
+        if (!isCancelled) {
+          console.warn('⏱️ Academic data fetch timed out after 30 seconds');
+          setError('Loading timed out. Please refresh the page.');
+          setLoading(false);
+        }
+      }, 30000);
 
       try {
         // Check if we should use mock data
@@ -233,6 +255,7 @@ export function AcademicsHub() {
           setAssignments(mockData.assignments);
           setStudyStreak(mockData.studyStreak);
           setLoading(false);
+          clearTimeout(timeoutId);
           return;
         }
 
@@ -243,17 +266,20 @@ export function AcademicsHub() {
           throw new Error('User not authenticated');
         }
 
-        // Fetch courses
-        const { data: coursesData, error: coursesError } = await supabase
+        // Fetch courses with timeout protection
+        const coursesPromise = supabase
           .from('canvas_courses')
           .select('*')
           .eq('user_id', user.id)
-          .order('name');
+          .order('name')
+          .limit(50); // Add limit to prevent huge queries
+
+        const { data: coursesData, error: coursesError } = await coursesPromise;
 
         if (coursesError) throw coursesError;
 
-        // Fetch assignments (upcoming only)
-        const { data: assignmentsData, error: assignmentsError } = await supabase
+        // Fetch assignments (upcoming only) with timeout protection
+        const assignmentsPromise = supabase
           .from('canvas_assignments')
           .select(`
             *,
@@ -262,29 +288,40 @@ export function AcademicsHub() {
               canvas_course_code
             )
           `)
+          .eq('canvas_assignments.user_id', user.id)
           .gte('due_at', new Date().toISOString())
           .order('due_at', { ascending: true })
           .limit(10);
 
-        if (assignmentsError) throw assignmentsError;
+        const { data: assignmentsData, error: assignmentsError } = await assignmentsPromise;
 
-        // Fetch submissions for grades
-        const { data: submissionsData } = await supabase
+        if (assignmentsError) {
+          console.warn('Assignments fetch error:', assignmentsError);
+          // Don't throw - continue with empty assignments
+        }
+
+        // Fetch submissions for grades (non-blocking)
+        const submissionsPromise = supabase
           .from('canvas_submissions')
           .select('*')
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .limit(100);
 
-        // Fetch study streak
-        const { data: streakData } = await supabase
+        const { data: submissionsData } = await submissionsPromise;
+
+        // Fetch study streak (non-blocking)
+        const streakPromise = supabase
           .from('study_streaks')
           .select('current_streak')
           .eq('user_id', user.id)
           .single();
 
+        const { data: streakData } = await streakPromise;
+
         setStudyStreak(streakData?.current_streak || 0);
 
         // Transform data to match component expectations
-        const transformedCourses: CourseCard[] = coursesData?.map((course: any) => ({
+        const transformedCourses: CourseCard[] = coursesData?.map((course) => ({
           id: course.id,
           name: course.name,
           grade: course.current_grade || 'N/A',
@@ -294,7 +331,7 @@ export function AcademicsHub() {
           color: getCourseColor(course.id)
         })) || [];
 
-        const transformedAssignments: Assignment[] = assignmentsData?.map((assignment: any) => ({
+        const transformedAssignments: Assignment[] = assignmentsData?.map((assignment) => ({
           id: assignment.id,
           title: assignment.name,
           course: assignment.course?.name || 'Unknown',
@@ -306,17 +343,30 @@ export function AcademicsHub() {
           completed: calculateCompletion(assignment.id, submissionsData || [])
         })) || [];
 
-        setCourses(transformedCourses);
-        setAssignments(transformedAssignments);
-      } catch (err: any) {
+        if (!isCancelled) {
+          setCourses(transformedCourses);
+          setAssignments(transformedAssignments);
+        }
+      } catch (err) {
         console.error('Error fetching academic data:', err);
-        setError(err.message);
+        if (!isCancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load academic data');
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+          clearTimeout(timeoutId);
+        }
       }
     }
 
     fetchAcademicData();
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isCancelled = true;
+      clearTimeout(timeoutId);
+    };
   }, [user]);
 
   const handleStudyPlan = () => {
@@ -438,7 +488,7 @@ export function AcademicsHub() {
       </div>
 
       {/* Top Stats Bar - Always Visible */}
-      <div className="grid grid-cols-4 gap-2 flex-shrink-0">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 flex-shrink-0">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 rounded-lg p-2.5 border border-blue-200/50 dark:border-blue-800/50">
           <div className="flex items-center justify-between">
             <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />

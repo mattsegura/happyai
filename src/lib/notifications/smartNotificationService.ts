@@ -559,8 +559,8 @@ export class SmartNotificationService {
   // =====================================================
 
   private async checkAchievementTriggers(
-    userId: string,
-    context: UserContext,
+    _userId: string,
+    _context: UserContext,
     prefs: NotificationPreferences
   ): Promise<void> {
     if (!prefs.achievement_notifications) return;

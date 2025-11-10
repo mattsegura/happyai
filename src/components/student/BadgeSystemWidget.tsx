@@ -177,7 +177,7 @@ export function BadgeSystemWidget() {
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          All ({mockBadges.length})
+          All ({badges.length})
         </button>
         <button
           onClick={() => setFilter('earned')}
@@ -207,7 +207,7 @@ export function BadgeSystemWidget() {
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          Locked ({mockBadges.length - earnedCount - inProgressBadges.length})
+          Locked ({badges.length - earnedCount - inProgressBadges.length})
         </button>
       </div>
 
@@ -285,7 +285,7 @@ export function BadgeSystemWidget() {
                         Earned • +{badge.points} pts
                       </span>
                     ) : (
-                      <span>{badge.requirement}</span>
+                      <span>{badge.description}</span>
                     )}
                   </div>
                 </div>

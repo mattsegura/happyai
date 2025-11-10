@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { handleError } from '../../lib/errorHandler';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useAuth } from '../../contexts/AuthContext';
@@ -15,7 +14,6 @@ import {
   Calendar,
   ChevronDown,
   ChevronRight,
-  TestTube,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 

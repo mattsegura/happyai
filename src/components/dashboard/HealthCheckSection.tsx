@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GraduationCap, Heart, TrendingUp, AlertTriangle, Sparkles, ChevronRight } from 'lucide-react';
+import { GraduationCap, Heart, AlertTriangle, Sparkles, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // TODO: Fetch from Supabase

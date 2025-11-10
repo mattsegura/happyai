@@ -65,7 +65,7 @@ export function PaymentMethodManager() {
           <h2 className="text-2xl font-bold">Payment Methods</h2>
           {isMockMode && (
             <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded mt-1 inline-block">
-              Mock Mode
+              Test Mode
             </span>
           )}
         </div>
@@ -125,7 +125,7 @@ function PaymentMethodCard({
   onSetDefault: (id: string) => void;
   isDeleting: boolean;
 }) {
-  const getBrandIcon = (brand: string) => {
+  const getBrandIcon = () => {
     // In a real app, you'd use brand-specific logos
     return <CreditCard className="w-6 h-6" />;
   };
@@ -134,7 +134,7 @@ function PaymentMethodCard({
     <div className="bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {getBrandIcon(method.card_brand || 'unknown')}
+          {getBrandIcon()}
           <div>
             <div className="flex items-center gap-2">
               <p className="font-medium">
@@ -204,10 +204,20 @@ function AddPaymentMethodForm({
     try {
       await stripeClient.createPaymentMethod({
         user_id: user.id,
+        type: 'card',
         card_number: cardNumber,
-        exp_month: parseInt(expMonth),
-        exp_year: parseInt(expYear),
-        cvc: cvc,
+        card_exp_month: parseInt(expMonth),
+        card_exp_year: parseInt(expYear),
+        card_cvc: cvc,
+        billing_name: (user.user_metadata?.full_name as string) || 'Unknown',
+        billing_email: user.email || '',
+        billing_address: {
+          line1: '',
+          city: '',
+          state: '',
+          postal_code: '',
+          country: 'US',
+        },
       });
 
       toast.success('Payment method added successfully');
@@ -226,7 +236,7 @@ function AddPaymentMethodForm({
 
       {isMockMode && (
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-sm text-yellow-800 dark:text-yellow-200">
-          Mock Mode: Use any test card number (e.g., 4242 4242 4242 4242)
+          Test Mode: Use any test card number (e.g., 4242 4242 4242 4242)
         </div>
       )}
 

@@ -354,9 +354,7 @@ export function LandingPage() {
         </ImageComparison>
         </div>
 
-        <HapiIntelligence onCtaClick={() => {
-          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-        }} />
+        <HapiIntelligence />
 
         <HapiMomentsCarousel />
 

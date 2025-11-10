@@ -4,29 +4,16 @@ import * as React from "react"
 import {
   add,
   eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
   format,
   getDay,
   isEqual,
   isSameDay,
   isSameMonth,
   isToday,
-  parse,
-  startOfToday,
   startOfWeek,
 } from "date-fns"
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlusCircleIcon,
-  SearchIcon,
-} from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { useMediaQuery } from "@/hooks/use-media-query"
 
 interface Event {
   id: number
@@ -61,7 +48,6 @@ export function FullScreenCalendar({ data }: FullScreenCalendarProps) {
   const [selectedDay, setSelectedDay] = React.useState(today)
   // Fixed to August 2025
   const firstDayCurrentMonth = new Date(2025, 7, 1) // Month is 0-indexed, so 7 = August
-  const isDesktop = useMediaQuery("(min-width: 768px)")
 
   // Show only 4 weeks starting from the first week of August
   const startDate = startOfWeek(firstDayCurrentMonth);
