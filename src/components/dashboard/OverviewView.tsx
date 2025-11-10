@@ -1,4 +1,4 @@
-import { BookOpen, Heart, MessageSquare, Activity, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Sparkles, GraduationCap, Bell } from 'lucide-react';
+import { BookOpen, Activity, Calendar, ChevronLeft, ChevronRight, Sparkles, GraduationCap } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { designSystem } from '../../lib/design-system';
 import { useState } from 'react';
@@ -148,82 +148,8 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Notifications Section - Takes 2 columns */}
-        <div className="lg:col-span-2 flex flex-col space-y-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-primary" />
-              <h3 className={designSystem.typography.sectionTitle}>Notifications</h3>
-            </div>
-            <span className="text-xs text-muted-foreground bg-primary/10 px-2 py-1 rounded-full font-semibold">
-              5 new
-            </span>
-          </div>
-
-          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4 space-y-3">
-            {/* Morning Check-in Reminder */}
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-rose-200/50 bg-rose-50/50 dark:border-rose-800/50 dark:bg-rose-950/20 hover:bg-rose-100/50 dark:hover:bg-rose-900/20 transition-colors cursor-pointer">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
-                <Heart className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Morning Check-in Reminder</p>
-                <p className="text-xs text-muted-foreground mt-1">Don't forget to complete your daily mood check-in!</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">Just now</p>
-              </div>
-            </div>
-
-            {/* Assignment Graded */}
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-green-200/50 bg-green-50/50 dark:border-green-800/50 dark:bg-green-950/20 hover:bg-green-100/50 dark:hover:bg-green-900/20 transition-colors cursor-pointer">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                <CheckCircle2 className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Biology Lab Report Graded</p>
-                <p className="text-xs text-muted-foreground mt-1">You received an A (95%) on your lab report.</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">2 hours ago</p>
-              </div>
-            </div>
-
-            {/* New Assignment Posted */}
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-blue-200/50 bg-blue-50/50 dark:border-blue-800/50 dark:bg-blue-950/20 hover:bg-blue-100/50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">New Assignment: Chapter 5 Reading</p>
-                <p className="text-xs text-muted-foreground mt-1">Due Friday, 11:59 PM • History 101</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">5 hours ago</p>
-              </div>
-            </div>
-
-            {/* Teacher Message */}
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-purple-200/50 bg-purple-50/50 dark:border-purple-800/50 dark:bg-purple-950/20 hover:bg-purple-100/50 dark:hover:bg-purple-900/20 transition-colors cursor-pointer">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center">
-                <MessageSquare className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Message from Prof. Johnson</p>
-                <p className="text-xs text-muted-foreground mt-1">Office hours moved to Thursday 3-5 PM this week.</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">Yesterday</p>
-              </div>
-            </div>
-
-            {/* Study Plan Reminder */}
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-amber-200/50 bg-amber-50/50 dark:border-amber-800/50 dark:bg-amber-950/20 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors cursor-pointer">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Study Plan Reminder</p>
-                <p className="text-xs text-muted-foreground mt-1">Remember, you're supposed to allocate 45 minutes for Calculus review today.</p>
-                <p className="text-[10px] text-muted-foreground/70 mt-1">Today at 2:00 PM</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Mood Tracker - Last 30 Days */}
-          <div className="flex flex-col">
+        {/* Mood Tracker Section - Takes 2 columns */}
+        <div className="lg:col-span-2 flex flex-col">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Activity className="h-5 w-5 text-primary" />
@@ -281,7 +207,6 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
                 </div>
               </div>
             </div>
-          </div>
         </div>
 
         {/* Weekly Calendar - Takes 1 column */}

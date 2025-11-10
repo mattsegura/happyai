@@ -260,7 +260,7 @@ export function Dashboard() {
             </div>
 
             {/* Notification Center - Shows on desktop */}
-            <div className="hidden md:flex items-center gap-3 ml-auto">
+            <div className="hidden md:flex items-center gap-3 ml-auto relative z-[110]">
               <NotificationCenter />
             </div>
           </header>
