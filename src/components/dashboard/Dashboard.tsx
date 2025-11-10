@@ -58,17 +58,17 @@ export function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
 
+  // Simplified navigation - reduced from 9 to 5 primary items for better UX
   const navigationItems = [
-    { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Overview' },
+    { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
     { id: 'academics', path: '/dashboard/academics', icon: GraduationCap, label: 'Academics' },
     { id: 'wellbeing', path: '/dashboard/wellbeing', icon: Smile, label: 'Wellbeing' },
-    { id: 'progress', path: '/dashboard/progress', icon: TrendingUp, label: 'Progress' },
     { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
-    { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Lab' },
-    { id: 'classes', path: '/dashboard/classes', icon: Users, label: 'Classes' },
-    { id: 'subscription', path: '/dashboard/subscription', icon: CreditCard, label: 'Subscription' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
+
+  // Secondary routes still accessible via URL (Lab, Progress, Classes, Subscription)
+  // These are accessed via quick actions or contextual navigation
 
   useEffect(() => {
     if (user) {
@@ -195,7 +195,7 @@ export function Dashboard() {
       </aside>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-4 pb-24 md:pb-4 sm:px-6 lg:px-8">
           <header
             className={cn(
               SURFACE_BASE,
@@ -400,6 +400,35 @@ export function Dashboard() {
             </Suspense>
         </div>
       </div>
+
+      {/* Mobile Bottom Tab Bar - Fixed at bottom for touch-friendly navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-lg pb-safe">
+        <div className="grid grid-cols-5 gap-1 p-2">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname.includes(item.path);
+            return (
+              <button
+                key={item.id}
+                onClick={() => navigate(item.path)}
+                className={cn(
+                  'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+                  'min-h-[64px]', // Touch target size (minimum 44px recommended)
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+                  isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground active:bg-muted'
+                )}
+                aria-label={`Navigate to ${item.label}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <Icon className="h-5 w-5 flex-shrink-0" />
+                <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
       {showMorningPulseModal && (
         <MorningPulseModal
