@@ -10,22 +10,24 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Plus, Sparkles, Bot, RefreshCw, X } from 'lucide-react';
+import { Plus, Sparkles, Bot, RefreshCw, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { getUnifiedCalendarService, type UnifiedEvent } from '../../lib/calendar/unifiedCalendar';
 import { LoadMeterGauge } from './LoadMeterGauge';
-import { UnifiedCalendar } from './UnifiedCalendar';
 import { StudySessionEditor } from './StudySessionEditor';
 import { StudyPlanGenerator } from './StudyPlanGenerator';
 import { SchedulingAssistant } from './SchedulingAssistant';
 import { getOverSchedulingDetector } from '../../lib/calendar/overSchedulingDetector';
 import { supabase } from '../../lib/supabase';
+import { cn } from '../../lib/utils';
 
 export function EnhancedStudyPlanner() {
   const { user } = useAuth();
   const [events, setEvents] = useState<UnifiedEvent[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date | null>(null);
 
   // Modal states
   const [showSessionEditor, setShowSessionEditor] = useState(false);
@@ -194,9 +196,42 @@ export function EnhancedStudyPlanner() {
     loadEvents();
   };
 
+  // Calendar logic from CalendarView
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    const days = [];
+    // Add empty cells for days before the first of the month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+    // Add all days of the month
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    return days;
+  };
+
+  const previousMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+  };
+
   const weekStart = getWeekStart(selectedDate);
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 6);
+
+  const calendarDays = getDaysInMonth(currentDate);
+  const monthName = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const today = new Date().toDateString();
 
   if (!user) {
     return (
@@ -313,12 +348,148 @@ export function EnhancedStudyPlanner() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar - Takes 2 columns */}
         <div className="lg:col-span-2">
-          <UnifiedCalendar
-            userId={user.id}
-            initialDate={selectedDate}
-            onEventClick={handleEventClick}
-            onCreateSession={handleCreateSession}
-          />
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4 lg:p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl lg:text-2xl font-bold text-foreground">Calendar</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground mt-1">View your schedule and study plans</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowSessionEditor(true);
+                  setEditorInitialDate(undefined);
+                }}
+                className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Add Event</span>
+              </button>
+            </div>
+
+            {/* Month Navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-semibold text-foreground">{monthName}</h4>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={previousMonth}
+                  className="p-2 hover:bg-muted rounded-lg transition-colors"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="h-5 w-5 text-muted-foreground" />
+                </button>
+                <button
+                  onClick={() => setCurrentDate(new Date())}
+                  className="px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                >
+                  Today
+                </button>
+                <button
+                  onClick={nextMonth}
+                  className="p-2 hover:bg-muted rounded-lg transition-colors"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </div>
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-2">
+              {/* Day headers */}
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <div key={day} className="text-center text-xs font-semibold text-muted-foreground py-2">
+                  {day}
+                </div>
+              ))}
+
+              {/* Calendar days */}
+              {calendarDays.map((day, idx) => {
+                if (!day) {
+                  return <div key={`empty-${idx}`} className="aspect-square" />;
+                }
+
+                const dateString = day.toDateString();
+                const isToday = dateString === today;
+                const isSelected = calendarSelectedDate?.toDateString() === dateString;
+                const dayEvents = events.filter(event => {
+                  const eventDate = new Date(event.startTime);
+                  return eventDate.toDateString() === dateString;
+                });
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setCalendarSelectedDate(day);
+                      setSelectedDate(day);
+                    }}
+                    className={cn(
+                      'aspect-square p-2 rounded-lg border transition-all hover:border-primary/40',
+                      isToday && 'bg-primary/10 border-primary font-bold',
+                      isSelected && !isToday && 'bg-accent/20 border-accent',
+                      !isToday && !isSelected && 'border-border/40 hover:bg-muted/50'
+                    )}
+                  >
+                    <div className="flex flex-col h-full">
+                      <span className={cn(
+                        'text-sm',
+                        isToday ? 'text-primary font-bold' : 'text-foreground'
+                      )}>
+                        {day.getDate()}
+                      </span>
+                      {dayEvents.length > 0 && (
+                        <div className="mt-1 flex flex-col gap-0.5">
+                          {dayEvents.slice(0, 2).map((event, i) => (
+                            <div
+                              key={i}
+                              className={cn(
+                                'h-1 rounded-full',
+                                event.type === 'assignment' ? 'bg-amber-500' :
+                                event.type === 'exam' ? 'bg-red-500' :
+                                event.type === 'study_session' ? 'bg-blue-500' : 'bg-gray-500'
+                              )}
+                            />
+                          ))}
+                          {dayEvents.length > 2 && (
+                            <span className="text-[8px] text-muted-foreground">+{dayEvents.length - 2}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Selected Date Events */}
+            {calendarSelectedDate && events.filter(event => {
+              const eventDate = new Date(event.startTime);
+              return eventDate.toDateString() === calendarSelectedDate.toDateString();
+            }).length > 0 && (
+              <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border/40">
+                <h4 className="text-sm font-semibold text-foreground mb-3">
+                  {calendarSelectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                </h4>
+                <div className="space-y-2">
+                  {events.filter(event => {
+                    const eventDate = new Date(event.startTime);
+                    return eventDate.toDateString() === calendarSelectedDate.toDateString();
+                  }).map((event, i) => (
+                    <div key={i} className="flex items-center gap-3 p-2 bg-background rounded-lg">
+                      <div className={cn(
+                        'h-2 w-2 rounded-full',
+                        event.type === 'assignment' ? 'bg-amber-500' :
+                        event.type === 'exam' ? 'bg-red-500' :
+                        event.type === 'study_session' ? 'bg-blue-500' : 'bg-gray-500'
+                      )} />
+                      <span className="text-sm text-foreground flex-1">{event.title}</span>
+                      <span className="text-xs text-muted-foreground capitalize">{event.type.replace('_', ' ')}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Sidebar - Takes 1 column */}

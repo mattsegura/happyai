@@ -780,33 +780,42 @@ export function LandingPage() {
           </div>
 
           {/* Dock Navigation */}
-          <div className="flex justify-center mb-4 relative z-50" style={{ minHeight: '180px' }}>
-            <div className="flex items-end">
-              <Dock magnification={100} distance={180} className="items-end pb-3">
-                <DockItem className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800">
+          <div className="flex justify-center mb-8 relative z-50" style={{ minHeight: '80px' }}>
+            <div className="flex items-center">
+              <Dock magnification={140} distance={180} panelHeight={56} className="items-center">
+                <DockItem className="min-w-[140px] h-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 border border-blue-400/30 dark:border-blue-500/30">
                   <DockLabel>Students</DockLabel>
                   <DockIcon>
-                    <GraduationCap className="h-full w-full text-neutral-600 dark:text-neutral-300" />
+                    <div className="flex items-center gap-2 px-4">
+                      <GraduationCap className="h-5 w-5 text-white flex-shrink-0" />
+                      <span className="text-sm font-semibold text-white whitespace-nowrap">Students</span>
+                    </div>
                   </DockIcon>
                 </DockItem>
-                
-                <DockItem 
-                  className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800"
+
+                <DockItem
+                  className="min-w-[140px] h-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 dark:from-purple-600 dark:to-violet-700 border border-purple-400/30 dark:border-purple-500/30"
                   onClick={() => { window.location.href = '/teacher-features'; }}
                 >
                   <DockLabel>Teachers</DockLabel>
                   <DockIcon>
-                    <Users className="h-full w-full text-neutral-600 dark:text-neutral-300" />
+                    <div className="flex items-center gap-2 px-4">
+                      <Users className="h-5 w-5 text-white flex-shrink-0" />
+                      <span className="text-sm font-semibold text-white whitespace-nowrap">Teachers</span>
+                    </div>
                   </DockIcon>
                 </DockItem>
-                
-                <DockItem 
-                  className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800"
+
+                <DockItem
+                  className="min-w-[160px] h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700 border border-emerald-400/30 dark:border-emerald-500/30"
                   onClick={() => { window.location.href = '/enterprise-features'; }}
                 >
                   <DockLabel>Enterprises</DockLabel>
                   <DockIcon>
-                    <Building2 className="h-full w-full text-neutral-600 dark:text-neutral-300" />
+                    <div className="flex items-center gap-2 px-4">
+                      <Building2 className="h-5 w-5 text-white flex-shrink-0" />
+                      <span className="text-sm font-semibold text-white whitespace-nowrap">Enterprises</span>
+                    </div>
                   </DockIcon>
                 </DockItem>
               </Dock>

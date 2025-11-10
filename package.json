@@ -18,7 +18,13 @@
     "test:e2e": "playwright test",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "perf:benchmark": "tsx scripts/performance-benchmark.ts",
+    "perf:load-test": "k6 run scripts/load-test.js",
+    "perf:load-test:small": "k6 run --vus 100 --duration 2m scripts/load-test.js",
+    "perf:load-test:medium": "k6 run --vus 500 --duration 5m scripts/load-test.js",
+    "perf:load-test:large": "k6 run --vus 1000 --duration 10m scripts/load-test.js",
+    "perf:stress-test": "k6 run --stage 1m:500 --stage 2m:1000 --stage 2m:2000 --stage 1m:0 scripts/load-test.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

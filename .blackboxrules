@@ -1,0 +1,446 @@
+# HapiAI Project Rules
+
+## Project Overview
+HapiAI is a comprehensive educational wellbeing platform that combines academic tracking, emotional wellness monitoring, and gamification to support student success. The platform integrates with Canvas LMS and Google Calendar, uses AI for insights, and provides multi-role dashboards (student, teacher, admin).
+
+## Tech Stack
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: Radix UI primitives + custom components
+- **Backend**: Supabase (PostgreSQL + Auth + Edge Functions)
+- **AI Integration**: Anthropic Claude + OpenAI
+- **Animations**: Framer Motion
+- **State Management**: React Context API
+- **Routing**: React Router v7
+- **Date Handling**: date-fns
+- **Icons**: Lucide React
+
+## Architecture Principles
+
+### 1. Component Organization
+```
+src/
+├── components/
+│   ├── academics/      # Academic features (grades, study planner, Canvas sync)
+│   ├── admin/          # Admin dashboard and management
+│   ├── auth/           # Authentication pages and flows
+│   ├── common/         # Shared components (ErrorBoundary, ThemeToggle)
+│   ├── dashboard/      # Student dashboard components
+│   ├── landing/        # Landing page components
+│   ├── leaderboard/    # Gamification leaderboards
+│   ├── moments/        # Hapi Moments (peer recognition)
+│   ├── notifications/  # Notification system
+│   ├── onboarding/     # User onboarding flows
+│   ├── popups/         # Modal dialogs and popups
+│   ├── progress/       # Progress tracking and achievements
+│   ├── student/        # Student-specific features
+│   ├── teacher/        # Teacher dashboard and tools
+│   ├── ui/             # Reusable UI primitives
+│   └── wellbeing/      # Emotional wellness features
+├── contexts/           # React contexts (AuthContext)
+├── lib/                # Utilities, types, and business logic
+│   ├── academics/      # Academic calculations and utilities
+│   ├── ai/             # AI integration (Claude, OpenAI)
+│   ├── calendar/       # Google Calendar integration
+│   ├── canvas/         # Canvas LMS integration
+│   ├── gamification/   # Points, achievements, levels
+│   └── notifications/  # Notification system logic
+└── supabase/
+    ├── functions/      # Edge functions (OAuth callbacks, webhooks)
+    └── migrations/     # Database schema migrations
+```
+
+### 2. Multi-Tenancy Architecture
+- **University-based isolation**: All data is scoped to `university_id`
+- **Row Level Security (RLS)**: Enforced at database level
+- **Role-based access**: student, teacher, admin, super_admin
+- **Auto-assignment**: Users automatically assigned to university based on email domain
+
+### 3. Authentication Flow
+- Supabase Auth with email/password
+- Profile auto-creation via database trigger
+- Role-based routing (student → /dashboard, teacher → /teacher, admin → /admin)
+- Demo accounts for development (@demo.com with password: demo123)
+- Auth state cached in localStorage to prevent role flickering
+
+## Coding Standards
+
+### TypeScript
+- **Strict mode enabled**: Use proper typing, avoid `any`
+- **Type exports**: Export types from `lib/supabase.ts` and component files
+- **Interface naming**: Use descriptive names (e.g., `AuthContextType`, `PulseQuestion`)
+- **Props interfaces**: Define props interfaces for all components
+- **Null safety**: Handle null/undefined cases explicitly
+
+### React Patterns
+- **Functional components**: Use hooks, no class components
+- **Custom hooks**: Extract reusable logic (e.g., `useAuth`)
+- **Lazy loading**: Use `React.lazy()` for route-level code splitting
+- **Error boundaries**: Wrap major sections with ErrorBoundary
+- **Suspense**: Provide loading fallbacks for lazy components
+- **Context usage**: Use contexts sparingly, prefer prop drilling for local state
+
+### Component Structure
+```typescript
+// 1. Imports (grouped: React, external libs, internal components, types, utils)
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import { Button } from '../ui/button';
+import { supabase } from '../../lib/supabase';
+import type { Profile, Class } from '../../lib/supabase';
+import { cn } from '../../lib/utils';
+
+// 2. Types/Interfaces
+interface ComponentProps {
+  title: string;
+  onAction?: () => void;
+}
+
+// 3. Component
+export function Component({ title, onAction }: ComponentProps) {
+  // 3a. Hooks (state, context, effects)
+  const { user, role } = useAuth();
+  const [data, setData] = useState<DataType[]>([]);
+  
+  // 3b. Effects
+  useEffect(() => {
+    // Effect logic
+  }, [dependencies]);
+  
+  // 3c. Event handlers
+  const handleClick = () => {
+    // Handler logic
+  };
+  
+  // 3d. Render helpers (if needed)
+  const renderItem = (item: DataType) => {
+    return <div key={item.id}>{item.name}</div>;
+  };
+  
+  // 3e. Early returns (loading, error states)
+  if (!user) return null;
+  
+  // 3f. Main render
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Content */}
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Styling Guidelines
+- **Tailwind-first**: Use Tailwind utility classes
+- **Custom colors**: Use design system colors (primary, secondary, accent)
+- **Dark mode**: Support dark mode with `dark:` variants
+- **Responsive**: Mobile-first approach with responsive breakpoints
+- **Animations**: Use Framer Motion for complex animations, Tailwind for simple transitions
+- **cn() utility**: Use `cn()` from `lib/utils.ts` to merge class names
+- **Consistent spacing**: Use Tailwind spacing scale (p-4, gap-6, etc.)
+
+### Design System
+```typescript
+// Color Palette
+primary: {
+  50-900: // Blue shades
+  DEFAULT: 'hsl(var(--primary))'
+}
+secondary: {
+  50-900: // Gray shades
+}
+accent: {
+  50-900: // Sky blue shades
+}
+
+// Component Variants (using class-variance-authority)
+const cardVariants = cva('base-classes', {
+  variants: {
+    variant: { default: '', hover: '', flat: '' },
+    padding: { none: '', sm: 'p-4', md: 'p-6', lg: 'p-8' }
+  }
+});
+```
+
+### State Management
+- **Local state**: `useState` for component-specific state
+- **Context**: `useContext` for auth, theme, global settings
+- **Server state**: Direct Supabase queries (no React Query yet)
+- **Form state**: Controlled components with local state
+- **Derived state**: Calculate from existing state, don't store separately
+
+### Data Fetching
+```typescript
+// Pattern: Fetch in useEffect, handle loading/error states
+const [data, setData] = useState<DataType[]>([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
+
+useEffect(() => {
+  async function fetchData() {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('table_name')
+        .select('*')
+        .eq('university_id', universityId);
+      
+      if (error) throw error;
+      setData(data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      handleError(err, { context: 'fetchData' });
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  fetchData();
+}, [universityId]);
+```
+
+### Error Handling
+- **Use errorHandler**: Import and use `handleError()` from `lib/errorHandler.ts`
+- **User context**: Errors are automatically tagged with user info
+- **Try-catch**: Wrap async operations in try-catch blocks
+- **Error boundaries**: Catch React errors at component boundaries
+- **User feedback**: Show toast notifications for user-facing errors
+- **Logging**: Errors logged to Supabase `error_logs` table
+
+### Database Patterns
+- **RLS policies**: All tables have university_id-based RLS
+- **Soft deletes**: Use `is_active` flags instead of hard deletes
+- **Timestamps**: All tables have `created_at` and `updated_at`
+- **UUIDs**: Use UUID primary keys (auto-generated)
+- **Indexes**: Add indexes for frequently queried columns
+- **Migrations**: All schema changes via numbered migration files
+
+### Security Rules
+- **Never expose secrets**: Use environment variables for API keys
+- **RLS enforcement**: All queries respect Row Level Security
+- **Input validation**: Validate user input on both client and server
+- **SQL injection**: Use parameterized queries (Supabase handles this)
+- **XSS prevention**: React escapes by default, be careful with dangerouslySetInnerHTML
+- **CORS**: Configured in Supabase for allowed origins
+
+## Feature-Specific Guidelines
+
+### Academic Features
+- **Canvas integration**: OAuth flow via edge functions
+- **Grade calculations**: Use utilities from `lib/academics/`
+- **Study planning**: AI-powered suggestions via Claude
+- **Calendar sync**: Bi-directional with Google Calendar
+- **Achievements**: Unlock based on academic milestones
+
+### Wellbeing Features
+- **Emotion tracking**: Use `EMOTION_CONFIGS` from `lib/emotionConfig.ts`
+- **Pulse checks**: Daily check-ins with intensity (1-5)
+- **Mood analytics**: Correlate with academic performance
+- **Privacy**: Sensitive data visible only to user and authorized staff
+
+### Gamification
+- **Points system**: Defined in `lib/gamification/`
+- **Achievements**: Badge system with unlock conditions
+- **Leaderboards**: Class-scoped, university-scoped, global
+- **Streaks**: Daily engagement tracking
+- **Levels**: Every 100 points = 1 level
+
+### Teacher Tools
+- **Class pulses**: Questions that expire at midnight
+- **Sentiment monitoring**: Aggregate class mood data
+- **Analytics**: Student engagement and performance metrics
+- **Office hours**: Queue management system
+- **Feedback hub**: Instructor feedback tracking
+
+### Admin Features
+- **User management**: CRUD operations for users
+- **Class management**: Create/edit/delete classes
+- **University settings**: Configure university-specific options
+- **Error monitoring**: View and manage error logs
+- **Reports**: Generate analytics reports
+
+## AI Integration
+
+### Claude (Anthropic)
+- **Use cases**: Long-form insights, trajectory summaries, study plans
+- **Context**: Provide relevant user data for personalized responses
+- **Streaming**: Support streaming responses for better UX
+- **Error handling**: Graceful fallbacks if AI unavailable
+
+### OpenAI
+- **Use cases**: Quick insights, chat responses, content generation
+- **Model**: GPT-4 for complex tasks, GPT-3.5 for simple ones
+- **Token limits**: Monitor usage to stay within limits
+- **Caching**: Cache common responses to reduce API calls
+
+## Performance Optimization
+
+### Code Splitting
+- **Route-level**: Lazy load dashboard components
+- **Component-level**: Lazy load heavy components (charts, 3D scenes)
+- **Dynamic imports**: Use `React.lazy()` and `Suspense`
+
+### Bundle Size
+- **Tree shaking**: Import only what you need from libraries
+- **Icon optimization**: Import specific icons from lucide-react
+- **Image optimization**: Use appropriate formats and sizes
+- **Lazy loading**: Defer non-critical resources
+
+### Rendering
+- **Memoization**: Use `React.memo()` for expensive components
+- **useMemo/useCallback**: Optimize expensive calculations and callbacks
+- **Virtual scrolling**: For long lists (if needed)
+- **Debouncing**: Debounce search inputs and frequent updates
+
+## Testing Strategy (Future)
+- **Unit tests**: Test utilities and business logic
+- **Component tests**: Test component behavior and rendering
+- **Integration tests**: Test feature flows
+- **E2E tests**: Test critical user journeys
+- **Accessibility tests**: Ensure WCAG compliance
+
+## Deployment
+
+### Environment Variables
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_ANTHROPIC_API_KEY=your_anthropic_key
+VITE_OPENAI_API_KEY=your_openai_key
+VITE_AUTH_TIMEOUT=10000
+```
+
+### Build Process
+```bash
+npm run typecheck  # Check TypeScript errors
+npm run lint       # Check ESLint errors
+npm run build      # Production build
+npm run preview    # Preview production build
+```
+
+### Supabase Deployment
+```bash
+# Deploy edge functions
+supabase functions deploy function-name
+
+# Run migrations
+supabase db push
+
+# Generate types
+supabase gen types typescript --local > src/lib/database.types.ts
+```
+
+## Common Patterns
+
+### Modal Dialogs
+```typescript
+// Use Radix Dialog with custom styling
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+
+<Dialog open={isOpen} onOpenChange={setIsOpen}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Title</DialogTitle>
+    </DialogHeader>
+    {/* Content */}
+  </DialogContent>
+</Dialog>
+```
+
+### Toast Notifications
+```typescript
+// Use react-hot-toast
+import toast from 'react-hot-toast';
+
+toast.success('Success message');
+toast.error('Error message');
+toast.loading('Loading...');
+```
+
+### Loading States
+```typescript
+// Consistent loading UI
+if (loading) {
+  return (
+    <div className="flex items-center justify-center p-8">
+      <div className="relative w-16 h-16">
+        <div className="absolute inset-0 border-4 border-primary-200 dark:border-primary-900 rounded-full"></div>
+        <div className="absolute inset-0 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    </div>
+  );
+}
+```
+
+### Empty States
+```typescript
+// Consistent empty state UI
+if (data.length === 0) {
+  return (
+    <div className="text-center py-12">
+      <Icon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+      <h3 className="text-lg font-semibold mb-2">No items found</h3>
+      <p className="text-muted-foreground mb-4">Description of empty state</p>
+      <Button onClick={handleAction}>Action</Button>
+    </div>
+  );
+}
+```
+
+## Git Workflow
+- **Branch naming**: `feature/description`, `fix/description`, `refactor/description`
+- **Commit messages**: Descriptive, present tense ("Add feature" not "Added feature")
+- **Pull requests**: Include description, screenshots for UI changes
+- **Code review**: Required before merging to main
+
+## Documentation
+- **Component docs**: Add JSDoc comments for complex components
+- **Type docs**: Document complex types and interfaces
+- **README files**: Keep feature-specific READMEs updated
+- **Migration notes**: Document breaking changes in migrations
+
+## Accessibility
+- **Semantic HTML**: Use appropriate HTML elements
+- **ARIA labels**: Add labels for screen readers
+- **Keyboard navigation**: Ensure all interactive elements are keyboard accessible
+- **Focus management**: Manage focus for modals and dynamic content
+- **Color contrast**: Ensure sufficient contrast ratios
+- **Alt text**: Provide descriptive alt text for images
+
+## Browser Support
+- **Modern browsers**: Chrome, Firefox, Safari, Edge (latest 2 versions)
+- **Mobile**: iOS Safari, Chrome Android
+- **No IE11**: Modern JavaScript features used
+
+## Known Limitations
+- **Mock data**: Some features use mock data in development
+- **Demo accounts**: Special handling for @demo.com accounts
+- **Canvas sync**: Requires university-specific Canvas URL configuration
+- **Google Calendar**: Requires OAuth setup per university
+- **AI features**: Require API keys and may have rate limits
+
+## Future Enhancements
+- **React Query**: For better server state management
+- **WebSockets**: For real-time updates
+- **PWA**: Progressive Web App capabilities
+- **Mobile app**: React Native version
+- **Analytics**: User behavior tracking
+- **A/B testing**: Feature experimentation framework
+
+## Resources
+- **Supabase Docs**: https://supabase.com/docs
+- **Tailwind Docs**: https://tailwindcss.com/docs
+- **Radix UI**: https://www.radix-ui.com/
+- **Framer Motion**: https://www.framer.com/motion/
+- **React Router**: https://reactrouter.com/
+
+## Questions or Issues?
+- Check existing documentation in `/docs` folder
+- Review similar components for patterns
+- Consult team members for architectural decisions
+- Create GitHub issues for bugs or feature requests

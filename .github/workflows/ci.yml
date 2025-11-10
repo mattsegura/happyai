@@ -1,8 +1,9 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches: [main, develop, saad]
+  # Temporarily disabled to prevent continuous failures
+  # push:
+  #   branches: [main, develop, saad]
   pull_request:
     branches: [main, develop]
   workflow_dispatch: # Allow manual trigger

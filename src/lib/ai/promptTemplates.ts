@@ -450,6 +450,190 @@ Respond ONLY with valid JSON.`,
 };
 
 // =====================================================
+// ADMIN ANALYTICS: CORRELATION ANALYSIS (Phase 3)
+// =====================================================
+
+export const CORRELATION_ANALYSIS_PROMPT: PromptTemplate = {
+  version: 'v1.0',
+  featureType: 'correlation_analysis',
+  model: 'claude-3-sonnet-20240229',
+  systemPrompt: 'You are an expert data analyst specializing in educational psychology and student wellbeing analytics.',
+  template: `Analyze the following data showing the relationship between student emotional wellbeing (sentiment) and academic performance (GPA).
+
+**Statistical Summary:**
+- Correlation coefficient (r): {r_value}
+- P-value: {p_value}
+- Sample size: {n_students} students
+
+**Data Breakdown by Department:**
+{data_summary}
+
+**Context:**
+- Sentiment is measured on a 6-tier scale (1=most negative, 6=most positive)
+- GPA is on a 0-100 scale
+- This analysis covers the past {time_period}
+
+**Task:**
+Provide a comprehensive analysis of the relationship between emotional wellbeing and academic performance.
+
+1. **Summary** (2-3 sentences): Explain the correlation strength, direction, and statistical significance in plain language that school administrators can understand.
+
+2. **Key Insights** (3-4 points): Identify the most important findings from this data, such as:
+   - How much difference in GPA exists between high-sentiment and low-sentiment students?
+   - Which departments show the strongest/weakest correlation?
+   - Any time-based patterns (midterms, finals, etc.)
+   - The practical significance of these findings
+
+3. **Actionable Recommendations** (2-3 points): Suggest evidence-based interventions that could improve student outcomes based on this correlation.
+
+**Output Format (JSON):**
+\`\`\`json
+{
+  "summary": "Clear explanation of the correlation in 2-3 sentences",
+  "insights": [
+    "Insight 1 with specific data points",
+    "Insight 2 with specific data points",
+    "Insight 3 with specific data points"
+  ],
+  "recommendations": [
+    "Specific, actionable recommendation 1",
+    "Specific, actionable recommendation 2"
+  ]
+}
+\`\`\`
+
+Respond ONLY with valid JSON.`,
+  variables: ['r_value', 'p_value', 'n_students', 'data_summary', 'time_period']
+};
+
+// =====================================================
+// ADMIN ANALYTICS: EMOTIONAL TRENDS (Phase 3)
+// =====================================================
+
+export const EMOTIONAL_TRENDS_PROMPT: PromptTemplate = {
+  version: 'v1.0',
+  featureType: 'emotional_trends',
+  model: 'claude-3-sonnet-20240229',
+  systemPrompt: 'You are an expert in student mental health and wellbeing analytics.',
+  template: `Analyze emotional check-in data to identify the top 3 most significant trends.
+
+**Time Period:** {time_period}
+**Total Check-ins:** {total_check_ins}
+
+**Emotion Frequency Distribution:**
+{emotion_data}
+
+**Context:**
+- 6-tier sentiment system (1=most negative, 6=most positive)
+- Tier 1: Scared, Sad, Lonely
+- Tier 2: Frustrated, Worried, Nervous
+- Tier 3: Tired, Bored, Careless
+- Tier 4: Peaceful, Relieved, Content
+- Tier 5: Hopeful, Proud
+- Tier 6: Happy, Excited, Inspired
+
+**Additional Context (if available):**
+{additional_context}
+
+**Task:**
+Identify and analyze the most important emotional patterns in this data.
+
+1. **Top 3 Most Common Emotions:** List the most frequently reported emotions with their frequency percentage and tier level.
+
+2. **Top 3 Most Concerning Trends:** Identify worrying patterns such as:
+   - Rising negative emotions
+   - Specific day-of-week patterns
+   - Grade level or department-specific issues
+   - Time-of-year patterns (exam stress, etc.)
+
+3. **Actionable Recommendation:** Provide ONE specific, practical recommendation to address the most concerning trend.
+
+**Output Format (JSON):**
+\`\`\`json
+{
+  "commonEmotions": [
+    {
+      "emotion": "Tired",
+      "frequency": 0.225,
+      "tier": 3,
+      "note": "Brief context about why this emotion is common"
+    }
+  ],
+  "concerningTrends": [
+    "Detailed description of concerning trend 1 with specific data",
+    "Detailed description of concerning trend 2 with specific data",
+    "Detailed description of concerning trend 3 with specific data"
+  ],
+  "recommendation": "One specific, actionable recommendation to address the most pressing concern"
+}
+\`\`\`
+
+Respond ONLY with valid JSON.`,
+  variables: ['time_period', 'total_check_ins', 'emotion_data', 'additional_context']
+};
+
+// =====================================================
+// ADMIN ANALYTICS: ACADEMIC RISK DRIVERS (Phase 3)
+// =====================================================
+
+export const ACADEMIC_RISK_DRIVERS_PROMPT: PromptTemplate = {
+  version: 'v1.0',
+  featureType: 'risk_drivers',
+  model: 'claude-3-sonnet-20240229',
+  systemPrompt: 'You are an expert in educational analytics and student success interventions.',
+  template: `Analyze the primary factors contributing to academic risk across the student population.
+
+**Time Period:** {time_period}
+**Total Students Analyzed:** {total_students}
+
+**Risk Factor Data:**
+{risk_factors_data}
+
+**Department Breakdown:**
+{department_data}
+
+**Task:**
+Identify the top 3 academic risk drivers and provide targeted intervention strategies.
+
+For each of the top 3 risk drivers:
+1. Explain why this factor is particularly concerning
+2. Identify which student populations are most affected
+3. Suggest 2-3 specific intervention strategies
+
+**Output Format (JSON):**
+\`\`\`json
+{
+  "topDrivers": [
+    {
+      "driver": "Missed Assignments",
+      "studentsAffected": 216,
+      "percentOfStudents": 22.3,
+      "severity": "Critical",
+      "explanation": "Why this is the #1 concern",
+      "mostAffectedGroups": ["11th graders", "Mathematics department"],
+      "interventions": [
+        "Specific intervention strategy 1",
+        "Specific intervention strategy 2",
+        "Specific intervention strategy 3"
+      ]
+    }
+  ],
+  "departmentInsights": [
+    {
+      "department": "mathematics",
+      "primaryIssue": "Low grades",
+      "recommendation": "Specific recommendation for this department"
+    }
+  ],
+  "overallRecommendation": "One high-impact, institution-wide recommendation"
+}
+\`\`\`
+
+Respond ONLY with valid JSON.`,
+  variables: ['time_period', 'total_students', 'risk_factors_data', 'department_data']
+};
+
+// =====================================================
 // PROMPT VERSIONING
 // =====================================================
 
@@ -462,6 +646,9 @@ export const PROMPT_VERSIONS: Record<string, string> = {
   'grade_insights_v1.0': GRADE_PROJECTION_INSIGHTS_PROMPT.template,
   'analyze_feedback_v1.0': ANALYZE_FEEDBACK_PROMPT.template,
   'detect_patterns_v1.0': DETECT_FEEDBACK_PATTERNS_PROMPT.template,
+  'correlation_analysis_v1.0': CORRELATION_ANALYSIS_PROMPT.template,
+  'emotional_trends_v1.0': EMOTIONAL_TRENDS_PROMPT.template,
+  'risk_drivers_v1.0': ACADEMIC_RISK_DRIVERS_PROMPT.template,
 };
 
 export default {
@@ -473,6 +660,9 @@ export default {
   GRADE_PROJECTION_INSIGHTS_PROMPT,
   ANALYZE_FEEDBACK_PROMPT,
   DETECT_FEEDBACK_PATTERNS_PROMPT,
+  CORRELATION_ANALYSIS_PROMPT,
+  EMOTIONAL_TRENDS_PROMPT,
+  ACADEMIC_RISK_DRIVERS_PROMPT,
   fillTemplate,
   PROMPT_VERSIONS,
 };

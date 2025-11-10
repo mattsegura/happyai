@@ -9,9 +9,10 @@ name: Canvas Data Sync
 # =====================================================
 
 on:
-  schedule:
-    # Run every 15 minutes
-    - cron: '*/15 * * * *'
+  # Disabled until Supabase Edge Functions are set up
+  # schedule:
+  #   # Run every 15 minutes
+  #   - cron: '*/15 * * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
