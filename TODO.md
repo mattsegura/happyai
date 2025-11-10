@@ -15,4 +15,4 @@
 - [x] Run linter (`npm run lint`) to ensure no errors.
 - [x] If portal causes alignment issues, calculate dynamic position using button ref's bounding rect.
 
-**Status**: Complete
+**Status**: Complet
