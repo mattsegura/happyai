@@ -6,21 +6,33 @@ import {
   Target,
   Share2,
   TrendingUp,
+  FileUp,
   Gauge,
   Clock,
   Users,
   BarChart3,
+  Sparkles,
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Zap,
   BookOpen,
+  MessageSquare,
+  PenTool,
+  Upload,
+  GraduationCap,
   Activity,
+  Send,
+  Layers,
   Lock,
-  Send
+  FileText
 } from 'lucide-react';
 import { Logo } from '../ui/logo';
+import { FullScreenCalendar } from '../ui/fullscreen-calendar';
 import { PromptBox } from '../ui/chatgpt-prompt-input';
 import { AIStudyFlow } from '../ui/ai-study-flow';
+import { PageHeader } from '../ui/page-header';
+import { Footer } from '../ui/footer';
 
 // AI Chat Interface Component
 interface AIChatInterfaceProps {
@@ -181,8 +193,7 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
 
       {/* Premium Chat Messages */}
       <div className="relative h-[400px] overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-        <AnimatePresence>
-          {messages.map((message, index) => (
+        {messages.map((message, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -225,7 +236,6 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
               </div>
             </motion.div>
           ))}
-        </AnimatePresence>
 
         {isSending && (
           <motion.div
@@ -283,6 +293,7 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
               name="message" 
               value={inputValue}
               onChange={(e) => setInputValue((e.target as HTMLTextAreaElement).value)}
+              disableExtras={true}
             />
           )}
         </div>
@@ -300,13 +311,16 @@ function AIChatInterface({ onStudyPlanGenerated, onFlowStart, onFlowComplete, is
   );
 }
 
+// Study Tools Section Component with Toggle
 export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) {
   const [activeSection, setActiveSection] = useState<string>('hero');
-  const [, setStudyBlocks] = useState<StudyBlock[]>([]);
-  const [, setAnimatedBlocks] = useState<Array<{id: number, name: string, time: string, datetime: string, color: string}>>([]);
+  const [studyBlocks, setStudyBlocks] = useState<StudyBlock[]>([]);
+  const [animatedBlocks, setAnimatedBlocks] = useState<Array<{id: number, name: string, time: string, datetime: string, color: string}>>([]);
   const [isFlowGenerating, setIsFlowGenerating] = useState(false);
   const [isFlowComplete, setIsFlowComplete] = useState(false);
   const [flowResetKey, setFlowResetKey] = useState(0);
+  const [activeStudyTool, setActiveStudyTool] = useState<'notes' | 'summary' | 'flashcards' | 'quizzes'>('notes');
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
 
   const handleStudyPlanGenerated = (blocks: StudyBlock[]) => {
     if (blocks.length === 0) {
@@ -335,63 +349,62 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
     });
   };
 
-  // // Sample calendar events
-  // const calendarEvents = [
-  //   {
-  //     day: new Date("2025-08-11"),
-  //     events: [
-  //       { 
-  //         id: 1, 
-  //         name: "Biology Research Paper", 
-  //         time: "Due 11:59 PM", 
-  //         datetime: "2025-08-11T23:59",
-  //         color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     day: new Date("2025-08-16"),
-  //     events: [
-  //       { 
-  //         id: 2, 
-  //         name: "History Project", 
-  //         time: "Due 11:59 PM", 
-  //         datetime: "2025-08-16T23:59",
-  //         color: "bg-amber-400 dark:bg-amber-500 border-amber-500 dark:border-amber-400 text-white"
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     day: new Date("2025-08-20"),
-  //     events: [
-  //       { 
-  //         id: 3, 
-  //         name: "Calculus Exam", 
-  //         time: "10:00 AM", 
-  //         datetime: "2025-08-20T10:00",
-  //         color: "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500 text-white"
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     day: new Date("2025-08-26"),
-  //     events: [
-  //       { 
-  //         id: 4, 
-  //         name: "AP Biology Exam", 
-  //         time: "9:00 AM", 
-  //         datetime: "2025-08-26T09:00",
-  //         color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
-  //       },
-  //     ],
-  //   },
-  // ];
+  // Sample calendar events
+  const calendarEvents = [
+    {
+      day: new Date("2025-08-11"),
+      events: [
+        { 
+          id: 1, 
+          name: "Biology Research Paper", 
+          time: "Due 11:59 PM", 
+          datetime: "2025-08-11T23:59",
+          color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
+        },
+      ],
+    },
+    {
+      day: new Date("2025-08-16"),
+      events: [
+        { 
+          id: 2, 
+          name: "History Project", 
+          time: "Due 11:59 PM", 
+          datetime: "2025-08-16T23:59",
+          color: "bg-amber-400 dark:bg-amber-500 border-amber-500 dark:border-amber-400 text-white"
+        },
+      ],
+    },
+    {
+      day: new Date("2025-08-20"),
+      events: [
+        { 
+          id: 3, 
+          name: "Calculus Exam", 
+          time: "10:00 AM", 
+          datetime: "2025-08-20T10:00",
+          color: "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500 text-white"
+        },
+      ],
+    },
+    {
+      day: new Date("2025-08-26"),
+      events: [
+        { 
+          id: 4, 
+          name: "AP Biology Exam", 
+          time: "9:00 AM", 
+          datetime: "2025-08-26T09:00",
+          color: "bg-emerald-400 dark:bg-emerald-500 border-emerald-500 dark:border-emerald-400 text-white"
+        },
+      ],
+    },
+  ];
 
   const sections = [
     { id: 'hero', name: 'Overview', icon: Brain },
     { id: 'workload', name: 'Workload Gauge™', icon: Gauge },
     { id: 'calendar', name: 'Smart Calendar™', icon: Calendar },
-    { id: 'autolearn', name: 'AutoLearn™', icon: Sparkles },
     { id: 'gpa', name: 'GPA Pathway™', icon: Target },
     { id: 'studyshare', name: 'Study Share™', icon: Share2 },
     { id: 'insights', name: 'Performance Insights™', icon: TrendingUp },
@@ -400,29 +413,7 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFFDF8] via-blue-50/30 to-[#FFFDF8] dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Fixed Navigation Header */}
-      <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700"
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Logo />
-
-            {/* Back to Home Button */}
-            <motion.button
-              onClick={onNavigateHome}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Home</span>
-            </motion.button>
-          </div>
-        </div>
-      </motion.header>
+      <PageHeader theme="blue" />
 
       {/* Side Navigation */}
       <motion.nav
@@ -550,6 +541,7 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                     { label: 'Class-by-class breakdowns', icon: BookOpen },
                     { label: 'Stress level indicators', icon: Gauge },
                   ].map((item, i) => {
+                    const Icon = item.icon;
                     return (
                       <motion.div
                         key={i}
@@ -719,71 +711,405 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
             </div>
           </motion.section>
 
-          {/* AutoLearn Engine Section */}
+          {/* AI-Powered Study Tools Section */}
           <motion.section
-            id="autolearn"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            onViewportEnter={() => setActiveSection('autolearn')}
             className="mb-32"
           >
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
-                  AutoLearn Engine™
-                </h2>
-              </div>
+            {/* Header */}
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 mb-6"
+              >
+                <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">AI Study Assistant</span>
+              </motion.div>
 
-              <p className="text-lg text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Upload any file — PDF, lecture video, or audio recording — and watch as our AI instantly 
-                generates flashcards, quizzes, and comprehensive study materials tailored to your learning style.
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+                Upload Any File, Master Any Subject
+              </h2>
+              
+              <p className="text-xl text-slate-700 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed">
+                Upload PDFs, PowerPoints, Word docs, or lecture notes — our AI instantly transforms them into 
+                personalized study materials. From auto-generated notes to custom quizzes, everything you need 
+                to excel is created in seconds.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: Upload,
-                  title: 'Upload Any File',
-                  description: 'PDFs, videos, audio recordings, lecture notes — we handle it all',
-                  color: 'from-blue-500 to-sky-500'
-                },
-                {
-                  icon: Brain,
-                  title: 'AI Processing',
-                  description: 'Advanced algorithms extract key concepts and learning objectives',
-                  color: 'from-purple-500 to-pink-500'
-                },
-                {
-                  icon: FileUp,
-                  title: 'Instant Materials',
-                  description: 'Get flashcards, quizzes, and study guides in seconds',
-                  color: 'from-green-500 to-emerald-500'
-                },
-              ].map((item, i) => {
-                const Icon = item.icon;
-                return (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-700"
-                  >
-                    <div className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center mb-6`}>
-                      <Icon className="w-8 h-8 text-white" />
+            {/* Interactive Study Tools Demo */}
+            <div className="max-w-7xl mx-auto">
+              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-slate-700">
+                <div className="grid lg:grid-cols-[280px,1fr]">
+                  {/* Vertical Tab Navigation */}
+                  <div className="bg-slate-800/50 p-6 border-r border-slate-700">
+                    <div className="space-y-3">
+                      {[
+                        { id: 'notes', label: 'Auto Notes', icon: FileText, color: 'from-blue-500 to-cyan-500' },
+                        { id: 'summary', label: 'Auto Summary', icon: BookOpen, color: 'from-purple-500 to-pink-500' },
+                        { id: 'flashcards', label: 'Auto Flashcards', icon: Layers, color: 'from-orange-500 to-red-500' },
+                        { id: 'quizzes', label: 'Auto Quizzes', icon: Brain, color: 'from-green-500 to-emerald-500' }
+                      ].map((tool) => {
+                        const Icon = tool.icon;
+                        const isActive = activeStudyTool === tool.id;
+                        return (
+                          <motion.button
+                            key={tool.id}
+                            onClick={() => setActiveStudyTool(tool.id)}
+                            whileHover={{ scale: 1.02, x: 4 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`w-full text-left p-4 rounded-xl transition-all ${
+                              isActive 
+                                ? 'bg-gradient-to-r ' + tool.color + ' shadow-lg' 
+                                : 'bg-slate-700/50 hover:bg-slate-700'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20' : 'bg-slate-600'}`}>
+                                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-300'}`} />
+                              </div>
+                              <span className={`font-semibold ${isActive ? 'text-white' : 'text-slate-300'}`}>
+                                {tool.label}
+                              </span>
+                            </div>
+                          </motion.button>
+                        );
+                      })}
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{item.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{item.description}</p>
-                  </motion.div>
-                );
-              })}
+
+                    {/* Example Badge */}
+                    <div className="mt-8 p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
+                      <p className="text-xs font-semibold text-emerald-400 mb-2">REAL STUDENT EXAMPLE</p>
+                      <p className="text-sm text-slate-300 leading-relaxed">
+                        Sarah uploaded her Biology 201 lecture on the cardiovascular system
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Content Display Area */}
+                  <div className="p-8 lg:p-12 min-h-[600px]">
+                    <AnimatePresence mode="wait">
+                      {/* Auto Notes */}
+                      {activeStudyTool === 'notes' && (
+                        <motion.div
+                          key="notes"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
+                          className="prose prose-invert max-w-none"
+                        >
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl">
+                              <FileText className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-2xl font-bold text-white m-0">Structured Study Notes</h3>
+                              <p className="text-slate-400 text-sm m-0">AI-organized for maximum retention</p>
+                            </div>
+                          </div>
+
+                          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                            <h4 className="text-xl font-bold text-white mb-4">The Cardiovascular System</h4>
+                            
+                            <div className="space-y-4 text-slate-300">
+                              <div>
+                                <h5 className="text-lg font-semibold text-cyan-400 mb-2">Heart Structure & Function</h5>
+                                <ul className="space-y-2 text-sm leading-relaxed">
+                                  <li><strong>Four Chambers:</strong> Right atrium receives deoxygenated blood from body → Right ventricle pumps to lungs → Left atrium receives oxygenated blood → Left ventricle pumps to body</li>
+                                  <li><strong>Valves:</strong> Tricuspid (right), Bicuspid/Mitral (left), Pulmonary, Aortic - prevent backflow</li>
+                                  <li><strong>Cardiac Cycle:</strong> Systole (contraction) & Diastole (relaxation) = ~72 beats/min at rest</li>
+                                </ul>
+                              </div>
+
+                              <div>
+                                <h5 className="text-lg font-semibold text-cyan-400 mb-2">Blood Circulation Pathways</h5>
+                                <ul className="space-y-2 text-sm leading-relaxed">
+                                  <li><strong>Pulmonary Circuit:</strong> Heart → Lungs (gas exchange: CO₂ out, O₂ in) → Heart</li>
+                                  <li><strong>Systemic Circuit:</strong> Heart → Body tissues (deliver O₂, nutrients; collect CO₂, waste) → Heart</li>
+                                  <li><strong>Coronary Circulation:</strong> Supplies heart muscle itself via coronary arteries</li>
+                                </ul>
+                              </div>
+
+                              <div>
+                                <h5 className="text-lg font-semibold text-cyan-400 mb-2">Blood Vessels</h5>
+                                <ul className="space-y-2 text-sm leading-relaxed">
+                                  <li><strong>Arteries:</strong> Thick walls, carry blood away from heart (mostly oxygenated, except pulmonary)</li>
+                                  <li><strong>Veins:</strong> Thinner walls, valves prevent backflow, return blood to heart</li>
+                                  <li><strong>Capillaries:</strong> One cell thick, enable nutrient/gas exchange with tissues</li>
+                                </ul>
+                              </div>
+
+                              <div>
+                                <h5 className="text-lg font-semibold text-cyan-400 mb-2">Key Terms</h5>
+                                <p className="text-sm leading-relaxed">
+                                  <strong>Stroke Volume:</strong> Blood pumped per beat (~70mL) | 
+                                  <strong> Cardiac Output:</strong> Total blood pumped per minute (~5L) | 
+                                  <strong> Blood Pressure:</strong> Force on arterial walls (120/80 mmHg normal)
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* Auto Summary */}
+                      {activeStudyTool === 'summary' && (
+                        <motion.div
+                          key="summary"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl">
+                              <BookOpen className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-2xl font-bold text-white m-0">Concise Summary</h3>
+                              <p className="text-slate-400 text-sm m-0">Key concepts at a glance</p>
+                            </div>
+                          </div>
+
+                          <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 rounded-xl p-8 border border-purple-500/30">
+                            <div className="space-y-6">
+                              <div>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm">1</div>
+                                  <h4 className="text-xl font-bold text-white">Core Function</h4>
+                                </div>
+                                <p className="text-slate-200 leading-relaxed ml-10">
+                                  The cardiovascular system is a closed-loop network that delivers oxygen and nutrients to tissues 
+                                  while removing carbon dioxide and metabolic waste. The heart acts as a dual pump: the right side 
+                                  sends blood to the lungs for oxygenation, while the left side pumps oxygen-rich blood throughout the body.
+                                </p>
+                              </div>
+
+                              <div>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm">2</div>
+                                  <h4 className="text-xl font-bold text-white">Critical Components</h4>
+                                </div>
+                                <p className="text-slate-200 leading-relaxed ml-10">
+                                  <strong className="text-pink-300">Heart:</strong> Four-chambered muscular pump with valves ensuring unidirectional flow. <br />
+                                  <strong className="text-pink-300">Blood Vessels:</strong> Arteries (high pressure, thick walls) carry blood away from heart; 
+                                  veins (lower pressure, valves) return blood; capillaries (microscopic) facilitate exchange. <br />
+                                  <strong className="text-pink-300">Blood:</strong> Transports O₂, CO₂, nutrients, hormones, and immune cells.
+                                </p>
+                              </div>
+
+                              <div>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-sm">3</div>
+                                  <h4 className="text-xl font-bold text-white">Clinical Significance</h4>
+                                </div>
+                                <p className="text-slate-200 leading-relaxed ml-10">
+                                  Understanding this system is vital for diagnosing conditions like hypertension, heart failure, 
+                                  atherosclerosis, and arrhythmias. Cardiac output (stroke volume × heart rate) determines tissue 
+                                  perfusion, and disruptions can lead to organ damage or death.
+                                </p>
+                              </div>
+
+                              <div className="bg-slate-800/50 rounded-lg p-4 border-l-4 border-purple-500">
+                                <p className="text-sm text-slate-300 italic">
+                                  <strong>Quick Takeaway:</strong> The cardiovascular system is your body's highway system — 
+                                  heart as the engine, vessels as roads, blood as delivery trucks carrying essential cargo to keep you alive.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* Auto Flashcards */}
+                      {activeStudyTool === 'flashcards' && (
+                        <motion.div
+                          key="flashcards"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl">
+                              <Layers className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-2xl font-bold text-white m-0">Interactive Flashcards</h3>
+                              <p className="text-slate-400 text-sm m-0">Click to flip • 24 cards generated</p>
+                            </div>
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-4">
+                            {[
+                              {
+                                front: "What are the four chambers of the heart?",
+                                back: "Right Atrium, Right Ventricle, Left Atrium, Left Ventricle"
+                              },
+                              {
+                                front: "What is the function of the pulmonary circuit?",
+                                back: "Carries deoxygenated blood from the heart to the lungs for gas exchange, then returns oxygenated blood back to the heart"
+                              },
+                              {
+                                front: "Define Cardiac Output",
+                                back: "The total volume of blood the heart pumps per minute. Formula: Stroke Volume × Heart Rate (normally ~5 liters/min)"
+                              },
+                              {
+                                front: "What prevents backflow of blood in veins?",
+                                back: "One-way valves located throughout the venous system, which close when blood tries to flow backward due to gravity"
+                              },
+                              {
+                                front: "What is systole vs. diastole?",
+                                back: "Systole = contraction phase (heart pumps blood out)\nDiastole = relaxation phase (chambers fill with blood)"
+                              },
+                              {
+                                front: "Where does gas exchange occur?",
+                                back: "In the capillaries - tiny blood vessels with walls only one cell thick that allow O₂ and CO₂ to diffuse between blood and tissues"
+                              }
+                            ].map((card, idx) => (
+                              <motion.div
+                                key={idx}
+                                whileHover={{ scale: 1.02 }}
+                                className="h-48 cursor-pointer perspective-1000"
+                                onClick={(e) => {
+                                  const card = e.currentTarget.querySelector('.flashcard-inner');
+                                  card?.classList.toggle('rotate-y-180');
+                                }}
+                              >
+                                <div className="flashcard-inner relative w-full h-full transition-transform duration-500 preserve-3d">
+                                  {/* Front */}
+                                  <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-6 flex items-center justify-center shadow-xl">
+                                    <p className="text-white text-center font-semibold text-lg leading-relaxed">
+                                      {card.front}
+                                    </p>
+                                  </div>
+                                  {/* Back */}
+                                  <div className="absolute inset-0 backface-hidden bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl p-6 flex items-center justify-center shadow-xl rotate-y-180">
+                                    <p className="text-white text-center text-base leading-relaxed">
+                                      {card.back}
+                                    </p>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </div>
+
+                          <div className="mt-6 text-center">
+                            <p className="text-slate-400 text-sm">
+                              Click any card to reveal the answer • 
+                              <span className="text-orange-400 font-semibold"> 18 more cards available</span>
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* Auto Quizzes */}
+                      {activeStudyTool === 'quizzes' && (
+                        <motion.div
+                          key="quizzes"
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl">
+                              <Brain className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <h3 className="text-2xl font-bold text-white m-0">Practice Quiz</h3>
+                              <p className="text-slate-400 text-sm m-0">Test your knowledge • 15 questions</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-6">
+                            {[
+                              {
+                                question: "1. Which chamber of the heart receives oxygenated blood from the lungs?",
+                                options: ["Right Atrium", "Right Ventricle", "Left Atrium", "Left Ventricle"],
+                                correct: 2
+                              },
+                              {
+                                question: "2. What is the primary function of capillaries?",
+                                options: [
+                                  "Carry blood away from the heart at high pressure",
+                                  "Return blood to the heart using valves",
+                                  "Enable nutrient and gas exchange with tissues",
+                                  "Store blood for emergency use"
+                                ],
+                                correct: 2
+                              },
+                              {
+                                question: "3. Normal resting heart rate for adults is approximately:",
+                                options: ["40-50 bpm", "60-100 bpm", "120-140 bpm", "150-180 bpm"],
+                                correct: 1
+                              }
+                            ].map((q, qIdx) => (
+                              <div key={qIdx} className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                                <p className="text-white font-semibold text-lg mb-4">{q.question}</p>
+                                <div className="space-y-2">
+                                  {q.options.map((option, oIdx) => (
+                                    <motion.button
+                                      key={oIdx}
+                                      whileHover={{ scale: 1.01, x: 4 }}
+                                      whileTap={{ scale: 0.99 }}
+                                      className={`w-full text-left p-4 rounded-lg transition-all ${
+                                        selectedAnswers[qIdx] === oIdx
+                                          ? selectedAnswers[qIdx] === q.correct
+                                            ? 'bg-green-500/20 border-2 border-green-500'
+                                            : 'bg-red-500/20 border-2 border-red-500'
+                                          : 'bg-slate-700/50 hover:bg-slate-700 border-2 border-transparent'
+                                      }`}
+                                      onClick={() => {
+                                        setSelectedAnswers(prev => ({ ...prev, [qIdx]: oIdx }));
+                                      }}
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-slate-200">{option}</span>
+                                        {selectedAnswers[qIdx] === oIdx && (
+                                          <span className="text-sm font-semibold">
+                                            {oIdx === q.correct ? 
+                                              <span className="text-green-400">✓ Correct!</span> : 
+                                              <span className="text-red-400">✗ Try again</span>
+                                            }
+                                          </span>
+                                        )}
+                                      </div>
+                                    </motion.button>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+
+                            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl p-6 border border-green-500/30">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-white font-semibold mb-1">Quiz Progress</p>
+                                  <p className="text-slate-400 text-sm">
+                                    {Object.keys(selectedAnswers).length} of 3 answered • 12 more questions available
+                                  </p>
+                                </div>
+                                <motion.button
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-lg shadow-lg"
+                                >
+                                  Continue Quiz →
+                                </motion.button>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.section>
 
@@ -821,23 +1147,21 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                   ].map((item, i) => {
                     const Icon = item.icon;
                     return (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
-                        className="flex items-center gap-3"
-                      >
-                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                          <Icon className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        </div>
                         <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
-                      </motion.div>
+                      </div>
                     );
                   })}
                 </div>
               </div>
 
               <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
                 whileHover={{ scale: 1.02 }}
                 className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-200 dark:border-slate-700"
               >
@@ -913,176 +1237,37 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
                 {
                   icon: Users,
                   title: 'Study Groups',
-                  description: 'Create and manage collaborative study groups'
+                  description: 'Create and manage collaborative learning spaces'
                 },
                 {
-                  icon: MessageSquare,
-                  title: 'Group Chat',
-                  description: 'Real-time messaging for study discussions'
+                  icon: TrendingUp,
+                  title: 'Track Progress',
+                  description: 'Monitor group performance and engagement levels'
                 },
                 {
-                  icon: PenTool,
-                  title: 'Shared Whiteboard',
-                  description: 'Collaborative whiteboard for visual learning'
-                },
-              ].map((item, i) => {
-                const Icon = item.icon;
+                  icon: Lock,
+                  title: 'Secure Sharing',
+                  description: 'End-to-end encryption for all shared materials'
+                }
+              ].map((feature, idx) => {
+                const Icon = feature.icon;
                 return (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    whileHover={{ y: -8, scale: 1.05 }}
-                    className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700"
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-lg flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6 text-white" />
+                  <div key={idx} className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:border-pink-300 dark:hover:border-pink-700 transition-colors">
+                    <div className="p-3 bg-pink-100 dark:bg-pink-900/30 rounded-xl w-fit mb-4">
+                      <Icon className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                     </div>
-                    <h3 className="font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{item.description}</p>
-                  </motion.div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{feature.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm">{feature.description}</p>
+                  </div>
                 );
               })}
             </div>
           </motion.section>
-
-          {/* Performance Insights Dashboard Section */}
-          <motion.section
-            id="insights"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            onViewportEnter={() => setActiveSection('insights')}
-            className="mb-32"
-          >
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl">
-                  <TrendingUp className="w-6 h-6 text-white" />
-                </div>
-                <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
-                  Performance Insights Dashboard™
-                </h2>
-              </div>
-
-              <p className="text-lg text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                Visual progress tracking that shows your quiz performance, GPA trajectory, and study efficiency. 
-                Know exactly where you stand and where you're headed.
-              </p>
-            </div>
-
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-2xl p-8 border border-slate-200 dark:border-slate-700"
-            >
-              <div className="grid md:grid-cols-3 gap-8 mb-8">
-                {[
-                  { label: 'Quiz Average', value: '87%', color: 'from-blue-500 to-sky-500', icon: BookOpen },
-                  { label: 'Study Hours', value: '24.5', color: 'from-purple-500 to-pink-500', icon: Clock },
-                  { label: 'GPA Trend', value: '+0.3', color: 'from-green-500 to-emerald-500', icon: TrendingUp },
-                ].map((stat, i) => {
-                  const Icon = stat.icon;
-                  return (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      className="text-center"
-                    >
-                      <div className={`w-16 h-16 mx-auto mb-4 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center`}>
-                        <Icon className="w-8 h-8 text-white" />
-                      </div>
-                      <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{stat.value}</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</p>
-                    </motion.div>
-                  );
-                })}
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                  <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-sky-500" />
-                    Recent Performance
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { subject: 'Biology Quiz', score: 92, date: 'Nov 3' },
-                      { subject: 'Math Test', score: 85, date: 'Nov 1' },
-                      { subject: 'History Essay', score: 88, date: 'Oct 28' },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-slate-900 dark:text-white text-sm">{item.subject}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{item.date}</p>
-                        </div>
-                        <span className="text-lg font-bold text-sky-600 dark:text-sky-400">{item.score}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                  <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-purple-500" />
-                    Study Efficiency
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      { metric: 'Focus Time', value: '85%' },
-                      { metric: 'Retention Rate', value: '78%' },
-                      { metric: 'Completion Rate', value: '92%' },
-                    ].map((item, i) => (
-                      <div key={i}>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-slate-600 dark:text-slate-400">{item.metric}</span>
-                          <span className="text-sm font-semibold text-slate-900 dark:text-white">{item.value}</span>
-                        </div>
-                        <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: item.value }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, delay: i * 0.1 }}
-                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.section>
-
-          {/* CTA Section */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center py-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">
-              Ready to transform your academic journey?
-            </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
-              Join thousands of students using AI Tutor to achieve their academic goals
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all"
-            >
-              Get Started Free
-            </motion.button>
-          </motion.section>
         </div>
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
-
