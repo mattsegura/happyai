@@ -1,0 +1,58 @@
+📚 Hapi Study Notes Chrome Extension - File Structure
+=====================================================
+
+chrome-extension/
+│
+├── 📄 manifest.json                    # Extension configuration (Manifest V3)
+│
+├── 🎨 popup.html                       # Main UI - Beautiful gradient interface
+│
+├── 📁 scripts/
+│   ├── popup.js                        # UI logic & user interactions
+│   ├── background.js                   # Service worker (API calls)
+│   └── content.js                      # Content script (page context)
+│
+├── 📁 icons/
+│   ├── icon.svg                        # Vector icon source
+│   ├── generate-icons.html             # Tool to generate PNG icons
+│   ├── README.md                       # Icon setup instructions
+│   ├── icon16.png                      # 16x16 icon (generate this)
+│   ├── icon48.png                      # 48x48 icon (generate this)
+│   └── icon128.png                     # 128x128 icon (generate this)
+│
+├── 📖 Documentation/
+│   ├── README.md                       # Main user guide
+│   ├── SETUP.md                        # Detailed setup instructions
+│   ├── QUICK_START.md                  # 5-minute quick start
+│   ├── TESTING.md                      # 33 test cases
+│   ├── CHANGELOG.md                    # Version history
+│   ├── PROJECT_SUMMARY.md              # Project overview
+│   └── FILE_STRUCTURE.txt              # This file
+│
+└── 📁 ../docs/features/
+    └── CHROME_EXTENSION.md             # Technical documentation
+
+Key Files to Start With:
+========================
+1. QUICK_START.md     - Get running in 5 minutes
+2. SETUP.md           - Detailed setup guide
+3. README.md          - Full documentation
+4. manifest.json      - Extension configuration
+5. popup.html         - Main UI
+
+Files You Need to Generate:
+============================
+- icons/icon16.png    - Use generate-icons.html
+- icons/icon48.png    - Use generate-icons.html
+- icons/icon128.png   - Use generate-icons.html
+
+API Keys Required:
+==================
+1. Firecrawl API key  - https://firecrawl.dev
+2. AI API key         - Anthropic or OpenAI
+
+Total Files: 15 (12 existing + 3 to generate)
+Total Lines of Code: ~1,200+
+Total Documentation: ~3,000+ lines
+
+Status: ✅ Ready to use!

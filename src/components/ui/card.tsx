@@ -4,13 +4,19 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const cardVariants = cva(
-  'rounded-2xl border bg-card text-card-foreground shadow-sm',
+  'rounded-2xl border bg-card text-card-foreground',
   {
     variants: {
       variant: {
         default: '',
         hover: 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:border-primary/30 dark:hover:border-primary/40',
         flat: 'bg-muted/50 border-transparent shadow-none',
+      },
+      elevation: {
+        flat: 'shadow-none border-border/40',
+        low: 'shadow-sm border-border/60',
+        medium: 'shadow-md border-border/80',
+        high: 'shadow-lg shadow-primary/5 border-border',
       },
       padding: {
         none: '',
@@ -21,6 +27,7 @@ const cardVariants = cva(
     },
     defaultVariants: {
       variant: 'default',
+      elevation: 'low',
       padding: 'md',
     },
   }
@@ -34,13 +41,13 @@ export interface CardProps
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   (
-    { variant, padding, as: Component = 'div', className, children, ...props },
+    { variant, elevation, padding, as: Component = 'div', className, children, ...props },
     ref
   ) => {
     return (
       <Component
         ref={ref as any}
-        className={cn(cardVariants({ variant, padding }), className)}
+        className={cn(cardVariants({ variant, elevation, padding }), className)}
         {...props}
       >
         {children}
