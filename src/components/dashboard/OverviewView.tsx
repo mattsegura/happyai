@@ -1,4 +1,4 @@
-import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, ArrowRight, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Circle, Sparkles } from 'lucide-react';
+import { BookOpen, Heart, Trophy, MessageSquare, Beaker, TrendingUp, Zap, Activity, ArrowRight, Calendar, ChevronLeft, ChevronRight, CheckCircle2, Circle, Sparkles, GraduationCap, Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { designSystem } from '../../lib/design-system';
 import { useState } from 'react';
@@ -61,112 +61,40 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
 
   const quickStats = [
     {
-      label: 'Current Streak',
-      value: '7',
-      unit: 'days',
-      icon: Zap,
-      color: 'from-orange-500 to-red-500',
-      bgColor: 'bg-orange-50 dark:bg-orange-950/20',
-      iconBg: 'bg-gradient-to-br from-orange-500 to-red-500'
-    },
-    {
-      label: 'Points Today',
-      value: '45',
-      unit: 'pts',
-      icon: Trophy,
-      color: 'from-yellow-500 to-orange-500',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
-      iconBg: 'bg-gradient-to-br from-yellow-500 to-orange-500'
-    },
-    {
-      label: 'Class Rank',
-      value: '#12',
+      label: 'Current GPA',
+      value: '3.72',
       unit: '',
-      icon: TrendingUp,
-      color: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-50 dark:bg-green-950/20',
-      iconBg: 'bg-gradient-to-br from-green-500 to-emerald-500'
+      icon: GraduationCap,
+      color: 'from-blue-500 to-indigo-600',
+      bgColor: 'bg-blue-50 dark:bg-blue-950/20',
+      iconBg: 'bg-gradient-to-br from-blue-500 to-indigo-600'
     },
     {
-      label: 'Current Level',
-      value: '9',
-      unit: '',
-      icon: Activity,
-      color: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-50 dark:bg-purple-950/20',
-      iconBg: 'bg-gradient-to-br from-purple-500 to-pink-500'
-    },
-  ];
-
-  const quickActions = [
-    {
-      id: 'academics',
-      label: 'Academics',
+      label: 'Enrolled Classes',
+      value: '5',
+      unit: 'classes',
       icon: BookOpen,
-      color: 'from-blue-500 to-cyan-600',
-      iconBg: 'bg-gradient-to-br from-blue-500 to-indigo-600',
-      description: 'View grades & assignments',
-      stats: '3 due this week',
-      statColor: 'text-blue-600 dark:text-blue-400',
-      preview: {
-        type: 'assignments',
-        items: [
-          { title: 'Biology Lab Report', due: 'Tomorrow', status: 'pending' },
-          { title: 'Math Problem Set', due: 'Friday', status: 'in-progress' },
-          { title: 'History Essay', due: 'Next Week', status: 'not-started' },
-        ]
-      }
+      color: 'from-purple-500 to-violet-600',
+      bgColor: 'bg-purple-50 dark:bg-purple-950/20',
+      iconBg: 'bg-gradient-to-br from-purple-500 to-violet-600'
     },
     {
-      id: 'wellbeing',
-      label: 'Wellbeing',
-      icon: Heart,
-      color: 'from-rose-500 to-pink-600',
-      iconBg: 'bg-gradient-to-br from-rose-500 to-pink-600',
-      description: 'Track your mood',
-      stats: "Complete today's pulse",
-      statColor: 'text-rose-600 dark:text-rose-400',
-      preview: {
-        type: 'mood-tracker',
-        sentiment: 5, // Current mood level
-        streak: 7,
-        message: 'Coming soon: Consolidated mood tracking and sentiment analytics'
-      }
+      label: 'Upcoming',
+      value: '3',
+      unit: 'assignments',
+      icon: Calendar,
+      color: 'from-amber-500 to-orange-600',
+      bgColor: 'bg-amber-50 dark:bg-amber-950/20',
+      iconBg: 'bg-gradient-to-br from-amber-500 to-orange-600'
     },
     {
-      id: 'hapi',
-      label: 'Hapi AI',
-      icon: MessageSquare,
-      color: 'from-purple-500 to-indigo-600',
-      iconBg: 'bg-gradient-to-br from-purple-500 to-violet-600',
-      description: 'Chat with your AI assistant',
-      stats: 'Ask me anything',
-      statColor: 'text-purple-600 dark:text-purple-400',
-      preview: {
-        type: 'suggestions',
-        items: [
-          'Help with math homework?',
-          'Explain photosynthesis',
-          'Study tips for finals',
-        ]
-      }
-    },
-    {
-      id: 'lab',
-      label: 'Hapi Lab',
-      icon: Beaker,
+      label: 'This Week',
+      value: '2',
+      unit: 'exams',
+      icon: Sparkles,
       color: 'from-emerald-500 to-teal-600',
-      iconBg: 'bg-gradient-to-br from-emerald-500 to-teal-600',
-      description: 'Pulses & Hapi Moments',
-      stats: '2 new moments',
-      statColor: 'text-emerald-600 dark:text-emerald-400',
-      preview: {
-        type: 'moments',
-        items: [
-          { from: 'Sarah', message: 'Thanks for helping me!', time: '2h' },
-          { from: 'Mike', message: 'Great presentation!', time: '5h' },
-        ]
-      }
+      bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
+      iconBg: 'bg-gradient-to-br from-emerald-500 to-teal-600'
     },
   ];
 
@@ -220,140 +148,78 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Quick Actions - Takes 2 columns */}
+        {/* Notifications Section - Takes 2 columns */}
         <div className="lg:col-span-2 flex flex-col">
           <div className="flex items-center justify-between mb-3">
-            <h3 className={designSystem.typography.sectionTitle}>Quick Actions</h3>
-            <button
-              onClick={() => onNavigate('classes')}
-              className={cn(
-                'text-xs md:text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1',
-                designSystem.transition.default,
-                designSystem.interactive.focus
-              )}
-            >
-              View All
-              <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <Bell className="h-5 w-5 text-primary" />
+              <h3 className={designSystem.typography.sectionTitle}>Notifications</h3>
+            </div>
+            <span className="text-xs text-muted-foreground bg-primary/10 px-2 py-1 rounded-full font-semibold">
+              5 new
+            </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.id}
-                  onClick={() => onNavigate(action.id)}
-                  className={cn(
-                    'group relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm text-left',
-                    'h-[200px] sm:h-[220px] flex flex-col',
-                    'hover:shadow-lg hover:-translate-y-1 active:translate-y-0',
-                    designSystem.transition.default,
-                    designSystem.interactive.focus
-                  )}
-                  aria-label={`Navigate to ${action.label}`}
-                >
-                  {/* Header */}
-                  <div className="p-4 md:p-5 pb-3 flex-shrink-0">
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <div className={cn('p-2.5 md:p-3 rounded-xl shadow-md flex-shrink-0', action.iconBg)}>
-                        <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className={cn(designSystem.typography.cardTitle, 'mb-0.5')}>{action.label}</h4>
-                        <p className={cn('text-xs font-medium', action.statColor)}>{action.stats}</p>
-                      </div>
-                      <ArrowRight className={cn('h-4 w-4 text-muted-foreground group-hover:translate-x-1 flex-shrink-0', designSystem.transition.default)} />
-                    </div>
-                  </div>
 
-                  {/* Preview Content - Scrollable with consistent height */}
-                  <div className="flex-1 px-4 md:px-5 pb-4 md:pb-5 overflow-hidden">
-                    {action.preview.type === 'assignments' && (
-                      <div className="space-y-2 h-full flex flex-col justify-center">
-                        {(action.preview.items || []).slice(0, 3).map((item: any, idx: number) => (
-                          <div key={idx} className="flex items-center gap-2 text-xs">
-                            {item.status === 'in-progress' ? (
-                              <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
-                            ) : (
-                              <Circle className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-                            )}
-                            <span className="flex-1 text-foreground/80 truncate">{item.title}</span>
-                            <span className="text-muted-foreground text-[10px]">{item.due}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4 space-y-3">
+            {/* Morning Check-in Reminder */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-rose-200/50 bg-rose-50/50 dark:border-rose-800/50 dark:bg-rose-950/20 hover:bg-rose-100/50 dark:hover:bg-rose-900/20 transition-colors cursor-pointer">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+                <Heart className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">Morning Check-in Reminder</p>
+                <p className="text-xs text-muted-foreground mt-1">Don't forget to complete your daily mood check-in!</p>
+                <p className="text-[10px] text-muted-foreground/70 mt-1">Just now</p>
+              </div>
+            </div>
 
-                    {action.preview.type === 'mood-tracker' && (
-                      <div className="space-y-3 h-full flex flex-col justify-center">
-                        {/* Mood indicator */}
-                        <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20">
-                          <div className="flex items-center gap-2">
-                            <Heart className="h-4 w-4 text-rose-500 fill-rose-500" />
-                            <div>
-                              <p className="text-xs font-semibold text-foreground">Current Mood</p>
-                              <p className="text-[10px] text-muted-foreground">Level {action.preview.sentiment}/6</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5, 6].map((level) => (
-                              <div
-                                key={level}
-                                className={cn(
-                                  'w-1.5 h-6 rounded-full transition-all',
-                                  level <= (action.preview.sentiment || 0)
-                                    ? 'bg-gradient-to-t from-rose-500 to-pink-500'
-                                    : 'bg-muted-foreground/20'
-                                )}
-                              />
-                            ))}
-                          </div>
-                        </div>
+            {/* Assignment Graded */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-green-200/50 bg-green-50/50 dark:border-green-800/50 dark:bg-green-950/20 hover:bg-green-100/50 dark:hover:bg-green-900/20 transition-colors cursor-pointer">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                <CheckCircle2 className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">Biology Lab Report Graded</p>
+                <p className="text-xs text-muted-foreground mt-1">You received an A (95%) on your lab report.</p>
+                <p className="text-[10px] text-muted-foreground/70 mt-1">2 hours ago</p>
+              </div>
+            </div>
 
-                        {/* Coming soon message */}
-                        <div className="text-[11px] text-muted-foreground/80 italic leading-relaxed">
-                          {action.preview.message}
-                        </div>
-                      </div>
-                    )}
+            {/* New Assignment Posted */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-blue-200/50 bg-blue-50/50 dark:border-blue-800/50 dark:bg-blue-950/20 hover:bg-blue-100/50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
+                <BookOpen className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">New Assignment: Chapter 5 Reading</p>
+                <p className="text-xs text-muted-foreground mt-1">Due Friday, 11:59 PM • History 101</p>
+                <p className="text-[10px] text-muted-foreground/70 mt-1">5 hours ago</p>
+              </div>
+            </div>
 
-                    {action.preview.type === 'suggestions' && (
-                      <div className="space-y-2 h-full flex flex-col justify-center">
-                        {(action.preview.items || []).slice(0, 2).map((item: any, idx: number) => (
-                          <div key={idx} className={cn('flex items-center gap-2 text-xs text-foreground/70 group-hover:text-foreground/90', designSystem.transition.default)}>
-                            <Sparkles className="h-3 w-3 text-purple-500 flex-shrink-0" />
-                            <span className="truncate">{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+            {/* Teacher Message */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-purple-200/50 bg-purple-50/50 dark:border-purple-800/50 dark:bg-purple-950/20 hover:bg-purple-100/50 dark:hover:bg-purple-900/20 transition-colors cursor-pointer">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center">
+                <MessageSquare className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">Message from Prof. Johnson</p>
+                <p className="text-xs text-muted-foreground mt-1">Office hours moved to Thursday 3-5 PM this week.</p>
+                <p className="text-[10px] text-muted-foreground/70 mt-1">Yesterday</p>
+              </div>
+            </div>
 
-                    {action.preview.type === 'moments' && (
-                      <div className="space-y-2 h-full flex flex-col justify-center">
-                        {(action.preview.items || []).map((item: any, idx: number) => (
-                          <div key={idx} className="flex items-start gap-2">
-                            <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0">
-                              {item.from[0]}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs text-foreground/80 truncate">{item.message}</p>
-                              <p className="text-[10px] text-muted-foreground">{item.from} • {item.time} ago</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Hover gradient overlay - More pronounced */}
-                  <div className={cn(
-                    'absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 pointer-events-none',
-                    designSystem.transition.default,
-                    action.color
-                  )} />
-                </button>
-              );
-            })}
+            {/* Study Plan Reminder */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-amber-200/50 bg-amber-50/50 dark:border-amber-800/50 dark:bg-amber-950/20 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors cursor-pointer">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                <Calendar className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">Study Plan Reminder</p>
+                <p className="text-xs text-muted-foreground mt-1">Remember, you're supposed to allocate 45 minutes for Calculus review today.</p>
+                <p className="text-[10px] text-muted-foreground/70 mt-1">Today at 2:00 PM</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -364,6 +230,15 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
               <Calendar className="h-4 w-4 md:h-5 md:w-5 text-primary" />
               <h3 className={designSystem.typography.sectionTitle}>This Week</h3>
             </div>
+            <button
+              onClick={() => onNavigate('calendar')}
+              className={cn(
+                'text-xs text-primary hover:text-primary/80 font-medium',
+                designSystem.transition.default
+              )}
+            >
+              View Full
+            </button>
           </div>
           <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-3.5 flex-1 flex flex-col">
             {/* Week Navigation Header */}

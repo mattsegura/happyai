@@ -5,12 +5,14 @@ import { OverviewView } from './OverviewView';
 import { MeetingDetailsModal } from './MeetingDetailsModal';
 import { ClassesView } from './ClassesView';
 import { ProfileView } from './ProfileView';
+import { CalendarView } from './CalendarView';
+import { StudyBuddyView } from './StudyBuddyView';
 import { PopupQueueManager } from '../popups/PopupQueueManager';
 import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp, CreditCard } from 'lucide-react';
+import { Home, Users, Beaker, User, Smile, MessageSquare, GraduationCap, ChevronLeft, TrendingUp, CreditCard, Calendar, BookOpen } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
@@ -58,16 +60,17 @@ export function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
 
-  // Simplified navigation - reduced from 9 to 5 primary items for better UX
+  // Updated navigation structure - 6 primary items
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
-    { id: 'academics', path: '/dashboard/academics', icon: GraduationCap, label: 'Academics' },
-    { id: 'wellbeing', path: '/dashboard/wellbeing', icon: Smile, label: 'Wellbeing' },
+    { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
+    { id: 'calendar', path: '/dashboard/calendar', icon: Calendar, label: 'AI Calendar' },
+    { id: 'study-buddy', path: '/dashboard/study-buddy', icon: BookOpen, label: 'Study Buddy' },
     { id: 'hapi', path: '/dashboard/hapi', icon: MessageSquare, label: 'Hapi AI' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
-  // Secondary routes still accessible via URL (Lab, Progress, Classes, Subscription)
+  // Secondary routes still accessible via URL (Lab, Progress, Wellbeing, Academics, Subscription)
   // These are accessed via quick actions or contextual navigation
 
   useEffect(() => {
@@ -206,24 +209,28 @@ export function Dashboard() {
             {!location.pathname.includes('/overview') && (
               <div>
                 <h1 className="text-xl font-semibold text-foreground md:text-2xl">
+                  {location.pathname.includes('classes') && 'Classes'}
+                  {location.pathname.includes('calendar') && 'AI Calendar'}
+                  {location.pathname.includes('study-buddy') && 'Study Buddy'}
+                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && 'Hapi AI'}
+                  {location.pathname.includes('profile') && 'Profile'}
                   {location.pathname.includes('academics') && 'Academics'}
                   {location.pathname.includes('wellbeing') && 'Wellbeing'}
                   {location.pathname.includes('progress') && 'Progress'}
-                  {location.pathname.includes('hapi') && 'Hapi AI'}
                   {location.pathname.includes('lab') && 'Hapi Lab'}
-                  {location.pathname.includes('classes') && 'Classes'}
                   {location.pathname.includes('subscription') && 'Subscription'}
-                  {location.pathname.includes('profile') && 'Profile'}
                 </h1>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {location.pathname.includes('classes') && 'Your courses, grades & class overview'}
+                  {location.pathname.includes('calendar') && 'Schedule & AI study plan assistant'}
+                  {location.pathname.includes('study-buddy') && 'Study tools & planner'}
+                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && 'AI-powered assistant'}
+                  {location.pathname.includes('profile') && 'Your account settings'}
                   {location.pathname.includes('academics') && 'Grades, assignments & study tools'}
                   {location.pathname.includes('wellbeing') && 'Mood tracking & sentiment analytics'}
                   {location.pathname.includes('progress') && 'Achievements, badges & leaderboard'}
-                  {location.pathname.includes('hapi') && 'AI-powered assistant'}
                   {location.pathname.includes('lab') && 'Pulse checks & Hapi moments'}
-                  {location.pathname.includes('classes') && 'Your enrolled classes'}
                   {location.pathname.includes('subscription') && 'Manage your subscription & billing'}
-                  {location.pathname.includes('profile') && 'Your account settings'}
                 </p>
               </div>
             )}
@@ -320,6 +327,22 @@ export function Dashboard() {
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
                       <ClassesView />
+                    </div>
+                  }
+                />
+                <Route
+                  path="calendar"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <CalendarView />
+                    </div>
+                  }
+                />
+                <Route
+                  path="study-buddy"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyBuddyView />
                     </div>
                   }
                 />
