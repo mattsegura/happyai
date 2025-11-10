@@ -11,7 +11,7 @@ import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, Beaker, User, Smile, GraduationCap, ChevronLeft, Calendar, BookOpen } from 'lucide-react';
+import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
@@ -19,8 +19,19 @@ import { cn } from '../../lib/utils';
 // Lazy load heavy components for better performance
 const StudentHapiLab = lazy(() => import('../student/StudentHapiLab').then(m => ({ default: m.StudentHapiLab })));
 const EnhancedHapiChat = lazy(() => import('../student/EnhancedHapiChat').then(m => ({ default: m.EnhancedHapiChat })));
+const HapiChatView = lazy(() => import('../chat/HapiChatView').then(m => ({ default: m.HapiChatView })));
 const WellbeingView = lazy(() => import('../wellbeing/WellbeingView').then(m => ({ default: m.WellbeingView })));
 const ProgressView = lazy(() => import('../progress/ProgressView').then(m => ({ default: m.ProgressView })));
+
+// Lazy load AI Study Hub tab components
+const ChatTab = lazy(() => import('../chat/tabs/ChatTab').then(m => ({ default: m.ChatTab })));
+const FlashcardsTab = lazy(() => import('../chat/tabs/FlashcardsTab').then(m => ({ default: m.FlashcardsTab })));
+const QuizzesTab = lazy(() => import('../chat/tabs/QuizzesTab').then(m => ({ default: m.QuizzesTab })));
+const SummarizationTab = lazy(() => import('../chat/tabs/SummarizationTab').then(m => ({ default: m.SummarizationTab })));
+const TranscriptionTab = lazy(() => import('../chat/tabs/TranscriptionTab').then(m => ({ default: m.TranscriptionTab })));
+const AudioRecapsTab = lazy(() => import('../chat/tabs/AudioRecapsTab').then(m => ({ default: m.AudioRecapsTab })));
+const EssayGradingTab = lazy(() => import('../chat/tabs/EssayGradingTab').then(m => ({ default: m.EssayGradingTab })));
+const ImageAnalysisTab = lazy(() => import('../chat/tabs/ImageAnalysisTab').then(m => ({ default: m.ImageAnalysisTab })));
 
 // Lazy load all academics components (largest bundle)
 const AcademicsHub = lazy(() => import('../academics/AcademicsHub').then(m => ({ default: m.AcademicsHub })));
@@ -57,15 +68,25 @@ export function Dashboard() {
   const [selectedPulse, setSelectedPulse] = useState<any>(null);
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [studyHubExpanded, setStudyHubExpanded] = useState(false);
 
+  // AI Study Hub sub-items
+  const studyHubItems = [
+    { id: 'ai-chat', path: '/dashboard/ai-chat', icon: MessageCircle, label: 'AI Chat', description: 'General study assistance' },
+    { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards', description: 'AI-generated from your materials' },
+    { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes', description: 'Practice tests & questions' },
+    { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize', description: 'Notes, PDFs, slides' },
+    { id: 'transcribe', path: '/dashboard/transcribe', icon: Mic, label: 'Transcribe', description: 'Lecture recordings' },
+    { id: 'audio-recaps', path: '/dashboard/audio-recaps', icon: Volume2, label: 'Audio Recaps', description: 'Listen to summaries' },
+    { id: 'essay-help', path: '/dashboard/essay-help', icon: PenTool, label: 'Essay Help', description: 'Grading & writing assistance' },
+    { id: 'image-analysis', path: '/dashboard/image-analysis', icon: ImageIcon, label: 'Image Analysis', description: 'Diagrams & visual materials' },
+  ];
 
   // Updated navigation structure - New organization
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
-    { id: 'calendar', path: '/dashboard/calendar', icon: Calendar, label: 'Calendar' },
     { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Study Planner' },
     { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
-    { id: 'lab', path: '/dashboard/lab', icon: Beaker, label: 'Hapi Lab' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
@@ -155,7 +176,7 @@ export function Dashboard() {
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
+        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
@@ -179,6 +200,58 @@ export function Dashboard() {
               </NavLink>
             );
           })}
+
+          {/* AI Study Hub - Expandable Section */}
+          {!sidebarCollapsed && (
+            <div className="space-y-1">
+              <button
+                onClick={() => setStudyHubExpanded(!studyHubExpanded)}
+                className={cn(
+                  'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                  studyHubExpanded || location.pathname.includes('/ai-chat') || location.pathname.includes('/flashcards') || location.pathname.includes('/quizzes') || location.pathname.includes('/summarize') || location.pathname.includes('/transcribe') || location.pathname.includes('/audio-recaps') || location.pathname.includes('/essay-help') || location.pathname.includes('/image-analysis')
+                    ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                    : 'hover:bg-muted/70 hover:text-foreground'
+                )}
+              >
+                <Brain className="h-5 w-5" />
+                <span className="flex-1 text-left">AI Study Hub</span>
+                {studyHubExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+
+              {/* Sub-items */}
+              {studyHubExpanded && (
+                <div className="ml-4 space-y-1 border-l-2 border-border/40 pl-2">
+                  {studyHubItems.map((subItem) => {
+                    const SubIcon = subItem.icon;
+                    return (
+                      <NavLink
+                        key={subItem.id}
+                        to={subItem.path}
+                        className={({ isActive }) =>
+                          cn(
+                            'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
+                            isActive
+                              ? 'bg-primary/10 text-primary font-semibold'
+                              : 'hover:bg-muted/50 hover:text-foreground'
+                          )
+                        }
+                      >
+                        <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium">{subItem.label}</div>
+                          <div className="text-xs text-muted-foreground">{subItem.description}</div>
+                        </div>
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         <div className="space-y-3 px-4 pb-6">
@@ -211,7 +284,8 @@ export function Dashboard() {
                   {location.pathname.includes('classes') && 'Classes'}
                   {location.pathname.includes('calendar') && 'Calendar'}
                   {location.pathname.includes('planner') && 'Study Planner'}
-                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && 'Hapi AI'}
+                  {location.pathname.includes('hapi-chat') && 'AI Chat'}
+                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && 'Hapi AI'}
                   {location.pathname.includes('profile') && 'Profile'}
                   {location.pathname.includes('academics') && 'Academics'}
                   {location.pathname.includes('wellbeing') && 'Wellbeing'}
@@ -223,7 +297,8 @@ export function Dashboard() {
                   {location.pathname.includes('classes') && 'Your courses, grades & class overview'}
                   {location.pathname.includes('calendar') && 'Full calendar with AI study planning'}
                   {location.pathname.includes('planner') && 'AI-powered study plan generator'}
-                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && 'AI-powered assistant'}
+                  {location.pathname.includes('hapi-chat') && 'Chat with your AI learning companion'}
+                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && 'AI-powered assistant'}
                   {location.pathname.includes('profile') && 'Your account settings'}
                   {location.pathname.includes('academics') && 'Grades, assignments & study tools'}
                   {location.pathname.includes('wellbeing') && 'Mood tracking & sentiment analytics'}
@@ -310,6 +385,79 @@ export function Dashboard() {
                   element={
                     <div className="space-y-6">
                       <StudentHapiLab />
+                    </div>
+                  }
+                />
+                {/* AI Study Hub Routes */}
+                <Route
+                  path="ai-chat"
+                  element={
+                    <div className="p-6">
+                      <ChatTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="flashcards"
+                  element={
+                    <div className="p-6">
+                      <FlashcardsTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="quizzes"
+                  element={
+                    <div className="p-6">
+                      <QuizzesTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="summarize"
+                  element={
+                    <div className="p-6">
+                      <SummarizationTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="transcribe"
+                  element={
+                    <div className="p-6">
+                      <TranscriptionTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="audio-recaps"
+                  element={
+                    <div className="p-6">
+                      <AudioRecapsTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="essay-help"
+                  element={
+                    <div className="p-6">
+                      <EssayGradingTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="image-analysis"
+                  element={
+                    <div className="p-6">
+                      <ImageAnalysisTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="hapi-chat"
+                  element={
+                    <div className="p-6">
+                      <HapiChatView />
                     </div>
                   }
                 />

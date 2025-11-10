@@ -1,0 +1,199 @@
+import { useState } from 'react';
+import { Upload, FileText, Sparkles, RotateCw, Check, X } from 'lucide-react';
+import { cn } from '../../../lib/utils';
+
+type Flashcard = {
+  id: string;
+  front: string;
+  back: string;
+  mastered: boolean;
+};
+
+export function FlashcardsTab() {
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsGenerating(true);
+    
+    // Simulate AI generation
+    setTimeout(() => {
+      const generated: Flashcard[] = [
+        { id: '1', front: 'What is photosynthesis?', back: 'The process by which plants convert light energy into chemical energy', mastered: false },
+        { id: '2', front: 'Define mitosis', back: 'Cell division that results in two identical daughter cells', mastered: false },
+        { id: '3', front: 'What is DNA?', back: 'Deoxyribonucleic acid - the molecule that carries genetic information', mastered: false },
+      ];
+      setFlashcards(generated);
+      setIsGenerating(false);
+    }, 2000);
+  };
+
+  const handleMastered = (mastered: boolean) => {
+    const updated = [...flashcards];
+    updated[currentIndex].mastered = mastered;
+    setFlashcards(updated);
+    
+    if (currentIndex < flashcards.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setIsFlipped(false);
+    }
+  };
+
+  const currentCard = flashcards[currentIndex];
+
+  return (
+    <div className="flex flex-col h-full p-6">
+      {/* Header */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Sparkles className="w-6 h-6 text-violet-600" />
+          Smart Flashcards
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Upload your notes, PDFs, or slides and AI will generate flashcards automatically
+        </p>
+      </div>
+
+      {flashcards.length === 0 ? (
+        /* Upload Area */
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center max-w-md">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
+              <Upload className="w-10 h-10 text-violet-600 dark:text-violet-400" />
+            </div>
+            
+            <h3 className="text-xl font-bold text-foreground mb-2">
+              Generate Flashcards
+            </h3>
+            <p className="text-sm text-muted-foreground mb-6">
+              Upload your study materials and let AI create flashcards for you
+            </p>
+
+            <label className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold cursor-pointer hover:shadow-lg transition-all">
+              <FileText className="w-5 h-5" />
+              {isGenerating ? 'Generating...' : 'Upload File'}
+              <input
+                type="file"
+                className="hidden"
+                accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
+                onChange={handleFileUpload}
+                disabled={isGenerating}
+              />
+            </label>
+
+            <p className="text-xs text-muted-foreground mt-4">
+              Supports PDF, Word, PowerPoint, and text files
+            </p>
+          </div>
+        </div>
+      ) : (
+        /* Flashcard Display */
+        <div className="flex-1 flex flex-col items-center justify-center">
+          {/* Progress */}
+          <div className="w-full max-w-2xl mb-6">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <span>Card {currentIndex + 1} of {flashcards.length}</span>
+              <span>{flashcards.filter(c => c.mastered).length} mastered</span>
+            </div>
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-violet-600 to-purple-600 transition-all duration-300"
+                style={{ width: `${((currentIndex + 1) / flashcards.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Card */}
+          <div 
+            className={cn(
+              "w-full max-w-2xl h-80 cursor-pointer perspective-1000",
+              "transition-transform duration-500 transform-style-3d",
+              isFlipped && "rotate-y-180"
+            )}
+            onClick={() => setIsFlipped(!isFlipped)}
+          >
+            <div className="relative w-full h-full">
+              {/* Front */}
+              <div className={cn(
+                "absolute inset-0 backface-hidden",
+                "bg-gradient-to-br from-white to-violet-50 dark:from-gray-800 dark:to-violet-900/20",
+                "border-2 border-violet-200 dark:border-violet-800",
+                "rounded-3xl shadow-2xl p-8",
+                "flex flex-col items-center justify-center"
+              )}>
+                <div className="text-xs font-semibold text-violet-600 dark:text-violet-400 mb-4">
+                  QUESTION
+                </div>
+                <p className="text-2xl font-bold text-center text-foreground">
+                  {currentCard?.front}
+                </p>
+                <div className="mt-8 text-sm text-muted-foreground">
+                  Click to reveal answer
+                </div>
+              </div>
+
+              {/* Back */}
+              <div className={cn(
+                "absolute inset-0 backface-hidden rotate-y-180",
+                "bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600",
+                "rounded-3xl shadow-2xl p-8",
+                "flex flex-col items-center justify-center text-white"
+              )}>
+                <div className="text-xs font-semibold mb-4 opacity-90">
+                  ANSWER
+                </div>
+                <p className="text-xl font-semibold text-center">
+                  {currentCard?.back}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          {isFlipped && (
+            <div className="flex gap-4 mt-8">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMastered(false);
+                }}
+                className="flex items-center gap-2 px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-semibold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+              >
+                <X className="w-5 h-5" />
+                Need Practice
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMastered(true);
+                }}
+                className="flex items-center gap-2 px-6 py-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-xl font-semibold hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+              >
+                <Check className="w-5 h-5" />
+                Mastered
+              </button>
+            </div>
+          )}
+
+          {/* Reset Button */}
+          <button
+            onClick={() => {
+              setCurrentIndex(0);
+              setIsFlipped(false);
+              setFlashcards([]);
+            }}
+            className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+          >
+            <RotateCw className="w-4 h-4" />
+            Start Over
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
