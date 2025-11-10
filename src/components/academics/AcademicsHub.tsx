@@ -19,8 +19,10 @@ import {
   BarChart3,
   MessageSquare,
   RefreshCw,
+  Info,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { designSystem } from '../../lib/design-system';
 import { AchievementsDisplay } from './AchievementsDisplay';
 import { FeedbackHub } from './FeedbackHub';
 import { MoodGradeAnalytics } from './MoodGradeAnalytics';
@@ -29,7 +31,7 @@ import { CanvasSyncStatus } from './CanvasSyncStatus';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
-type TabType = 'overview' | 'feedback' | 'analytics' | 'achievements' | 'canvas';
+type TabType = 'overview' | 'insights' | 'canvas';
 
 type CourseCard = {
   id: string;
@@ -419,12 +421,14 @@ export function AcademicsHub() {
 
   return (
     <div className="h-full flex flex-col gap-3 max-h-[calc(100vh-120px)]">
-      {/* Tab Navigation */}
+      {/* Simplified Tab Navigation - 3 tabs instead of 5 */}
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide flex-shrink-0">
         <button
           onClick={() => setActiveTab('overview')}
           className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all',
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap',
+            designSystem.transition.default,
+            designSystem.interactive.focus,
             activeTab === 'overview'
               ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
               : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -435,48 +439,26 @@ export function AcademicsHub() {
         </button>
 
         <button
-          onClick={() => setActiveTab('feedback')}
+          onClick={() => setActiveTab('insights')}
           className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all',
-            activeTab === 'feedback'
-              ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg'
-              : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
-          )}
-        >
-          <MessageSquare className="w-4 h-4" />
-          Feedback Hub
-        </button>
-
-        <button
-          onClick={() => setActiveTab('analytics')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all',
-            activeTab === 'analytics'
-              ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg'
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap',
+            designSystem.transition.default,
+            designSystem.interactive.focus,
+            activeTab === 'insights'
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
               : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
           )}
         >
           <BarChart3 className="w-4 h-4" />
-          Mood × Grades
-        </button>
-
-        <button
-          onClick={() => setActiveTab('achievements')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all',
-            activeTab === 'achievements'
-              ? 'bg-gradient-to-r from-yellow-600 to-orange-600 text-white shadow-lg'
-              : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
-          )}
-        >
-          <Trophy className="w-4 h-4" />
-          Achievements
+          Insights
         </button>
 
         <button
           onClick={() => setActiveTab('canvas')}
           className={cn(
-            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all',
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap',
+            designSystem.transition.default,
+            designSystem.interactive.focus,
             activeTab === 'canvas'
               ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg'
               : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -487,38 +469,48 @@ export function AcademicsHub() {
         </button>
       </div>
 
-      {/* Top Stats Bar - Always Visible */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 flex-shrink-0">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 rounded-lg p-2.5 border border-blue-200/50 dark:border-blue-800/50">
-          <div className="flex items-center justify-between">
-            <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-lg font-bold text-blue-900 dark:text-blue-100">{currentGPA}</span>
+      {/* Simplified Top Stats - 3 key metrics instead of 4 */}
+      <div className="grid grid-cols-3 gap-3 flex-shrink-0">
+        <div className={cn(
+          'bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 rounded-xl p-4 border border-blue-200/50 dark:border-blue-800/50',
+          designSystem.transition.default,
+          'hover:shadow-md'
+        )}>
+          <div className="flex items-start justify-between mb-2">
+            <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className="group relative">
+              <Info className="h-4 w-4 text-blue-500/50 cursor-help" />
+              <div className="absolute right-0 top-6 hidden group-hover:block z-10 w-48 p-2 bg-popover border rounded-lg shadow-lg text-xs">
+                Calculated from your average grade percentage ÷ 25 (4.0 scale)
+              </div>
+            </div>
           </div>
-          <p className="text-xs font-medium text-blue-700 dark:text-blue-300 mt-0.5">Current GPA</p>
+          <span className="text-2xl font-bold text-blue-900 dark:text-blue-100 block mb-1">{currentGPA}</span>
+          <p className={cn(designSystem.typography.label, 'text-blue-700 dark:text-blue-300')}>Current GPA</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 rounded-lg p-2.5 border border-purple-200/50 dark:border-purple-800/50">
-          <div className="flex items-center justify-between">
-            <Calendar className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-            <span className="text-lg font-bold text-purple-900 dark:text-purple-100">{dueSoon}</span>
+        <div className={cn(
+          'bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 rounded-xl p-4 border border-purple-200/50 dark:border-purple-800/50',
+          designSystem.transition.default,
+          'hover:shadow-md'
+        )}>
+          <div className="flex items-center justify-between mb-2">
+            <Calendar className="h-5 w-5 text-purple-600 dark:text-purple-400" />
           </div>
-          <p className="text-xs font-medium text-purple-700 dark:text-purple-300 mt-0.5">Due Soon</p>
+          <span className="text-2xl font-bold text-purple-900 dark:text-purple-100 block mb-1">{dueSoon}</span>
+          <p className={cn(designSystem.typography.label, 'text-purple-700 dark:text-purple-300')}>Due This Week</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 rounded-lg p-2.5 border border-green-200/50 dark:border-green-800/50">
-          <div className="flex items-center justify-between">
-            <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-            <span className="text-lg font-bold text-green-900 dark:text-green-100">{avgGrade}%</span>
+        <div className={cn(
+          'bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 rounded-xl p-4 border border-green-200/50 dark:border-green-800/50',
+          designSystem.transition.default,
+          'hover:shadow-md'
+        )}>
+          <div className="flex items-center justify-between mb-2">
+            <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
           </div>
-          <p className="text-xs font-medium text-green-700 dark:text-green-300 mt-0.5">Avg Grade</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 rounded-lg p-2.5 border border-orange-200/50 dark:border-orange-800/50">
-          <div className="flex items-center justify-between">
-            <Star className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-            <span className="text-lg font-bold text-orange-900 dark:text-orange-100">{studyStreak}</span>
-          </div>
-          <p className="text-xs font-medium text-orange-700 dark:text-orange-300 mt-0.5">Streak Days</p>
+          <span className="text-2xl font-bold text-green-900 dark:text-green-100 block mb-1">{avgGrade}%</span>
+          <p className={cn(designSystem.typography.label, 'text-green-700 dark:text-green-300')}>Avg Grade</p>
         </div>
       </div>
 
@@ -744,21 +736,27 @@ export function AcademicsHub() {
       </div>
       )}
 
-      {activeTab === 'feedback' && (
-        <div className="flex-1 overflow-y-auto">
-          <FeedbackHub />
-        </div>
-      )}
+      {activeTab === 'insights' && (
+        <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+          {/* Combined Insights Tab - Feedback, Analytics, Achievements */}
 
-      {activeTab === 'analytics' && (
-        <div className="flex-1 overflow-y-auto">
-          <MoodGradeAnalytics />
-        </div>
-      )}
+          {/* Mood × Grades Analytics */}
+          <div className="flex-shrink-0">
+            <h3 className={cn(designSystem.typography.sectionTitle, 'mb-3')}>Mood × Grades Analytics</h3>
+            <MoodGradeAnalytics />
+          </div>
 
-      {activeTab === 'achievements' && (
-        <div className="flex-1 overflow-y-auto">
-          <AchievementsDisplay />
+          {/* Feedback Hub */}
+          <div className="flex-shrink-0">
+            <h3 className={cn(designSystem.typography.sectionTitle, 'mb-3')}>Feedback Hub</h3>
+            <FeedbackHub />
+          </div>
+
+          {/* Achievements */}
+          <div className="flex-shrink-0">
+            <h3 className={cn(designSystem.typography.sectionTitle, 'mb-3')}>Achievements</h3>
+            <AchievementsDisplay />
+          </div>
         </div>
       )}
 
