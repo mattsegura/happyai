@@ -15,6 +15,14 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { EMOTION_CONFIGS, EmotionConfig } from '../../lib/emotionConfig';
+import {
+  isSentimentMockEnabled,
+  getMockSentimentByDepartment,
+  getMockSentimentByGradeLevel,
+  getMockEmotionDistribution,
+  getMockStudentAlerts,
+  mockSentimentStats,
+} from '../../lib/mockSentimentData';
 
 type DepartmentFilter = 'all' | 'mathematics' | 'science' | 'english' | 'history' | 'arts' | 'physical_education' | 'technology' | 'languages';
 type GradeLevelFilter = 'all' | '9' | '10' | '11' | '12';
@@ -68,6 +76,26 @@ export function SentimentMonitoring() {
 
   const loadSentimentData = async () => {
     try {
+      // Check if using mock data
+      if (isSentimentMockEnabled()) {
+        // Use mock data
+        let mockStats = mockSentimentStats;
+
+        // Apply filters
+        if (departmentFilter !== 'all') {
+          mockStats = getMockSentimentByDepartment(departmentFilter);
+        } else if (gradeLevelFilter !== 'all') {
+          mockStats = getMockSentimentByGradeLevel(gradeLevelFilter);
+        }
+
+        setStats(mockStats);
+        setEmotionDist(getMockEmotionDistribution());
+        setAlerts(getMockStudentAlerts(ADMIN_CONFIG.STUDENT_ALERTS_LIMIT || 10));
+        setLoading(false);
+        return;
+      }
+
+      // Real data fetching from Supabase
       // Calculate date range based on filter
       const now = new Date();
       const startDate = new Date();
@@ -242,6 +270,8 @@ export function SentimentMonitoring() {
     return date.toLocaleDateString();
   };
 
+  const useMock = isSentimentMockEnabled();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -250,6 +280,12 @@ export function SentimentMonitoring() {
         <p className="text-sm text-muted-foreground">
           Platform-wide emotional wellness tracking
         </p>
+        {useMock && (
+          <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/30 dark:text-blue-400">
+            <AlertTriangle className="h-3 w-3" />
+            Using mock data (set VITE_USE_SENTIMENT_MOCK=false for real data)
+          </div>
+        )}
       </div>
 
       {/* Feature 3: Filters */}

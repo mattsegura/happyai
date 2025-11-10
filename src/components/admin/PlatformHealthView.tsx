@@ -678,6 +678,52 @@ export function PlatformHealthView() {
             </div>
           </div>
 
+          {/* Response Rate by Alert Type */}
+          <div>
+            <p className="mb-2 text-sm font-semibold text-foreground">Response Rate by Alert Type</p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {responseData?.byAlertType.map((alertType) => (
+                <div
+                  key={alertType.alertType}
+                  className={cn(
+                    'rounded-lg border p-3',
+                    alertType.alertType === 'emotional'
+                      ? 'border-pink-200 bg-pink-50 dark:border-pink-800 dark:bg-pink-950/20'
+                      : alertType.alertType === 'academic'
+                        ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20'
+                        : 'border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-950/20'
+                  )}
+                >
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {alertType.alertType} Alerts
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">{alertType.responseRate.toFixed(1)}%</p>
+                  <div className="mt-1 flex items-center gap-1">
+                    {alertType.responseRate >= 80 ? (
+                      <CheckCircle2 className="h-3 w-3 text-green-600 dark:text-green-400" />
+                    ) : alertType.responseRate >= 70 ? (
+                      <Activity className="h-3 w-3 text-yellow-600 dark:text-yellow-400" />
+                    ) : (
+                      <AlertTriangle className="h-3 w-3 text-red-600 dark:text-red-400" />
+                    )}
+                    <span
+                      className={cn(
+                        'text-xs font-semibold',
+                        alertType.responseRate >= 80
+                          ? 'text-green-600 dark:text-green-400'
+                          : alertType.responseRate >= 70
+                            ? 'text-yellow-600 dark:text-yellow-400'
+                            : 'text-red-600 dark:text-red-400'
+                      )}
+                    >
+                      {alertType.responseRate >= 80 ? 'Excellent' : alertType.responseRate >= 70 ? 'Good' : 'Needs Improvement'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div>
             <p className="mb-2 text-sm font-semibold text-foreground">Top Responding Teachers</p>
             <div className="space-y-2">
