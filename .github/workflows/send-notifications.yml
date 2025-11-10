@@ -9,15 +9,16 @@ name: Send Notifications
 # =====================================================
 
 on:
-  schedule:
-    # Morning reminders at 8:00 AM UTC (adjust for your timezone)
-    - cron: '0 8 * * *'
-
-    # Deadline reminders at 6:00 PM UTC (once daily)
-    - cron: '0 18 * * *'
-
-    # Weekly summaries on Monday at 9:00 AM UTC
-    - cron: '0 9 * * 1'
+  # Disabled - not needed
+  # schedule:
+  #   # Morning reminders at 8:00 AM UTC (adjust for your timezone)
+  #   - cron: '0 8 * * *'
+  #
+  #   # Deadline reminders at 6:00 PM UTC (once daily)
+  #   - cron: '0 18 * * *'
+  #
+  #   # Weekly summaries on Monday at 9:00 AM UTC
+  #   - cron: '0 9 * * 1'
 
   workflow_dispatch: # Allow manual trigger
     inputs:
