@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ChatProvider } from './contexts/ChatContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { AITutorPage } from './components/pages/AITutorPage';
 import { TeacherFeaturesPage } from './components/pages/TeacherFeaturesPage';
@@ -111,7 +112,11 @@ function AppContent() {
         } />
 
         {/* Student Dashboard Routes */}
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/dashboard/*" element={
+          <ChatProvider>
+            <Dashboard />
+          </ChatProvider>
+        } />
 
         {/* Teacher Dashboard Routes */}
         <Route path="/teacher/*" element={<TeacherDashboard />} />
