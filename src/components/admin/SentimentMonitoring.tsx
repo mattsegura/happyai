@@ -276,12 +276,12 @@ export function SentimentMonitoring() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-foreground">Sentiment Monitoring</h2>
+        <h2 className="text-2xl font-semibold text-foreground">Sentiment Monitoring</h2>
         <p className="text-sm text-muted-foreground">
           Platform-wide emotional wellness tracking
         </p>
         {useMock && (
-          <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/30 dark:text-blue-400">
+          <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary dark:bg-primary/20">
             <AlertTriangle className="h-3 w-3" />
             Using mock data (set VITE_USE_SENTIMENT_MOCK=false for real data)
           </div>
@@ -298,7 +298,7 @@ export function SentimentMonitoring() {
               <select
                 value={departmentFilter}
                 onChange={(e) => setDepartmentFilter(e.target.value as DepartmentFilter)}
-                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground"
+                className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-sm transition focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 <option value="all">All Departments</option>
                 <option value="mathematics">Mathematics</option>
@@ -318,7 +318,7 @@ export function SentimentMonitoring() {
               <select
                 value={gradeLevelFilter}
                 onChange={(e) => setGradeLevelFilter(e.target.value as GradeLevelFilter)}
-                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground"
+                className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-sm transition focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 <option value="all">All Grades</option>
                 <option value="9">9th Grade</option>
@@ -334,7 +334,7 @@ export function SentimentMonitoring() {
               <select
                 value={timeRangeFilter}
                 onChange={(e) => setTimeRangeFilter(e.target.value as TimeRangeFilter)}
-                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground"
+                className="rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-sm transition focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 <option value="7d">Last 7 Days</option>
                 <option value="30d">Last 30 Days</option>
@@ -346,110 +346,94 @@ export function SentimentMonitoring() {
       </Card>
 
       {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="rounded-lg bg-blue-500/10 p-2">
-                    <Activity className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Check-ins</p>
-                </div>
-                {loading ? (
-                  <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
-                ) : (
-                  <h3 className="text-3xl font-bold text-foreground">
-                    {stats.totalCheckIns.toLocaleString()}
-                  </h3>
-                )}
+      <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="rounded-xl bg-primary/10 p-2 shadow-sm">
+                <Activity className="h-4 w-4 text-primary" />
               </div>
             </div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Check-ins</p>
+            {loading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
+            ) : (
+              <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                {stats.totalCheckIns.toLocaleString()}
+              </h3>
+            )}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className={cn(
-                    'rounded-lg p-2',
-                    stats.positiveTrend ? 'bg-green-500/10' : 'bg-orange-500/10'
-                  )}>
-                    {stats.positiveTrend ? (
-                      <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    ) : (
-                      <TrendingDown className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                    )}
-                  </div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sentiment</p>
-                </div>
-                {loading ? (
-                  <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className={cn(
+                'rounded-xl p-2 shadow-sm',
+                stats.positiveTrend ? 'bg-green-500/10' : 'bg-orange-500/10'
+              )}>
+                {stats.positiveTrend ? (
+                  <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
                 ) : (
-                  <div>
-                    <h3 className="text-3xl font-bold text-foreground">
-                      {stats.averageSentiment}
-                      <span className="ml-1 text-lg text-muted-foreground">/6</span>
-                    </h3>
-                    <p className={cn('mt-1 text-xs font-semibold', getSentimentColor(stats.averageSentiment))}>
-                      {getSentimentLabel(stats.averageSentiment)}
-                    </p>
-                  </div>
+                  <TrendingDown className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="rounded-lg bg-orange-500/10 p-2">
-                    <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                  </div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Alerts</p>
-                </div>
-                {loading ? (
-                  <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
-                ) : (
-                  <div>
-                    <h3 className="text-3xl font-bold text-foreground">
-                      {stats.alertCount}
-                    </h3>
-                    <p className="mt-1 text-xs font-medium text-muted-foreground">
-                      Need support
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="rounded-lg bg-purple-500/10 p-2">
-                    <Users className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <h3 className="text-xl font-bold text-foreground">Active</h3>
-                </div>
-                <p className="mt-1 text-xs font-medium text-muted-foreground">
-                  Monitoring
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Sentiment</p>
+            {loading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
+            ) : (
+              <div>
+                <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                  {stats.averageSentiment}
+                  <span className="ml-1 text-base md:text-lg text-muted-foreground">/6</span>
+                </h3>
+                <p className={cn('mt-1 text-xs font-semibold', getSentimentColor(stats.averageSentiment))}>
+                  {getSentimentLabel(stats.averageSentiment)}
                 </p>
               </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="rounded-xl bg-orange-500/10 p-2 shadow-sm">
+                <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+              </div>
             </div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Alerts</p>
+            {loading ? (
+              <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
+            ) : (
+              <div>
+                <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                  {stats.alertCount}
+                </h3>
+                <p className="mt-1 text-xs font-medium text-muted-foreground">
+                  Need support
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="rounded-xl bg-accent/10 p-2 shadow-sm">
+                <Users className="h-4 w-4 text-accent" />
+              </div>
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Status</p>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <h3 className="text-xl md:text-2xl font-black text-foreground">Active</h3>
+            </div>
+            <p className="mt-1 text-xs font-medium text-muted-foreground">
+              Monitoring
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -494,13 +478,13 @@ export function SentimentMonitoring() {
       {/* Student Alerts */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-semibold">Students Requiring Attention</CardTitle>
+          <CardTitle className="text-lg md:text-xl font-semibold">Students Requiring Attention</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="space-y-3">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-16 animate-pulse rounded-lg bg-muted"></div>
+                <div key={i} className="h-16 animate-pulse rounded-xl bg-muted"></div>
               ))}
             </div>
           ) : alerts.length > 0 ? (
@@ -508,20 +492,20 @@ export function SentimentMonitoring() {
               {alerts.map((alert) => (
                 <div
                   key={alert.id}
-                  className="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50/50 p-4 dark:border-orange-900/30 dark:bg-orange-950/20"
+                  className="group relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-border bg-muted/30 p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-sm font-bold text-white">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-sm font-bold text-primary-foreground shadow-sm">
                       {alert.name?.charAt(0) || '?'}
                     </div>
-                    <div>
-                      <p className="font-semibold text-foreground">{alert.name}</p>
-                      <p className="text-xs text-muted-foreground">{alert.email}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-foreground truncate">{alert.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{alert.email}</p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right">
                     <p className="text-sm font-semibold text-foreground">
-                      {alert.lastEmotion} (S{alert.sentiment})
+                      {alert.lastEmotion} <span className="text-muted-foreground">(S{alert.sentiment})</span>
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {alert.consecutiveLow} low check-ins • {formatDate(alert.checkInDate)}
@@ -532,7 +516,9 @@ export function SentimentMonitoring() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8">
-              <CheckCircle2 className="mb-2 h-8 w-8 text-green-600 dark:text-green-400" />
+              <div className="rounded-full bg-green-500/10 p-3 mb-2">
+                <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+              </div>
               <p className="text-sm font-semibold text-foreground">No alerts</p>
               <p className="text-xs text-muted-foreground">All students are doing well</p>
             </div>

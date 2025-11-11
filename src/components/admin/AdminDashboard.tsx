@@ -85,7 +85,7 @@ export function AdminDashboard() {
   ] as const;
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
+    <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
       {/* Sidebar */}
       <aside
         className={`hidden min-h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
@@ -98,13 +98,13 @@ export function AdminDashboard() {
             sidebarCollapsed ? 'justify-center' : 'justify-start'
           )}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
             <Shield className="h-5 w-5" />
           </div>
           {!sidebarCollapsed && (
             <div>
               <p className="text-sm font-semibold text-foreground">Hapi AI</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-purple-600 dark:text-purple-400">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Admin Console
               </p>
             </div>
@@ -115,15 +115,15 @@ export function AdminDashboard() {
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
-            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3';
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
               <button
                 key={item.id}
                 onClick={() => setCurrentView(item.id as View)}
                 className={cn(
-                  'flex w-full items-center rounded-xl py-2 transition-all duration-200',
+                  'flex w-full items-center rounded-xl py-3 transition-all duration-200',
                   isActive
-                    ? 'bg-purple-500/10 text-purple-600 shadow ring-1 ring-purple-500/40 dark:text-purple-400'
+                    ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
                     : 'hover:bg-muted/70 hover:text-foreground',
                   spacingClasses
                 )}
@@ -140,7 +140,7 @@ export function AdminDashboard() {
           <ThemeToggle />
           <button
             onClick={signOut}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-50/50 px-3 py-2 text-xs font-semibold text-red-600 shadow-sm transition hover:border-red-500/50 hover:bg-red-100 dark:bg-red-950/20 dark:text-red-400 dark:hover:bg-red-950/40"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-muted/50 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:bg-muted hover:text-foreground"
             aria-label="Sign out"
           >
             <LogOut className="h-4 w-4" />
@@ -148,7 +148,7 @@ export function AdminDashboard() {
           </button>
           <button
             onClick={() => setSidebarCollapsed((prev) => !prev)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-purple-500/40 hover:text-purple-600 dark:hover:text-purple-400"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-primary/40 hover:text-primary"
             aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
           >
             <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
@@ -170,22 +170,22 @@ export function AdminDashboard() {
               <h1 className="text-xl font-semibold text-foreground">
                 {role === 'super_admin' ? 'Platform Administration' : university?.name || 'University Administration'}
               </h1>
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {role === 'super_admin' ? 'Multi-university system management' : 'System monitoring, user management, and analytics'}
               </p>
             </div>
             {profile && (
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 {university && role !== 'super_admin' && (
-                  <div className="flex items-center gap-2 rounded-xl border border-blue-500/30 bg-blue-50/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm dark:bg-blue-950/20">
-                    <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-muted/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm">
+                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
                     <span>{university.name}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-3 rounded-xl border border-purple-500/30 bg-purple-50/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm dark:bg-purple-950/20">
-                  <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/50 px-3 py-2 text-xs font-semibold text-foreground shadow-sm">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
                   <span>{profile.full_name}</span>
-                  <span className="rounded-full bg-purple-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
                     {role === 'super_admin' ? 'SUPER ADMIN' : 'ADMIN'}
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export function AdminDashboard() {
             )}
             {/* Mobile Navigation */}
             <div className="md:hidden">
-              <div className="flex items-center gap-2 overflow-x-auto">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentView === item.id;
@@ -202,13 +202,13 @@ export function AdminDashboard() {
                       key={item.id}
                       onClick={() => setCurrentView(item.id as View)}
                       className={cn(
-                        'flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold transition',
+                        'flex min-w-fit items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all whitespace-nowrap touch-manipulation active:scale-95',
                         isActive
-                          ? 'bg-purple-500 text-white shadow'
+                          ? 'bg-primary text-primary-foreground shadow'
                           : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
                       )}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-5 w-5" />
                       {item.label}
                     </button>
                   );

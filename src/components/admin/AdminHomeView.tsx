@@ -50,16 +50,16 @@ interface StatCardProps {
 
 function StatCard({ title, value, change, icon: Icon, iconColor, loading }: StatCardProps) {
   return (
-    <Card>
-      <CardContent className="p-6">
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardContent className="p-4 md:p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <div className="mt-2 flex items-baseline gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{title}</p>
+            <div className="flex items-baseline gap-2">
               {loading ? (
                 <div className="h-8 w-20 animate-pulse rounded bg-muted"></div>
               ) : (
-                <h3 className="text-3xl font-bold text-foreground">{value}</h3>
+                <h3 className="text-2xl md:text-3xl font-black text-foreground">{value}</h3>
               )}
               {change !== undefined && !loading && (
                 <span
@@ -78,8 +78,8 @@ function StatCard({ title, value, change, icon: Icon, iconColor, loading }: Stat
               )}
             </div>
           </div>
-          <div className={cn('rounded-xl p-3', iconColor)}>
-            <Icon className="h-6 w-6 text-white" />
+          <div className={cn('rounded-xl p-2 shadow-sm', iconColor)}>
+            <Icon className="h-5 w-5 text-white" />
           </div>
         </div>
       </CardContent>
@@ -298,13 +298,13 @@ export function AdminHomeView() {
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Users"
           value={stats.totalUsers.toLocaleString()}
           change={12}
           icon={Users}
-          iconColor="bg-gradient-to-br from-blue-500 to-blue-600"
+          iconColor="bg-gradient-to-br from-primary to-accent"
           loading={loading}
         />
         <StatCard
@@ -312,7 +312,7 @@ export function AdminHomeView() {
           value={stats.totalClasses.toLocaleString()}
           change={5}
           icon={GraduationCap}
-          iconColor="bg-gradient-to-br from-purple-500 to-purple-600"
+          iconColor="bg-gradient-to-br from-primary to-accent"
           loading={loading}
         />
         <StatCard
@@ -320,14 +320,14 @@ export function AdminHomeView() {
           value={stats.dailyActiveUsers.toLocaleString()}
           change={8}
           icon={Activity}
-          iconColor="bg-gradient-to-br from-green-500 to-green-600"
+          iconColor="bg-gradient-to-br from-green-500 to-emerald-500"
           loading={loading}
         />
         <StatCard
           title="Platform Health"
           value={`${stats.platformHealth}%`}
           icon={CheckCircle2}
-          iconColor="bg-gradient-to-br from-emerald-500 to-emerald-600"
+          iconColor="bg-gradient-to-br from-green-500 to-emerald-500"
           loading={loading}
         />
       </div>
@@ -343,8 +343,10 @@ export function AdminHomeView() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                <span className="text-2xl font-bold text-foreground">
+                <div className="rounded-xl bg-primary/10 p-2 shadow-sm">
+                  <Calendar className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-2xl md:text-3xl font-black text-foreground">
                   {loading ? '...' : stats.weeklyActiveUsers.toLocaleString()}
                 </span>
               </div>
@@ -376,7 +378,7 @@ export function AdminHomeView() {
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all"
+                  className="h-full bg-gradient-to-r from-primary to-accent transition-all"
                   style={{ width: `${stats.teacherAdoptionRate}%` }}
                 />
               </div>
