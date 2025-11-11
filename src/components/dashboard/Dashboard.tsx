@@ -86,9 +86,9 @@ export function Dashboard() {
   // Updated navigation structure - New organization
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
+    { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
     { id: 'analytics', path: '/dashboard/analytics', icon: BarChart3, label: 'Analytics' },
     { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Study Planner' },
-    { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
 
