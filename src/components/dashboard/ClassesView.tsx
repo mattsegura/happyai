@@ -10,6 +10,13 @@ import {
   Loader2,
   Search,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { ClassAnalyticsDetail } from "./ClassAnalyticsDetail";
 import { JoinClassModal } from "./JoinClassModal";
 import { BrowseClassesModal } from "./BrowseClassesModal";
@@ -160,7 +167,7 @@ export function ClassesView() {
   return (
     <>
       <div className="space-y-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 text-primary">
               <Users className="h-5 w-5" />
@@ -174,19 +181,44 @@ export function ClassesView() {
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowBrowseModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-primary bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
-            >
-              <Search className="h-4 w-4" /> Browse Classes
-            </button>
-            <button
-              onClick={() => setShowJoinModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted"
-            >
-              <Hash className="h-4 w-4" /> Enter Code
-            </button>
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-muted-foreground">
+                Quick select:
+              </label>
+              <Select
+                value=""
+                onValueChange={(value) => {
+                  const selected = classes.find(c => c.id === value);
+                  if (selected) setSelectedClass(selected);
+                }}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Choose a class..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {classes.map((classItem) => (
+                    <SelectItem key={classItem.id} value={classItem.id}>
+                      {classItem.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowBrowseModal(true)}
+                className="inline-flex items-center gap-2 rounded-xl border border-primary bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+              >
+                <Search className="h-4 w-4" /> Browse Classes
+              </button>
+              <button
+                onClick={() => setShowJoinModal(true)}
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted"
+              >
+                <Hash className="h-4 w-4" /> Enter Code
+              </button>
+            </div>
           </div>
         </div>
 

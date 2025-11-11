@@ -1,3 +1,5 @@
+import { getSentimentColor as getDesignSystemColor } from './design-system';
+
 export type EmotionName =
   | 'Scared' | 'Sad' | 'Lonely'
   | 'Frustrated' | 'Worried' | 'Nervous'
@@ -91,36 +93,13 @@ export function getSentimentLabel(value: number): string {
   return 'Excellent';
 }
 
+// Use design system colors for consistent, supportive emotion representation
 export function getSentimentColor(value: number): { gradient: string; text: string; bg: string } {
-  if (value <= 1.5) return {
-    gradient: 'from-red-400 to-red-600',
-    text: 'text-red-600',
-    bg: 'bg-red-100'
-  };
-  if (value <= 2.5) return {
-    gradient: 'from-sky-400 to-blue-600',
-    text: 'text-blue-600',
-    bg: 'bg-blue-100'
-  };
-  if (value <= 3.5) return {
-    gradient: 'from-slate-400 to-gray-600',
-    text: 'text-gray-600',
-    bg: 'bg-gray-100'
-  };
-  if (value <= 4.5) return {
-    gradient: 'from-blue-400 to-blue-600',
-    text: 'text-blue-600',
-    bg: 'bg-blue-100'
-  };
-  if (value <= 5.5) return {
-    gradient: 'from-cyan-400 to-cyan-600',
-    text: 'text-cyan-600',
-    bg: 'bg-cyan-100'
-  };
+  const colors = getDesignSystemColor(value);
   return {
-    gradient: 'from-teal-400 to-cyan-600',
-    text: 'text-teal-600',
-    bg: 'bg-teal-100'
+    gradient: colors.gradient,
+    text: colors.text,
+    bg: colors.bg
   };
 }
 

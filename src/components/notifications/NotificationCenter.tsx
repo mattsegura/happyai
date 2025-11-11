@@ -5,10 +5,9 @@
  * Shows unread count badge and allows marking as read/dismissed
  */
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { NotificationQueue } from '../../lib/notifications/types';
 import {
   Bell,
   BellDot,
@@ -23,38 +22,73 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
+// Mock notification type
+type MockNotification = {
+  id: string;
+  title: string;
+  body: string;
+  notification_type: string;
+  priority: number;
+  created_at: string;
+  read_at: string | null;
+  dismissed_at: string | null;
+  clicked_at: string | null;
+  action_url?: string;
+  action_label?: string;
+};
+
+// Mock notifications data
+const MOCK_NOTIFICATIONS: MockNotification[] = [
+  {
+    id: '1',
+    title: 'Upcoming Assignment Due',
+    body: 'Your Biology lab report is due in 2 days. Don\'t forget to submit!',
+    notification_type: 'deadline',
+    priority: 80,
+    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    read_at: null,
+    dismissed_at: null,
+    clicked_at: null,
+    action_url: '/dashboard/planner',
+    action_label: 'View Planner',
+  },
+  {
+    id: '2',
+    title: 'New Achievement Unlocked!',
+    body: 'Congratulations! You\'ve earned the "7-Day Streak" badge for checking in daily.',
+    notification_type: 'achievement',
+    priority: 60,
+    created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    read_at: null,
+    dismissed_at: null,
+    clicked_at: null,
+  },
+  {
+    id: '3',
+    title: 'AI Study Suggestion',
+    body: 'Based on your schedule, consider reviewing Calculus concepts for 30 minutes today.',
+    notification_type: 'ai_suggestion',
+    priority: 50,
+    created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    read_at: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(),
+    dismissed_at: null,
+    clicked_at: null,
+  },
+];
+
 export function NotificationCenter() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationQueue[]>([]);
+  const [notifications, setNotifications] = useState<MockNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (user) {
       loadNotifications();
-
-      // Set up realtime subscription for new notifications
-      const subscription = supabase
-        .channel('notification_changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'notification_queue',
-            filter: `user_id=eq.${user.id}`,
-          },
-          () => {
-            loadNotifications();
-          }
-        )
-        .subscribe();
-
-      return () => {
-        subscription.unsubscribe();
-      };
     }
   }, [user]);
 
@@ -64,21 +98,11 @@ export function NotificationCenter() {
     try {
       setLoading(true);
 
-      // Load notifications
-      const { data, error } = await supabase
-        .from('notification_queue')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('status', 'sent')
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (error) throw error;
-
-      setNotifications((data as NotificationQueue[]) || []);
+      // Use mock data for now
+      setNotifications(MOCK_NOTIFICATIONS);
 
       // Count unread
-      const unread = data?.filter((n) => !n.read_at && !n.dismissed_at).length || 0;
+      const unread = MOCK_NOTIFICATIONS.filter((n) => !n.read_at && !n.dismissed_at).length;
       setUnreadCount(unread);
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -91,19 +115,13 @@ export function NotificationCenter() {
     if (!user) return;
 
     try {
-      const { error } = await supabase.rpc('mark_notification_read', {
-        p_notification_id: notificationId,
-        p_user_id: user.id,
-      });
-
-      if (!error) {
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === notificationId ? { ...n, read_at: new Date().toISOString() } : n
-          )
-        );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-      }
+      // Mock implementation
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === notificationId ? { ...n, read_at: new Date().toISOString() } : n
+        )
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -113,25 +131,19 @@ export function NotificationCenter() {
     if (!user) return;
 
     try {
-      const { error } = await supabase.rpc('mark_notification_dismissed', {
-        p_notification_id: notificationId,
-        p_user_id: user.id,
-      });
-
-      if (!error) {
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.id === notificationId
-              ? {
-                  ...n,
-                  dismissed_at: new Date().toISOString(),
-                  read_at: n.read_at || new Date().toISOString(),
-                }
-              : n
-          )
-        );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
-      }
+      // Mock implementation
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === notificationId
+            ? {
+                ...n,
+                dismissed_at: new Date().toISOString(),
+                read_at: n.read_at || new Date().toISOString(),
+              }
+            : n
+        )
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error dismissing notification:', error);
     }
@@ -145,13 +157,7 @@ export function NotificationCenter() {
         .filter((n) => !n.read_at && !n.dismissed_at)
         .map((n) => n.id);
 
-      for (const id of unreadIds) {
-        await supabase.rpc('mark_notification_read', {
-          p_notification_id: id,
-          p_user_id: user.id,
-        });
-      }
-
+      // Mock implementation
       setNotifications((prev) =>
         prev.map((n) =>
           unreadIds.includes(n.id) ? { ...n, read_at: new Date().toISOString() } : n
@@ -163,16 +169,12 @@ export function NotificationCenter() {
     }
   };
 
-  const handleNotificationClick = async (notification: NotificationQueue) => {
+  const handleNotificationClick = async (notification: MockNotification) => {
     // Mark as clicked (which also marks as read)
     if (!user) return;
 
     try {
-      await supabase.rpc('mark_notification_clicked', {
-        p_notification_id: notification.id,
-        p_user_id: user.id,
-      });
-
+      // Mock implementation
       setNotifications((prev) =>
         prev.map((n) =>
           n.id === notification.id
@@ -232,6 +234,7 @@ export function NotificationCenter() {
     <div className="relative">
       {/* Bell Icon Button */}
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-full hover:bg-muted transition-colors"
         aria-label="Notifications"
@@ -251,16 +254,16 @@ export function NotificationCenter() {
       </button>
 
       {/* Dropdown */}
-      {isOpen && (
+      {isOpen && createPortal(
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-[99999]"
             onClick={() => setIsOpen(false)}
           />
 
           {/* Dropdown Panel */}
-          <div className="absolute right-0 mt-2 w-96 max-h-[600px] bg-card border rounded-lg shadow-lg z-50 flex flex-col">
+          <div className="fixed right-4 top-20 w-96 max-h-[600px] bg-card border rounded-lg shadow-lg z-[100000] flex flex-col">
             {/* Header */}
             <div className="p-4 border-b">
               <div className="flex items-center justify-between mb-3">
@@ -418,7 +421,8 @@ export function NotificationCenter() {
               </div>
             )}
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );

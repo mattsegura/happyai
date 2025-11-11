@@ -91,3 +91,15 @@ export type { LogoProps } from './logo';
 
 export { default as PricingSection } from './pricing-section';
 export { TimelineContent } from './timeline-animation';
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./select";

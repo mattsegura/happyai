@@ -1,14 +1,24 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ChatProvider } from './contexts/ChatContext';
+import { AssignmentProvider } from './contexts/AssignmentContext';
+import { StudyPlanProvider } from './contexts/StudyPlanContext';
+import { StudyToolsProvider } from './contexts/StudyToolsContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { AITutorPage } from './components/pages/AITutorPage';
 import { TeacherFeaturesPage } from './components/pages/TeacherFeaturesPage';
+import { EnterpriseFeaturesPage } from './components/pages/EnterpriseFeaturesPage';
+import { EmotionalWellbeingPage } from './components/pages/EmotionalWellbeingPage';
+import { PrivacyPolicyPage } from './components/pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
+import { FERPACompliancePage } from './components/pages/FERPACompliancePage';
+import { AccessibilityPage } from './components/pages/AccessibilityPage';
 import { LoginPage } from './components/auth/LoginPage';
 import { SignupPage } from './components/auth/SignupPage';
 import { ToastProvider } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/tooltip-radix';
-import { PWAInstallPrompt } from './components/common/PWAInstallPrompt';
+import { ScrollToTop } from './components/common/ScrollToTop';
 
 // Lazy load dashboards for code splitting
 const Dashboard = lazy(() => import('./components/dashboard/Dashboard').then(module => ({ default: module.Dashboard })));
@@ -27,38 +37,11 @@ function SignupPageWrapper() {
 }
 
 function AppContent() {
-  const { user, loading, role } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { user, loading, role, profile } = useAuth();
 
-  // Debug logging
-  if (import.meta.env.DEV) {
-    console.log('[AppContent] Render -', { user: user?.email, loading, role, path: location.pathname });
-  }
-
-  // Force correct dashboard based on role when user is authenticated
-  useEffect(() => {
-    if (!loading && user && role) {
-      const currentPath = location.pathname;
-      const isOnDashboard = currentPath.startsWith('/dashboard');
-      const isOnTeacher = currentPath.startsWith('/teacher');
-      const isOnAdmin = currentPath.startsWith('/admin');
-
-      // Redirect if user is on wrong dashboard
-      if (role === 'teacher' && !isOnTeacher && (isOnDashboard || currentPath === '/')) {
-        if (import.meta.env.DEV) console.log('[AppContent] Redirecting teacher from', currentPath, 'to /teacher');
-        navigate('/teacher', { replace: true });
-      } else if ((role === 'admin' || role === 'super_admin') && !isOnAdmin && (isOnDashboard || isOnTeacher || currentPath === '/')) {
-        if (import.meta.env.DEV) console.log('[AppContent] Redirecting admin from', currentPath, 'to /admin');
-        navigate('/admin', { replace: true });
-      } else if (role === 'student' && !isOnDashboard && (isOnTeacher || isOnAdmin || currentPath === '/')) {
-        if (import.meta.env.DEV) console.log('[AppContent] Redirecting student from', currentPath, 'to /dashboard');
-        navigate('/dashboard', { replace: true });
-      }
-    }
-  }, [user, loading, role, location.pathname, navigate]);
-
-  if (loading) {
+  // Show loading while authenticating OR while profile is being fetched
+  // This prevents wrong redirects before role is loaded from database
+  if (loading || (user && !profile)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-accent-50 to-white dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
         <div className="text-center">
@@ -83,6 +66,21 @@ function AppContent() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/ai-tutor" element={<AITutorPage onNavigateHome={() => window.location.href = '/'} />} />
         <Route path="/teacher-features" element={<TeacherFeaturesPage />} />
+        <Route path="/enterprise-features" element={<EnterpriseFeaturesPage />} />
+        <Route path="/emotional-wellbeing" element={<EmotionalWellbeingPage />} />
+        
+        {/* Legal Pages */}
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsOfServicePage />} />
+        <Route path="/ferpa" element={<FERPACompliancePage />} />
+        <Route path="/accessibility" element={<AccessibilityPage />} />
+        
+        {/* Company Pages - Coming Soon */}
+        <Route path="/about" element={<Navigate to="/" replace />} />
+        <Route path="/careers" element={<Navigate to="/" replace />} />
+        <Route path="/blog" element={<Navigate to="/" replace />} />
+        
+        {/* Auth Pages */}
         <Route path="/login" element={<LoginPageWrapper />} />
         <Route path="/signup" element={<SignupPageWrapper />} />
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -107,21 +105,27 @@ function AppContent() {
     <Suspense fallback={DashboardLoadingFallback}>
       <Routes>
         <Route path="/" element={
-          (() => {
-            const redirectPath = (role === 'admin' || role === 'super_admin')
-              ? '/admin'
-              : role === 'teacher'
-                ? '/teacher'
-                : '/dashboard';
-            if (import.meta.env.DEV) {
-              console.log('[AppContent] Root redirect -', { role, redirectPath });
-            }
-            return <Navigate to={redirectPath} replace />;
-          })()
+          (role === 'admin' || role === 'super_admin') ? (
+            <Navigate to="/admin" replace />
+          ) : role === 'teacher' ? (
+            <Navigate to="/teacher" replace />
+          ) : (
+            <Navigate to="/dashboard" replace />
+          )
         } />
 
         {/* Student Dashboard Routes */}
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/dashboard/*" element={
+          <StudyToolsProvider>
+            <StudyPlanProvider>
+              <AssignmentProvider>
+                <ChatProvider>
+                  <Dashboard />
+                </ChatProvider>
+              </AssignmentProvider>
+            </StudyPlanProvider>
+          </StudyToolsProvider>
+        } />
 
         {/* Teacher Dashboard Routes */}
         <Route path="/teacher/*" element={<TeacherDashboard />} />
@@ -139,11 +143,11 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <TooltipProvider delayDuration={200}>
         <ToastProvider>
           <AuthProvider>
             <AppContent />
-            <PWAInstallPrompt />
           </AuthProvider>
         </ToastProvider>
       </TooltipProvider>

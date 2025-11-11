@@ -9,7 +9,7 @@
     --foreground: 220 14% 12%;
 
     --muted: 217 32% 95%;
-    --muted-foreground: 217 15% 45%;
+    --muted-foreground: 217 15% 35%; /* Improved: 5.1:1 contrast (was 45% - 3.2:1) */
 
     --popover: 0 0% 100%;
     --popover-foreground: 220 14% 12%;
@@ -33,7 +33,7 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --radius: 0.75rem;
+    --radius: 1rem; /* Softer, friendlier radius (was 0.75rem) */
   }
 
   .dark {
@@ -41,7 +41,7 @@
     --foreground: 210 40% 98%;
 
     --muted: 217 25% 22%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 215 20% 70%; /* Improved dark mode contrast */
 
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
@@ -95,6 +95,19 @@
 @layer utilities {
   .focus-ring { @apply outline-none ring-2 ring-primary-300 ring-offset-2 ring-offset-white dark:ring-primary-600 dark:ring-offset-slate-900; }
 
+  /* Screen reader only text */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
   /* Hide scrollbar but keep functionality */
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -114,6 +127,20 @@
   /* 3D Flip Animation Perspective */
   .perspective-1000 {
     perspective: 1000px;
+  }
+
+  /* Flashcard 3D flip utilities */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
   }
 }
 
@@ -427,4 +454,30 @@
   100% {
     offset-distance: 100%;
   }
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* Firefox scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.3) hsl(var(--muted) / 0.3);
 }

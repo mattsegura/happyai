@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hapi Study Notes</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 380px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 0;
+    }
+
+    .container {
+      padding: 24px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .url-display {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .url-display label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+    }
+
+    .url-display .url {
+      font-size: 13px;
+      word-break: break-all;
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+
+    .analyze-btn {
+      width: 100%;
+      padding: 16px;
+      background: #fff;
+      color: #667eea;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      margin-bottom: 16px;
+    }
+
+    .analyze-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .analyze-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .analyze-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: none;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.loading {
+      text-align: center;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .status-text {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .result {
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      border-radius: 12px;
+      padding: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #667eea;
+    }
+
+    .result-content {
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .settings-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .settings-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .settings-panel {
+      display: none;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .settings-panel.show {
+      display: block;
+    }
+
+    .settings-panel label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .settings-panel input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .settings-panel input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 10px;
+      background: #fff;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .save-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📚 Hapi Study Notes</h1>
+      <p>Convert any website into study notes</p>
+    </div>
+
+    <div class="url-display">
+      <label>Current Page</label>
+      <div class="url" id="currentUrl">Loading...</div>
+    </div>
+
+    <button class="analyze-btn" id="analyzeBtn">
+      🔍 Analyze Site
+    </button>
+
+    <div class="status" id="status">
+      <div class="spinner"></div>
+      <div class="status-text" id="statusText">Processing...</div>
+    </div>
+
+    <div class="result" id="result">
+      <h3>📝 Study Notes</h3>
+      <div class="result-content" id="resultContent"></div>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <button class="settings-btn" id="settingsBtn">⚙️ Settings</button>
+
+    <div class="settings-panel" id="settingsPanel">
+      <label>Firecrawl API Key</label>
+      <input type="password" id="firecrawlKey" placeholder="Enter your Firecrawl API key">
+      
+      <label>AI Provider</label>
+      <select id="aiProvider" style="width: 100%; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 13px; margin-bottom: 12px;">
+        <option value="gemini">Google Gemini</option>
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="openai">OpenAI (GPT)</option>
+      </select>
+
+      <label>AI API Key</label>
+      <input type="password" id="aiKey" placeholder="Enter your AI API key">
+      
+      <button class="save-btn" id="saveBtn">💾 Save Settings</button>
+    </div>
+  </div>
+
+  <script src="scripts/popup.js"></script>
+</body>
+</html>

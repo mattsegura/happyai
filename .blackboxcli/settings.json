@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "remote-code": {
+      "httpUrl": "https://cloud.blackbox.ai/api/mcp",
+      "headers": {
+        "Authorization": "Bearer bb_bedb180082c7e36cd11ed6c280f6c39d2d99b75d0e414baa01a74abd1f891149"
+      }
+    }
+  }
+}

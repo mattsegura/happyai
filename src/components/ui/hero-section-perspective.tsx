@@ -1,5 +1,5 @@
 export interface HeroSectionPerspectiveProps {
-  title: string
+  title: string | React.ReactNode
   subtitle: string
   dashboardImage: string
   dashboardImageDark?: string
@@ -24,11 +24,11 @@ export const HeroSectionPerspective = ({
 
         <section className="overflow-hidden bg-[#FFFDF8] dark:bg-transparent">
           <div className="relative mx-auto max-w-5xl px-6 pt-40 pb-28 lg:pt-36 lg:pb-24">
-            <div className="relative z-10 mx-auto max-w-2xl text-center">
-              <h1 className="whitespace-nowrap text-4xl font-semibold md:text-5xl lg:text-6xl text-slate-900 dark:text-white">
+            <div className="relative z-10 mx-auto max-w-3xl text-center">
+              <h1 className="text-4xl font-semibold md:text-5xl lg:text-6xl text-slate-900 dark:text-white leading-tight">
                 {title}
               </h1>
-              <p className="mx-auto my-8 max-w-2xl text-2xl md:text-3xl text-slate-600 dark:text-slate-300">
+              <p className="mx-auto my-8 max-w-2xl text-xl md:text-2xl text-slate-600 dark:text-slate-300">
                 {subtitle}
               </p>
             </div>
