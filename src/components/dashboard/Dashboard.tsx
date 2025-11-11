@@ -6,13 +6,12 @@ import { MeetingDetailsModal } from './MeetingDetailsModal';
 import { ClassesView } from './ClassesView';
 import { ProfileView } from './ProfileView';
 import { CalendarView } from './CalendarView';
-import { AnalyticsView } from './AnalyticsView';
 import { PopupQueueManager } from '../popups/PopupQueueManager';
 import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight, BarChart3 } from 'lucide-react';
+import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
@@ -87,7 +86,6 @@ export function Dashboard() {
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
     { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
-    { id: 'analytics', path: '/dashboard/analytics', icon: BarChart3, label: 'Analytics' },
     { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Study Planner' },
     { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
   ] as const;
@@ -283,7 +281,6 @@ export function Dashboard() {
             {!location.pathname.includes('/overview') && (
               <div>
                 <h1 className="text-xl font-semibold text-foreground md:text-2xl">
-                  {location.pathname.includes('analytics') && 'Analytics'}
                   {location.pathname.includes('classes') && 'Classes'}
                   {location.pathname.includes('calendar') && 'Calendar'}
                   {location.pathname.includes('planner') && 'Study Planner'}
@@ -297,7 +294,6 @@ export function Dashboard() {
                   {location.pathname.includes('subscription') && 'Subscription'}
                 </h1>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {location.pathname.includes('analytics') && 'Track your mood, progress & achievements'}
                   {location.pathname.includes('classes') && 'Your courses, grades & class overview'}
                   {location.pathname.includes('calendar') && 'Full calendar with AI study planning'}
                   {location.pathname.includes('planner') && 'AI-powered study plan generator'}
@@ -366,14 +362,6 @@ export function Dashboard() {
                         />
                       )}
                     </>
-                  }
-                />
-                <Route
-                  path="analytics"
-                  element={
-                    <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <AnalyticsView />
-                    </div>
                   }
                 />
                 <Route
