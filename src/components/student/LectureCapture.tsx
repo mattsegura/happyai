@@ -63,7 +63,7 @@ const mockLectureHistory: LectureSession[] = [
 ];
 
 export function LectureCapture() {
-  const [mode, setMode] = useState<LectureMode>('live');
+  const [mode, setMode] = useState<LectureMode | null>(null); // null = showing choice screen
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -224,63 +224,179 @@ export function LectureCapture() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-border">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-3">
-            <Video className="w-8 h-8 text-blue-600" />
-            Lecture Capture
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Record live lectures or transcribe existing recordings
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Mode Toggle */}
-          <div className="flex items-center gap-2 p-1 bg-muted rounded-lg">
+      {/* Header - Only show when mode is selected */}
+      {mode && (
+        <div className="flex items-center justify-between p-6 border-b border-border bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20">
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setMode('live')}
-              className={cn(
-                'px-4 py-2 rounded-md font-medium text-sm transition-all',
-                mode === 'live'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
+              onClick={() => setMode(null)}
+              className="flex items-center gap-2 px-3 py-2 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-all text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              <Video className="w-4 h-4 inline mr-2" />
-              Live
+              ← Back
             </button>
-            <button
-              onClick={() => setMode('upload')}
-              className={cn(
-                'px-4 py-2 rounded-md font-medium text-sm transition-all',
-                mode === 'upload'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              <Upload className="w-4 h-4 inline mr-2" />
-              Upload
-            </button>
+            <div className="h-6 w-px bg-border" />
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-3">
+                {mode === 'live' ? (
+                  <>
+                    <Video className="w-7 h-7 text-blue-600" />
+                    Live Lecture
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-7 h-7 text-purple-600" />
+                    Upload Recording
+                  </>
+                )}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                {mode === 'live'
+                  ? 'Connect to a live lecture for real-time transcription'
+                  : 'Upload or link recordings for AI transcription'}
+              </p>
+            </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowHistory(!showHistory)}
-            className="flex items-center gap-2"
-          >
-            <Clock className="w-4 h-4" />
-            History
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowHistory(!showHistory)}
+              className="flex items-center gap-2"
+            >
+              <Clock className="w-4 h-4" />
+              History
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex-1 flex overflow-hidden">
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          {mode === 'live' ? (
+          {!mode ? (
+            /* Split-Screen Choice View */
+            <div className="flex-1 p-8">
+              <div className="max-w-7xl mx-auto h-full flex flex-col">
+                {/* Title */}
+                <div className="text-center mb-12">
+                  <h1 className="text-4xl font-bold mb-3">
+                    <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                      Lecture Capture
+                    </span>
+                  </h1>
+                  <p className="text-lg text-muted-foreground">
+                    Choose how you want to capture your lecture content
+                  </p>
+                </div>
+
+                {/* Split Options */}
+                <div className="flex-1 grid grid-cols-2 gap-8">
+                  {/* Live Lecture Option */}
+                  <motion.button
+                    onClick={() => setMode('live')}
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative group bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100 dark:from-blue-950/40 dark:via-cyan-950/40 dark:to-blue-900/40 rounded-3xl p-12 border-2 border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-600 transition-all overflow-hidden shadow-xl hover:shadow-2xl"
+                  >
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    <div className="relative z-10 h-full flex flex-col items-center justify-center text-center space-y-6">
+                      {/* Icon */}
+                      <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl group-hover:shadow-blue-500/50 transition-all transform group-hover:scale-110">
+                        <Video className="w-16 h-16 text-white" />
+                      </div>
+
+                      {/* Title */}
+                      <div>
+                        <h2 className="text-3xl font-bold text-foreground mb-2">
+                          Live Lecture
+                        </h2>
+                        <p className="text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+                          Connect to Zoom, Google Meet, or MS Teams to transcribe lectures in real-time
+                        </p>
+                      </div>
+
+                      {/* Features */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          Real-time transcription
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          Speaker identification
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          Instant study materials
+                        </div>
+                      </div>
+
+                      {/* CTA */}
+                      <div className="pt-4">
+                        <div className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold group-hover:bg-blue-700 transition-colors shadow-lg">
+                          Start Live Session →
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+
+                  {/* Upload Recording Option */}
+                  <motion.button
+                    onClick={() => setMode('upload')}
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative group bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-purple-950/40 dark:via-pink-950/40 dark:to-purple-900/40 rounded-3xl p-12 border-2 border-purple-200 dark:border-purple-800 hover:border-purple-400 dark:hover:border-purple-600 transition-all overflow-hidden shadow-xl hover:shadow-2xl"
+                  >
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    <div className="relative z-10 h-full flex flex-col items-center justify-center text-center space-y-6">
+                      {/* Icon */}
+                      <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-2xl group-hover:shadow-purple-500/50 transition-all transform group-hover:scale-110">
+                        <Upload className="w-16 h-16 text-white" />
+                      </div>
+
+                      {/* Title */}
+                      <div>
+                        <h2 className="text-3xl font-bold text-foreground mb-2">
+                          Upload Recording
+                        </h2>
+                        <p className="text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+                          Upload audio/video files or paste YouTube links to get AI-powered transcriptions
+                        </p>
+                      </div>
+
+                      {/* Features */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          File uploads (MP3, MP4, WAV)
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          YouTube link support
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          Batch processing
+                        </div>
+                      </div>
+
+                      {/* CTA */}
+                      <div className="pt-4">
+                        <div className="px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold group-hover:bg-purple-700 transition-colors shadow-lg">
+                          Upload Files →
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          ) : mode === 'live' ? (
             /* Live Transcription Mode */
             connectionStatus === 'disconnected' ? (
               <div className="flex-1 flex items-center justify-center p-8">

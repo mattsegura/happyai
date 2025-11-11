@@ -604,8 +604,8 @@ export function Dashboard() {
             ? "p-0" // Fullscreen for AI Chat
             : "px-6 pb-24 md:pb-4"
         )}>
-          {/* Sleek Header - Hidden only on AI Chat for immersive experience */}
-          {!location.pathname.includes('ai-chat') && !location.pathname.includes('/overview') && (
+          {/* Sleek Header - Hidden only on AI Chat, Overview, and Lecture Capture for immersive experience */}
+          {!location.pathname.includes('ai-chat') && !location.pathname.includes('/overview') && !location.pathname.includes('lecture-capture') && (
             <SleekPageHeader
               title={
                 location.pathname.includes('classes') && !location.pathname.includes('analytics') ? 'Classes' :
