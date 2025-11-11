@@ -77,26 +77,30 @@ export function ProfessionalCalendar({
   const handleEventClick = (event: CalendarEvent) => {
     // If it's an assignment or exam deadline, show assignment details modal
     if (event.type === 'assignment' || event.type === 'exam') {
+      const eventType = event.type || 'assignment';
+      const eventCourseName = event.courseName || event.course || 'General';
+      const eventDate = event.startDate || event.date || new Date().toISOString().split('T')[0];
+      
       const assignment: Assignment = {
         id: event.id,
-        title: event.title,
-        description: event.description || `${event.type.charAt(0).toUpperCase() + event.type.slice(1)} for ${event.courseName}`,
-        courseName: event.courseName,
-        courseColor: event.courseColor,
-        dueDate: new Date(event.date + 'T' + (event.startTime || '23:59')).toISOString(),
-        type: event.type as 'essay' | 'project' | 'assignment' | 'exam',
+        title: event.title || 'Untitled Assignment',
+        description: event.description || `${eventType.charAt(0).toUpperCase() + eventType.slice(1)} for ${eventCourseName}`,
+        courseName: eventCourseName,
+        courseColor: event.courseColor || '#6366f1',
+        dueDate: new Date(eventDate + 'T' + (event.startTime || '23:59')).toISOString(),
+        type: eventType as 'essay' | 'project' | 'assignment' | 'exam',
         status: 'in-progress',
         progress: 50,
         files: [],
-        checklist: event.tasks.map((task, idx) => ({
+        checklist: (event.tasks || []).map((task, idx) => ({
           id: `task-${idx}`,
-          title: task,
+          title: typeof task === 'string' ? task : task.title || 'Untitled Task',
           completed: false,
           category: 'preparation'
         })),
         chatHistory: [],
         parsedInstructions: {
-          requirements: event.tasks,
+          requirements: (event.tasks || []).map(task => typeof task === 'string' ? task : task.title || ''),
           rubric: [],
           sections: [],
           format: 'Standard'
@@ -320,26 +324,29 @@ export function ProfessionalCalendar({
               <p className="text-sm text-muted-foreground">No upcoming events</p>
             ) : (
               <div className="space-y-2">
-                {upcomingEvents.map(event => (
-                  <button
-                    key={event.id}
-                    onClick={() => handleEventClick(event)}
-                    className="w-full p-2 rounded-lg border border-border hover:border-primary/50 hover:shadow-sm transition-all text-left"
-                    style={{ backgroundColor: `${event.courseColor}08` }}
-                  >
-                    <div className="text-xs text-muted-foreground mb-1">
-                      {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {event.startTime}
-                    </div>
-                    <div className="text-sm font-medium truncate">{event.title}</div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: event.courseColor }}
-                      />
-                      <span className="text-xs text-muted-foreground truncate">{event.courseName}</span>
-                    </div>
-                  </button>
-                ))}
+                {upcomingEvents.map(event => {
+                  const eventDate = event.startDate || event.date || new Date().toISOString().split('T')[0];
+                  return (
+                    <button
+                      key={event.id}
+                      onClick={() => handleEventClick(event)}
+                      className="w-full p-2 rounded-lg border border-border hover:border-primary/50 hover:shadow-sm transition-all text-left"
+                      style={{ backgroundColor: `${event.courseColor || '#6366f1'}08` }}
+                    >
+                      <div className="text-xs text-muted-foreground mb-1">
+                        {new Date(eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {event.startTime || '00:00'}
+                      </div>
+                      <div className="text-sm font-medium truncate">{event.title || 'Untitled Event'}</div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <div
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: event.courseColor || '#6366f1' }}
+                        />
+                        <span className="text-xs text-muted-foreground truncate">{event.courseName || event.course || 'General'}</span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText,
   Image,
@@ -19,11 +19,16 @@ import {
   BookOpen,
   Mic,
   Volume2,
-  Eye
+  Eye,
+  ExternalLink,
+  Share2,
+  Copy,
+  Folder
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { FileLibraryItem } from '../../lib/types/studyPlan';
 import { mockFileLibrary, getFilesByClass, getRecentFiles, getStorageStats } from '../../lib/mockData/fileLibrary';
+import { FileGenerationWorkflow } from './FileGenerationWorkflow';
 
 type ViewMode = 'grid' | 'list';
 type FilterBy = 'all' | 'pdf' | 'image' | 'video' | 'audio';
@@ -33,6 +38,9 @@ export function FileLibrary() {
   const [filterBy, setFilterBy] = useState<FilterBy>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [workflowFile, setWorkflowFile] = useState<FileLibraryItem | null>(null);
+  const [showWorkflow, setShowWorkflow] = useState(false);
+  const [contextMenuFile, setContextMenuFile] = useState<string | null>(null);
 
   const stats = getStorageStats();
   
@@ -83,6 +91,58 @@ export function FileLibrary() {
   };
 
   const uniqueClasses = Array.from(new Set(mockFileLibrary.map(f => f.className)));
+
+  const handleGenerate = (file: FileLibraryItem) => {
+    setWorkflowFile(file);
+    setShowWorkflow(true);
+  };
+
+  const handleDownload = (file: FileLibraryItem) => {
+    // Simulate download
+    const link = document.createElement('a');
+    link.href = file.url || '#';
+    link.download = file.name;
+    link.click();
+    alert(`Downloading ${file.name}...`);
+  };
+
+  const handleDelete = (file: FileLibraryItem) => {
+    if (confirm(`Are you sure you want to delete ${file.name}?`)) {
+      alert(`Deleted ${file.name}`);
+      // In real implementation, would call API to delete
+    }
+  };
+
+  const handleShare = (file: FileLibraryItem) => {
+    alert(`Sharing ${file.name}...`);
+    // In real implementation, would open share modal
+  };
+
+  const handleCopyLink = (file: FileLibraryItem) => {
+    const link = file.url || window.location.href;
+    navigator.clipboard.writeText(link);
+    alert('Link copied to clipboard!');
+  };
+
+  const handleOpenFile = (file: FileLibraryItem) => {
+    if (file.url) {
+      window.open(file.url, '_blank');
+    } else {
+      alert(`Opening ${file.name}...`);
+    }
+  };
+
+  // Close context menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (contextMenuFile) {
+        setContextMenuFile(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [contextMenuFile]);
 
   return (
     <div className="flex flex-col h-full">
@@ -184,6 +244,7 @@ export function FileLibrary() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
+                  onClick={() => handleOpenFile(file)}
                   className="group relative bg-card border border-border/60 rounded-lg p-4 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer"
                 >
                   {/* File Icon/Thumbnail */}
@@ -266,14 +327,88 @@ export function FileLibrary() {
 
                   {/* Actions (show on hover) */}
                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border shadow-lg hover:bg-muted transition-colors">
-                      <MoreVertical className="w-4 h-4 text-foreground" />
-                    </button>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setContextMenuFile(contextMenuFile === file.id ? null : file.id);
+                        }}
+                        className="p-2 bg-background/90 backdrop-blur-sm rounded-lg border border-border shadow-lg hover:bg-muted transition-colors"
+                      >
+                        <MoreVertical className="w-4 h-4 text-foreground" />
+                      </button>
+
+                      {/* Context Menu */}
+                      {contextMenuFile === file.id && (
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-xl py-1 z-10">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenFile(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            Open File
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownload(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <Download className="w-4 h-4" />
+                            Download
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <Share2 className="w-4 h-4" />
+                            Share
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyLink(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <Copy className="w-4 h-4" />
+                            Copy Link
+                          </button>
+                          <div className="h-px bg-border my-1" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2 text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Generate More Tools Button */}
                   <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGenerate(file);
+                      }}
                       className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg text-xs font-semibold shadow-lg hover:shadow-xl transition-all"
                       title="Generate more tools from this file"
                     >
@@ -298,6 +433,7 @@ export function FileLibrary() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.03 }}
+                  onClick={() => handleOpenFile(file)}
                   className="flex items-center gap-4 p-4 bg-card border border-border/60 rounded-lg hover:border-primary/50 hover:shadow-md transition-all cursor-pointer group"
                 >
                   {/* Icon */}
@@ -338,17 +474,90 @@ export function FileLibrary() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      className="px-3 py-1.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg text-xs font-semibold hover:shadow-lg transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGenerate(file);
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg text-xs font-semibold hover:shadow-lg transition-all flex items-center gap-1"
                       title="Generate more tools"
                     >
                       <Plus className="w-3 h-3" />
+                      Generate
                     </button>
-                    <button
-                      className="p-2 hover:bg-muted rounded-lg transition-colors"
-                      title="More options"
-                    >
-                      <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                    </button>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setContextMenuFile(contextMenuFile === file.id ? null : file.id);
+                        }}
+                        className="p-2 hover:bg-muted rounded-lg transition-colors"
+                        title="More options"
+                      >
+                        <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                      </button>
+
+                      {/* Context Menu */}
+                      {contextMenuFile === file.id && (
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-lg shadow-xl py-1 z-10">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenFile(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            Open File
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownload(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <Download className="w-4 h-4" />
+                            Download
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <Share2 className="w-4 h-4" />
+                            Share
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyLink(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2"
+                          >
+                            <Copy className="w-4 h-4" />
+                            Copy Link
+                          </button>
+                          <div className="h-px bg-border my-1" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(file);
+                              setContextMenuFile(null);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm hover:bg-muted flex items-center gap-2 text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -356,7 +565,16 @@ export function FileLibrary() {
           </div>
         )}
       </div>
+
+      {/* Generation Workflow Modal */}
+      <FileGenerationWorkflow
+        isOpen={showWorkflow}
+        onClose={() => {
+          setShowWorkflow(false);
+          setWorkflowFile(null);
+        }}
+        file={workflowFile}
+      />
     </div>
   );
 }
-

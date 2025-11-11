@@ -47,7 +47,7 @@ export function SummarizationTab() {
 
       {!summary ? (
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-md">
+          <div className="text-center max-w-3xl">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
               <FileText className="w-10 h-10 text-violet-600 dark:text-violet-400" />
             </div>

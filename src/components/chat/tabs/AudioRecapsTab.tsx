@@ -35,7 +35,7 @@ export function AudioRecapsTab() {
       </div>
 
       <div className="flex-1 flex items-center justify-center">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-5xl px-8">
           <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 rounded-3xl p-12 text-white text-center shadow-2xl">
             <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
               <Volume2 className="w-16 h-16" />

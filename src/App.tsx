@@ -1,10 +1,13 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { initializeCleanup } from './lib/chat/conversationManager';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ChatProvider } from './contexts/ChatContext';
 import { AssignmentProvider } from './contexts/AssignmentContext';
 import { StudyPlanProvider } from './contexts/StudyPlanContext';
 import { StudyToolsProvider } from './contexts/StudyToolsContext';
+import { StudyGroupProvider } from './contexts/StudyGroupContext';
+import { ContentProvider } from './contexts/ContentContext';
 import { LandingPage } from './components/landing/LandingPage';
 import { AITutorPage } from './components/pages/AITutorPage';
 import { TeacherFeaturesPage } from './components/pages/TeacherFeaturesPage';
@@ -116,15 +119,19 @@ function AppContent() {
 
         {/* Student Dashboard Routes */}
         <Route path="/dashboard/*" element={
-          <StudyToolsProvider>
-            <StudyPlanProvider>
-              <AssignmentProvider>
-                <ChatProvider>
-                  <Dashboard />
-                </ChatProvider>
-              </AssignmentProvider>
-            </StudyPlanProvider>
-          </StudyToolsProvider>
+          <ContentProvider>
+            <StudyToolsProvider>
+              <StudyPlanProvider>
+                <AssignmentProvider>
+                  <StudyGroupProvider>
+                    <ChatProvider>
+                      <Dashboard />
+                    </ChatProvider>
+                  </StudyGroupProvider>
+                </AssignmentProvider>
+              </StudyPlanProvider>
+            </StudyToolsProvider>
+          </ContentProvider>
         } />
 
         {/* Teacher Dashboard Routes */}
@@ -141,6 +148,11 @@ function AppContent() {
 }
 
 function App() {
+  // Initialize chat message cleanup on app startup
+  useEffect(() => {
+    initializeCleanup();
+  }, []);
+
   return (
     <BrowserRouter>
       <ScrollToTop />

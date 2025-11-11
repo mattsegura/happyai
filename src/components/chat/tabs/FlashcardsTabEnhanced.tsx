@@ -110,7 +110,7 @@ export function FlashcardsTabEnhanced() {
         <StudyBuddyFileUpload />
         
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-md">
+          <div className="text-center max-w-3xl">
             <Brain className="w-16 h-16 mx-auto text-violet-600 dark:text-violet-400 mb-4" />
             <h3 className="text-xl font-bold text-foreground mb-2">
               No Flashcards Found
@@ -227,7 +227,7 @@ export function FlashcardsTabEnhanced() {
               key={currentIndex}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="w-full max-w-3xl"
+              className="w-full max-w-5xl"
             >
               {/* Card Type Badge */}
               <div className="flex items-center justify-between mb-4">

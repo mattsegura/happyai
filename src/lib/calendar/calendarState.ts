@@ -12,7 +12,7 @@ export interface CalendarFilters {
 
 // Get all events for a specific date
 export function getEventsForDate(events: CalendarEvent[], date: string): CalendarEvent[] {
-  return events.filter(event => event.date === date);
+  return events.filter(event => (event.startDate || event.date) === date);
 }
 
 // Get events for a date range
@@ -25,7 +25,8 @@ export function getEventsForDateRange(
   const end = new Date(endDate);
   
   return events.filter(event => {
-    const eventDate = new Date(event.date);
+    const eventDateStr = event.startDate || event.date || '';
+    const eventDate = new Date(eventDateStr);
     return eventDate >= start && eventDate <= end;
   });
 }
@@ -35,13 +36,18 @@ export function getEventsGroupedByDate(events: CalendarEvent[]): Map<string, Cal
   const grouped = new Map<string, CalendarEvent[]>();
   
   events.forEach(event => {
-    const existing = grouped.get(event.date) || [];
-    grouped.set(event.date, [...existing, event]);
+    const eventDate = event.startDate || event.date || '';
+    const existing = grouped.get(eventDate) || [];
+    grouped.set(eventDate, [...existing, event]);
   });
   
   // Sort events within each day by start time
   grouped.forEach((dayEvents, date) => {
-    dayEvents.sort((a, b) => a.startTime.localeCompare(b.startTime));
+    dayEvents.sort((a, b) => {
+      const timeA = a.startTime || '00:00';
+      const timeB = b.startTime || '00:00';
+      return timeA.localeCompare(timeB);
+    });
     grouped.set(date, dayEvents);
   });
   
@@ -133,9 +139,11 @@ export function getEventAtTimeSlot(
   const dayEvents = getEventsForDate(events, date);
   
   for (const event of dayEvents) {
-    const eventHour = parseInt(event.startTime.split(':')[0]);
+    const startTime = event.startTime || '00:00';
+    const eventHour = parseInt(startTime.split(':')[0]);
     const slotHour = parseInt(timeSlot.split(':')[0]);
-    const eventEndHour = eventHour + Math.ceil(event.duration / 60);
+    const duration = event.duration || 60;
+    const eventEndHour = eventHour + Math.ceil(duration / 60);
     
     if (slotHour >= eventHour && slotHour < eventEndHour) {
       return event;
@@ -151,11 +159,16 @@ export function getUpcomingEvents(events: CalendarEvent[], limit: number = 10): 
   const today = formatDateKey(now);
   
   return events
-    .filter(event => event.date >= today)
+    .filter(event => (event.startDate || event.date || '') >= today)
     .sort((a, b) => {
-      const dateCompare = a.date.localeCompare(b.date);
+      const dateA = a.startDate || a.date || '';
+      const dateB = b.startDate || b.date || '';
+      const dateCompare = dateA.localeCompare(dateB);
       if (dateCompare !== 0) return dateCompare;
-      return a.startTime.localeCompare(b.startTime);
+      
+      const timeA = a.startTime || '00:00';
+      const timeB = b.startTime || '00:00';
+      return timeA.localeCompare(timeB);
     })
     .slice(0, limit);
 }
@@ -163,9 +176,11 @@ export function getUpcomingEvents(events: CalendarEvent[], limit: number = 10): 
 // Get events for today
 export function getTodayEvents(events: CalendarEvent[]): CalendarEvent[] {
   const today = formatDateKey(new Date());
-  return getEventsForDate(events, today).sort((a, b) => 
-    a.startTime.localeCompare(b.startTime)
-  );
+  return getEventsForDate(events, today).sort((a, b) => {
+    const timeA = a.startTime || '00:00';
+    const timeB = b.startTime || '00:00';
+    return timeA.localeCompare(timeB);
+  });
 }
 
 // Check if date is today

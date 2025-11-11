@@ -1,23 +1,28 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, FileText, Clock, Calendar, Upload, CheckCircle,
-  AlertCircle, Brain, Send, Plus, X, Download, ExternalLink, Sparkles
+  AlertCircle, Brain, Plus, X, Download, ExternalLink, Sparkles,
+  Chrome, Check, Zap, Shield, RefreshCw, Paperclip, Globe, Send
 } from 'lucide-react';
 import { useAssignments } from '@/contexts/AssignmentContext';
-import { ChatMessage, ChecklistItem, UploadedFile } from '@/lib/types/assignment';
+import { ChecklistItem, UploadedFile } from '@/lib/types/assignment';
 import { cn } from '@/lib/utils';
 
 export function AssignmentWorkspace() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getAssignment, updateChecklistItem, addChatMessage, addFileToAssignment } = useAssignments();
+  const { getAssignment, updateChecklistItem, addFileToAssignment } = useAssignments();
   
   const assignment = getAssignment(id!);
+  const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'checklist'>('overview');
+  const [showExtensionModal, setShowExtensionModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'checklist' | 'chat'>('overview');
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [deepSearchEnabled, setDeepSearchEnabled] = useState(false);
 
   if (!assignment) {
     return (
@@ -40,29 +45,60 @@ export function AssignmentWorkspace() {
   const completedTasks = assignment.checklist.filter(t => t.completed).length;
   const totalTasks = assignment.checklist.length;
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAttachedFiles(prev => [...prev, ...files]);
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSendMessage = async () => {
     if (!chatInput.trim() || isSending) return;
 
-    const userMessage: ChatMessage = {
+    const prefix = deepSearchEnabled ? '[WEB SEARCH] ' : '';
+    const userMessage = {
       id: `msg-${Date.now()}`,
-      role: 'user',
-      content: chatInput,
+      role: 'user' as const,
+      content: prefix + chatInput,
       timestamp: new Date().toISOString(),
     };
 
-    addChatMessage(assignment.id, userMessage);
+    // Add message to assignment context
+    if (assignment.chatHistory) {
+      assignment.chatHistory.push(userMessage);
+    }
+    
+    // Handle file uploads
+    if (attachedFiles.length > 0) {
+      attachedFiles.forEach(file => {
+        addFileToAssignment(assignment.id, {
+          id: `file-${Date.now()}-${file.name}`,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          uploadedAt: new Date().toISOString(),
+          category: 'supporting',
+        });
+      });
+    }
+    
     setChatInput('');
+    setAttachedFiles([]);
     setIsSending(true);
 
     // Simulate AI response
     setTimeout(() => {
-      const aiMessage: ChatMessage = {
+      const aiMessage = {
         id: `msg-${Date.now()}`,
-        role: 'assistant',
-        content: getAIResponse(chatInput, assignment),
+        role: 'assistant' as const,
+        content: getAIResponse(chatInput, assignment, deepSearchEnabled),
         timestamp: new Date().toISOString(),
       };
-      addChatMessage(assignment.id, aiMessage);
+      if (assignment.chatHistory) {
+        assignment.chatHistory.push(aiMessage);
+      }
       setIsSending(false);
     }, 1500);
   };
@@ -130,7 +166,6 @@ export function AssignmentWorkspace() {
               { id: 'overview', label: 'Overview' },
               { id: 'files', label: 'Files' },
               { id: 'checklist', label: 'Checklist' },
-              { id: 'chat', label: 'AI Chat' },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -156,19 +191,10 @@ export function AssignmentWorkspace() {
             {activeTab === 'checklist' && (
               <ChecklistTab assignment={assignment} onToggle={updateChecklistItem} />
             )}
-            {activeTab === 'chat' && (
-              <ChatTab
-                assignment={assignment}
-                chatInput={chatInput}
-                setChatInput={setChatInput}
-                isSending={isSending}
-                onSend={handleSendMessage}
-              />
-            )}
           </div>
         </div>
 
-        {/* Right Panel - AI Assistant */}
+        {/* Right Panel - AI Assistant & Quick Actions */}
         <div className="space-y-6">
           {/* AI Assistant Card */}
           <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl border border-primary/20 p-6">
@@ -203,7 +229,7 @@ export function AssignmentWorkspace() {
               </li>
             </ul>
             <button
-              onClick={() => setActiveTab('chat')}
+              onClick={() => setShowChatModal(true)}
               className="w-full mt-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
             >
               Open Chat
@@ -229,9 +255,82 @@ export function AssignmentWorkspace() {
                 <ExternalLink className="w-4 h-4" />
                 View on Calendar
               </button>
+              <button 
+                onClick={() => setShowExtensionModal(true)}
+                className="w-full px-4 py-2 text-left text-sm hover:bg-muted rounded-lg transition-colors flex items-center gap-2 text-blue-600"
+              >
+                <Chrome className="w-4 h-4" />
+                Chrome Extension
+              </button>
             </div>
           </div>
         </div>
+        
+        {/* Extension Modal */}
+        {showExtensionModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowExtensionModal(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-background rounded-2xl shadow-2xl mx-4 p-8"
+            >
+              <button
+                onClick={() => setShowExtensionModal(false)}
+                className="absolute top-4 right-4 p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <ExtensionContent />
+            </motion.div>
+          </div>
+        )}
+
+        {/* AI Chat Modal */}
+        {showChatModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowChatModal(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative z-10 w-full max-w-4xl max-h-[85vh] bg-background rounded-2xl shadow-2xl mx-4"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Brain className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold">AI Assistant</h3>
+                    <p className="text-xs text-muted-foreground">Ask me anything about your assignment</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowChatModal(false)}
+                  className="p-2 hover:bg-muted rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-6">
+                <ChatInterface
+                  assignment={assignment}
+                  chatInput={chatInput}
+                  setChatInput={setChatInput}
+                  isSending={isSending}
+                  onSend={handleSendMessage}
+                  attachedFiles={attachedFiles}
+                  onFileSelect={handleFileSelect}
+                  onRemoveFile={handleRemoveFile}
+                  deepSearchEnabled={deepSearchEnabled}
+                  setDeepSearchEnabled={setDeepSearchEnabled}
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -388,13 +487,42 @@ function ChecklistTab({ assignment, onToggle }: { assignment: any; onToggle: any
   );
 }
 
-function ChatTab({ assignment, chatInput, setChatInput, isSending, onSend }: any) {
+function ChatInterface({ 
+  assignment, 
+  chatInput, 
+  setChatInput, 
+  isSending, 
+  onSend,
+  attachedFiles,
+  onFileSelect,
+  onRemoveFile,
+  deepSearchEnabled,
+  setDeepSearchEnabled
+}: any) {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   return (
     <div className="flex flex-col h-[600px]">
-      <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-        {assignment.chatHistory.map((message: ChatMessage) => (
-          <div
+      {/* Deep Search Banner */}
+      {deepSearchEnabled && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center gap-2"
+        >
+          <Globe className="w-4 h-4 text-blue-500 animate-pulse" />
+          <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+            Web Search Active - AI will search the internet for relevant information
+          </span>
+        </motion.div>
+      )}
+
+      <div className="flex-1 overflow-y-auto space-y-4 mb-4 custom-scrollbar">
+        {assignment.chatHistory.map((message: any) => (
+          <motion.div
             key={message.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             className={cn(
               'flex gap-3',
               message.role === 'user' ? 'justify-end' : 'justify-start'
@@ -407,9 +535,9 @@ function ChatTab({ assignment, chatInput, setChatInput, isSending, onSend }: any
             )}
             <div
               className={cn(
-                'p-3 rounded-lg max-w-[80%]',
+                'p-3 rounded-lg max-w-[80%] shadow-sm',
                 message.role === 'user'
-                  ? 'bg-primary text-white'
+                  ? 'bg-gradient-to-br from-primary to-accent text-white'
                   : 'bg-muted'
               )}
             >
@@ -418,44 +546,121 @@ function ChatTab({ assignment, chatInput, setChatInput, isSending, onSend }: any
                 {new Date(message.timestamp).toLocaleTimeString()}
               </p>
             </div>
-          </div>
+          </motion.div>
         ))}
         {isSending && (
-          <div className="flex gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex gap-3"
+          >
             <div className="p-2 bg-primary/10 rounded-full">
               <Brain className="w-4 h-4 text-primary animate-pulse" />
             </div>
             <div className="p-3 bg-muted rounded-lg">
               <p className="text-sm">Thinking...</p>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={chatInput}
-          onChange={(e) => setChatInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && onSend()}
-          placeholder="Ask for help or feedback..."
-          className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <button
-          onClick={onSend}
-          disabled={isSending || !chatInput.trim()}
-          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
-        >
-          <Send className="w-4 h-4" />
-        </button>
+      {/* Attached Files Preview */}
+      {attachedFiles.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          {attachedFiles.map((file: File, index: number) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg text-sm"
+            >
+              <FileText className="w-3 h-3 text-primary" />
+              <span className="text-xs max-w-[150px] truncate">{file.name}</span>
+              <button
+                onClick={() => onRemoveFile(index)}
+                className="p-0.5 hover:bg-primary/20 rounded transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Input Area */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={onFileSelect}
+            className="hidden"
+          />
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 hover:bg-muted rounded-lg transition-colors"
+            title="Attach files"
+          >
+            <Paperclip className="w-4 h-4" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setDeepSearchEnabled(!deepSearchEnabled)}
+            className={cn(
+              'p-2 rounded-lg transition-all',
+              deepSearchEnabled
+                ? 'bg-blue-500/20 text-blue-600 hover:bg-blue-500/30'
+                : 'hover:bg-muted'
+            )}
+            title="Toggle deep web search"
+          >
+            <Globe className={cn('w-4 h-4', deepSearchEnabled && 'animate-pulse')} />
+          </motion.button>
+
+          <input
+            type="text"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && onSend()}
+            placeholder={deepSearchEnabled ? "Ask with web search..." : "Ask for help or feedback..."}
+            className={cn(
+              "flex-1 px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all",
+              deepSearchEnabled && "border-blue-500/50 focus:border-blue-500"
+            )}
+          />
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onSend}
+            disabled={isSending || !chatInput.trim()}
+            className="px-5 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Send className="w-4 h-4" />
+          </motion.button>
+        </div>
       </div>
     </div>
   );
 }
 
-function getAIResponse(userInput: string, assignment: any): string {
+function getAIResponse(userInput: string, assignment: any, deepSearch: boolean = false): string {
   const input = userInput.toLowerCase();
   
+  if (deepSearch) {
+    return `🌐 [Web Search Results]\n\nI've searched the internet for information related to your query. Based on current sources and research, here's what I found:\n\n${getRegularResponse(input, assignment)}\n\nNote: These results include up-to-date information from the web to ensure accuracy and relevance.`;
+  }
+  
+  return getRegularResponse(input, assignment);
+}
+
+function getRegularResponse(input: string, assignment: any): string {
   if (input.includes('thesis') || input.includes('argument')) {
     return 'A strong thesis statement should be specific, arguable, and meet all the rubric requirements. Based on your assignment requirements, try to focus on the key themes that will earn you the most points. What specific aspect can we tackle first to get this done?';
   }
@@ -469,5 +674,123 @@ function getAIResponse(userInput: string, assignment: any): string {
   }
   
   return 'I\'m here to help you complete this assignment on time and meet all requirements! I can assist with brainstorming, outlining, reviewing your drafts, finding sources, checking rubric requirements, or anything else you need to finish this. What task should we tackle next?';
+}
+
+function ExtensionContent() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
+      {/* Header */}
+      <div className="text-center space-y-3">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl"
+        >
+          <Chrome className="w-10 h-10 text-white" />
+        </motion.div>
+        <h2 className="text-2xl font-bold">Hapi AI Chrome Extension</h2>
+        <p className="text-muted-foreground">Real-time AI assistance while writing in Google Docs</p>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+          <Zap className="w-4 h-4 text-yellow-600" />
+          <span className="text-sm font-semibold text-yellow-600">Coming Soon</span>
+        </div>
+      </div>
+
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          {
+            icon: Brain,
+            title: 'Smart Writing Assistance',
+            description: 'Get contextual suggestions as you type',
+            color: 'from-purple-500 to-pink-500',
+          },
+          {
+            icon: Shield,
+            title: 'Plagiarism Detection',
+            description: 'Ensure originality in real-time',
+            color: 'from-green-500 to-emerald-500',
+          },
+          {
+            icon: Check,
+            title: 'Grammar & Style',
+            description: 'Advanced writing refinement',
+            color: 'from-blue-500 to-cyan-500',
+          },
+          {
+            icon: RefreshCw,
+            title: 'Auto-Sync Progress',
+            description: 'Seamless integration with workspace',
+            color: 'from-orange-500 to-red-500',
+          },
+        ].map((feature, index) => (
+          <motion.div
+            key={feature.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="p-6 rounded-xl border border-border hover:border-primary/50 hover:shadow-lg transition-all"
+          >
+            <div className={cn(
+              'w-12 h-12 rounded-lg bg-gradient-to-br mb-4 flex items-center justify-center',
+              feature.color
+            )}>
+              <feature.icon className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2">{feature.title}</h3>
+            <p className="text-sm text-muted-foreground">{feature.description}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Screenshot Placeholder */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4 }}
+        className="relative p-8 bg-gradient-to-br from-muted/50 to-muted rounded-2xl border border-border overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div className="relative z-10 space-y-4">
+          <div className="flex items-center gap-3 p-4 bg-background rounded-lg border border-border shadow-sm">
+            <Chrome className="w-8 h-8 text-primary" />
+            <div className="flex-1">
+              <div className="h-3 bg-primary/20 rounded w-3/4 mb-2" />
+              <div className="h-2 bg-muted rounded w-1/2" />
+            </div>
+          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            Extension interface preview
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Install Button (Non-functional) */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center"
+      >
+        <button
+          disabled
+          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold shadow-xl opacity-50 cursor-not-allowed inline-flex items-center gap-3"
+        >
+          <Chrome className="w-5 h-5" />
+          Install Extension
+          <span className="text-xs">(Coming Soon)</span>
+        </button>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Get notified when the extension launches →{' '}
+          <a href="#" className="text-primary hover:underline">Join Waitlist</a>
+        </p>
+      </motion.div>
+    </motion.div>
+  );
 }
 

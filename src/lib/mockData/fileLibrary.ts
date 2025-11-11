@@ -8,10 +8,10 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'application/pdf',
     size: 2457600, // ~2.4 MB
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-bio',
-    className: 'BIO 101 - Cell Biology',
+    classId: 'bio101',
+    className: 'BIO 101',
     studyPlanId: 'study-plan-bio-1',
-    studyPlanTitle: 'Cell Biology Midterm Prep',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 4,
       quizzes: 1,
@@ -29,10 +29,10 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'image/png',
     size: 1048576, // 1 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-bio',
-    className: 'BIO 101 - Cell Biology',
+    classId: 'bio101',
+    className: 'BIO 101',
     studyPlanId: 'study-plan-bio-1',
-    studyPlanTitle: 'Cell Biology Midterm Prep',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -46,12 +46,12 @@ export const mockFileLibrary: FileLibraryItem[] = [
   },
   {
     id: 'file-3',
-    name: 'lecture-5-photosynthesis.mp4',
+    name: 'lecture-5-dna-replication.mp4',
     type: 'video/mp4',
     size: 52428800, // 50 MB
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-bio',
-    className: 'BIO 101 - Cell Biology',
+    classId: 'bio101',
+    className: 'BIO 101',
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -60,21 +60,21 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 1,
       imageAnalyses: 0
     },
-    url: '/mock-files/lecture-5-photosynthesis.mp4',
+    url: '/mock-files/lecture-5-dna-replication.mp4',
     thumbnailUrl: '/mock-thumbnails/video-icon.png'
   },
 
   // Math files
   {
     id: 'file-4',
-    name: 'calculus-derivatives.pdf',
+    name: 'calculus-integration.pdf',
     type: 'application/pdf',
     size: 1835008, // ~1.75 MB
     uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-math',
-    className: 'MATH 201 - Calculus I',
-    studyPlanId: 'study-plan-math-1',
-    studyPlanTitle: 'Derivatives Mastery',
+    classId: 'calc2',
+    className: 'MATH 251',
+    studyPlanId: 'study-plan-calc-1',
+    studyPlanTitle: 'Calculus II Study Plan',
     generatedTools: {
       flashcards: 3,
       quizzes: 1,
@@ -83,19 +83,19 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/calculus-derivatives.pdf',
+    url: '/mock-files/calculus-integration.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
     id: 'file-5',
-    name: 'calculus-integrals.pdf',
+    name: 'series-sequences.pdf',
     type: 'application/pdf',
     size: 2097152, // 2 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-math',
-    className: 'MATH 201 - Calculus I',
-    studyPlanId: 'study-plan-math-1',
-    studyPlanTitle: 'Derivatives Mastery',
+    classId: 'calc2',
+    className: 'MATH 251',
+    studyPlanId: 'study-plan-calc-1',
+    studyPlanTitle: 'Calculus II Study Plan',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -104,7 +104,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/calculus-integrals.pdf',
+    url: '/mock-files/series-sequences.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
@@ -113,8 +113,8 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     size: 524288, // 512 KB
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-math',
-    className: 'MATH 201 - Calculus I',
+    classId: 'calc2',
+    className: 'MATH 251',
     generatedTools: {
       flashcards: 0,
       quizzes: 1,
@@ -127,17 +127,17 @@ export const mockFileLibrary: FileLibraryItem[] = [
     thumbnailUrl: '/mock-thumbnails/docx-icon.png'
   },
 
-  // History files
+  // English files
   {
     id: 'file-7',
-    name: 'wwii-timeline.pdf',
+    name: 'modernist-literature.pdf',
     type: 'application/pdf',
     size: 3145728, // 3 MB
     uploadedAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-hist',
-    className: 'HIST 301 - Modern History',
-    studyPlanId: 'study-plan-hist-1',
-    studyPlanTitle: 'WWII Exam Preparation',
+    classId: 'eng201',
+    className: 'ENG 201',
+    studyPlanId: 'study-plan-eng-1',
+    studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
       flashcards: 3,
       quizzes: 1,
@@ -151,14 +151,14 @@ export const mockFileLibrary: FileLibraryItem[] = [
   },
   {
     id: 'file-8',
-    name: 'wwii-battles.pdf',
+    name: 'poetry-analysis-guide.pdf',
     type: 'application/pdf',
     size: 2621440, // ~2.5 MB
     uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-hist',
-    className: 'HIST 301 - Modern History',
-    studyPlanId: 'study-plan-hist-1',
-    studyPlanTitle: 'WWII Exam Preparation',
+    classId: 'eng201',
+    className: 'ENG 201',
+    studyPlanId: 'study-plan-eng-1',
+    studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -167,19 +167,19 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/wwii-battles.pdf',
+    url: '/mock-files/poetry-analysis-guide.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
     id: 'file-9',
-    name: 'wwii-map.jpg',
+    name: 'literary-timeline.jpg',
     type: 'image/jpeg',
     size: 2097152, // 2 MB
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-hist',
-    className: 'HIST 301 - Modern History',
-    studyPlanId: 'study-plan-hist-1',
-    studyPlanTitle: 'WWII Exam Preparation',
+    classId: 'eng201',
+    className: 'ENG 201',
+    studyPlanId: 'study-plan-eng-1',
+    studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -188,21 +188,21 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 1
     },
-    url: '/mock-files/wwii-map.jpg',
-    thumbnailUrl: '/mock-thumbnails/wwii-map-thumb.jpg'
+    url: '/mock-files/literary-timeline.jpg',
+    thumbnailUrl: '/mock-thumbnails/literary-timeline-thumb.jpg'
   },
 
   // Chemistry files
   {
     id: 'file-10',
-    name: 'chemistry-stoichiometry.pdf',
+    name: 'thermodynamics-notes.pdf',
     type: 'application/pdf',
     size: 2359296, // ~2.25 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-chem',
-    className: 'CHEM 151 - General Chemistry',
+    classId: 'chem102',
+    className: 'CHEM 102',
     studyPlanId: 'study-plan-chem-1',
-    studyPlanTitle: 'Chemical Reactions Study Plan',
+    studyPlanTitle: 'Chemistry Study Plan',
     generatedTools: {
       flashcards: 2,
       quizzes: 1,
@@ -211,7 +211,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/chemistry-stoichiometry.pdf',
+    url: '/mock-files/thermodynamics-notes.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
@@ -220,8 +220,8 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'application/pdf',
     size: 1572864, // ~1.5 MB
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-chem',
-    className: 'CHEM 151 - General Chemistry',
+    classId: 'chem102',
+    className: 'CHEM 102',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -235,12 +235,14 @@ export const mockFileLibrary: FileLibraryItem[] = [
   },
   {
     id: 'file-12',
-    name: 'acids-bases.pdf',
+    name: 'chemical-bonding.pdf',
     type: 'application/pdf',
     size: 1887437, // ~1.8 MB
     uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-chem',
-    className: 'CHEM 151 - General Chemistry',
+    classId: 'chem102',
+    className: 'CHEM 102',
+    studyPlanId: 'study-plan-chem-1',
+    studyPlanTitle: 'Chemistry Study Plan',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -249,21 +251,21 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/acids-bases.pdf',
+    url: '/mock-files/chemical-bonding.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
 
-  // Physics files
+  // Additional Biology file
   {
     id: 'file-13',
-    name: 'physics-mechanics.pdf',
+    name: 'genetics-notes.pdf',
     type: 'application/pdf',
     size: 2621440, // ~2.5 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-phys',
-    className: 'PHYS 101 - Physics I',
-    studyPlanId: 'study-plan-phys-1',
-    studyPlanTitle: 'Mechanics Fundamentals',
+    classId: 'bio101',
+    className: 'BIO 101',
+    studyPlanId: 'study-plan-bio-1',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -272,19 +274,19 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/physics-mechanics.pdf',
+    url: '/mock-files/genetics-notes.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
     id: 'file-14',
-    name: 'physics-energy.pdf',
+    name: 'dna-replication.pdf',
     type: 'application/pdf',
     size: 1966080, // ~1.875 MB
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-phys',
-    className: 'PHYS 101 - Physics I',
-    studyPlanId: 'study-plan-phys-1',
-    studyPlanTitle: 'Mechanics Fundamentals',
+    classId: 'bio101',
+    className: 'BIO 101',
+    studyPlanId: 'study-plan-bio-1',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,

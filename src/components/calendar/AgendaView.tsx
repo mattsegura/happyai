@@ -19,9 +19,15 @@ export function AgendaView({ events, onEventClick }: AgendaViewProps) {
   
   // Sort events by date and group
   const sortedEvents = [...events].sort((a, b) => {
-    const dateCompare = a.date.localeCompare(b.date);
+    // Use startDate property (events have startDate, not date)
+    const dateA = a.startDate || a.date || '';
+    const dateB = b.startDate || b.date || '';
+    const dateCompare = dateA.localeCompare(dateB);
     if (dateCompare !== 0) return dateCompare;
-    return a.startTime.localeCompare(b.startTime);
+    
+    const timeA = a.startTime || '00:00';
+    const timeB = b.startTime || '00:00';
+    return timeA.localeCompare(timeB);
   });
   
   const eventsByDate = getEventsGroupedByDate(sortedEvents);
@@ -153,14 +159,16 @@ export function AgendaView({ events, onEventClick }: AgendaViewProps) {
                                 </div>
                               </div>
                               <div className="flex flex-col gap-1 items-end">
-                                <span className={cn(
-                                  'px-2 py-1 rounded text-xs font-semibold',
-                                  event.priority === 'high' ? 'bg-red-500/10 text-red-600' :
-                                  event.priority === 'medium' ? 'bg-yellow-500/10 text-yellow-600' :
-                                  'bg-green-500/10 text-green-600'
-                                )}>
-                                  {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)}
-                                </span>
+                                {event.priority && (
+                                  <span className={cn(
+                                    'px-2 py-1 rounded text-xs font-semibold',
+                                    event.priority === 'high' ? 'bg-red-500/10 text-red-600' :
+                                    event.priority === 'medium' ? 'bg-yellow-500/10 text-yellow-600' :
+                                    'bg-green-500/10 text-green-600'
+                                  )}>
+                                    {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)}
+                                  </span>
+                                )}
                                 {event.isAIGenerated && (
                                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                                     <AlertCircle className="w-3 h-3" />

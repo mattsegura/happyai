@@ -3,12 +3,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   BookOpen, Clock, CheckCircle, Target, TrendingUp,
-  MoreVertical, Edit3, Trash2, ExternalLink, Brain, Calendar, Zap
+  MoreVertical, Edit3, Trash2, ExternalLink, Brain, Calendar, Zap, Plus
 } from 'lucide-react';
 import { useStudyPlans } from '@/contexts/StudyPlanContext';
 import { StudyPlan } from '@/lib/types/studyPlan';
 import { cn } from '@/lib/utils';
-import { StudyBuddyFileUpload } from './StudyBuddyFileUpload';
 
 export function StudyBuddyHub() {
   const navigate = useNavigate();
@@ -30,9 +29,6 @@ export function StudyBuddyHub() {
 
   return (
     <div className="space-y-6">
-      {/* File Upload Section */}
-      <StudyBuddyFileUpload />
-
       {/* Info Banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -49,6 +45,23 @@ export function StudyBuddyHub() {
           </div>
         </div>
       </motion.div>
+
+      {/* Header Actions */}
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold mb-1">Your Study Plans</h2>
+          <p className="text-sm text-muted-foreground">AI-powered learning for mastering concepts</p>
+        </div>
+        <motion.button
+          onClick={() => navigate('/dashboard/study-buddy/create')}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary via-accent to-primary text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all animate-gradient-x"
+        >
+          <Brain className="w-5 h-5" />
+          Create Study Plan
+        </motion.button>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -106,13 +119,15 @@ export function StudyBuddyHub() {
           <p className="text-muted-foreground mb-6">
             Create your first study plan to start mastering concepts with AI assistance
           </p>
-          <button
+          <motion.button
             onClick={() => navigate('/dashboard/study-buddy/create')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all mx-auto"
           >
             <Plus className="w-5 h-5" />
-            Create First Study Plan
-          </button>
+            Create Study Plan
+          </motion.button>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
