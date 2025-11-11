@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Upload, Mic, Loader } from 'lucide-react';
+import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
+import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
+import { transcriptionHistory } from '../../../lib/mockData/toolHistory';
 
 export function TranscriptionTab() {
   const [transcription, setTranscription] = useState('');
@@ -17,8 +20,22 @@ export function TranscriptionTab() {
   };
 
   return (
-    <div className="flex flex-col h-full p-6">
-      <div className="mb-6">
+    <div className="flex h-full">
+      {/* History Sidebar */}
+      <ToolHistorySidebar
+        items={transcriptionHistory}
+        title="Previous Transcriptions"
+        onSelectItem={(item) => {
+          console.log('Selected transcription:', item);
+        }}
+      />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 p-6">
+        {/* File Upload Section - Persistent across all Study Buddy pages */}
+        <StudyBuddyFileUpload />
+        
+        <div className="mb-6">
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Mic className="w-6 h-6 text-violet-600" />
           Lecture Recording & Transcription
@@ -32,18 +49,12 @@ export function TranscriptionTab() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-md">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
-              <Upload className="w-10 h-10 text-violet-600 dark:text-violet-400" />
+              <Mic className="w-10 h-10 text-violet-600 dark:text-violet-400" />
             </div>
-            <h3 className="text-xl font-bold text-foreground mb-2">Upload Recording</h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              AI will transcribe and add timestamps automatically
+            <h3 className="text-xl font-bold text-foreground mb-2">No Transcriptions Yet</h3>
+            <p className="text-sm text-muted-foreground">
+              Upload an audio or video file using the upload section above to generate a transcription
             </p>
-            <label className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold cursor-pointer hover:shadow-lg transition-all">
-              {isProcessing ? <Loader className="w-5 h-5 animate-spin" /> : <Mic className="w-5 h-5" />}
-              {isProcessing ? 'Transcribing...' : 'Upload Audio/Video'}
-              <input type="file" className="hidden" accept="audio/*,video/*" onChange={handleFileUpload} disabled={isProcessing} />
-            </label>
-            <p className="text-xs text-muted-foreground mt-4">Supports MP3, MP4, WAV, M4A</p>
           </div>
         </div>
       ) : (
@@ -58,6 +69,7 @@ export function TranscriptionTab() {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }

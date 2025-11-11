@@ -1,5 +1,5 @@
 import { useState, useRef, KeyboardEvent } from 'react';
-import { Send, Sparkles } from 'lucide-react';
+import { Send, Sparkles, Paperclip, X, Globe } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface ChatInputProps {
@@ -9,17 +9,38 @@ interface ChatInputProps {
 
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [inputValue, setInputValue] = useState('');
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [deepSearchEnabled, setDeepSearchEnabled] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
     if (!inputValue.trim() || disabled) return;
-    onSend(inputValue);
+    
+    // Include deep search indicator in the message if enabled
+    const messagePrefix = deepSearchEnabled ? '[WEB SEARCH] ' : '';
+    onSend(messagePrefix + inputValue);
+    
     setInputValue('');
+    setAttachedFiles([]);
     
     // Reset textarea height
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAttachedFiles(prev => [...prev, ...files]);
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -46,6 +67,35 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
 
   return (
     <div className="border-t border-border bg-card/80 backdrop-blur-sm">
+      {/* Deep Search Toggle */}
+      <div className="px-4 py-3 border-b border-border/50 bg-card/60 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Globe className={cn(
+            "w-4 h-4 transition-colors",
+            deepSearchEnabled ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground"
+          )} />
+          <span className="text-sm font-medium text-foreground">Deep Web Search</span>
+          <span className="text-xs text-muted-foreground">Get real-time information from the web</span>
+        </div>
+        <button
+          onClick={() => setDeepSearchEnabled(!deepSearchEnabled)}
+          className={cn(
+            "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2",
+            deepSearchEnabled ? "bg-gradient-to-r from-blue-600 to-blue-500" : "bg-muted"
+          )}
+          role="switch"
+          aria-checked={deepSearchEnabled}
+          aria-label="Toggle deep web search"
+        >
+          <span
+            className={cn(
+              "inline-block h-4 w-4 transform rounded-full bg-white shadow-lg transition-transform",
+              deepSearchEnabled ? "translate-x-6" : "translate-x-1"
+            )}
+          />
+        </button>
+      </div>
+
       {/* Quick Suggestions */}
       {inputValue.length === 0 && (
         <div className="px-4 py-3 border-b border-border/50 bg-muted/30">
@@ -70,22 +120,72 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         </div>
       )}
 
+      {/* Attached Files Preview */}
+      {attachedFiles.length > 0 && (
+        <div className="px-4 pt-3 bg-card/50 border-t border-border/50">
+          <div className="flex flex-wrap gap-2">
+            {attachedFiles.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20"
+              >
+                <Paperclip className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs font-medium text-foreground truncate max-w-[150px]">
+                  {file.name}
+                </span>
+                <button
+                  onClick={() => handleRemoveFile(index)}
+                  className="p-0.5 hover:bg-primary/20 rounded transition-colors"
+                >
+                  <X className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Input Area */}
       <div className="p-4 bg-card/50">
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+          accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
+        />
+        
         <div className="flex gap-3 items-end">
           <div className="flex-1 relative">
+            {/* Deep Search Active Indicator */}
+            {deepSearchEnabled && (
+              <div className="absolute -top-8 left-0 flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                <Globe className="w-3 h-3 text-blue-600 dark:text-blue-400 animate-pulse" />
+                <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+                  Web Search Active
+                </span>
+              </div>
+            )}
+            
             <textarea
               ref={inputRef}
               value={inputValue}
               onChange={handleInput}
               onKeyDown={handleKeyDown}
-              placeholder="Ask me anything about your studies..."
+              placeholder={deepSearchEnabled 
+                ? "Ask me anything - searching the web for latest info..." 
+                : "Ask me anything about your studies..."}
               disabled={disabled}
               rows={1}
               className={cn(
-                'w-full px-4 py-3 rounded-xl',
-                'bg-background border-2 border-border',
-                'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10',
+                'w-full px-4 py-3 pr-12 rounded-xl',
+                'bg-background border-2',
+                deepSearchEnabled 
+                  ? 'border-blue-500/50 focus:border-blue-500 focus:ring-blue-500/20' 
+                  : 'border-border focus:border-primary focus:ring-primary/10',
+                'focus:outline-none focus:ring-2',
                 'text-[15px] placeholder:text-muted-foreground/60',
                 'transition-all resize-none',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -95,6 +195,19 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
               aria-label="Type your message"
               aria-describedby="chat-input-hint"
             />
+            {/* Paperclip button inside textarea */}
+            <button
+              onClick={triggerFileUpload}
+              disabled={disabled}
+              className={cn(
+                'absolute right-3 bottom-3 p-1.5 rounded-lg transition-all',
+                'hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/50',
+                disabled ? 'opacity-50 cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
+              )}
+              aria-label="Attach files"
+            >
+              <Paperclip className="w-4 h-4" />
+            </button>
             <span id="chat-input-hint" className="sr-only">
               Press Enter to send, Shift+Enter for new line
             </span>

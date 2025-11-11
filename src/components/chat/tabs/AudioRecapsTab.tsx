@@ -1,13 +1,30 @@
 import { useState } from 'react';
 import { Volume2, Play, Pause, RotateCw } from 'lucide-react';
+import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
+import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
+import { audioRecapHistory } from '../../../lib/mockData/toolHistory';
 
 export function AudioRecapsTab() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
   return (
-    <div className="flex flex-col h-full p-6">
-      <div className="mb-6">
+    <div className="flex h-full">
+      {/* History Sidebar */}
+      <ToolHistorySidebar
+        items={audioRecapHistory}
+        title="Previous Audio Recaps"
+        onSelectItem={(item) => {
+          console.log('Selected audio recap:', item);
+        }}
+      />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 p-6">
+        {/* File Upload Section - Persistent across all Study Buddy pages */}
+        <StudyBuddyFileUpload />
+        
+        <div className="mb-6">
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Volume2 className="w-6 h-6 text-violet-600" />
           Audio Recaps
@@ -82,6 +99,7 @@ export function AudioRecapsTab() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

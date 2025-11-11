@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Upload, Image as ImageIcon, Loader } from 'lucide-react';
+import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
+import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
+import { imageAnalysisHistory } from '../../../lib/mockData/toolHistory';
 
 export function ImageAnalysisTab() {
   const [analysis, setAnalysis] = useState('');
@@ -21,8 +24,22 @@ export function ImageAnalysisTab() {
   };
 
   return (
-    <div className="flex flex-col h-full p-6">
-      <div className="mb-6">
+    <div className="flex h-full">
+      {/* History Sidebar */}
+      <ToolHistorySidebar
+        items={imageAnalysisHistory}
+        title="Previous Image Analyses"
+        onSelectItem={(item) => {
+          console.log('Selected image analysis:', item);
+        }}
+      />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 p-6">
+        {/* File Upload Section - Persistent across all Study Buddy pages */}
+        <StudyBuddyFileUpload />
+        
+        <div className="mb-6">
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <ImageIcon className="w-6 h-6 text-violet-600" />
           Image & Diagram Analysis
@@ -36,18 +53,12 @@ export function ImageAnalysisTab() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-md">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
-              <Upload className="w-10 h-10 text-violet-600 dark:text-violet-400" />
+              <ImageIcon className="w-10 h-10 text-violet-600 dark:text-violet-400" />
             </div>
-            <h3 className="text-xl font-bold text-foreground mb-2">Upload Image</h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              AI will analyze diagrams, charts, and visual materials
+            <h3 className="text-xl font-bold text-foreground mb-2">No Images Yet</h3>
+            <p className="text-sm text-muted-foreground">
+              Upload an image using the file upload section above to get started with AI-powered analysis
             </p>
-            <label className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold cursor-pointer hover:shadow-lg transition-all">
-              {isProcessing ? <Loader className="w-5 h-5 animate-spin" /> : <ImageIcon className="w-5 h-5" />}
-              {isProcessing ? 'Analyzing...' : 'Upload Image'}
-              <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isProcessing} />
-            </label>
-            <p className="text-xs text-muted-foreground mt-4">Supports JPG, PNG, GIF, WebP</p>
           </div>
         </div>
       ) : (
@@ -75,6 +86,7 @@ export function ImageAnalysisTab() {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -1263,7 +1263,7 @@ export function AITutorPage({ onNavigateHome }: { onNavigateHome: () => void }) 
               })}
             </div>
           </motion.section>
-        </div>
+                </div>
       </main>
 
       {/* Footer */}

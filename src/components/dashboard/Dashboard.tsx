@@ -11,13 +11,22 @@ import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight } from 'lucide-react';
+import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight, LogOut, Settings, FolderOpen, TrendingUp } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { cn } from '../../lib/utils';
 
 // Lazy load heavy components for better performance
 const StudentHapiLab = lazy(() => import('../student/StudentHapiLab').then(m => ({ default: m.StudentHapiLab })));
+const StudyBuddyHub = lazy(() => import('../student/StudyBuddyHub').then(m => ({ default: m.StudyBuddyHub })));
+const FileLibrary = lazy(() => import('../student/FileLibrary').then(m => ({ default: m.FileLibrary })));
+const SmartCalendar = lazy(() => import('../student/SmartCalendar').then(m => ({ default: m.SmartCalendar })));
+const AnalyticsView = lazy(() => import('./AnalyticsView').then(m => ({ default: m.AnalyticsView })));
+const AssignmentAssistantHub = lazy(() => import('../student/AssignmentAssistantHub').then(m => ({ default: m.AssignmentAssistantHub })));
+const AssignmentWorkspace = lazy(() => import('../student/AssignmentWorkspace').then(m => ({ default: m.AssignmentWorkspace })));
+const AssignmentCreationFlow = lazy(() => import('../student/AssignmentCreationFlow').then(m => ({ default: m.AssignmentCreationFlow })));
+const StudyPlanCreationFlow = lazy(() => import('../student/StudyPlanCreationFlow').then(m => ({ default: m.StudyPlanCreationFlow })));
+const StudyPlanWorkspace = lazy(() => import('../student/StudyPlanWorkspace').then(m => ({ default: m.StudyPlanWorkspace })));
 const EnhancedHapiChat = lazy(() => import('../student/EnhancedHapiChat').then(m => ({ default: m.EnhancedHapiChat })));
 const HapiChatView = lazy(() => import('../chat/HapiChatView').then(m => ({ default: m.HapiChatView })));
 const WellbeingView = lazy(() => import('../wellbeing/WellbeingView').then(m => ({ default: m.WellbeingView })));
@@ -52,7 +61,7 @@ const SubscriptionGate = lazy(() => import('../payment/SubscriptionGate').then(m
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
 export function Dashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPopups, setShowPopups] = useState(true);
@@ -69,25 +78,30 @@ export function Dashboard() {
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [studyHubExpanded, setStudyHubExpanded] = useState(false);
+  const [classesExpanded, setClassesExpanded] = useState(false);
 
-  // AI Study Hub sub-items
+  // Classes sub-items
+  const classesItems = [
+    { id: 'analytics', path: '/dashboard/classes/analytics', icon: TrendingUp, label: 'Analytics', description: 'Academic & emotional insights' },
+  ];
+
+  // AI Study Hub sub-items (removed AI Chat - moved to main nav, removed Essay Help - moved to Assignment Assistant)
   const studyHubItems = [
-    { id: 'ai-chat', path: '/dashboard/ai-chat', icon: MessageCircle, label: 'AI Chat', description: 'General study assistance' },
+    { id: 'file-library', path: '/dashboard/file-library', icon: FolderOpen, label: 'File Library', description: 'View all uploaded files & tools' },
     { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards', description: 'AI-generated from your materials' },
     { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes', description: 'Practice tests & questions' },
     { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize', description: 'Notes, PDFs, slides' },
     { id: 'transcribe', path: '/dashboard/transcribe', icon: Mic, label: 'Transcribe', description: 'Lecture recordings' },
     { id: 'audio-recaps', path: '/dashboard/audio-recaps', icon: Volume2, label: 'Audio Recaps', description: 'Listen to summaries' },
-    { id: 'essay-help', path: '/dashboard/essay-help', icon: PenTool, label: 'Essay Help', description: 'Grading & writing assistance' },
     { id: 'image-analysis', path: '/dashboard/image-analysis', icon: ImageIcon, label: 'Image Analysis', description: 'Diagrams & visual materials' },
   ];
 
   // Updated navigation structure - New organization
   const navigationItems = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
-    { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Study Planner' },
-    { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
-    { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
+    { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Smart Calendar' },
+    { id: 'ai-chat', path: '/dashboard/ai-chat', icon: MessageCircle, label: 'AI Chat' },
+    { id: 'assignments', path: '/dashboard/assignments', icon: FileText, label: 'Assignment Assistant' },
   ] as const;
 
   // Secondary routes still accessible via URL (Lab, Progress, Wellbeing, Academics, Subscription)
@@ -153,7 +167,7 @@ export function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
       <aside
-        className={`hidden h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
+        className={`hidden sticky top-0 h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
           sidebarCollapsed ? 'w-20' : 'w-72'
         }`}
       >
@@ -201,28 +215,106 @@ export function Dashboard() {
             );
           })}
 
-          {/* AI Study Hub - Expandable Section */}
+          {/* Classes - Expandable Section with Main Page */}
           {!sidebarCollapsed && (
             <div className="space-y-1">
-              <button
-                onClick={() => setStudyHubExpanded(!studyHubExpanded)}
-                className={cn(
-                  'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
-                  studyHubExpanded || location.pathname.includes('/ai-chat') || location.pathname.includes('/flashcards') || location.pathname.includes('/quizzes') || location.pathname.includes('/summarize') || location.pathname.includes('/transcribe') || location.pathname.includes('/audio-recaps') || location.pathname.includes('/essay-help') || location.pathname.includes('/image-analysis')
-                    ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
-                    : 'hover:bg-muted/70 hover:text-foreground'
-                )}
-              >
-                <Brain className="h-5 w-5" />
-                <span className="flex-1 text-left">AI Study Hub</span>
-                {studyHubExpanded ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </button>
+              <div className="relative">
+                <NavLink
+                  to="/dashboard/classes"
+                  className={({ isActive }) =>
+                    cn(
+                      'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                      isActive || classesExpanded || location.pathname.includes('/classes/analytics')
+                        ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                        : 'hover:bg-muted/70 hover:text-foreground'
+                    )
+                  }
+                >
+                  <GraduationCap className="h-5 w-5" />
+                  <span className="flex-1 text-left">Classes</span>
+                </NavLink>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setClassesExpanded(!classesExpanded);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded transition-colors"
+                >
+                  {classesExpanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
 
-              {/* Sub-items */}
+              {/* Classes Sub-items */}
+              {classesExpanded && (
+                <div className="ml-4 space-y-1 border-l-2 border-border/40 pl-2">
+                  {classesItems.map((subItem) => {
+                    const SubIcon = subItem.icon;
+                    return (
+                      <NavLink
+                        key={subItem.id}
+                        to={subItem.path}
+                        className={({ isActive }) =>
+                          cn(
+                            'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
+                            isActive
+                              ? 'bg-primary/10 text-primary font-semibold'
+                              : 'hover:bg-muted/50 hover:text-foreground'
+                          )
+                        }
+                      >
+                        <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium">{subItem.label}</div>
+                          <div className="text-xs text-muted-foreground">{subItem.description}</div>
+                        </div>
+                      </NavLink>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Study Buddy - Expandable Section with Main Page */}
+          {!sidebarCollapsed && (
+            <div className="space-y-1">
+              <div className="relative">
+                <NavLink
+                  to="/dashboard/study-buddy"
+                  className={({ isActive }) =>
+                    cn(
+                      'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                      isActive || studyHubExpanded || location.pathname.includes('/flashcards') || location.pathname.includes('/quizzes') || location.pathname.includes('/summarize') || location.pathname.includes('/transcribe') || location.pathname.includes('/audio-recaps') || location.pathname.includes('/image-analysis')
+                        ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                        : 'hover:bg-muted/70 hover:text-foreground'
+                    )
+                  }
+                >
+                  <Brain className="h-5 w-5" />
+                  <span className="flex-1 text-left">Study Buddy</span>
+                </NavLink>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setStudyHubExpanded(!studyHubExpanded);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded transition-colors"
+                >
+                  {studyHubExpanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+
+              {/* Study Tools Sub-items */}
               {studyHubExpanded && (
                 <div className="ml-4 space-y-1 border-l-2 border-border/40 pl-2">
                   {studyHubItems.map((subItem) => {
@@ -254,8 +346,68 @@ export function Dashboard() {
           )}
         </nav>
 
-        <div className="space-y-3 px-4 pb-6">
-          <div className="flex items-center justify-center gap-2">
+        {/* Bottom Section - Settings & Profile */}
+        <div className="mt-auto border-t border-border/40 pt-3 space-y-2 px-3 pb-6">
+          {!sidebarCollapsed && (
+            <>
+              {/* Profile Button */}
+              <NavLink
+                to="/dashboard/profile"
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                      : 'hover:bg-muted/70 hover:text-foreground text-muted-foreground'
+                  )
+                }
+              >
+                <User className="h-5 w-5" />
+                <span className="text-sm font-medium">Profile</span>
+              </NavLink>
+
+              {/* Logout Button */}
+              <button
+                onClick={() => signOut()}
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 hover:bg-red-500/10 hover:text-red-500 text-muted-foreground"
+              >
+                <LogOut className="h-5 w-5" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </>
+          )}
+
+          {sidebarCollapsed && (
+            <>
+              {/* Profile Icon Only */}
+              <NavLink
+                to="/dashboard/profile"
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center justify-center rounded-xl px-0 py-3 transition-all duration-200',
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
+                      : 'hover:bg-muted/70 hover:text-foreground text-muted-foreground'
+                  )
+                }
+                aria-label="Profile"
+              >
+                <User className="h-5 w-5" />
+              </NavLink>
+
+              {/* Logout Icon Only */}
+              <button
+                onClick={() => signOut()}
+                className="flex w-full items-center justify-center rounded-xl px-0 py-3 transition-all duration-200 hover:bg-red-500/10 hover:text-red-500 text-muted-foreground"
+                aria-label="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </>
+          )}
+
+          {/* Theme Toggle & Collapse */}
+          <div className="flex items-center justify-center gap-2 pt-2">
             <ThemeToggle />
           </div>
           <button
@@ -283,9 +435,18 @@ export function Dashboard() {
                 <h1 className="text-xl font-semibold text-foreground md:text-2xl">
                   {location.pathname.includes('classes') && 'Classes'}
                   {location.pathname.includes('calendar') && 'Calendar'}
-                  {location.pathname.includes('planner') && 'Study Planner'}
+                  {location.pathname.includes('planner') && 'Smart Calendar'}
+                  {location.pathname.includes('assignments') && !location.pathname.includes('assignments/') && 'Assignment Assistant'}
+                  {location.pathname.includes('assignments/create') && 'Create Assignment'}
+                  {location.pathname.includes('assignments/essay-help') && 'Essay Help'}
+                  {location.pathname.match(/assignments\/[^/]+$/) && !location.pathname.includes('essay-help') && 'Assignment Workspace'}
+                  {location.pathname.includes('study-buddy/create') && 'Create Study Plan'}
+                  {location.pathname.match(/study-buddy\/[^/]+$/) && 'Study Plan Workspace'}
+                  {location.pathname.includes('study-buddy') && !location.pathname.includes('study-buddy/') && 'Study Buddy'}
+                  {location.pathname.includes('file-library') && 'File Library'}
+                  {location.pathname.includes('ai-chat') && 'AI Chat'}
                   {location.pathname.includes('hapi-chat') && 'AI Chat'}
-                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && 'Hapi AI'}
+                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && !location.pathname.includes('ai-chat') && 'Hapi AI'}
                   {location.pathname.includes('profile') && 'Profile'}
                   {location.pathname.includes('academics') && 'Academics'}
                   {location.pathname.includes('wellbeing') && 'Wellbeing'}
@@ -296,9 +457,14 @@ export function Dashboard() {
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {location.pathname.includes('classes') && 'Your courses, grades & class overview'}
                   {location.pathname.includes('calendar') && 'Full calendar with AI study planning'}
-                  {location.pathname.includes('planner') && 'AI-powered study plan generator'}
+                  {location.pathname.includes('planner') && 'Time management & sequential study planning'}
+                  {location.pathname.includes('assignments/essay-help') && 'AI-powered writing assistance & grading'}
+                  {location.pathname.includes('assignments') && !location.pathname.includes('assignments/') && 'AI help for essays, projects & assignments'}
+                  {location.pathname.includes('study-buddy') && 'Customizable class-based study plans'}
+                  {location.pathname.includes('file-library') && 'View all uploaded files & generated study tools'}
+                  {location.pathname.includes('ai-chat') && 'Chat with your AI learning companion'}
                   {location.pathname.includes('hapi-chat') && 'Chat with your AI learning companion'}
-                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && 'AI-powered assistant'}
+                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && !location.pathname.includes('ai-chat') && 'AI-powered assistant'}
                   {location.pathname.includes('profile') && 'Your account settings'}
                   {location.pathname.includes('academics') && 'Grades, assignments & study tools'}
                   {location.pathname.includes('wellbeing') && 'Mood tracking & sentiment analytics'}
@@ -365,6 +531,31 @@ export function Dashboard() {
                   }
                 />
                 <Route
+                  path="study-buddy"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyBuddyHub />
+                    </div>
+                  }
+                />
+                {/* Study Plan Routes */}
+                <Route
+                  path="study-buddy/create"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyPlanCreationFlow />
+                    </div>
+                  }
+                />
+                <Route
+                  path="study-buddy/:id"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyPlanWorkspace />
+                    </div>
+                  }
+                />
+                <Route
                   path="wellbeing"
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
@@ -394,6 +585,15 @@ export function Dashboard() {
                   element={
                     <div className="p-6">
                       <ChatTab />
+                    </div>
+                  }
+                />
+                {/* File Library Route */}
+                <Route
+                  path="file-library"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-0 h-full')}>
+                      <FileLibrary />
                     </div>
                   }
                 />
@@ -438,14 +638,6 @@ export function Dashboard() {
                   }
                 />
                 <Route
-                  path="essay-help"
-                  element={
-                    <div className="p-6">
-                      <EssayGradingTab />
-                    </div>
-                  }
-                />
-                <Route
                   path="image-analysis"
                   element={
                     <div className="p-6">
@@ -478,6 +670,16 @@ export function Dashboard() {
                   }
                 />
                 <Route
+                  path="classes/analytics"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                        <AnalyticsView />
+                      </Suspense>
+                    </div>
+                  }
+                />
+                <Route
                   path="calendar"
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
@@ -489,7 +691,40 @@ export function Dashboard() {
                   path="planner"
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <EnhancedStudyPlanner />
+                      <SmartCalendar />
+                    </div>
+                  }
+                />
+                {/* Assignment Assistant Routes */}
+                <Route
+                  path="assignments"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AssignmentAssistantHub />
+                    </div>
+                  }
+                />
+                <Route
+                  path="assignments/create"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AssignmentCreationFlow />
+                    </div>
+                  }
+                />
+                <Route
+                  path="assignments/essay-help"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <EssayGradingTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="assignments/:id"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AssignmentWorkspace />
                     </div>
                   }
                 />

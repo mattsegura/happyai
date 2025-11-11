@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { Upload, Sparkles, CheckCircle, XCircle } from 'lucide-react';
+import { Sparkles, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '../../../lib/utils';
+import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
+import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
+import { quizHistory } from '../../../lib/mockData/toolHistory';
 
 type Question = {
   id: string;
@@ -14,37 +17,6 @@ export function QuizzesTab() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const handleGenerate = () => {
-    setIsGenerating(true);
-    
-    // Simulate AI generation
-    setTimeout(() => {
-      const generated: Question[] = [
-        {
-          id: '1',
-          question: 'What is the powerhouse of the cell?',
-          options: ['Nucleus', 'Mitochondria', 'Ribosome', 'Golgi apparatus'],
-          correctAnswer: 1
-        },
-        {
-          id: '2',
-          question: 'Which process do plants use to make food?',
-          options: ['Respiration', 'Photosynthesis', 'Digestion', 'Fermentation'],
-          correctAnswer: 1
-        },
-        {
-          id: '3',
-          question: 'What is the basic unit of life?',
-          options: ['Atom', 'Molecule', 'Cell', 'Organ'],
-          correctAnswer: 2
-        },
-      ];
-      setQuestions(generated);
-      setIsGenerating(false);
-    }, 2000);
-  };
 
   const handleAnswer = (answerIndex: number) => {
     const updated = [...questions];
@@ -62,7 +34,21 @@ export function QuizzesTab() {
   const currentQuestion = questions[currentIndex];
 
   return (
-    <div className="flex flex-col h-full p-6">
+    <div className="flex h-full">
+      {/* History Sidebar */}
+      <ToolHistorySidebar
+        items={quizHistory}
+        title="Previous Quizzes"
+        onSelectItem={(item) => {
+          console.log('Selected quiz:', item);
+        }}
+      />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 p-6">
+        {/* File Upload Section - Persistent across all Study Buddy pages */}
+        <StudyBuddyFileUpload />
+      
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
@@ -75,28 +61,16 @@ export function QuizzesTab() {
       </div>
 
       {questions.length === 0 ? (
-        /* Generate Quiz */
+        /* Empty State */
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-md">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
               <Sparkles className="w-10 h-10 text-violet-600 dark:text-violet-400" />
             </div>
-            
-            <h3 className="text-xl font-bold text-foreground mb-2">
-              Generate Practice Quiz
-            </h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Upload your materials or select a topic to create a custom quiz
+            <h3 className="text-xl font-bold text-foreground mb-2">No Quizzes Yet</h3>
+            <p className="text-sm text-muted-foreground">
+              Upload study materials using the file upload section above to generate AI-powered practice quizzes
             </p>
-
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
-            >
-              <Upload className="w-5 h-5" />
-              {isGenerating ? 'Generating Quiz...' : 'Generate Quiz'}
-            </button>
           </div>
         </div>
       ) : showResults ? (
@@ -195,6 +169,7 @@ export function QuizzesTab() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
