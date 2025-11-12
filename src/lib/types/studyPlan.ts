@@ -321,6 +321,15 @@ export interface ImageAnnotation {
   color: string;
 }
 
+export interface FolderItem {
+  id: string;
+  name: string;
+  classId: string;
+  parentFolderId: string | null; // null for root folders (class folders)
+  createdAt: string;
+  color?: string; // Optional color for organization
+}
+
 export interface FileLibraryItem {
   id: string;
   name: string;
@@ -329,6 +338,7 @@ export interface FileLibraryItem {
   uploadedAt: string;
   classId: string;
   className: string;
+  folderId: string | null; // Can be in a subfolder or root of class
   studyPlanId?: string;
   studyPlanTitle?: string;
   generatedTools: {

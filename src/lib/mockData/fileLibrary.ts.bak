@@ -75,7 +75,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     folderId: 'folder-bio-notes', // In Notes folder
     studyPlanId: 'study-plan-bio-1',
     studyPlanTitle: 'Biology Midterm Prep',
@@ -98,7 +97,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     folderId: 'folder-bio-diagrams', // In Diagrams folder
     studyPlanId: 'study-plan-bio-1',
     studyPlanTitle: 'Biology Midterm Prep',
@@ -121,7 +119,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     folderId: 'folder-bio-lectures', // In Lectures folder
     generatedTools: {
       flashcards: 0,
@@ -144,7 +141,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'calc2',
     className: 'MATH 251',
-    folderId: null,
     folderId: 'folder-calc-exams', // In Exam Prep folder
     studyPlanId: 'study-plan-calc-1',
     studyPlanTitle: 'Calculus II Study Plan',
@@ -167,7 +163,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'calc2',
     className: 'MATH 251',
-    folderId: null,
     folderId: 'folder-calc-homework', // In Homework folder
     studyPlanId: 'study-plan-calc-1',
     studyPlanTitle: 'Calculus II Study Plan',
@@ -190,7 +185,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'calc2',
     className: 'MATH 251',
-    folderId: null,
     folderId: null, // Root of class folder
     generatedTools: {
       flashcards: 0,
@@ -213,7 +207,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'eng201',
     className: 'ENG 201',
-    folderId: null,
     studyPlanId: 'study-plan-eng-1',
     studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
@@ -235,7 +228,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'eng201',
     className: 'ENG 201',
-    folderId: null,
     studyPlanId: 'study-plan-eng-1',
     studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
@@ -257,7 +249,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'eng201',
     className: 'ENG 201',
-    folderId: null,
     studyPlanId: 'study-plan-eng-1',
     studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
@@ -281,7 +272,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'chem102',
     className: 'CHEM 102',
-    folderId: null,
     studyPlanId: 'study-plan-chem-1',
     studyPlanTitle: 'Chemistry Study Plan',
     generatedTools: {
@@ -303,7 +293,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'chem102',
     className: 'CHEM 102',
-    folderId: null,
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -323,7 +312,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'chem102',
     className: 'CHEM 102',
-    folderId: null,
     studyPlanId: 'study-plan-chem-1',
     studyPlanTitle: 'Chemistry Study Plan',
     generatedTools: {
@@ -347,7 +335,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     studyPlanId: 'study-plan-bio-1',
     studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
@@ -369,7 +356,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     studyPlanId: 'study-plan-bio-1',
     studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
@@ -391,7 +377,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-phys',
     className: 'PHYS 101 - Physics I',
-    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -413,7 +398,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-lit',
     className: 'ENG 202 - British Literature',
-    folderId: null,
     studyPlanId: 'study-plan-lit-1',
     studyPlanTitle: 'Shakespeare Analysis',
     generatedTools: {
@@ -435,7 +419,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-lit',
     className: 'ENG 202 - British Literature',
-    folderId: null,
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -457,7 +440,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-cs',
     className: 'CS 301 - Algorithms',
-    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -477,7 +459,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-cs',
     className: 'CS 301 - Algorithms',
-    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -497,7 +478,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date().toISOString(),
     classId: 'class-cs',
     className: 'CS 301 - Algorithms',
-    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -579,39 +559,5 @@ export const getUniqueClasses = () => {
     classes.set(file.classId, file.className);
   });
   return Array.from(classes, ([id, name]) => ({ id, name }));
-};
-
-// Folder-related helper functions
-
-// Get folders by class
-export const getFoldersByClass = (classId: string): FolderItem[] => {
-  return mockFolders.filter(folder => folder.classId === classId);
-};
-
-// Get files by folder
-export const getFilesByFolder = (folderId: string): FileLibraryItem[] => {
-  return mockFileLibrary.filter(file => file.folderId === folderId);
-};
-
-// Get files in class root (no folder)
-export const getFilesInClassRoot = (classId: string): FileLibraryItem[] => {
-  return mockFileLibrary.filter(file => file.classId === classId && file.folderId === null);
-};
-
-// Get all files in class (including subfolders)
-export const getAllFilesInClass = (classId: string): FileLibraryItem[] => {
-  return mockFileLibrary.filter(file => file.classId === classId);
-};
-
-// Create new folder (mock function - in real app this would call API)
-export const createFolder = (name: string, classId: string, color?: string): FolderItem => {
-  return {
-    id: `folder-${Date.now()}`,
-    name,
-    classId,
-    parentFolderId: null,
-    createdAt: new Date().toISOString(),
-    color
-  };
 };
 
