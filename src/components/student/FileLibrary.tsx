@@ -105,44 +105,133 @@ export function FileLibrary() {
   };
 
   const handleDownload = (file: FileLibraryItem) => {
-    alert(`Downloading: ${file.name}`);
+    // Mock download functionality
+    const link = document.createElement('a');
+    link.href = file.url || '#';
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Show success notification
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    notification.textContent = `✓ Downloaded ${file.name}`;
+    document.body.appendChild(notification);
+    setTimeout(() => document.body.removeChild(notification), 3000);
+    
     setContextMenuFile(null);
   };
 
   const handleDelete = (file: FileLibraryItem) => {
-    if (confirm(`Are you sure you want to delete "${file.name}"?`)) {
-      alert(`Deleted: ${file.name}`);
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${file.name}"?\n\nThis action cannot be undone.`
+    );
+    
+    if (confirmDelete) {
+      // In a real app, this would call an API to delete the file
+      // For now, we'll just show a success message
+      const notification = document.createElement('div');
+      notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+      notification.textContent = `✓ Deleted ${file.name}`;
+      document.body.appendChild(notification);
+      setTimeout(() => document.body.removeChild(notification), 3000);
+      
       setContextMenuFile(null);
     }
   };
 
   const handleShare = (file: FileLibraryItem) => {
-    alert(`Sharing: ${file.name}`);
+    // Generate a shareable link (mock)
+    const shareUrl = `${window.location.origin}/shared/${file.id}`;
+    
+    // Try to use Web Share API if available
+    if (navigator.share) {
+      navigator.share({
+        title: file.name,
+        text: `Check out this file: ${file.name}`,
+        url: shareUrl,
+      }).catch(() => {
+        // Fallback to copy link
+        fallbackCopyLink(shareUrl, file.name);
+      });
+    } else {
+      // Fallback to copy link
+      fallbackCopyLink(shareUrl, file.name);
+    }
+    
     setContextMenuFile(null);
   };
 
+  const fallbackCopyLink = (url: string, fileName: string) => {
+    navigator.clipboard.writeText(url).then(() => {
+      const notification = document.createElement('div');
+      notification.className = 'fixed bottom-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+      notification.textContent = `✓ Share link copied for ${fileName}`;
+      document.body.appendChild(notification);
+      setTimeout(() => document.body.removeChild(notification), 3000);
+    });
+  };
+
   const handleCopyLink = (file: FileLibraryItem) => {
-    alert(`Copied link for: ${file.name}`);
+    const fileUrl = file.url || `${window.location.origin}/files/${file.id}`;
+    navigator.clipboard.writeText(fileUrl).then(() => {
+      const notification = document.createElement('div');
+      notification.className = 'fixed bottom-4 right-4 bg-primary text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+      notification.textContent = `✓ Link copied to clipboard`;
+      document.body.appendChild(notification);
+      setTimeout(() => document.body.removeChild(notification), 3000);
+    });
     setContextMenuFile(null);
   };
 
   const handleOpenFile = (file: FileLibraryItem) => {
-    alert(`Opening: ${file.name}`);
+    // Open file in a new tab (mock)
+    if (file.url) {
+      window.open(file.url, '_blank');
+    } else {
+      const notification = document.createElement('div');
+      notification.className = 'fixed bottom-4 right-4 bg-amber-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+      notification.textContent = `Opening ${file.name}...`;
+      document.body.appendChild(notification);
+      setTimeout(() => document.body.removeChild(notification), 2000);
+    }
   };
 
   const handleCreateFolder = () => {
     if (!newFolderName.trim() || !selectedClass) return;
-    alert(`Creating folder "${newFolderName}" in ${selectedClassName}`);
+    
+    // In a real app, this would call an API
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    notification.textContent = `✓ Created folder "${newFolderName}" in ${selectedClassName}`;
+    document.body.appendChild(notification);
+    setTimeout(() => document.body.removeChild(notification), 3000);
+    
     setNewFolderName('');
     setShowNewFolderModal(false);
   };
 
   const handleUploadFile = () => {
     if (!uploadClassId) {
-      alert('Please select a class first!');
+      const notification = document.createElement('div');
+      notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+      notification.textContent = '⚠️ Please select a class first!';
+      document.body.appendChild(notification);
+      setTimeout(() => document.body.removeChild(notification), 3000);
       return;
     }
-    alert(`Uploading file to class and folder`);
+    
+    // In a real app, this would handle actual file upload
+    const className = classes.find(c => c.id === uploadClassId)?.name || 'Unknown Class';
+    const folderName = uploadFolderId ? folders.find(f => f.id === uploadFolderId)?.name : 'root';
+    
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    notification.textContent = `✓ File uploaded to ${className}${folderName !== 'root' ? ` / ${folderName}` : ''}`;
+    document.body.appendChild(notification);
+    setTimeout(() => document.body.removeChild(notification), 3000);
+    
     setShowUploadModal(false);
     setUploadClassId(null);
     setUploadFolderId(null);
