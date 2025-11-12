@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useRef, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { TeacherHomeView } from './TeacherHomeView';
@@ -15,7 +15,7 @@ const WorkloadDashboard = lazy(() => import('./workload/WorkloadDashboard'));
 const SafeBoxView = lazy(() => import('./SafeBoxView'));
 const HapiMomentsView = lazy(() => import('./HapiMomentsView'));
 const ReportsHub = lazy(() => import('./ReportsHub'));
-import { Home, Users, Beaker, User, GraduationCap, Smile, ChevronLeft, UserSearch, Heart, AlertCircle, BarChart3, Shield, Sparkles, FileText } from 'lucide-react';
+import { Home, Users, Beaker, User, GraduationCap, Smile, UserSearch, Heart, AlertCircle, BarChart3, Shield, Sparkles, FileText } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationBell } from '../common/NotificationBell';
 import { cn } from '../../lib/utils';
@@ -39,7 +39,8 @@ export function TeacherDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [labState, setLabState] = useState<{ tab?: 'pulses' | 'office-hours'; pulseId?: string }>({});
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Default to collapsed like Student View
+  const sidebarCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Determine current view from URL
   const currentPath = location.pathname.split('/teacher/')[1] || '';
@@ -72,10 +73,37 @@ export function TeacherDashboard() {
     { id: 'profile', icon: User, label: 'Profile' },
   ] as const;
 
+  // Handle sidebar hover with 3-second delay before closing (matching Student View)
+  const handleSidebarMouseEnter = () => {
+    if (sidebarCloseTimerRef.current) {
+      clearTimeout(sidebarCloseTimerRef.current);
+      sidebarCloseTimerRef.current = null;
+    }
+    setSidebarCollapsed(false);
+  };
+
+  const handleSidebarMouseLeave = () => {
+    sidebarCloseTimerRef.current = setTimeout(() => {
+      setSidebarCollapsed(true);
+      sidebarCloseTimerRef.current = null;
+    }, 3000);
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (sidebarCloseTimerRef.current) {
+        clearTimeout(sidebarCloseTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/12 to-accent/12 dark:from-background dark:via-background dark:to-background">
       <aside
-        className={`hidden h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
+        onMouseEnter={handleSidebarMouseEnter}
+        onMouseLeave={handleSidebarMouseLeave}
+        className={`hidden sticky top-0 h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
           sidebarCollapsed ? 'w-20' : 'w-72'
         }`}
       >
@@ -85,24 +113,24 @@ export function TeacherDashboard() {
             sidebarCollapsed ? 'justify-center' : 'justify-start'
           )}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
-            <Smile className="h-5 w-5" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
+            <Smile className="h-6 w-6" />
           </div>
           {!sidebarCollapsed && (
             <div>
-              <p className="text-sm font-semibold text-foreground">Hapi AI</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="text-base font-semibold text-foreground">Hapi AI</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Teacher Analyst
               </p>
             </div>
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
+        <nav className="mt-8 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
-            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-3';
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
               <button
                 key={item.id}
@@ -110,8 +138,8 @@ export function TeacherDashboard() {
                 className={cn(
                   'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                   isActive
-                    ? 'bg-primary/10 text-primary shadow ring-1 ring-primary/40'
-                    : 'hover:bg-muted/70 hover:text-foreground',
+                    ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                   spacingClasses
                 )}
                 aria-label={item.label}
@@ -125,14 +153,6 @@ export function TeacherDashboard() {
 
         <div className="space-y-3 px-4 pb-6">
           <ThemeToggle />
-          <button
-            onClick={() => setSidebarCollapsed((prev) => !prev)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-primary/40 hover:text-primary"
-            aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
-          >
-            <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-            {!sidebarCollapsed && <span>Collapse</span>}
-          </button>
         </div>
       </aside>
 
