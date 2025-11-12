@@ -259,8 +259,8 @@ export function Dashboard() {
                   cn(
                     'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                     spacingClasses
                   )
                 }
@@ -291,8 +291,8 @@ export function Dashboard() {
                         cn(
                           'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
                           isActive || aiChatExpanded || location.pathname.includes('/ai-chat/')
-                            ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                            : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300'
+                            ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-500'
+                            : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300'
                         )
                       }
                     >
@@ -305,7 +305,7 @@ export function Dashboard() {
                         e.stopPropagation();
                         setAiChatExpanded(!aiChatExpanded);
                       }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-primary/20 rounded transition-colors"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-blue-500/10 rounded transition-colors"
                     >
                       {aiChatExpanded ? (
                         <ChevronDown className="h-4 w-4" />
@@ -317,7 +317,7 @@ export function Dashboard() {
 
                   {/* AI Chat Sub-items */}
                   {aiChatExpanded && (
-                    <div className="ml-4 space-y-1 border-l-2 border-purple-400/30 pl-2">
+                    <div className="ml-4 space-y-1 border-l-2 border-blue-400/30 pl-2">
                       {aiChatItems.map((subItem) => {
                         const SubIcon = subItem.icon;
                         return (
@@ -328,15 +328,15 @@ export function Dashboard() {
                               cn(
                                 'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
                                 isActive
-                                  ? 'bg-purple-500/20 text-purple-700 dark:text-purple-300 font-semibold'
-                                  : 'text-purple-600/80 dark:text-purple-400/80 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300'
+                                  ? 'bg-blue-500/10 text-blue-700 dark:text-blue-300 font-semibold'
+                                  : 'text-blue-600/70 dark:text-blue-400/70 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300'
                               )
                             }
                           >
                             <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium">{subItem.label}</div>
-                              <div className="text-xs text-purple-500/60 dark:text-purple-400/60">{subItem.description}</div>
+                              <div className="text-xs text-blue-500/60 dark:text-blue-400/60">{subItem.description}</div>
                             </div>
                           </NavLink>
                         );
@@ -354,8 +354,8 @@ export function Dashboard() {
                     cn(
                       'flex w-full items-center justify-center px-0 py-2 rounded-xl transition-all duration-200',
                       isActive || location.pathname.includes('/ai-chat/')
-                        ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                        : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300'
+                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-500'
+                        : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300'
                     )
                   }
                   aria-label={item.label}
@@ -365,7 +365,7 @@ export function Dashboard() {
               );
             }
 
-            // Regular items
+            // Regular items in Section 2
             return (
               <NavLink
                 key={item.id}
@@ -374,8 +374,8 @@ export function Dashboard() {
                   cn(
                     'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300',
+                      ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-500'
+                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300',
                     spacingClasses
                   )
                 }
@@ -402,8 +402,8 @@ export function Dashboard() {
                   cn(
                     'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-green-600 dark:text-green-400 hover:bg-green-500/10 hover:text-green-700 dark:hover:text-green-300',
+                      ? 'bg-green-500/10 text-green-600 dark:text-green-400 font-semibold border-l-4 border-green-500'
+                      : 'text-green-600 dark:text-green-400 hover:bg-green-500/5 hover:text-green-700 dark:hover:text-green-300',
                     spacingClasses
                   )
                 }
@@ -430,8 +430,8 @@ export function Dashboard() {
                   cn(
                     'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                     spacingClasses
                   )
                 }
@@ -455,8 +455,8 @@ export function Dashboard() {
                   cn(
                     'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                   )
                 }
               >
@@ -484,8 +484,8 @@ export function Dashboard() {
                   cn(
                     'flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                   )
                 }
                 aria-label="Profile"
