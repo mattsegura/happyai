@@ -3,12 +3,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText, Plus, Clock, CheckCircle, AlertCircle, Calendar,
-  TrendingUp, Target, MoreVertical, Edit3, Trash2, ExternalLink, Brain, PenTool
+  TrendingUp, Target, MoreVertical, Edit3, Trash2, ExternalLink, Brain
 } from 'lucide-react';
 import { useAssignments } from '@/contexts/AssignmentContext';
 import { Assignment } from '@/lib/types/assignment';
 import { cn } from '@/lib/utils';
-import { StudyBuddyFileUpload } from './StudyBuddyFileUpload';
 
 export function AssignmentAssistantHub() {
   const navigate = useNavigate();
@@ -34,9 +33,6 @@ export function AssignmentAssistantHub() {
 
   return (
     <div className="space-y-6">
-      {/* File Upload Section */}
-      <StudyBuddyFileUpload />
-
       {/* Info Banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -51,27 +47,15 @@ export function AssignmentAssistantHub() {
               Get AI help completing essays, projects, and assignments. This is for DOING work, not studying. Each assignment has a dedicated AI assistant focused on helping you complete tasks, meet requirements, and finish on time.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <motion.button
-              onClick={() => navigate('/dashboard/assignments/essay-help')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
-              title="Get AI help with writing & grading essays"
-            >
-              <PenTool className="w-4 h-4" />
-              Essay Help
-            </motion.button>
-            <motion.button
-              onClick={() => navigate('/dashboard/assignments/create')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
-            >
-              <Plus className="w-4 h-4" />
-              New Assignment
-            </motion.button>
-          </div>
+          <motion.button
+            onClick={() => navigate('/dashboard/assignments/create')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
+          >
+            <Plus className="w-4 h-4" />
+            Create Assignment
+          </motion.button>
         </div>
       </motion.div>
 
@@ -131,13 +115,15 @@ export function AssignmentAssistantHub() {
           <p className="text-muted-foreground mb-6">
             Start a new assignment with AI assistance to help you complete essays, projects, and more.
           </p>
-          <button
+          <motion.button
             onClick={() => navigate('/dashboard/assignments/create')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all mx-auto"
           >
             <Plus className="w-5 h-5" />
-            Create First Assignment
-          </button>
+            Create Assignment
+          </motion.button>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -98,16 +98,16 @@ export function MonthView({ events, currentDate, onDayClick, onEventClick }: Mon
                     }}
                     className="flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium truncate shadow-sm cursor-pointer hover:opacity-80 transition-opacity"
                     style={{
-                      backgroundColor: `${event.courseColor}20`,
-                      borderLeft: `3px solid ${event.courseColor}`,
+                      backgroundColor: `${event.courseColor || '#6366f1'}20`,
+                      borderLeft: `3px solid ${event.courseColor || '#6366f1'}`,
                     }}
-                    title={`${event.title} - ${event.startTime}`}
+                    title={`${event.title || 'Untitled'} - ${event.startTime || ''}`}
                   >
                     <div
                       className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: event.courseColor }}
+                      style={{ backgroundColor: event.courseColor || '#6366f1' }}
                     />
-                    <span className="truncate">{event.title}</span>
+                    <span className="truncate">{event.title || 'Untitled Event'}</span>
                   </motion.div>
                 ))}
                 {dayEvents.length > 3 && (

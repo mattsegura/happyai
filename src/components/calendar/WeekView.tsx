@@ -105,22 +105,22 @@ export function WeekView({ events, currentDate, onEventClick, onTimeSlotClick }:
                         animate={{ scale: 1, opacity: 1 }}
                         className="h-full p-2 rounded-lg shadow-sm"
                         style={{
-                          backgroundColor: `${event.courseColor}30`,
-                          borderLeft: `4px solid ${event.courseColor}`,
+                          backgroundColor: `${event.courseColor || '#6366f1'}30`,
+                          borderLeft: `4px solid ${event.courseColor || '#6366f1'}`,
                         }}
                       >
-                        <div className="font-semibold text-xs truncate" title={event.title}>
-                          {event.title}
+                        <div className="font-semibold text-xs truncate" title={event.title || 'Untitled'}>
+                          {event.title || 'Untitled Event'}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {event.startTime} • {event.duration}min
+                          {event.startTime || '00:00'} • {event.duration || 60}min
                         </div>
                         <div className="flex items-center gap-1 mt-1">
                           <div
                             className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: event.courseColor }}
+                            style={{ backgroundColor: event.courseColor || '#6366f1' }}
                           />
-                          <span className="text-xs truncate">{event.courseName}</span>
+                          <span className="text-xs truncate">{event.courseName || event.course || 'General'}</span>
                         </div>
                         {event.priority === 'high' && (
                           <div className="inline-block px-1.5 py-0.5 bg-red-500/20 text-red-600 text-xs rounded mt-1 font-medium">

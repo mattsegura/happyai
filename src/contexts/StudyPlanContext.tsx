@@ -29,41 +29,41 @@ interface StudyPlanContextType {
 
 const StudyPlanContext = createContext<StudyPlanContextType | undefined>(undefined);
 
-// Mock study plans
+// Mock study plans - aligned with unified mock data (Nov 11, 2025)
 const mockStudyPlans: StudyPlan[] = [
   {
     id: 'study-1',
-    title: 'Calculus Midterm Prep',
-    courseId: '1',
-    courseName: 'MATH 201',
+    title: 'Advanced Calculus - Fourier Series',
+    courseId: 'calc-301',
+    courseName: 'Advanced Calculus',
     courseColor: '#3b82f6',
-    purpose: 'exam',
+    purpose: 'concept-learning',
     uploadedFiles: [],
-    linkedAssignments: [],
-    topics: ['Integration', 'Derivatives', 'Limits', 'Applications'],
+    linkedAssignments: ['hw6-calculus'],
+    topics: ['Fourier Series', 'Harmonic Analysis', 'Convergence'],
     studyTasks: [
       {
         id: 'task-1',
-        title: 'Review Chapter 5: Integration',
-        duration: 90,
+        title: 'Understand Fourier coefficients',
+        duration: 60,
         completed: true,
-        topicTags: ['Integration'],
+        topicTags: ['Fourier Series'],
         understanding: 'mastered'
       },
       {
         id: 'task-2',
-        title: 'Practice integration problems',
-        duration: 60,
+        title: 'Practice series convergence proofs',
+        duration: 90,
         completed: true,
-        topicTags: ['Integration'],
+        topicTags: ['Convergence'],
         understanding: 'getting-it'
       },
       {
         id: 'task-3',
-        title: 'Review derivatives rules',
+        title: 'Apply to real-world signals',
         duration: 45,
         completed: false,
-        topicTags: ['Derivatives'],
+        topicTags: ['Harmonic Analysis'],
         understanding: 'struggling'
       }
     ],
@@ -73,29 +73,249 @@ const mockStudyPlans: StudyPlan[] = [
       summaries: []
     },
     progress: 65,
-    hoursStudied: 4.5,
-    goalDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    hoursStudied: 3.5,
+    goalDate: '2025-11-15',
     status: 'active',
-    chatHistory: [
-      {
-        id: 'msg-1',
-        role: 'tutor',
-        content: 'Hi! I\'m your AI tutor for Calculus. I see you\'re preparing for the midterm. Let\'s start by reviewing integration. What specific topics would you like to focus on?',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-      }
-    ],
+    chatHistory: [],
     aiInsights: [
-      'You\'re strong on integration but might need more practice on derivatives',
-      'Consider doing practice problems under timed conditions',
-      'Review the chain rule - it\'s commonly tested'
+      'Strong grasp of fundamentals, focus on applications',
+      'Practice more complex convergence problems'
     ],
-    source: 'custom',
-    createdDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    source: 'ai-generated',
+    createdDate: '2025-11-08',
     studyPreferences: {
       sessionDuration: 90,
       learningStyle: 'practice-heavy',
-      studyTimePreference: 'afternoon',
+      studyTimePreference: 'morning',
       breakFrequency: 45
+    }
+  },
+  {
+    id: 'study-2',
+    title: 'Data Structures - Graph Algorithms',
+    courseId: 'cs-201',
+    courseName: 'Data Structures',
+    courseColor: '#10b981',
+    purpose: 'exam',
+    uploadedFiles: [],
+    linkedAssignments: [],
+    topics: ['Graph Traversal', 'Shortest Path', 'Dijkstra', 'BFS/DFS'],
+    studyTasks: [
+      {
+        id: 'task-1',
+        title: 'Master BFS and DFS',
+        duration: 60,
+        completed: true,
+        topicTags: ['BFS/DFS'],
+        understanding: 'mastered'
+      },
+      {
+        id: 'task-2',
+        title: 'Implement Dijkstra\'s algorithm',
+        duration: 120,
+        completed: false,
+        topicTags: ['Dijkstra', 'Shortest Path'],
+        understanding: 'getting-it'
+      },
+      {
+        id: 'task-3',
+        title: 'Solve practice problems',
+        duration: 90,
+        completed: false,
+        topicTags: ['Graph Traversal'],
+        understanding: 'struggling'
+      }
+    ],
+    generatedTools: {
+      flashcards: [],
+      quizzes: [],
+      summaries: []
+    },
+    progress: 35,
+    hoursStudied: 2.0,
+    goalDate: '2025-11-16',
+    status: 'active',
+    chatHistory: [],
+    aiInsights: [
+      'Focus on understanding time complexity',
+      'Visualize graph traversal patterns'
+    ],
+    source: 'ai-generated',
+    createdDate: '2025-11-09',
+    studyPreferences: {
+      sessionDuration: 120,
+      learningStyle: 'visual',
+      studyTimePreference: 'afternoon',
+      breakFrequency: 60
+    }
+  },
+  {
+    id: 'study-3',
+    title: 'Physics II - Thermodynamics Review',
+    courseId: 'phys-202',
+    courseName: 'Physics II',
+    courseColor: '#f59e0b',
+    purpose: 'concept-learning',
+    uploadedFiles: [],
+    linkedAssignments: ['lab5-physics'],
+    topics: ['Laws of Thermodynamics', 'Heat Engines', 'Entropy', 'Statistical Mechanics'],
+    studyTasks: [
+      {
+        id: 'task-1',
+        title: 'Review first and second laws',
+        duration: 75,
+        completed: true,
+        topicTags: ['Laws of Thermodynamics'],
+        understanding: 'getting-it'
+      },
+      {
+        id: 'task-2',
+        title: 'Understand entropy concept',
+        duration: 60,
+        completed: false,
+        topicTags: ['Entropy'],
+        understanding: 'struggling'
+      },
+      {
+        id: 'task-3',
+        title: 'Heat engine efficiency problems',
+        duration: 90,
+        completed: false,
+        topicTags: ['Heat Engines'],
+        understanding: 'learning'
+      }
+    ],
+    generatedTools: {
+      flashcards: [],
+      quizzes: [],
+      summaries: []
+    },
+    progress: 25,
+    hoursStudied: 1.5,
+    goalDate: '2025-11-18',
+    status: 'active',
+    chatHistory: [],
+    aiInsights: [
+      'Entropy is conceptually tricky - spend more time here',
+      'Connect theory to lab experiments'
+    ],
+    source: 'custom',
+    createdDate: '2025-11-10',
+    studyPreferences: {
+      sessionDuration: 75,
+      learningStyle: 'conceptual',
+      studyTimePreference: 'evening',
+      breakFrequency: 45
+    }
+  },
+  {
+    id: 'study-4',
+    title: 'American Literature - Modernist Authors',
+    courseId: 'lit-250',
+    courseName: 'American Literature',
+    courseColor: '#8b5cf6',
+    purpose: 'concept-learning',
+    uploadedFiles: [],
+    linkedAssignments: ['essay2-lit'],
+    topics: ['Hemingway', 'Fitzgerald', 'Modernism', 'Literary Analysis'],
+    studyTasks: [
+      {
+        id: 'task-1',
+        title: 'Read "The Great Gatsby" excerpts',
+        duration: 120,
+        completed: true,
+        topicTags: ['Fitzgerald'],
+        understanding: 'mastered'
+      },
+      {
+        id: 'task-2',
+        title: 'Analyze modernist themes',
+        duration: 90,
+        completed: true,
+        topicTags: ['Modernism', 'Literary Analysis'],
+        understanding: 'getting-it'
+      },
+      {
+        id: 'task-3',
+        title: 'Compare writing styles',
+        duration: 60,
+        completed: false,
+        topicTags: ['Hemingway', 'Fitzgerald'],
+        understanding: 'learning'
+      }
+    ],
+    generatedTools: {
+      flashcards: [],
+      quizzes: [],
+      summaries: []
+    },
+    progress: 70,
+    hoursStudied: 5.0,
+    goalDate: '2025-11-14',
+    status: 'active',
+    chatHistory: [],
+    aiInsights: [
+      'Strong analytical skills - excellent progress',
+      'Consider exploring historical context more deeply'
+    ],
+    source: 'custom',
+    createdDate: '2025-11-05',
+    studyPreferences: {
+      sessionDuration: 90,
+      learningStyle: 'reading-heavy',
+      studyTimePreference: 'evening',
+      breakFrequency: 60
+    }
+  },
+  {
+    id: 'study-5',
+    title: 'Final Exam Prep - Data Structures',
+    courseId: 'cs-201',
+    courseName: 'Data Structures',
+    courseColor: '#10b981',
+    purpose: 'exam',
+    uploadedFiles: [],
+    linkedAssignments: [],
+    topics: ['All Topics', 'Trees', 'Sorting', 'Graphs', 'Dynamic Programming'],
+    studyTasks: [
+      {
+        id: 'task-1',
+        title: 'Review all data structures',
+        duration: 180,
+        completed: false,
+        topicTags: ['All Topics'],
+        understanding: 'learning'
+      },
+      {
+        id: 'task-2',
+        title: 'Practice past exam problems',
+        duration: 120,
+        completed: false,
+        topicTags: ['All Topics'],
+        understanding: 'learning'
+      }
+    ],
+    generatedTools: {
+      flashcards: [],
+      quizzes: [],
+      summaries: []
+    },
+    progress: 10,
+    hoursStudied: 0.5,
+    goalDate: '2025-11-20',
+    status: 'active',
+    chatHistory: [],
+    aiInsights: [
+      'Start early - comprehensive exam',
+      'Focus on weak areas: graphs and DP'
+    ],
+    source: 'ai-generated',
+    createdDate: '2025-11-11',
+    studyPreferences: {
+      sessionDuration: 120,
+      learningStyle: 'practice-heavy',
+      studyTimePreference: 'morning',
+      breakFrequency: 30
     }
   }
 ];

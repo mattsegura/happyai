@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Loader } from 'lucide-react';
 import { ChatMessage } from './ChatMessage';
 import type { Message } from '../../contexts/ChatContext';
 
@@ -24,7 +23,7 @@ export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth custom-scrollbar"
+      className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
       role="log"
       aria-live="polite"
       aria-atomic="false"
@@ -33,56 +32,24 @@ export function ChatMessages({ messages, isTyping }: ChatMessagesProps) {
         <ChatMessage key={message.id} message={message} />
       ))}
 
-      {/* Enhanced Typing Indicator */}
-      <AnimatePresence>
-        {isTyping && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex gap-3"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-              className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 text-white flex items-center justify-center shadow-lg"
-            >
-              <div className="absolute -inset-0.5 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl blur opacity-30" />
-              <Sparkles className="w-4 h-4 relative animate-pulse" style={{ animationDuration: '2s' }} />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 rounded-2xl px-5 py-3 shadow-lg shadow-violet-500/5"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <motion.span
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 0.8, delay: 0 }}
-                    className="w-2 h-2 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full"
-                  />
-                  <motion.span
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 0.8, delay: 0.15 }}
-                    className="w-2 h-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full"
-                  />
-                  <motion.span
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 0.8, delay: 0.3 }}
-                    className="w-2 h-2 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full"
-                  />
-                </div>
-                <span className="text-sm font-medium bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
-                  Hapi is thinking...
-                </span>
+      {/* Typing Indicator */}
+      {isTyping && (
+        <div className="flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 text-white flex items-center justify-center">
+            <Loader className="w-4 h-4 animate-spin" />
+          </div>
+          <div className="bg-card border border-border rounded-2xl p-3 shadow-sm">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-violet-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 bg-pink-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <span className="text-sm text-muted-foreground">Hapi is thinking...</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Screen reader announcement for typing */}
       {isTyping && (

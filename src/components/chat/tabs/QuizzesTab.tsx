@@ -63,7 +63,7 @@ export function QuizzesTab() {
       {questions.length === 0 ? (
         /* Empty State */
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-md">
+          <div className="text-center max-w-3xl">
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
               <Sparkles className="w-10 h-10 text-violet-600 dark:text-violet-400" />
             </div>
@@ -76,7 +76,7 @@ export function QuizzesTab() {
       ) : showResults ? (
         /* Results */
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-2xl">
+          <div className="text-center max-w-5xl w-full px-8">
             <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-purple-600 mb-4">
               {Math.round((score / questions.length) * 100)}%
             </div>
@@ -137,14 +137,14 @@ export function QuizzesTab() {
           </div>
 
           {/* Question */}
-          <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full">
+          <div className="flex-1 flex flex-col items-center justify-center max-w-6xl mx-auto w-full px-4">
             <div className="w-full p-8 bg-gradient-to-br from-white to-violet-50 dark:from-gray-800 dark:to-violet-900/20 border-2 border-violet-200 dark:border-violet-800 rounded-3xl shadow-xl mb-8">
               <p className="text-2xl font-bold text-center text-foreground">
                 {currentQuestion?.question}
               </p>
             </div>
 
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
               {currentQuestion?.options.map((option, idx) => (
                 <button
                   key={idx}

@@ -28,14 +28,16 @@ export function DayExpandedView({
   const dayEvents = getEventsForDate(events, date);
   const timeSlots = getTimeSlots();
   const dateObj = new Date(date);
-  const totalDuration = dayEvents.reduce((sum, e) => sum + e.duration, 0);
+  const totalDuration = dayEvents.reduce((sum, e) => sum + (e.duration || 0), 0);
   const totalHours = Math.round((totalDuration / 60) * 10) / 10;
 
   const getEventAtTime = (time: string) => {
     return dayEvents.find(event => {
-      const eventHour = parseInt(event.startTime.split(':')[0]);
+      const startTime = event.startTime || '00:00';
+      const eventHour = parseInt(startTime.split(':')[0]);
       const slotHour = parseInt(time.split(':')[0]);
-      const eventEndHour = eventHour + Math.ceil(event.duration / 60);
+      const duration = event.duration || 60;
+      const eventEndHour = eventHour + Math.ceil(duration / 60);
       return slotHour >= eventHour && slotHour < eventEndHour;
     });
   };
@@ -116,32 +118,34 @@ export function DayExpandedView({
                             animate={{ opacity: 1, x: 0 }}
                             className="p-4 rounded-lg border group"
                             style={{
-                              backgroundColor: `${event.courseColor}15`,
-                              borderColor: event.courseColor,
+                              backgroundColor: `${event.courseColor || '#6366f1'}15`,
+                              borderColor: event.courseColor || '#6366f1',
                               borderLeftWidth: '4px',
                             }}
                           >
                             <div className="flex items-start justify-between gap-3">
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-semibold">{event.title}</h4>
+                                <h4 className="font-semibold">{event.title || 'Untitled Event'}</h4>
                                 <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
                                   <div
                                     className="w-3 h-3 rounded-full"
-                                    style={{ backgroundColor: event.courseColor }}
+                                    style={{ backgroundColor: event.courseColor || '#6366f1' }}
                                   />
-                                  <span>{event.courseName}</span>
+                                  <span>{event.courseName || event.course || 'General'}</span>
                                   <span>•</span>
                                   <Clock className="w-3 h-3" />
-                                  <span>{event.duration}min</span>
+                                  <span>{event.duration || 60}min</span>
                                 </div>
-                                <div className={cn(
-                                  'inline-block mt-2 px-2 py-1 rounded text-xs font-semibold',
-                                  event.priority === 'high' ? 'bg-red-500/10 text-red-600' :
-                                  event.priority === 'medium' ? 'bg-yellow-500/10 text-yellow-600' :
-                                  'bg-green-500/10 text-green-600'
-                                )}>
-                                  {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)} Priority
-                                </div>
+                                {event.priority && (
+                                  <div className={cn(
+                                    'inline-block mt-2 px-2 py-1 rounded text-xs font-semibold',
+                                    event.priority === 'high' ? 'bg-red-500/10 text-red-600' :
+                                    event.priority === 'medium' ? 'bg-yellow-500/10 text-yellow-600' :
+                                    'bg-green-500/10 text-green-600'
+                                  )}>
+                                    {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)} Priority
+                                  </div>
+                                )}
 
                                 {/* Tasks */}
                                 {event.tasks && event.tasks.length > 0 && (

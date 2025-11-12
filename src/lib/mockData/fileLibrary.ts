@@ -1,4 +1,69 @@
-import { FileLibraryItem } from '../types/studyPlan';
+import { FileLibraryItem, FolderItem } from '../types/studyPlan';
+
+// Mock folder structure - sub-folders students created for organization
+export const mockFolders: FolderItem[] = [
+  // BIO 101 sub-folders
+  {
+    id: 'folder-bio-lectures',
+    name: 'Lectures',
+    classId: 'bio101',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#10b981' // green
+  },
+  {
+    id: 'folder-bio-notes',
+    name: 'Notes',
+    classId: 'bio101',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#3b82f6' // blue
+  },
+  {
+    id: 'folder-bio-diagrams',
+    name: 'Diagrams & Images',
+    classId: 'bio101',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#f59e0b' // orange
+  },
+
+  // MATH 251 sub-folders
+  {
+    id: 'folder-calc-homework',
+    name: 'Homework',
+    classId: 'calc2',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#6366f1' // indigo
+  },
+  {
+    id: 'folder-calc-exams',
+    name: 'Exam Prep',
+    classId: 'calc2',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#ef4444' // red
+  },
+
+  // ENG 201 sub-folders
+  {
+    id: 'folder-eng-readings',
+    name: 'Readings',
+    classId: 'eng201',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#8b5cf6' // purple
+  },
+  {
+    id: 'folder-eng-essays',
+    name: 'Essay Drafts',
+    classId: 'eng201',
+    parentFolderId: null,
+    createdAt: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+    color: '#ec4899' // pink
+  },
+];
 
 export const mockFileLibrary: FileLibraryItem[] = [
   // Biology files
@@ -8,10 +73,12 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'application/pdf',
     size: 2457600, // ~2.4 MB
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-bio',
-    className: 'BIO 101 - Cell Biology',
+    classId: 'bio101',
+    className: 'BIO 101',
+    folderId: null,
+    folderId: 'folder-bio-notes', // In Notes folder
     studyPlanId: 'study-plan-bio-1',
-    studyPlanTitle: 'Cell Biology Midterm Prep',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 4,
       quizzes: 1,
@@ -29,10 +96,12 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'image/png',
     size: 1048576, // 1 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-bio',
-    className: 'BIO 101 - Cell Biology',
+    classId: 'bio101',
+    className: 'BIO 101',
+    folderId: null,
+    folderId: 'folder-bio-diagrams', // In Diagrams folder
     studyPlanId: 'study-plan-bio-1',
-    studyPlanTitle: 'Cell Biology Midterm Prep',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -46,12 +115,14 @@ export const mockFileLibrary: FileLibraryItem[] = [
   },
   {
     id: 'file-3',
-    name: 'lecture-5-photosynthesis.mp4',
+    name: 'lecture-5-dna-replication.mp4',
     type: 'video/mp4',
     size: 52428800, // 50 MB
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-bio',
-    className: 'BIO 101 - Cell Biology',
+    classId: 'bio101',
+    className: 'BIO 101',
+    folderId: null,
+    folderId: 'folder-bio-lectures', // In Lectures folder
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -60,21 +131,23 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 1,
       imageAnalyses: 0
     },
-    url: '/mock-files/lecture-5-photosynthesis.mp4',
+    url: '/mock-files/lecture-5-dna-replication.mp4',
     thumbnailUrl: '/mock-thumbnails/video-icon.png'
   },
 
   // Math files
   {
     id: 'file-4',
-    name: 'calculus-derivatives.pdf',
+    name: 'calculus-integration.pdf',
     type: 'application/pdf',
     size: 1835008, // ~1.75 MB
     uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-math',
-    className: 'MATH 201 - Calculus I',
-    studyPlanId: 'study-plan-math-1',
-    studyPlanTitle: 'Derivatives Mastery',
+    classId: 'calc2',
+    className: 'MATH 251',
+    folderId: null,
+    folderId: 'folder-calc-exams', // In Exam Prep folder
+    studyPlanId: 'study-plan-calc-1',
+    studyPlanTitle: 'Calculus II Study Plan',
     generatedTools: {
       flashcards: 3,
       quizzes: 1,
@@ -83,19 +156,21 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/calculus-derivatives.pdf',
+    url: '/mock-files/calculus-integration.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
     id: 'file-5',
-    name: 'calculus-integrals.pdf',
+    name: 'series-sequences.pdf',
     type: 'application/pdf',
     size: 2097152, // 2 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-math',
-    className: 'MATH 201 - Calculus I',
-    studyPlanId: 'study-plan-math-1',
-    studyPlanTitle: 'Derivatives Mastery',
+    classId: 'calc2',
+    className: 'MATH 251',
+    folderId: null,
+    folderId: 'folder-calc-homework', // In Homework folder
+    studyPlanId: 'study-plan-calc-1',
+    studyPlanTitle: 'Calculus II Study Plan',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -104,7 +179,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/calculus-integrals.pdf',
+    url: '/mock-files/series-sequences.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
@@ -113,8 +188,10 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     size: 524288, // 512 KB
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-math',
-    className: 'MATH 201 - Calculus I',
+    classId: 'calc2',
+    className: 'MATH 251',
+    folderId: null,
+    folderId: null, // Root of class folder
     generatedTools: {
       flashcards: 0,
       quizzes: 1,
@@ -127,17 +204,18 @@ export const mockFileLibrary: FileLibraryItem[] = [
     thumbnailUrl: '/mock-thumbnails/docx-icon.png'
   },
 
-  // History files
+  // English files
   {
     id: 'file-7',
-    name: 'wwii-timeline.pdf',
+    name: 'modernist-literature.pdf',
     type: 'application/pdf',
     size: 3145728, // 3 MB
     uploadedAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-hist',
-    className: 'HIST 301 - Modern History',
-    studyPlanId: 'study-plan-hist-1',
-    studyPlanTitle: 'WWII Exam Preparation',
+    classId: 'eng201',
+    className: 'ENG 201',
+    folderId: null,
+    studyPlanId: 'study-plan-eng-1',
+    studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
       flashcards: 3,
       quizzes: 1,
@@ -151,14 +229,15 @@ export const mockFileLibrary: FileLibraryItem[] = [
   },
   {
     id: 'file-8',
-    name: 'wwii-battles.pdf',
+    name: 'poetry-analysis-guide.pdf',
     type: 'application/pdf',
     size: 2621440, // ~2.5 MB
     uploadedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-hist',
-    className: 'HIST 301 - Modern History',
-    studyPlanId: 'study-plan-hist-1',
-    studyPlanTitle: 'WWII Exam Preparation',
+    classId: 'eng201',
+    className: 'ENG 201',
+    folderId: null,
+    studyPlanId: 'study-plan-eng-1',
+    studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -167,19 +246,20 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/wwii-battles.pdf',
+    url: '/mock-files/poetry-analysis-guide.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
     id: 'file-9',
-    name: 'wwii-map.jpg',
+    name: 'literary-timeline.jpg',
     type: 'image/jpeg',
     size: 2097152, // 2 MB
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-hist',
-    className: 'HIST 301 - Modern History',
-    studyPlanId: 'study-plan-hist-1',
-    studyPlanTitle: 'WWII Exam Preparation',
+    classId: 'eng201',
+    className: 'ENG 201',
+    folderId: null,
+    studyPlanId: 'study-plan-eng-1',
+    studyPlanTitle: 'English Lit Essay Prep',
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -188,21 +268,22 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 1
     },
-    url: '/mock-files/wwii-map.jpg',
-    thumbnailUrl: '/mock-thumbnails/wwii-map-thumb.jpg'
+    url: '/mock-files/literary-timeline.jpg',
+    thumbnailUrl: '/mock-thumbnails/literary-timeline-thumb.jpg'
   },
 
   // Chemistry files
   {
     id: 'file-10',
-    name: 'chemistry-stoichiometry.pdf',
+    name: 'thermodynamics-notes.pdf',
     type: 'application/pdf',
     size: 2359296, // ~2.25 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-chem',
-    className: 'CHEM 151 - General Chemistry',
+    classId: 'chem102',
+    className: 'CHEM 102',
+    folderId: null,
     studyPlanId: 'study-plan-chem-1',
-    studyPlanTitle: 'Chemical Reactions Study Plan',
+    studyPlanTitle: 'Chemistry Study Plan',
     generatedTools: {
       flashcards: 2,
       quizzes: 1,
@@ -211,7 +292,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/chemistry-stoichiometry.pdf',
+    url: '/mock-files/thermodynamics-notes.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
@@ -220,8 +301,9 @@ export const mockFileLibrary: FileLibraryItem[] = [
     type: 'application/pdf',
     size: 1572864, // ~1.5 MB
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-chem',
-    className: 'CHEM 151 - General Chemistry',
+    classId: 'chem102',
+    className: 'CHEM 102',
+    folderId: null,
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -235,12 +317,15 @@ export const mockFileLibrary: FileLibraryItem[] = [
   },
   {
     id: 'file-12',
-    name: 'acids-bases.pdf',
+    name: 'chemical-bonding.pdf',
     type: 'application/pdf',
     size: 1887437, // ~1.8 MB
     uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-chem',
-    className: 'CHEM 151 - General Chemistry',
+    classId: 'chem102',
+    className: 'CHEM 102',
+    folderId: null,
+    studyPlanId: 'study-plan-chem-1',
+    studyPlanTitle: 'Chemistry Study Plan',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -249,21 +334,22 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/acids-bases.pdf',
+    url: '/mock-files/chemical-bonding.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
 
-  // Physics files
+  // Additional Biology file
   {
     id: 'file-13',
-    name: 'physics-mechanics.pdf',
+    name: 'genetics-notes.pdf',
     type: 'application/pdf',
     size: 2621440, // ~2.5 MB
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-phys',
-    className: 'PHYS 101 - Physics I',
-    studyPlanId: 'study-plan-phys-1',
-    studyPlanTitle: 'Mechanics Fundamentals',
+    classId: 'bio101',
+    className: 'BIO 101',
+    folderId: null,
+    studyPlanId: 'study-plan-bio-1',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -272,19 +358,20 @@ export const mockFileLibrary: FileLibraryItem[] = [
       audioRecaps: 0,
       imageAnalyses: 0
     },
-    url: '/mock-files/physics-mechanics.pdf',
+    url: '/mock-files/genetics-notes.pdf',
     thumbnailUrl: '/mock-thumbnails/pdf-icon.png'
   },
   {
     id: 'file-14',
-    name: 'physics-energy.pdf',
+    name: 'dna-replication.pdf',
     type: 'application/pdf',
     size: 1966080, // ~1.875 MB
     uploadedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    classId: 'class-phys',
-    className: 'PHYS 101 - Physics I',
-    studyPlanId: 'study-plan-phys-1',
-    studyPlanTitle: 'Mechanics Fundamentals',
+    classId: 'bio101',
+    className: 'BIO 101',
+    folderId: null,
+    studyPlanId: 'study-plan-bio-1',
+    studyPlanTitle: 'Biology Midterm Prep',
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -304,6 +391,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-phys',
     className: 'PHYS 101 - Physics I',
+    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -325,6 +413,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-lit',
     className: 'ENG 202 - British Literature',
+    folderId: null,
     studyPlanId: 'study-plan-lit-1',
     studyPlanTitle: 'Shakespeare Analysis',
     generatedTools: {
@@ -346,6 +435,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-lit',
     className: 'ENG 202 - British Literature',
+    folderId: null,
     generatedTools: {
       flashcards: 1,
       quizzes: 0,
@@ -367,6 +457,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-cs',
     className: 'CS 301 - Algorithms',
+    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -386,6 +477,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'class-cs',
     className: 'CS 301 - Algorithms',
+    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -405,6 +497,7 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date().toISOString(),
     classId: 'class-cs',
     className: 'CS 301 - Algorithms',
+    folderId: null,
     generatedTools: {
       flashcards: 0,
       quizzes: 0,
@@ -486,5 +579,39 @@ export const getUniqueClasses = () => {
     classes.set(file.classId, file.className);
   });
   return Array.from(classes, ([id, name]) => ({ id, name }));
+};
+
+// Folder-related helper functions
+
+// Get folders by class
+export const getFoldersByClass = (classId: string): FolderItem[] => {
+  return mockFolders.filter(folder => folder.classId === classId);
+};
+
+// Get files by folder
+export const getFilesByFolder = (folderId: string): FileLibraryItem[] => {
+  return mockFileLibrary.filter(file => file.folderId === folderId);
+};
+
+// Get files in class root (no folder)
+export const getFilesInClassRoot = (classId: string): FileLibraryItem[] => {
+  return mockFileLibrary.filter(file => file.classId === classId && file.folderId === null);
+};
+
+// Get all files in class (including subfolders)
+export const getAllFilesInClass = (classId: string): FileLibraryItem[] => {
+  return mockFileLibrary.filter(file => file.classId === classId);
+};
+
+// Create new folder (mock function - in real app this would call API)
+export const createFolder = (name: string, classId: string, color?: string): FolderItem => {
+  return {
+    id: `folder-${Date.now()}`,
+    name,
+    classId,
+    parentFolderId: null,
+    createdAt: new Date().toISOString(),
+    color
+  };
 };
 

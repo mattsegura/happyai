@@ -17,7 +17,7 @@ const mockCourses = [
   { id: '5', name: 'History', code: 'HIST 101', color: '#eab308' },
 ];
 
-type Step = 'purpose' | 'class' | 'detection' | 'topics' | 'materials' | 'preferences' | 'creating';
+type Step = 'purpose' | 'class' | 'detection' | 'topics' | 'difficulty' | 'materials' | 'time-availability' | 'preferences' | 'creating';
 
 export function StudyPlanCreationFlow() {
   const navigate = useNavigate();
@@ -33,6 +33,8 @@ export function StudyPlanCreationFlow() {
   const [newTopic, setNewTopic] = useState('');
   const [goalDate, setGoalDate] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [difficultyRatings, setDifficultyRatings] = useState<{ [topic: string]: 1 | 2 | 3 | 4 | 5 }>({});
+  const [timeAvailability, setTimeAvailability] = useState<any>(null);
   const [preferences, setPreferences] = useState<StudyPreferences>({
     sessionDuration: 60,
     learningStyle: 'mixed',
@@ -143,7 +145,10 @@ export function StudyPlanCreationFlow() {
         generatedTools: {
           flashcards: [],
           quizzes: [],
-          summaries: []
+          summaries: [],
+          transcriptions: [],
+          audioRecaps: [],
+          imageAnalyses: []
         },
         goalDate: goalDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         status: 'active',
@@ -158,8 +163,11 @@ export function StudyPlanCreationFlow() {
           'Review regularly to improve retention',
           'Test yourself frequently with practice problems'
         ],
-        source: 'custom',
-        studyPreferences: preferences
+        source: 'ai-generated',
+        studyPreferences: preferences,
+        difficultyRatings,
+        timeAvailability,
+        autoScheduled: true
       });
 
       setTimeout(() => {
@@ -175,16 +183,23 @@ export function StudyPlanCreationFlow() {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <button
+        <motion.button
           onClick={() => step === 'purpose' ? navigate('/dashboard/study-buddy') : setStep('purpose')}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           className="p-2 hover:bg-muted rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h1 className="text-3xl font-bold">Create Study Plan</h1>
+        </motion.button>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Create Study Plan
+          </h1>
           <p className="text-muted-foreground">Get AI assistance for learning and understanding</p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Progress Steps */}
@@ -193,10 +208,14 @@ export function StudyPlanCreationFlow() {
           { id: 'purpose', label: 'Purpose' },
           { id: 'class', label: 'Class' },
           { id: 'topics', label: 'Topics' },
+          { id: 'difficulty', label: 'Difficulty' },
+          { id: 'materials', label: 'Materials' },
+          { id: 'time-availability', label: 'Schedule' },
           { id: 'creating', label: 'Create' },
         ].map((s, index) => {
-          const stepIndex = ['purpose', 'class', 'detection', 'topics', 'materials', 'preferences', 'creating'].indexOf(step);
-          const thisStepIndex = ['purpose', 'class', 'detection', 'topics', 'materials', 'preferences', 'creating'].indexOf(s.id);
+          const allSteps = ['purpose', 'class', 'detection', 'topics', 'difficulty', 'materials', 'time-availability', 'preferences', 'creating'];
+          const stepIndex = allSteps.indexOf(step);
+          const thisStepIndex = allSteps.indexOf(s.id);
           const isActive = stepIndex >= thisStepIndex;
           
           return (
@@ -215,7 +234,7 @@ export function StudyPlanCreationFlow() {
                   {s.label}
                 </span>
               </div>
-              {index < 3 && (
+              {index < 6 && (
                 <div className={cn(
                   'flex-1 h-0.5 mx-4',
                   isActive ? 'bg-primary' : 'bg-muted'
@@ -265,6 +284,15 @@ export function StudyPlanCreationFlow() {
               onRemoveTopic={handleRemoveTopic}
               goalDate={goalDate}
               setGoalDate={setGoalDate}
+              onNext={() => setStep('difficulty')}
+            />
+          )}
+
+          {step === 'difficulty' && (
+            <DifficultyStep
+              topics={topics}
+              difficultyRatings={difficultyRatings}
+              setDifficultyRatings={setDifficultyRatings}
               onNext={() => setStep('materials')}
             />
           )}
@@ -273,6 +301,14 @@ export function StudyPlanCreationFlow() {
             <MaterialsStep
               uploadedFiles={uploadedFiles}
               onFileUpload={handleFileUpload}
+              onNext={() => setStep('time-availability')}
+            />
+          )}
+
+          {step === 'time-availability' && (
+            <TimeAvailabilityStep
+              timeAvailability={timeAvailability}
+              setTimeAvailability={setTimeAvailability}
               onNext={() => setStep('preferences')}
             />
           )}
@@ -491,6 +527,65 @@ function TopicsStep({ planTitle, setPlanTitle, topics, newTopic, setNewTopic, on
   );
 }
 
+function DifficultyStep({ topics, difficultyRatings, setDifficultyRatings, onNext }: any) {
+  const handleRatingChange = (topic: string, rating: 1 | 2 | 3 | 4 | 5) => {
+    setDifficultyRatings((prev: any) => ({ ...prev, [topic]: rating }));
+  };
+
+  const allRated = topics.every((topic: string) => difficultyRatings[topic]);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold mb-2">Rate Topic Difficulty</h2>
+        <p className="text-muted-foreground mb-6">
+          How challenging do you find each topic? This helps AI create better study plans.
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        {topics.map((topic: string) => (
+          <div key={topic} className="p-4 bg-muted/30 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium">{topic}</h3>
+              <span className="text-xs text-muted-foreground">
+                {difficultyRatings[topic] 
+                  ? ['Very Easy', 'Easy', 'Moderate', 'Hard', 'Very Hard'][difficultyRatings[topic] - 1]
+                  : 'Not rated'}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <button
+                  key={rating}
+                  onClick={() => handleRatingChange(topic, rating as any)}
+                  className={cn(
+                    'flex-1 py-2 rounded-md transition-all font-medium text-sm',
+                    difficultyRatings[topic] === rating
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-background hover:bg-primary/10'
+                  )}
+                >
+                  {rating}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={onNext}
+        disabled={!allRated}
+        className="w-full py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        Continue
+        <ArrowRight className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
 function MaterialsStep({ uploadedFiles, onFileUpload, onNext }: any) {
   return (
     <div className="space-y-6">
@@ -505,20 +600,108 @@ function MaterialsStep({ uploadedFiles, onFileUpload, onNext }: any) {
           onChange={onFileUpload}
           className="hidden"
           multiple
+          accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
         />
         <div className="text-center">
           <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
           <p className="text-sm font-medium mb-1">
             {uploadedFiles.length > 0 
               ? `${uploadedFiles.length} file(s) selected`
-              : 'Click to upload study materials'}
+              : 'Click to upload or drag files here'}
           </p>
           <p className="text-xs text-muted-foreground">PDF, DOCX, TXT, or images</p>
         </div>
       </label>
 
+      {uploadedFiles.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium">Uploaded Files:</h3>
+          {uploadedFiles.map((file: File, index: number) => (
+            <div key={index} className="flex items-center gap-2 p-2 bg-muted/30 rounded-lg">
+              <BookOpen className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm flex-1">{file.name}</span>
+              <span className="text-xs text-muted-foreground">
+                {(file.size / 1024 / 1024).toFixed(2)} MB
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <button
         onClick={onNext}
+        className="w-full py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+      >
+        Continue
+        <ArrowRight className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
+function TimeAvailabilityStep({ timeAvailability, setTimeAvailability, onNext }: any) {
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const timeSlots = [
+    { label: 'Morning (6am-12pm)', value: 'morning', hours: '6am-12pm' },
+    { label: 'Afternoon (12pm-6pm)', value: 'afternoon', hours: '12pm-6pm' },
+    { label: 'Evening (6pm-10pm)', value: 'evening', hours: '6pm-10pm' },
+    { label: 'Night (10pm-12am)', value: 'night', hours: '10pm-12am' },
+  ];
+
+  const [availability, setAvailability] = useState<{ [key: string]: string[] }>(
+    timeAvailability || days.reduce((acc: any, day) => ({ ...acc, [day]: [] }), {})
+  );
+
+  const toggleSlot = (day: string, slot: string) => {
+    setAvailability((prev: any) => {
+      const daySlots = prev[day] || [];
+      const newSlots = daySlots.includes(slot)
+        ? daySlots.filter((s: string) => s !== slot)
+        : [...daySlots, slot];
+      return { ...prev, [day]: newSlots };
+    });
+  };
+
+  const handleContinue = () => {
+    setTimeAvailability(availability);
+    onNext();
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold mb-2">When Can You Study?</h2>
+        <p className="text-muted-foreground mb-6">
+          Select your available time slots. AI will schedule sessions during these times.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        {days.map((day) => (
+          <div key={day} className="border border-border rounded-lg p-4">
+            <h3 className="font-medium mb-3">{day}</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {timeSlots.map((slot) => (
+                <button
+                  key={slot.value}
+                  onClick={() => toggleSlot(day, slot.value)}
+                  className={cn(
+                    'p-2 rounded-md text-sm transition-all',
+                    availability[day]?.includes(slot.value)
+                      ? 'bg-primary text-white'
+                      : 'bg-muted hover:bg-muted/80'
+                  )}
+                >
+                  {slot.hours}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={handleContinue}
         className="w-full py-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2"
       >
         Continue
@@ -579,18 +762,66 @@ function PreferencesStep({ preferences, setPreferences, onNext }: any) {
 
 function CreatingStep() {
   return (
-    <div className="flex flex-col items-center justify-center py-12">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col items-center justify-center py-16"
+    >
       <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.2, 1]
+        }}
+        transition={{ 
+          rotate: { duration: 2, repeat: Infinity, ease: 'linear' },
+          scale: { duration: 1, repeat: Infinity }
+        }}
+        className="mb-8"
       >
-        <Sparkles className="w-16 h-16 text-primary mb-4" />
+        <Sparkles className="w-20 h-20 text-primary" />
       </motion.div>
-      <h2 className="text-2xl font-bold mb-2">Creating Your Study Plan...</h2>
-      <p className="text-muted-foreground text-center max-w-md">
+      
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+      >
+        Creating Your Study Plan...
+      </motion.h2>
+      
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="text-muted-foreground text-center max-w-md mb-8"
+      >
         AI is analyzing your topics, creating study tasks, and setting up your personalized tutor
-      </p>
-    </div>
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="flex gap-2"
+      >
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="w-3 h-3 bg-primary rounded-full"
+            animate={{
+              scale: [1, 1.5, 1],
+              opacity: [0.5, 1, 0.5]
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              delay: i * 0.2
+            }}
+          />
+        ))}
+      </motion.div>
+    </motion.div>
   );
 }
 

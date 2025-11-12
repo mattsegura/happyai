@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { OverviewView } from './OverviewView';
@@ -11,17 +11,33 @@ import { MorningPulseModal } from '../popups/MorningPulseModal';
 import { ConsolidatedClassPulsesModal } from '../popups/ConsolidatedClassPulsesModal';
 import { ClassPulseDetailModal } from './ClassPulseDetailModal';
 import { HapiReferralNotificationModal } from './HapiReferralNotificationModal';
-import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight } from 'lucide-react';
+import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle, Brain, Sparkles, FileText, Mic, Volume2, PenTool, Image as ImageIcon, ChevronDown, ChevronRight, LogOut, Settings, FolderOpen, TrendingUp, Calendar, Target, Zap, Award, Clock, Heart, Users, Video } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
+import { SleekPageHeader } from './SleekPageHeader';
 import { cn } from '../../lib/utils';
 
 // Lazy load heavy components for better performance
 const StudentHapiLab = lazy(() => import('../student/StudentHapiLab').then(m => ({ default: m.StudentHapiLab })));
+const StudyBuddyHub = lazy(() => import('../student/StudyBuddyHub').then(m => ({ default: m.StudyBuddyHub })));
+const FileLibrary = lazy(() => import('../student/FileLibrary').then(m => ({ default: m.FileLibrary })));
+const SmartCalendar = lazy(() => import('../student/SmartCalendar').then(m => ({ default: m.SmartCalendar })));
+const UnifiedAnalyticsView = lazy(() => import('../analytics/UnifiedAnalyticsView').then(m => ({ default: m.UnifiedAnalyticsView })));
+const AssignmentAssistantHub = lazy(() => import('../student/AssignmentAssistantHub').then(m => ({ default: m.AssignmentAssistantHub })));
+const AssignmentWorkspace = lazy(() => import('../student/AssignmentWorkspace').then(m => ({ default: m.AssignmentWorkspace })));
+const AssignmentCreationFlow = lazy(() => import('../student/AssignmentCreationFlow').then(m => ({ default: m.AssignmentCreationFlow })));
+const StudyPlanCreationFlow = lazy(() => import('../student/StudyPlanCreationFlow').then(m => ({ default: m.StudyPlanCreationFlow })));
+const StudyPlanWorkspace = lazy(() => import('../student/StudyPlanWorkspace').then(m => ({ default: m.StudyPlanWorkspace })));
 const EnhancedHapiChat = lazy(() => import('../student/EnhancedHapiChat').then(m => ({ default: m.EnhancedHapiChat })));
-const HapiChatView = lazy(() => import('../chat/HapiChatView').then(m => ({ default: m.HapiChatView })));
+const HapiChatView = lazy(() => import('../chat/HapiChatViewRedesigned').then(m => ({ default: m.HapiChatViewRedesigned })));
+const AIChatHub = lazy(() => import('../chat/AIChatHub').then(m => ({ default: m.AIChatHub })));
+const AcademicTutorChat = lazy(() => import('../chat/AcademicTutorChat').then(m => ({ default: m.AcademicTutorChat })));
+const WellbeingCoachChat = lazy(() => import('../chat/WellbeingCoachChat').then(m => ({ default: m.WellbeingCoachChat })));
 const WellbeingView = lazy(() => import('../wellbeing/WellbeingView').then(m => ({ default: m.WellbeingView })));
 const ProgressView = lazy(() => import('../progress/ProgressView').then(m => ({ default: m.ProgressView })));
+const StudyGroups = lazy(() => import('../student/StudyGroups').then(m => ({ default: m.StudyGroups })));
+const ShareSync = lazy(() => import('../student/ShareSync').then(m => ({ default: m.ShareSync })));
+const LectureCapture = lazy(() => import('../student/LectureCapture').then(m => ({ default: m.LectureCapture })));
 
 // Lazy load AI Study Hub tab components
 const ChatTab = lazy(() => import('../chat/tabs/ChatTab').then(m => ({ default: m.ChatTab })));
@@ -52,7 +68,7 @@ const SubscriptionGate = lazy(() => import('../payment/SubscriptionGate').then(m
 const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
 
 export function Dashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPopups, setShowPopups] = useState(true);
@@ -67,27 +83,51 @@ export function Dashboard() {
   const [classPulses] = useState<any[]>([]);
   const [selectedPulse, setSelectedPulse] = useState<any>(null);
   const [selectedReferral, setSelectedReferral] = useState<any>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Default to collapsed
   const [studyHubExpanded, setStudyHubExpanded] = useState(false);
+  const [aiChatExpanded, setAiChatExpanded] = useState(false);
+  const sidebarCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // Removed classes expansion - Analytics is now a direct main nav item
 
-  // AI Study Hub sub-items
-  const studyHubItems = [
-    { id: 'ai-chat', path: '/dashboard/ai-chat', icon: MessageCircle, label: 'AI Chat', description: 'General study assistance' },
-    { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards', description: 'AI-generated from your materials' },
-    { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes', description: 'Practice tests & questions' },
-    { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize', description: 'Notes, PDFs, slides' },
-    { id: 'transcribe', path: '/dashboard/transcribe', icon: Mic, label: 'Transcribe', description: 'Lecture recordings' },
-    { id: 'audio-recaps', path: '/dashboard/audio-recaps', icon: Volume2, label: 'Audio Recaps', description: 'Listen to summaries' },
-    { id: 'essay-help', path: '/dashboard/essay-help', icon: PenTool, label: 'Essay Help', description: 'Grading & writing assistance' },
-    { id: 'image-analysis', path: '/dashboard/image-analysis', icon: ImageIcon, label: 'Image Analysis', description: 'Diagrams & visual materials' },
+  // AI Chat sub-items - Two specialized AI agents
+  const aiChatItems = [
+    { id: 'tutor', path: '/dashboard/ai-chat/tutor', icon: Brain, label: 'Academic Tutor', description: 'Study help & concept mastery' },
+    { id: 'coach', path: '/dashboard/ai-chat/coach', icon: Heart, label: 'Wellbeing Coach', description: 'Emotional support & balance' },
   ];
 
-  // Updated navigation structure - New organization
-  const navigationItems = [
+  // Study Planner (formerly Study Buddy)
+  // Study tools - Now standalone navigation items (no longer sub-items)
+  const studyToolItems = [
+    { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards' },
+    { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes' },
+    { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize' },
+    { id: 'audio-recaps', path: '/dashboard/audio-recaps', icon: Volume2, label: 'Audio Recap' },
+    { id: 'image-analysis', path: '/dashboard/image-analysis', icon: ImageIcon, label: 'Image Analysis' },
+  ] as const;
+
+  // Navigation structure with dividers
+  // Section 1: Home, Analytics, Smart Calendar
+  const section1Items = [
     { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
-    { id: 'classes', path: '/dashboard/classes', icon: GraduationCap, label: 'Classes' },
-    { id: 'planner', path: '/dashboard/planner', icon: BookOpen, label: 'Study Planner' },
-    { id: 'profile', path: '/dashboard/profile', icon: User, label: 'Profile' },
+    { id: 'analytics', path: '/dashboard/analytics', icon: TrendingUp, label: 'Analytics' },
+    { id: 'planner', path: '/dashboard/planner', icon: Calendar, label: 'Smart Calendar' },
+  ] as const;
+
+  // Section 2: Chats, Lecture Capture, Assignment Assistant, Study Planner
+  const section2Items = [
+    { id: 'ai-chat', path: '/dashboard/ai-chat', icon: MessageCircle, label: 'Chats' },
+    { id: 'lecture-capture', path: '/dashboard/lecture-capture', icon: Video, label: 'Lecture Capture' },
+    { id: 'assignments', path: '/dashboard/assignments', icon: Target, label: 'Assignment Assistant' },
+    { id: 'study-buddy', path: '/dashboard/study-buddy', icon: BookOpen, label: 'Study Planner' },
+  ] as const;
+
+  // Section 3: Study Tools (Flashcards, Quizzes, etc.)
+  const section3Items = studyToolItems;
+
+  // Section 4: File Library, Share Sync
+  const section4Items = [
+    { id: 'file-library', path: '/dashboard/file-library', icon: FolderOpen, label: 'File Library' },
+    { id: 'share-sync', path: '/dashboard/share-sync', icon: Users, label: 'Share Sync' },
   ] as const;
 
   // Secondary routes still accessible via URL (Lab, Progress, Wellbeing, Academics, Subscription)
@@ -150,10 +190,40 @@ export function Dashboard() {
   };
 
 
+  // Handle sidebar hover with 3-second delay before closing
+  const handleSidebarMouseEnter = () => {
+    // Clear any pending close timer
+    if (sidebarCloseTimerRef.current) {
+      clearTimeout(sidebarCloseTimerRef.current);
+      sidebarCloseTimerRef.current = null;
+    }
+    // Expand sidebar immediately
+    setSidebarCollapsed(false);
+  };
+
+  const handleSidebarMouseLeave = () => {
+    // Set a 3-second timer before collapsing
+    sidebarCloseTimerRef.current = setTimeout(() => {
+      setSidebarCollapsed(true);
+      sidebarCloseTimerRef.current = null;
+    }, 3000);
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (sidebarCloseTimerRef.current) {
+        clearTimeout(sidebarCloseTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
       <aside
-        className={`hidden h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
+        onMouseEnter={handleSidebarMouseEnter}
+        onMouseLeave={handleSidebarMouseLeave}
+        className={`hidden sticky top-0 h-screen flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl transition-all duration-300 dark:bg-card/70 md:flex ${
           sidebarCollapsed ? 'w-20' : 'w-72'
         }`}
       >
@@ -176,8 +246,9 @@ export function Dashboard() {
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
-          {navigationItems.map((item) => {
+        <nav className="mt-8 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
+          {/* Section 1: Home, Analytics, Smart Calendar */}
+          {section1Items.map((item) => {
             const Icon = item.icon;
             const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
@@ -186,10 +257,10 @@ export function Dashboard() {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
-                      ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
-                      : 'hover:bg-muted/70 hover:text-foreground',
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                     spacingClasses
                   )
                 }
@@ -201,144 +272,329 @@ export function Dashboard() {
             );
           })}
 
-          {/* AI Study Hub - Expandable Section */}
-          {!sidebarCollapsed && (
-            <div className="space-y-1">
-              <button
-                onClick={() => setStudyHubExpanded(!studyHubExpanded)}
-                className={cn(
-                  'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
-                  studyHubExpanded || location.pathname.includes('/ai-chat') || location.pathname.includes('/flashcards') || location.pathname.includes('/quizzes') || location.pathname.includes('/summarize') || location.pathname.includes('/transcribe') || location.pathname.includes('/audio-recaps') || location.pathname.includes('/essay-help') || location.pathname.includes('/image-analysis')
-                    ? 'bg-primary text-primary-foreground shadow-lg ring-1 ring-primary/40'
-                    : 'hover:bg-muted/70 hover:text-foreground'
-                )}
-              >
-                <Brain className="h-5 w-5" />
-                <span className="flex-1 text-left">AI Study Hub</span>
-                {studyHubExpanded ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </button>
+          {/* Divider */}
+          <div className="h-px bg-border my-2" />
 
-              {/* Sub-items */}
-              {studyHubExpanded && (
-                <div className="ml-4 space-y-1 border-l-2 border-border/40 pl-2">
-                  {studyHubItems.map((subItem) => {
-                    const SubIcon = subItem.icon;
-                    return (
-                      <NavLink
-                        key={subItem.id}
-                        to={subItem.path}
-                        className={({ isActive }) =>
-                          cn(
-                            'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
-                            isActive
-                              ? 'bg-primary/10 text-primary font-semibold'
-                              : 'hover:bg-muted/50 hover:text-foreground'
-                          )
-                        }
-                      >
-                        <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium">{subItem.label}</div>
-                          <div className="text-xs text-muted-foreground">{subItem.description}</div>
-                        </div>
-                      </NavLink>
-                    );
-                  })}
+          {/* Section 2: Chats, Lecture Capture, Assignment Assistant, Study Planner */}
+          {section2Items.map((item) => {
+            const Icon = item.icon;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            
+            // Special handling for AI Chat with sub-items
+            if (item.id === 'ai-chat' && !sidebarCollapsed) {
+              return (
+                <div key={item.id} className="space-y-1">
+                  <div className="relative">
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
+                          isActive || aiChatExpanded || location.pathname.includes('/ai-chat/')
+                            ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-500'
+                            : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300'
+                        )
+                      }
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="flex-1 text-left">{item.label}</span>
+                    </NavLink>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setAiChatExpanded(!aiChatExpanded);
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-blue-500/10 rounded transition-colors"
+                    >
+                      {aiChatExpanded ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* AI Chat Sub-items */}
+                  {aiChatExpanded && (
+                    <div className="ml-4 space-y-1 border-l-2 border-blue-400/30 pl-2">
+                      {aiChatItems.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <NavLink
+                            key={subItem.id}
+                            to={subItem.path}
+                            className={({ isActive }) =>
+                              cn(
+                                'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
+                                isActive
+                                  ? 'bg-blue-500/10 text-blue-700 dark:text-blue-300 font-semibold'
+                                  : 'text-blue-600/70 dark:text-blue-400/70 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300'
+                              )
+                            }
+                          >
+                            <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium">{subItem.label}</div>
+                              <div className="text-xs text-blue-500/60 dark:text-blue-400/60">{subItem.description}</div>
+                            </div>
+                          </NavLink>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )}
+              );
+            } else if (item.id === 'ai-chat' && sidebarCollapsed) {
+              return (
+                <NavLink
+                  key={item.id}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex w-full items-center justify-center px-0 py-2 rounded-xl transition-all duration-200',
+                      isActive || location.pathname.includes('/ai-chat/')
+                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-500'
+                        : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300'
+                    )
+                  }
+                  aria-label={item.label}
+                >
+                  <Icon className="h-5 w-5" />
+                </NavLink>
+              );
+            }
+
+            // Regular items in Section 2
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
+                    isActive
+                      ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border-l-4 border-blue-500'
+                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-500/5 hover:text-blue-700 dark:hover:text-blue-300',
+                    spacingClasses
+                  )
+                }
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </NavLink>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="h-px bg-border my-2" />
+
+          {/* Section 3: Study Tools */}
+          {section3Items.map((item) => {
+            const Icon = item.icon;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
+                    isActive
+                      ? 'bg-green-500/10 text-green-600 dark:text-green-400 font-semibold border-l-4 border-green-500'
+                      : 'text-green-600 dark:text-green-400 hover:bg-green-500/5 hover:text-green-700 dark:hover:text-green-300',
+                    spacingClasses
+                  )
+                }
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </NavLink>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="h-px bg-border my-2" />
+
+          {/* Section 4: File Library & Share Sync */}
+          {section4Items.map((item) => {
+            const Icon = item.icon;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
+                    isActive
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                    spacingClasses
+                  )
+                }
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </NavLink>
+            );
+          })}
         </nav>
 
-        <div className="space-y-3 px-4 pb-6">
-          <div className="flex items-center justify-center gap-2">
+        {/* Bottom Section - Settings & Profile */}
+        <div className="mt-auto border-t border-border/40 pt-2 space-y-1 px-3 pb-4">
+          {!sidebarCollapsed && (
+            <>
+              {/* Profile Button */}
+              <NavLink
+                to="/dashboard/profile"
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
+                    isActive
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                  )
+                }
+              >
+                <User className="h-5 w-5" />
+                <span className="text-sm font-medium">Profile</span>
+              </NavLink>
+
+              {/* Logout Button */}
+              <button
+                onClick={() => signOut()}
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+              >
+                <LogOut className="h-5 w-5" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </>
+          )}
+
+          {sidebarCollapsed && (
+            <>
+              {/* Profile Icon Only */}
+              <NavLink
+                to="/dashboard/profile"
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200',
+                    isActive
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                  )
+                }
+                aria-label="Profile"
+              >
+                <User className="h-5 w-5" />
+              </NavLink>
+
+              {/* Logout Icon Only */}
+              <button
+                onClick={() => signOut()}
+                className="flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+                aria-label="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </>
+          )}
+
+          {/* Theme Toggle - Always visible */}
+          <div className="flex items-center justify-center pt-2">
             <ThemeToggle />
           </div>
-          <button
-            onClick={() => setSidebarCollapsed((prev) => !prev)}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-primary/40 hover:text-primary"
-            aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
-          >
-            <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-            {!sidebarCollapsed && <span>Collapse</span>}
-          </button>
         </div>
       </aside>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-4 pb-24 md:pb-4 sm:px-6 lg:px-8">
-          <header
-            className={cn(
-              SURFACE_BASE,
-              'flex flex-col gap-4 px-5 py-4'
-            )}
-          >
-            {/* Page Title - Hide on overview to avoid duplication */}
-            {!location.pathname.includes('/overview') && (
-              <div>
-                <h1 className="text-xl font-semibold text-foreground md:text-2xl">
-                  {location.pathname.includes('classes') && 'Classes'}
-                  {location.pathname.includes('calendar') && 'Calendar'}
-                  {location.pathname.includes('planner') && 'Study Planner'}
-                  {location.pathname.includes('hapi-chat') && 'AI Chat'}
-                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && 'Hapi AI'}
-                  {location.pathname.includes('profile') && 'Profile'}
-                  {location.pathname.includes('academics') && 'Academics'}
-                  {location.pathname.includes('wellbeing') && 'Wellbeing'}
-                  {location.pathname.includes('progress') && 'Progress'}
-                  {location.pathname.includes('lab') && 'Hapi Lab'}
-                  {location.pathname.includes('subscription') && 'Subscription'}
-                </h1>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {location.pathname.includes('classes') && 'Your courses, grades & class overview'}
-                  {location.pathname.includes('calendar') && 'Full calendar with AI study planning'}
-                  {location.pathname.includes('planner') && 'AI-powered study plan generator'}
-                  {location.pathname.includes('hapi-chat') && 'Chat with your AI learning companion'}
-                  {location.pathname.includes('hapi') && !location.pathname.includes('lab') && !location.pathname.includes('hapi-chat') && 'AI-powered assistant'}
-                  {location.pathname.includes('profile') && 'Your account settings'}
-                  {location.pathname.includes('academics') && 'Grades, assignments & study tools'}
-                  {location.pathname.includes('wellbeing') && 'Mood tracking & sentiment analytics'}
-                  {location.pathname.includes('progress') && 'Achievements, badges & leaderboard'}
-                  {location.pathname.includes('lab') && 'Pulse checks & Hapi moments'}
-                  {location.pathname.includes('subscription') && 'Manage your subscription & billing'}
-                </p>
-              </div>
-            )}
-
-            {/* Mobile Navigation - ALWAYS VISIBLE - At the top */}
-            <div className="md:hidden w-full">
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => navigate(item.path)}
-                      className={cn(
-                        'flex min-w-fit items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all whitespace-nowrap touch-manipulation active:scale-95',
-                        isActive
-                          ? 'bg-primary text-primary-foreground shadow'
-                          : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-                      )}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Notification Center - Shows on desktop */}
-            <div className="hidden md:flex items-center gap-3 ml-auto relative z-[110]">
-              <NotificationCenter />
-            </div>
-          </header>
+        <div className={cn(
+          "flex min-h-full w-full flex-col",
+          location.pathname.includes('ai-chat') 
+            ? "p-0" // Fullscreen for AI Chat
+            : "px-6 pb-24 md:pb-4"
+        )}>
+          {/* Sleek Header - Hidden only on AI Chat, Overview, and Lecture Capture for immersive experience */}
+          {!location.pathname.includes('ai-chat') && !location.pathname.includes('/overview') && !location.pathname.includes('lecture-capture') && (
+            <SleekPageHeader
+              title={
+                location.pathname.includes('classes') && !location.pathname.includes('analytics') ? 'Classes' :
+                location.pathname.includes('analytics') ? 'Analytics' :
+                location.pathname.includes('planner') ? 'Smart Calendar' :
+                location.pathname.includes('assignments') && !location.pathname.includes('assignments/') ? 'Assignment Assistant' :
+                location.pathname.includes('assignments/create') ? 'Create Assignment' :
+                location.pathname.includes('assignments/essay-help') ? 'Essay Help' :
+                location.pathname.match(/assignments\/[^/]+$/) && !location.pathname.includes('essay-help') ? 'Assignment Workspace' :
+                location.pathname.includes('study-buddy/create') ? 'Create Study Plan' :
+                location.pathname.match(/study-buddy\/[^/]+$/) ? 'Study Plan Workspace' :
+                location.pathname.includes('study-buddy') && !location.pathname.includes('study-buddy/') ? 'Study Planner' :
+                location.pathname.includes('file-library') ? 'File Library' :
+                location.pathname.includes('profile') ? 'Profile' :
+                location.pathname.includes('wellbeing') ? 'Wellbeing' :
+                location.pathname.includes('progress') ? 'Progress' :
+                location.pathname.includes('lab') ? 'Hapi Lab' :
+                location.pathname.includes('subscription') ? 'Subscription' :
+                'Dashboard'
+              }
+              subtitle={
+                location.pathname.includes('classes') && !location.pathname.includes('analytics') ? 'Your courses, grades & class overview' :
+                location.pathname.includes('analytics') ? 'Performance tracking & insights' :
+                location.pathname.includes('planner') ? 'Time management & study planning' :
+                location.pathname.includes('assignments/essay-help') ? 'AI-powered writing assistance' :
+                location.pathname.includes('assignments') && !location.pathname.includes('assignments/') ? 'Complete essays, projects & assignments' :
+                location.pathname.includes('study-buddy') ? 'Create & manage your study plans' :
+                location.pathname.includes('file-library') ? 'All your files & generated tools' :
+                location.pathname.includes('profile') ? 'Manage your account settings' :
+                location.pathname.includes('wellbeing') ? 'Mood tracking & mental health' :
+                location.pathname.includes('progress') ? 'Achievements & milestones' :
+                location.pathname.includes('lab') ? 'Daily check-ins & moments' :
+                location.pathname.includes('subscription') ? 'Plans & billing' :
+                undefined
+              }
+              icon={
+                location.pathname.includes('classes') ? BookOpen :
+                location.pathname.includes('analytics') ? TrendingUp :
+                location.pathname.includes('planner') ? Calendar :
+                location.pathname.includes('assignments') ? Target :
+                location.pathname.includes('study-buddy') ? BookOpen :
+                location.pathname.includes('file-library') ? FolderOpen :
+                location.pathname.includes('profile') ? User :
+                location.pathname.includes('wellbeing') ? Heart :
+                location.pathname.includes('progress') ? Award :
+                location.pathname.includes('lab') ? Sparkles :
+                location.pathname.includes('subscription') ? Settings :
+                undefined
+              }
+              badges={
+                location.pathname.includes('classes') && !location.pathname.includes('analytics') ? [
+                  { label: 'Courses', value: 4, color: 'blue', icon: BookOpen },
+                  { label: 'Avg GPA', value: '3.5', color: 'green', icon: Award },
+                  { label: 'Due Soon', value: 3, color: 'orange', icon: Clock },
+                ] :
+                location.pathname.includes('planner') ? [
+                  { label: 'This Week', value: 5, color: 'primary', icon: Calendar },
+                  { label: 'Study Hours', value: 23, color: 'purple', icon: Clock },
+                ] :
+                location.pathname.includes('assignments') && !location.pathname.includes('assignments/') ? [
+                  { label: 'Active', value: 3, color: 'orange', icon: Target },
+                  { label: 'Completed', value: 12, color: 'green', icon: Award },
+                ] :
+                location.pathname.includes('study-buddy') && !location.pathname.includes('study-buddy/') ? [
+                  { label: 'Active Plans', value: 2, color: 'primary', icon: BookOpen },
+                  { label: 'Progress', value: '65%', color: 'purple', icon: Zap },
+                ] :
+                []
+              }
+            />
+          )}
+          
+          <div className={cn(
+            !location.pathname.includes('ai-chat') && !location.pathname.includes('/overview') && "px-4 pt-4 sm:px-6 lg:px-8"
+          )}>
 
             <Suspense fallback={
               <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -365,6 +621,52 @@ export function Dashboard() {
                   }
                 />
                 <Route
+                  path="study-buddy"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyBuddyHub />
+                    </div>
+                  }
+                />
+                {/* Study Plan Routes */}
+                <Route
+                  path="study-buddy/create"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyPlanCreationFlow />
+                    </div>
+                  }
+                />
+                <Route
+                  path="study-buddy/:id"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <StudyPlanWorkspace />
+                    </div>
+                  }
+                />
+                {/* Lecture Capture Route - Combines Live + Upload */}
+                <Route
+                  path="lecture-capture"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <LectureCapture />
+                    </div>
+                  }
+                />
+                {/* Share Sync Route - Renamed and expanded Study Groups */}
+                <Route
+                  path="share-sync"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <ShareSync />
+                    </div>
+                  }
+                />
+                {/* Legacy routes for backwards compatibility */}
+                <Route path="live-lecture" element={<Navigate to="/dashboard/lecture-capture" replace />} />
+                <Route path="study-groups" element={<Navigate to="/dashboard/share-sync" replace />} />
+                <Route
                   path="wellbeing"
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
@@ -388,12 +690,18 @@ export function Dashboard() {
                     </div>
                   }
                 />
-                {/* AI Study Hub Routes */}
+                {/* AI Chat Routes with Sub-types */}
+                <Route path="ai-chat">
+                  <Route index element={<AIChatHub />} />
+                  <Route path="tutor" element={<AcademicTutorChat />} />
+                  <Route path="coach" element={<WellbeingCoachChat />} />
+                </Route>
+                {/* File Library Route */}
                 <Route
-                  path="ai-chat"
+                  path="file-library"
                   element={
-                    <div className="p-6">
-                      <ChatTab />
+                    <div className={cn(SURFACE_BASE, 'p-0 h-full')}>
+                      <FileLibrary />
                     </div>
                   }
                 />
@@ -438,14 +746,6 @@ export function Dashboard() {
                   }
                 />
                 <Route
-                  path="essay-help"
-                  element={
-                    <div className="p-6">
-                      <EssayGradingTab />
-                    </div>
-                  }
-                />
-                <Route
                   path="image-analysis"
                   element={
                     <div className="p-6">
@@ -469,13 +769,10 @@ export function Dashboard() {
                     </div>
                   }
                 />
+                {/* Analytics - Unified Classes + Analytics View (merged) */}
                 <Route
-                  path="classes"
-                  element={
-                    <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <ClassesView />
-                    </div>
-                  }
+                  path="analytics"
+                  element={<UnifiedAnalyticsView />}
                 />
                 <Route
                   path="calendar"
@@ -489,7 +786,40 @@ export function Dashboard() {
                   path="planner"
                   element={
                     <div className={cn(SURFACE_BASE, 'p-6')}>
-                      <EnhancedStudyPlanner />
+                      <SmartCalendar />
+                    </div>
+                  }
+                />
+                {/* Assignment Assistant Routes */}
+                <Route
+                  path="assignments"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AssignmentAssistantHub />
+                    </div>
+                  }
+                />
+                <Route
+                  path="assignments/create"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AssignmentCreationFlow />
+                    </div>
+                  }
+                />
+                <Route
+                  path="assignments/essay-help"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <EssayGradingTab />
+                    </div>
+                  }
+                />
+                <Route
+                  path="assignments/:id"
+                  element={
+                    <div className={cn(SURFACE_BASE, 'p-6')}>
+                      <AssignmentWorkspace />
                     </div>
                   }
                 />
@@ -568,35 +898,102 @@ export function Dashboard() {
                 </Route>
               </Routes>
             </Suspense>
+          </div>
         </div>
       </div>
 
       {/* Mobile Bottom Tab Bar - Fixed at bottom for touch-friendly navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-lg pb-safe">
         <div className="grid grid-cols-5 gap-1 p-2">
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname.includes(item.path);
-            return (
-              <button
-                key={item.id}
-                onClick={() => navigate(item.path)}
-                className={cn(
-                  'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
-                  'min-h-[64px]', // Touch target size (minimum 44px recommended)
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-                  isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground active:bg-muted'
-                )}
-                aria-label={`Navigate to ${item.label}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <Icon className="h-5 w-5 flex-shrink-0" />
-                <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
-              </button>
-            );
-          })}
+          {/* Home */}
+          <button
+            onClick={() => navigate('/dashboard/overview')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/overview')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Home"
+            aria-current={location.pathname.includes('/overview') ? 'page' : undefined}
+          >
+            <Home className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Home</span>
+          </button>
+          
+          {/* Smart Calendar */}
+          <button
+            onClick={() => navigate('/dashboard/planner')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/planner')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Smart Calendar"
+            aria-current={location.pathname.includes('/planner') ? 'page' : undefined}
+          >
+            <Calendar className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Calendar</span>
+          </button>
+          
+          {/* AI Chat */}
+          <button
+            onClick={() => navigate('/dashboard/ai-chat')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/ai-chat')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to AI Chat"
+            aria-current={location.pathname.includes('/ai-chat') ? 'page' : undefined}
+          >
+            <MessageCircle className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Chats</span>
+          </button>
+          
+          {/* Assignment Assistant */}
+          <button
+            onClick={() => navigate('/dashboard/assignments')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/assignments')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Assignment Assistant"
+            aria-current={location.pathname.includes('/assignments') ? 'page' : undefined}
+          >
+            <Target className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Assignments</span>
+          </button>
+          
+          {/* Study Planner */}
+          <button
+            onClick={() => navigate('/dashboard/study-buddy')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/study-buddy')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Study Planner"
+            aria-current={location.pathname.includes('/study-buddy') ? 'page' : undefined}
+          >
+            <BookOpen className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Study</span>
+          </button>
         </div>
       </nav>
 

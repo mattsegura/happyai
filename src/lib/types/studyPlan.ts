@@ -6,7 +6,7 @@ export interface StudyPlan {
   courseId: string;
   courseName: string;
   courseColor: string;
-  purpose: 'exam' | 'assignment-help' | 'topic-mastery' | 'review';
+  purpose: 'exam' | 'assignment-help' | 'topic-mastery' | 'review' | 'concept-learning';
   
   // Materials
   uploadedFiles: StudyFile[];
@@ -29,12 +29,21 @@ export interface StudyPlan {
   lastStudySession?: StudySession;
   
   // Metadata
-  source: 'custom' | 'calendar-generated';
+  source: 'custom' | 'calendar-generated' | 'ai-generated';
   createdDate: string;
   lastStudied?: string;
   
   // Preferences
   studyPreferences: StudyPreferences;
+  
+  // NEW: Enhanced features
+  difficultyRatings?: { [topic: string]: 1 | 2 | 3 | 4 | 5 };
+  timeAvailability?: WeeklySchedule;
+  autoScheduled?: boolean;
+  sharedWith?: string[];
+  groupId?: string;
+  collaborators?: Collaborator[];
+  aiRecommendations?: Recommendation[];
 }
 
 export interface StudyFile {
@@ -312,6 +321,15 @@ export interface ImageAnnotation {
   color: string;
 }
 
+export interface FolderItem {
+  id: string;
+  name: string;
+  classId: string;
+  parentFolderId: string | null; // null for root folders (class folders)
+  createdAt: string;
+  color?: string; // Optional color for organization
+}
+
 export interface FileLibraryItem {
   id: string;
   name: string;
@@ -320,6 +338,7 @@ export interface FileLibraryItem {
   uploadedAt: string;
   classId: string;
   className: string;
+  folderId: string | null; // Can be in a subfolder or root of class
   studyPlanId?: string;
   studyPlanTitle?: string;
   generatedTools: {
@@ -417,5 +436,120 @@ export interface StudyPlanMatch {
   courseName: string;
   purpose: string;
   topicMatch: number; // 0-1 confidence
+}
+
+// NEW: Enhanced system types
+
+export interface WeeklySchedule {
+  monday: TimeBlock[];
+  tuesday: TimeBlock[];
+  wednesday: TimeBlock[];
+  thursday: TimeBlock[];
+  friday: TimeBlock[];
+  saturday: TimeBlock[];
+  sunday: TimeBlock[];
+}
+
+export interface TimeBlock {
+  startTime: string; // "09:00"
+  endTime: string; // "12:00"
+  available: boolean;
+}
+
+export interface Collaborator {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  avatar?: string;
+  permission: 'view' | 'edit' | 'admin';
+  joinedAt: string;
+}
+
+export interface Recommendation {
+  id: string;
+  type: 'study-time' | 'tool-suggestion' | 'topic-review' | 'difficulty-adjustment' | 'break-reminder';
+  content: string;
+  priority: 'low' | 'medium' | 'high';
+  timestamp: string;
+  actionable: boolean;
+  actionLabel?: string;
+  dismissed: boolean;
+}
+
+export interface StudyGroup {
+  id: string;
+  name: string;
+  description: string;
+  courseId: string;
+  courseName: string;
+  members: GroupMember[];
+  createdBy: string;
+  createdAt: string;
+  settings: GroupSettings;
+  chatHistory: GroupChatMessage[];
+  sharedPlans: string[]; // Study plan IDs
+  competitions: GroupCompetition[];
+}
+
+export interface GroupMember {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  avatar?: string;
+  role: 'owner' | 'admin' | 'member';
+  joinedAt: string;
+  stats: {
+    hoursStudied: number;
+    topicsCompleted: number;
+    streak: number;
+  };
+}
+
+export interface GroupSettings {
+  visibility: 'public' | 'private' | 'invite-only';
+  allowChatFiles: boolean;
+  allowPlanSharing: boolean;
+  competitionsEnabled: boolean;
+}
+
+export interface GroupChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  content: string;
+  timestamp: string;
+  attachments?: StudyFile[];
+  replyTo?: string;
+}
+
+export interface GroupCompetition {
+  id: string;
+  name: string;
+  type: 'quiz' | 'study-hours' | 'streak' | 'topics-completed';
+  startDate: string;
+  endDate: string;
+  participants: string[]; // User IDs
+  leaderboard: LeaderboardEntry[];
+  prize?: string;
+  status: 'upcoming' | 'active' | 'completed';
+}
+
+export interface LeaderboardEntry {
+  userId: string;
+  userName: string;
+  avatar?: string;
+  score: number;
+  rank: number;
+  lastUpdated: string;
+}
+
+export interface ConflictWarning {
+  id: string;
+  type: 'overlap' | 'overload' | 'deadline-conflict' | 'time-constraint';
+  severity: 'low' | 'medium' | 'high';
+  description: string;
+  affectedItems: string[]; // IDs of study plans or assignments
+  suggestedResolution: string;
+  autoResolvable: boolean;
 }
 
