@@ -246,7 +246,7 @@ export function Dashboard() {
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-2 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
+        <nav className="mt-8 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
           {/* Section 1: Home, Analytics, Smart Calendar */}
           {section1Items.map((item) => {
             const Icon = item.icon;
@@ -257,7 +257,7 @@ export function Dashboard() {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                       : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
@@ -273,7 +273,7 @@ export function Dashboard() {
           })}
 
           {/* Divider */}
-          <div className="h-px bg-border/50 my-3" />
+          <div className="h-px bg-border my-2" />
 
           {/* Section 2: Chats, Lecture Capture, Assignment Assistant, Study Planner */}
           {section2Items.map((item) => {
@@ -289,7 +289,7 @@ export function Dashboard() {
                       to={item.path}
                       className={({ isActive }) =>
                         cn(
-                          'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                          'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
                           isActive || aiChatExpanded || location.pathname.includes('/ai-chat/')
                             ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                             : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
@@ -352,7 +352,7 @@ export function Dashboard() {
                   to={item.path}
                   className={({ isActive }) =>
                     cn(
-                      'flex w-full items-center justify-center px-0 py-3 rounded-xl transition-all duration-200',
+                      'flex w-full items-center justify-center px-0 py-2 rounded-xl transition-all duration-200',
                       isActive || location.pathname.includes('/ai-chat/')
                         ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                         : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
@@ -372,7 +372,7 @@ export function Dashboard() {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                       : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
@@ -388,7 +388,7 @@ export function Dashboard() {
           })}
 
           {/* Divider */}
-          <div className="h-px bg-border/50 my-3" />
+          <div className="h-px bg-border my-2" />
 
           {/* Section 3: Study Tools */}
           {section3Items.map((item) => {
@@ -400,7 +400,7 @@ export function Dashboard() {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                       : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
@@ -416,7 +416,7 @@ export function Dashboard() {
           })}
 
           {/* Divider */}
-          <div className="h-px bg-border/50 my-3" />
+          <div className="h-px bg-border my-2" />
 
           {/* Section 4: File Library & Share Sync */}
           {section4Items.map((item) => {
@@ -428,7 +428,7 @@ export function Dashboard() {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                       : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
@@ -445,7 +445,7 @@ export function Dashboard() {
         </nav>
 
         {/* Bottom Section - Settings & Profile */}
-        <div className="mt-auto border-t border-border/40 pt-3 space-y-2 px-3 pb-6">
+        <div className="mt-auto border-t border-border/40 pt-2 space-y-1 px-3 pb-4">
           {!sidebarCollapsed && (
             <>
               {/* Profile Button */}
@@ -453,7 +453,7 @@ export function Dashboard() {
                 to="/dashboard/profile"
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                    'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                       : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
@@ -467,7 +467,7 @@ export function Dashboard() {
               {/* Logout Button */}
               <button
                 onClick={() => signOut()}
-                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
               >
                 <LogOut className="h-5 w-5" />
                 <span className="text-sm font-medium">Logout</span>
@@ -482,7 +482,7 @@ export function Dashboard() {
                 to="/dashboard/profile"
                 className={({ isActive }) =>
                   cn(
-                    'flex w-full items-center justify-center rounded-xl px-0 py-3 transition-all duration-200',
+                    'flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                       : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
@@ -496,7 +496,7 @@ export function Dashboard() {
               {/* Logout Icon Only */}
               <button
                 onClick={() => signOut()}
-                className="flex w-full items-center justify-center rounded-xl px-0 py-3 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+                className="flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
                 aria-label="Logout"
               >
                 <LogOut className="h-5 w-5" />
