@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, Filter, Search, TrendingDown, TrendingUp, Activity } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
+import { motion } from 'framer-motion';
 import {
   detectAtRiskStudents,
   getAtRiskCounts,
@@ -143,68 +144,96 @@ function CareAlertsDashboard({ classId }: CareAlertsDashboardProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Care Alerts Dashboard</h2>
-        <p className="text-muted-foreground">
+    <div className="space-y-4">
+      {/* Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h2 className="text-2xl font-bold text-foreground">Care Alerts Dashboard</h2>
+        <p className="text-sm text-muted-foreground mt-1">
           Students flagged for emotional or academic concerns requiring attention
         </p>
-      </div>
+      </motion.div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-border bg-card p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4 shadow-sm hover:shadow-md transition-shadow"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Alerts</p>
+              <p className="text-xs text-muted-foreground">Total Alerts</p>
               <p className="text-2xl font-bold text-foreground">{counts.total}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-              <AlertCircle className="h-6 w-6" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20">
+              <AlertCircle className="h-5 w-5 text-primary" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4 shadow-sm hover:shadow-md transition-shadow"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Critical</p>
+              <p className="text-xs text-muted-foreground">Critical</p>
               <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">{counts.critical}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">
-              <TrendingDown className="h-6 w-6" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-500/10 dark:bg-rose-500/20">
+              <TrendingDown className="h-5 w-5 text-rose-600 dark:text-rose-400" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4 shadow-sm hover:shadow-md transition-shadow"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Emotional Risk</p>
+              <p className="text-xs text-muted-foreground">Emotional Risk</p>
               <p className="text-2xl font-bold text-foreground">{counts.emotional}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
-              <Activity className="h-6 w-6" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 dark:bg-purple-500/20">
+              <Activity className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-border bg-card p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4 shadow-sm hover:shadow-md transition-shadow"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Academic Risk</p>
+              <p className="text-xs text-muted-foreground">Academic Risk</p>
               <p className="text-2xl font-bold text-foreground">{counts.academic}</p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
-              <TrendingUp className="h-6 w-6" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 dark:bg-amber-500/20">
+              <TrendingUp className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Filters and Search */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-sm p-4"
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Search */}
           <div className="md:col-span-2">
@@ -250,43 +279,49 @@ function CareAlertsDashboard({ classId }: CareAlertsDashboardProps) {
         </div>
 
         {/* Sort */}
-        <div className="mt-4 flex items-center gap-2">
-          <Filter className="h-5 w-5 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Sort by:</span>
+        <div className="mt-3 flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">Sort by:</span>
           <div className="flex gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSortBy('severity')}
-              className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
                 sortBy === 'severity'
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-primary text-white shadow-sm'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
               Severity
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSortBy('daysAtRisk')}
-              className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
                 sortBy === 'daysAtRisk'
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-primary text-white shadow-sm'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
               Days at Risk
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSortBy('name')}
-              className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
                 sortBy === 'name'
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-primary text-white shadow-sm'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
               Name
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Alert Cards Grid */}
       {filteredStudents.length === 0 ? (

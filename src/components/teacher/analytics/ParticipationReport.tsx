@@ -8,6 +8,7 @@
  * - Visual progress bars with color coding
  */
 
+import { motion } from 'framer-motion';
 import { Target, BookOpen, FileQuestion, Briefcase, GraduationCap, MessageSquare, Sunrise, Heart } from 'lucide-react';
 import type { ParticipationRate } from '../../../lib/analytics/academicAnalytics';
 
@@ -100,73 +101,93 @@ export function ParticipationReport({ data }: ParticipationReportProps) {
   const colors = getOverallColor();
 
   return (
-    <div className={`rounded-2xl border-2 bg-gradient-to-br p-6 shadow-sm ${colors.bg} ${colors.border}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+    >
       {/* Header */}
-      <div className="mb-4 flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
-            <Target className="h-5 w-5 text-white" />
+      <div className="mb-3 flex items-start justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+            <Target className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-muted-foreground">Class Participation</h3>
-            <p className="text-lg font-bold text-foreground line-clamp-1">{data.className}</p>
+            <h3 className="text-[10px] text-muted-foreground">Class Participation</h3>
+            <p className="text-sm font-bold text-foreground line-clamp-1">{data.className}</p>
           </div>
         </div>
       </div>
 
       {/* Overall Rate */}
-      <div className="mb-6 rounded-xl border border-border/60 bg-card p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="mb-4 rounded-lg border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 p-3"
+      >
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-semibold text-muted-foreground">Overall Participation</p>
-          <span className={`text-2xl font-bold ${getRateColor(data.overall)}`}>
+          <p className="text-[10px] font-bold text-muted-foreground">Overall Participation</p>
+          <span className={`text-xl font-bold ${getRateColor(data.overall)}`}>
             {data.overall.toFixed(1)}%
           </span>
         </div>
-        <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500"
-            style={{ width: `${Math.min(100, data.overall)}%` }}
+        <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted/50">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(100, data.overall)}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-primary to-accent"
           />
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">{data.studentCount} students</p>
-      </div>
+        <p className="mt-1.5 text-[10px] text-muted-foreground">{data.studentCount} students</p>
+      </motion.div>
 
       {/* Participation by Type */}
-      <div className="space-y-4">
-        <h4 className="text-sm font-semibold text-foreground">By Assignment Type</h4>
+      <div className="space-y-3">
+        <h4 className="text-xs font-bold text-foreground">By Assignment Type</h4>
 
-        {assignmentTypes.map((type) => {
+        {assignmentTypes.map((type, index) => {
           const rate = data.byType[type.key];
           const Icon = type.icon;
 
           return (
-            <div key={type.key} className="rounded-lg border border-border/40 bg-card/50 p-3">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Icon className={`h-4 w-4 text-${type.color}-500`} />
-                  <span className="text-sm font-medium text-foreground">{type.label}</span>
+            <motion.div
+              key={type.key}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+              className="rounded-lg border border-border/40 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-950/10 dark:to-pink-950/10 p-2.5"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Icon className={`h-3.5 w-3.5 text-${type.color}-500`} />
+                  <span className="text-xs font-bold text-foreground">{type.label}</span>
                 </div>
-                <span className={`text-sm font-bold ${getRateColor(rate)}`}>
+                <span className={`text-xs font-bold ${getRateColor(rate)}`}>
                   {rate.toFixed(1)}%
                 </span>
               </div>
 
               {/* Progress Bar */}
-              <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className={`absolute left-0 top-0 h-full rounded-full transition-all duration-500 ${getBarColor(rate, type.color)}`}
-                  style={{ width: `${Math.min(100, rate)}%` }}
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted/50">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(100, rate)}%` }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 + index * 0.1 }}
+                  className={`absolute left-0 top-0 h-full rounded-full ${getBarColor(rate, type.color)}`}
                 />
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>
 
       {/* Insights */}
-      <div className="mt-4 rounded-lg border border-border/60 bg-card/50 p-3">
-        <h5 className="mb-2 text-xs font-semibold text-muted-foreground">Key Insights</h5>
-        <ul className="space-y-1 text-xs text-foreground">
+      <div className="mt-3 rounded-lg border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 p-3">
+        <h5 className="mb-2 text-[10px] font-bold text-muted-foreground">Key Insights</h5>
+        <ul className="space-y-1 text-[10px] text-foreground">
           {/* Find highest and lowest participation */}
           {(() => {
             const rates = Object.entries(data.byType).map(([key, value]) => ({
@@ -204,11 +225,11 @@ export function ParticipationReport({ data }: ParticipationReportProps) {
       </div>
 
       {/* Last Updated */}
-      <div className="mt-3 border-t border-border/40 pt-3">
-        <p className="text-xs text-muted-foreground">
+      <div className="mt-3 border-t border-border/50 pt-2">
+        <p className="text-[10px] text-muted-foreground">
           Updated {new Date(data.lastUpdated).toLocaleDateString()}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

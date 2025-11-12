@@ -1,10 +1,25 @@
-import { useState } from 'react';
-import { X, ChevronLeft, ChevronRight, Eye, Save, Send, BookTemplate } from 'lucide-react';
-import { PulseQuestion, QuestionType, QUESTION_TYPE_DEFINITIONS, PulseTemplate } from '../../lib/pulseTypes';
-import { PulseMetadataForm } from './pulse-wizard/PulseMetadataForm';
-import { QuestionList } from './pulse-wizard/QuestionList';
-import { QuestionBuilder } from './pulse-wizard/QuestionBuilder';
-import { PulsePreview } from './pulse-wizard/PulsePreview';
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Save,
+  Send,
+  BookTemplate,
+} from "lucide-react";
+import {
+  PulseQuestion,
+  QuestionType,
+  QUESTION_TYPE_DEFINITIONS,
+  PulseTemplate,
+} from "../../lib/pulseTypes";
+import { PulseMetadataForm } from "./pulse-wizard/PulseMetadataForm";
+import { QuestionList } from "./pulse-wizard/QuestionList";
+import { QuestionBuilder } from "./pulse-wizard/QuestionBuilder";
+import { PulsePreview } from "./pulse-wizard/PulsePreview";
+import { motion } from "framer-motion";
 
 interface CreatePulseWizardProps {
   onClose: () => void;
@@ -13,14 +28,23 @@ interface CreatePulseWizardProps {
   loadedTemplate?: Partial<PulseTemplate>;
 }
 
-type WizardStep = 'metadata' | 'questions' | 'preview';
+type WizardStep = "metadata" | "questions" | "preview";
 
-export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }: CreatePulseWizardProps) {
-  const [currentStep, setCurrentStep] = useState<WizardStep>('metadata');
-  const [selectedClassId, setSelectedClassId] = useState(classId || '');
-  const [title, setTitle] = useState(loadedTemplate?.template_data?.title || '');
-  const [description, setDescription] = useState(loadedTemplate?.template_data?.description || '');
-  const [expiresIn, setExpiresIn] = useState('24');
+export function CreatePulseWizard({
+  onClose,
+  classId,
+  classes,
+  loadedTemplate,
+}: CreatePulseWizardProps) {
+  const [currentStep, setCurrentStep] = useState<WizardStep>("metadata");
+  const [selectedClassId, setSelectedClassId] = useState(classId || "");
+  const [title, setTitle] = useState(
+    loadedTemplate?.template_data?.title || ""
+  );
+  const [description, setDescription] = useState(
+    loadedTemplate?.template_data?.description || ""
+  );
+  const [expiresIn, setExpiresIn] = useState("24");
   const [allowAnonymous, setAllowAnonymous] = useState(false);
   const [questions, setQuestions] = useState<Partial<PulseQuestion>[]>(
     loadedTemplate?.template_data?.questions?.map((q, i) => ({
@@ -28,22 +52,23 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
       position: i,
       options: q.options?.map((opt, optIdx) => ({
         id: `opt-${optIdx}`,
-        question_id: '',
+        question_id: "",
         option_text: opt.option_text,
         option_value: null,
         position: opt.position,
-        created_at: '',
+        created_at: "",
       })),
     })) || []
   );
   const [editingQuestion, setEditingQuestion] = useState<number | null>(null);
-  const [showQuestionTypeSelector, setShowQuestionTypeSelector] = useState(false);
+  const [showQuestionTypeSelector, setShowQuestionTypeSelector] =
+    useState(false);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const handleAddQuestion = (type: QuestionType) => {
     const newQuestion: Partial<PulseQuestion> = {
-      question_text: '',
+      question_text: "",
       question_type: type,
       position: questions.length,
       is_required: true,
@@ -56,7 +81,10 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
     setShowQuestionTypeSelector(false);
   };
 
-  const handleUpdateQuestion = (index: number, updated: Partial<PulseQuestion>) => {
+  const handleUpdateQuestion = (
+    index: number,
+    updated: Partial<PulseQuestion>
+  ) => {
     const newQuestions = [...questions];
     newQuestions[index] = { ...newQuestions[index], ...updated };
     setQuestions(newQuestions);
@@ -74,7 +102,7 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
     const newQuestion = {
       ...questionToDuplicate,
       position: questions.length,
-      question_text: questionToDuplicate.question_text + ' (Copy)',
+      question_text: questionToDuplicate.question_text + " (Copy)",
     };
     setQuestions([...questions, newQuestion]);
   };
@@ -95,25 +123,34 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
     setSaving(false);
   };
 
-  const handleSaveAsTemplate = async (templateName: string, templateDescription: string, category: string) => {
+  const handleSaveAsTemplate = async (
+    templateName: string,
+    templateDescription: string,
+    category: string
+  ) => {
     setSaving(true);
     const templateData = {
       title: title,
       description: description,
       questions: questions.map((q) => ({
-        question_text: q.question_text || '',
+        question_text: q.question_text || "",
         question_type: q.question_type!,
         is_required: q.is_required ?? true,
         points_value: q.points_value || 10,
         configuration: q.configuration || {},
         options: q.options?.map((opt) => ({
-          option_text: opt.option_text || '',
+          option_text: opt.option_text || "",
           position: opt.position || 0,
         })),
       })),
     };
 
-    console.log('Saving template:', { templateName, templateDescription, category, templateData });
+    console.log("Saving template:", {
+      templateName,
+      templateDescription,
+      category,
+      templateData,
+    });
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setSaving(false);
     setShowSaveTemplateModal(false);
@@ -127,68 +164,139 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
   };
 
   const canProceedToQuestions = selectedClassId && title.trim();
-  const canProceedToPreview = questions.length > 0 && questions.every(q => q.question_text?.trim());
+  const canProceedToPreview =
+    questions.length > 0 && questions.every((q) => q.question_text?.trim());
   const canSaveAsTemplate = title.trim() && questions.length > 0;
-  const totalPoints = questions.reduce((sum, q) => sum + (q.points_value || 0), 0);
+  const totalPoints = questions.reduce(
+    (sum, q) => sum + (q.points_value || 0),
+    0
+  );
 
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-card rounded-3xl shadow-2xl w-full max-w-6xl my-8 flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between p-6 border-b border-border">
+  return createPortal(
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/60 backdrop-blur-lg z-50 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          transition={{ type: "spring", duration: 0.3 }}
+          onClick={(e) => e.stopPropagation()}
+          className="bg-card rounded-2xl shadow-2xl w-full max-w-3xl border border-border/50 my-8"
+        >
+        <div className="flex items-center justify-between p-5 border-b border-border">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">
-              {currentStep === 'metadata' && 'Create Pulse Check'}
-              {currentStep === 'questions' && 'Add Questions'}
-              {currentStep === 'preview' && 'Preview & Publish'}
+            <h2 className="text-2xl font-bold text-foreground">
+              {currentStep === "metadata" && "Create Pulse Check"}
+              {currentStep === "questions" && "Add Questions"}
+              {currentStep === "preview" && "Preview & Publish"}
             </h2>
-            <p className="text-muted-foreground mt-1">
-              {currentStep === 'metadata' && 'Set up your pulse check details'}
-              {currentStep === 'questions' && `${questions.length} ${questions.length === 1 ? 'question' : 'questions'} added • ${totalPoints} points total`}
-              {currentStep === 'preview' && 'Review your pulse check before publishing'}
+            <p className="text-sm text-muted-foreground mt-1">
+              {currentStep === "metadata" && "Set up your pulse check details"}
+              {currentStep === "questions" &&
+                `${questions.length} ${
+                  questions.length === 1 ? "question" : "questions"
+                } added • ${totalPoints} points total`}
+              {currentStep === "preview" &&
+                "Review your pulse check before publishing"}
             </p>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={onClose}
-            className="p-2 hover:bg-muted rounded-xl transition-colors"
+            className="p-2 hover:bg-muted rounded-lg transition-colors"
           >
-            <X className="w-6 h-6 text-muted-foreground" />
-          </button>
+            <X className="h-5 w-5 text-muted-foreground" />
+          </motion.button>
         </div>
 
-        <div className="flex items-center justify-center py-4 px-6 bg-muted/30 dark:bg-muted/20 border-b border-border">
-          <div className="flex items-center space-x-2">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-              currentStep === 'metadata' ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-green-500 dark:bg-green-600 text-white'
-            }`}>
-              {currentStep === 'metadata' ? '1' : '✓'}
+        {/* Step Indicator - Matching Student Modal Style */}
+        <div className="flex items-center justify-center py-3 px-6 bg-muted/20 dark:bg-muted/10 border-b border-border">
+          <div className="flex items-center gap-3">
+            {/* Step 1 */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm transition-all ${
+                  currentStep === "metadata"
+                    ? "bg-primary text-white shadow-md"
+                    : "bg-green-500 text-white"
+                }`}
+              >
+                {currentStep === "metadata" ? "1" : "✓"}
+              </div>
+              <span
+                className={`text-sm font-medium ${
+                  currentStep === "metadata"
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Details
+              </span>
             </div>
-            <span className={`font-semibold ${currentStep === 'metadata' ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
-              Details
-            </span>
-            <div className="w-12 h-0.5 bg-border mx-2" />
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-              currentStep === 'questions' ? 'bg-blue-500 dark:bg-blue-600 text-white' :
-              currentStep === 'preview' ? 'bg-green-500 dark:bg-green-600 text-white' : 'bg-muted dark:bg-muted/50 text-muted-foreground'
-            }`}>
-              {currentStep === 'preview' ? '✓' : '2'}
+
+            {/* Connector */}
+            <div className="w-8 h-0.5 bg-border" />
+
+            {/* Step 2 */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm transition-all ${
+                  currentStep === "questions"
+                    ? "bg-primary text-white shadow-md"
+                    : currentStep === "preview"
+                    ? "bg-green-500 text-white"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {currentStep === "preview" ? "✓" : "2"}
+              </div>
+              <span
+                className={`text-sm font-medium ${
+                  currentStep === "questions"
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Questions
+              </span>
             </div>
-            <span className={`font-semibold ${currentStep === 'questions' ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
-              Questions
-            </span>
-            <div className="w-12 h-0.5 bg-border mx-2" />
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
-              currentStep === 'preview' ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-muted dark:bg-muted/50 text-muted-foreground'
-            }`}>
-              3
+
+            {/* Connector */}
+            <div className="w-8 h-0.5 bg-border" />
+
+            {/* Step 3 */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full font-semibold text-sm transition-all ${
+                  currentStep === "preview"
+                    ? "bg-primary text-white shadow-md"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                3
+              </div>
+              <span
+                className={`text-sm font-medium ${
+                  currentStep === "preview"
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Review
+              </span>
             </div>
-            <span className={`font-semibold ${currentStep === 'preview' ? 'text-blue-600 dark:text-blue-400' : 'text-muted-foreground'}`}>
-              Review
-            </span>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
-          {currentStep === 'metadata' && (
+        <div className="p-6 bg-muted/5 dark:bg-muted/5">
+          {currentStep === "metadata" && (
             <PulseMetadataForm
               classes={classes}
               selectedClassId={selectedClassId}
@@ -204,12 +312,14 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
             />
           )}
 
-          {currentStep === 'questions' && (
+          {currentStep === "questions" && (
             <div className="space-y-6">
               {editingQuestion !== null && questions[editingQuestion] ? (
                 <QuestionBuilder
                   question={questions[editingQuestion]}
-                  onUpdate={(updated) => handleUpdateQuestion(editingQuestion, updated)}
+                  onUpdate={(updated) =>
+                    handleUpdateQuestion(editingQuestion, updated)
+                  }
                   onClose={() => setEditingQuestion(null)}
                 />
               ) : (
@@ -234,7 +344,9 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                   <div className="bg-card rounded-3xl p-8 max-w-4xl w-full shadow-2xl max-h-[80vh] overflow-y-auto">
                     <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-2xl font-bold text-foreground">Choose Question Type</h3>
+                      <h3 className="text-2xl font-bold text-foreground">
+                        Choose Question Type
+                      </h3>
                       <button
                         onClick={() => setShowQuestionTypeSelector(false)}
                         className="p-2 hover:bg-muted rounded-xl transition-colors"
@@ -249,21 +361,27 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
                           onClick={() => handleAddQuestion(typeDef.value)}
                           className={`p-6 border-2 rounded-2xl text-left hover:shadow-lg transition-all duration-300 hover:scale-105 bg-${typeDef.color}-50 dark:bg-${typeDef.color}-950/30 border-${typeDef.color}-200 dark:border-${typeDef.color}-800 hover:border-${typeDef.color}-400 dark:hover:border-${typeDef.color}-600`}
                         >
-                          <div className={`w-12 h-12 rounded-xl bg-${typeDef.color}-500 dark:bg-${typeDef.color}-600 text-white flex items-center justify-center mb-3 text-2xl`}>
-                            {typeDef.icon === 'BarChart3' && '📊'}
-                            {typeDef.icon === 'CircleDot' && '⭕'}
-                            {typeDef.icon === 'CheckSquare' && '☑️'}
-                            {typeDef.icon === 'FileText' && '📝'}
-                            {typeDef.icon === 'Type' && '✏️'}
-                            {typeDef.icon === 'Sliders' && '🎚️'}
-                            {typeDef.icon === 'Star' && '⭐'}
-                            {typeDef.icon === 'Calendar' && '📅'}
-                            {typeDef.icon === 'ArrowUpDown' && '↕️'}
-                            {typeDef.icon === 'HelpCircle' && '❓'}
-                            {typeDef.icon === 'List' && '📋'}
+                          <div
+                            className={`w-12 h-12 rounded-xl bg-${typeDef.color}-500 dark:bg-${typeDef.color}-600 text-white flex items-center justify-center mb-3 text-2xl`}
+                          >
+                            {typeDef.icon === "BarChart3" && "📊"}
+                            {typeDef.icon === "CircleDot" && "⭕"}
+                            {typeDef.icon === "CheckSquare" && "☑️"}
+                            {typeDef.icon === "FileText" && "📝"}
+                            {typeDef.icon === "Type" && "✏️"}
+                            {typeDef.icon === "Sliders" && "🎚️"}
+                            {typeDef.icon === "Star" && "⭐"}
+                            {typeDef.icon === "Calendar" && "📅"}
+                            {typeDef.icon === "ArrowUpDown" && "↕️"}
+                            {typeDef.icon === "HelpCircle" && "❓"}
+                            {typeDef.icon === "List" && "📋"}
                           </div>
-                          <h4 className="font-bold text-foreground mb-1">{typeDef.label}</h4>
-                          <p className="text-sm text-muted-foreground">{typeDef.description}</p>
+                          <h4 className="font-bold text-foreground mb-1">
+                            {typeDef.label}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {typeDef.description}
+                          </p>
                         </button>
                       ))}
                     </div>
@@ -273,11 +391,13 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
             </div>
           )}
 
-          {currentStep === 'preview' && (
+          {currentStep === "preview" && (
             <PulsePreview
               title={title}
               description={description}
-              className={classes.find(c => c.id === selectedClassId)?.name || ''}
+              className={
+                classes.find((c) => c.id === selectedClassId)?.name || ""
+              }
               questions={questions}
               totalPoints={totalPoints}
               expiresIn={expiresIn}
@@ -285,85 +405,99 @@ export function CreatePulseWizard({ onClose, classId, classes, loadedTemplate }:
           )}
         </div>
 
-        <div className="flex items-center justify-between p-6 border-t border-border bg-muted/30 dark:bg-muted/20">
-          <div className="flex space-x-3">
-            <button
+        <div className="flex items-center justify-between p-5 border-t border-border bg-muted/20 dark:bg-muted/10">
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSaveDraft}
               disabled={saving || !canProceedToQuestions}
-              className="px-6 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+              className="px-4 py-2 bg-muted text-foreground font-medium rounded-lg hover:bg-muted/80 disabled:opacity-50 transition-all duration-200 flex items-center gap-2"
             >
-              <Save className="w-5 h-5" />
-              <span>{saving ? 'Saving...' : 'Save Draft'}</span>
-            </button>
+              <Save className="h-4 w-4" />
+              <span>{saving ? "Saving..." : "Save Draft"}</span>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setShowSaveTemplateModal(true)}
               disabled={!canSaveAsTemplate}
-              className="px-6 py-3 bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 font-semibold rounded-xl hover:bg-blue-200 dark:hover:bg-blue-900/50 disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+              className="px-4 py-2 bg-card border border-border text-foreground font-medium rounded-lg hover:border-primary/50 disabled:opacity-50 transition-all duration-200 flex items-center gap-2"
             >
-              <BookTemplate className="w-5 h-5" />
+              <BookTemplate className="h-4 w-4" />
               <span>Save as Template</span>
-            </button>
+            </motion.button>
           </div>
 
-          <div className="flex space-x-3">
-            {currentStep !== 'metadata' && (
-              <button
+          <div className="flex gap-2">
+            {currentStep !== "metadata" && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
-                  if (currentStep === 'questions') setCurrentStep('metadata');
-                  if (currentStep === 'preview') setCurrentStep('questions');
+                  if (currentStep === "questions") setCurrentStep("metadata");
+                  if (currentStep === "preview") setCurrentStep("questions");
                 }}
-                className="px-6 py-3 bg-card border-2 border-border text-foreground font-semibold rounded-xl hover:bg-muted/50 transition-all duration-300 flex items-center space-x-2"
+                className="px-4 py-2 bg-card border border-border text-foreground font-medium rounded-lg hover:bg-muted/50 transition-all duration-200 flex items-center gap-2"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="h-4 w-4" />
                 <span>Back</span>
-              </button>
+              </motion.button>
             )}
 
-            {currentStep === 'metadata' && (
-              <button
-                onClick={() => setCurrentStep('questions')}
+            {currentStep === "metadata" && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setCurrentStep("questions")}
                 disabled={!canProceedToQuestions}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-5 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg hover:shadow-lg disabled:opacity-50 transition-all duration-200 flex items-center gap-2"
               >
-                <span>Next: Add Questions</span>
-                <ChevronRight className="w-5 h-5" />
-              </button>
+                <span>Next: Questions</span>
+                <ChevronRight className="h-4 w-4" />
+              </motion.button>
             )}
 
-            {currentStep === 'questions' && (
-              <button
-                onClick={() => setCurrentStep('preview')}
+            {currentStep === "questions" && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setCurrentStep("preview")}
                 disabled={!canProceedToPreview}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-5 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg hover:shadow-lg disabled:opacity-50 transition-all duration-200 flex items-center gap-2"
               >
-                <Eye className="w-5 h-5" />
+                <Eye className="h-4 w-4" />
                 <span>Preview</span>
-              </button>
+              </motion.button>
             )}
 
-            {currentStep === 'preview' && (
-              <button
+            {currentStep === "preview" && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handlePublish}
                 disabled={saving}
-                className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white font-bold rounded-xl hover:shadow-xl disabled:opacity-50 transition-all duration-300 flex items-center space-x-2"
+                className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-lg hover:shadow-xl disabled:opacity-50 transition-all duration-200 flex items-center gap-2"
               >
-                <Send className="w-5 h-5" />
-                <span>{saving ? 'Publishing...' : 'Publish Pulse'}</span>
-              </button>
+                <Send className="h-4 w-4" />
+                <span>{saving ? "Publishing..." : "Publish Pulse"}</span>
+              </motion.button>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {showSaveTemplateModal && (
-        <SaveTemplateModal
-          onClose={() => setShowSaveTemplateModal(false)}
-          onSave={handleSaveAsTemplate}
-          saving={saving}
-        />
-      )}
-    </div>
+        {showSaveTemplateModal && (
+          <SaveTemplateModal
+            onClose={() => setShowSaveTemplateModal(false)}
+            onSave={handleSaveAsTemplate}
+            saving={saving}
+          />
+        )}
+      </div>
+    </motion.div>,
+    document.body
   );
 }
 
@@ -373,10 +507,14 @@ interface SaveTemplateModalProps {
   saving: boolean;
 }
 
-function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) {
-  const [templateName, setTemplateName] = useState('');
-  const [templateDescription, setTemplateDescription] = useState('');
-  const [category, setCategory] = useState('general');
+function SaveTemplateModal({
+  onClose,
+  onSave,
+  saving,
+}: SaveTemplateModalProps) {
+  const [templateName, setTemplateName] = useState("");
+  const [templateDescription, setTemplateDescription] = useState("");
+  const [category, setCategory] = useState("general");
 
   const handleSave = () => {
     if (templateName.trim()) {
@@ -385,22 +523,36 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-      <div className="bg-card rounded-3xl p-8 max-w-lg w-full shadow-2xl">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-foreground">Save as Template</h3>
-          <button
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[60]"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", duration: 0.3 }}
+        className="bg-card rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-border/50"
+      >
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-xl font-bold text-foreground">
+            Save as Template
+          </h3>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={onClose}
-            className="p-2 hover:bg-muted rounded-xl transition-colors"
+            className="p-2 hover:bg-muted rounded-lg transition-colors"
           >
-            <X className="w-6 h-6 text-muted-foreground" />
-          </button>
+            <X className="h-5 w-5 text-muted-foreground" />
+          </motion.button>
         </div>
 
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Template Name <span className="text-red-500 dark:text-red-400">*</span>
+              Template Name{" "}
+              <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <input
               type="text"
@@ -427,7 +579,9 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">Category</label>
+            <label className="block text-sm font-semibold text-foreground mb-2">
+              Category
+            </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -444,29 +598,33 @@ function SaveTemplateModal({ onClose, onSave, saving }: SaveTemplateModalProps) 
 
           <div className="bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4">
             <p className="text-sm text-blue-800 dark:text-blue-300">
-              💡 Templates save your questions and structure. You can reuse them later and customize
-              them for different classes and topics.
+              💡 Templates save your questions and structure. You can reuse them
+              later and customize them for different classes and topics.
             </p>
           </div>
 
-          <div className="flex space-x-3 pt-4">
-            <button
+          <div className="flex gap-3 pt-2">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={onClose}
               disabled={saving}
-              className="flex-1 py-3 bg-muted text-foreground font-semibold rounded-xl hover:bg-muted/80 disabled:opacity-50 transition-all duration-300"
+              className="flex-1 py-2.5 bg-muted text-foreground font-medium rounded-lg hover:bg-muted/80 disabled:opacity-50 transition-all duration-200"
             >
               Cancel
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSave}
               disabled={!templateName.trim() || saving}
-              className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all duration-300"
+              className="flex-1 py-2.5 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg hover:shadow-lg disabled:opacity-50 transition-all duration-200"
             >
-              {saving ? 'Saving...' : 'Save Template'}
-            </button>
+              {saving ? "Saving..." : "Save Template"}
+            </motion.button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

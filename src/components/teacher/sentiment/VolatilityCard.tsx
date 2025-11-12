@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Activity, TrendingUp, Info } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { calculateEmotionalVolatility, VolatilityResult } from '../../../lib/analytics/sentimentAnalytics';
 
 interface VolatilityCardProps {
@@ -88,34 +89,47 @@ export function VolatilityCard({ classId, className }: VolatilityCardProps) {
 
   if (loading) {
     return (
-      <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg animate-pulse">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md p-4 animate-pulse"
+      >
         <div className="h-48 bg-muted rounded-lg" />
-      </div>
+      </motion.div>
     );
   }
 
   if (!volatility) {
     return (
-      <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg">
-        <p className="text-muted-foreground text-center">No volatility data available</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <p className="text-muted-foreground text-center text-[10px]">No volatility data available</p>
+      </motion.div>
     );
   }
 
   return (
-    <div className={`bg-gradient-to-br ${getVolatilityBg(volatility.level)} rounded-2xl p-6 border-2 border-border shadow-lg relative overflow-hidden`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4 relative overflow-hidden`}
+    >
       {/* Background decoration */}
       <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${getVolatilityColor(volatility.level)} opacity-10 blur-3xl rounded-full`} />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 relative z-10">
-        <div className="flex items-center space-x-3">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-md ${getVolatilityBg(volatility.level)}`}>
-            {getVolatilityIcon(volatility.level)}
+      <div className="flex items-center justify-between mb-3 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center`}>
+            <Activity className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Emotional Volatility</h3>
-            <p className="text-sm text-muted-foreground">{className}</p>
+            <h3 className="text-sm font-bold text-foreground">Emotional Volatility</h3>
+            <p className="text-[10px] text-muted-foreground">{className}</p>
           </div>
         </div>
 
@@ -123,28 +137,33 @@ export function VolatilityCard({ classId, className }: VolatilityCardProps) {
           onClick={() => setShowInfo(!showInfo)}
           className="p-2 hover:bg-background/50 dark:hover:bg-card/50 rounded-lg transition-all duration-200"
         >
-          <Info className="w-5 h-5 text-muted-foreground" />
+          <Info className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
 
       {/* Info Panel */}
       {showInfo && (
-        <div className="mb-4 p-4 bg-background/50 dark:bg-card/50 rounded-lg border border-border relative z-10">
-          <h4 className="font-semibold text-foreground mb-2">What is Emotional Volatility?</h4>
-          <p className="text-sm text-muted-foreground mb-2">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mb-3 p-4 bg-background/50 dark:bg-card/50 rounded-lg border border-border relative z-10"
+        >
+          <h4 className="text-sm font-bold text-foreground mb-2">What is Emotional Volatility?</h4>
+          <p className="text-[10px] text-muted-foreground mb-2">
             Measures how much student emotions fluctuate day-to-day using standard deviation (SD).
           </p>
-          <ul className="text-sm text-muted-foreground space-y-1">
+          <ul className="text-[10px] text-muted-foreground space-y-1">
             <li>• <span className="text-green-600 dark:text-green-400 font-semibold">Low (SD 0-0.5):</span> Very stable emotions</li>
             <li>• <span className="text-blue-600 dark:text-blue-400 font-semibold">Medium (SD 0.5-1.0):</span> Normal fluctuation</li>
             <li>• <span className="text-orange-600 dark:text-orange-400 font-semibold">High (SD 1.0-1.5):</span> Significant mood swings</li>
             <li>• <span className="text-red-600 dark:text-red-400 font-semibold">Extreme (SD &gt;1.5):</span> Major volatility</li>
           </ul>
-        </div>
+        </motion.div>
       )}
 
       {/* Time Range Selector */}
-      <div className="flex bg-background/50 dark:bg-card/50 rounded-lg p-1 mb-6 relative z-10">
+      <div className="flex bg-background/50 dark:bg-card/50 rounded-lg p-1 mb-3 relative z-10">
         <button
           onClick={() => setPeriod('week')}
           className={`flex-1 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
@@ -179,17 +198,22 @@ export function VolatilityCard({ classId, className }: VolatilityCardProps) {
 
       {/* Main Volatility Display */}
       <div className="relative z-10">
-        <div className="text-center mb-6">
-          <div className={`inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br ${getVolatilityColor(volatility.level)} shadow-lg mb-4`}>
-            <div className="w-28 h-28 rounded-full bg-background dark:bg-card flex flex-col items-center justify-center">
-              <span className={`text-4xl font-bold ${getVolatilityTextColor(volatility.level)}`}>
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-center mb-3"
+        >
+          <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br ${getVolatilityColor(volatility.level)} shadow-lg mb-3`}>
+            <div className="w-20 h-20 rounded-full bg-background dark:bg-card flex flex-col items-center justify-center">
+              <span className={`text-3xl font-bold ${getVolatilityTextColor(volatility.level)}`}>
                 {volatility.standardDeviation.toFixed(2)}
               </span>
-              <span className="text-xs text-muted-foreground uppercase tracking-wide">SD</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wide">SD</span>
             </div>
           </div>
 
-          <div className={`inline-block px-4 py-2 rounded-full font-semibold text-sm ${getVolatilityBg(volatility.level)} ${getVolatilityTextColor(volatility.level)} border-2 ${
+          <div className={`inline-block px-3 py-1 rounded-full font-semibold text-[10px] ${getVolatilityBg(volatility.level)} ${getVolatilityTextColor(volatility.level)} border ${
             volatility.level === 'low' ? 'border-green-200 dark:border-green-500/30' :
             volatility.level === 'medium' ? 'border-blue-200 dark:border-blue-500/30' :
             volatility.level === 'high' ? 'border-orange-200 dark:border-orange-500/30' :
@@ -197,38 +221,48 @@ export function VolatilityCard({ classId, className }: VolatilityCardProps) {
           }`}>
             {volatility.level.charAt(0).toUpperCase() + volatility.level.slice(1)} Volatility
           </div>
-        </div>
+        </motion.div>
 
         {/* Interpretation */}
-        <div className="p-4 bg-background/50 dark:bg-card/50 rounded-xl border border-border">
-          <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="p-4 bg-background/50 dark:bg-card/50 rounded-xl border border-border"
+        >
+          <h4 className="text-sm font-bold text-foreground mb-2 flex items-center gap-2">
             <Activity className="w-4 h-4" />
             Interpretation
           </h4>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
             {volatility.interpretation}
           </p>
-        </div>
+        </motion.div>
 
         {/* Visual Reference Bar */}
-        <div className="mt-6">
-          <div className="relative h-3 bg-gradient-to-r from-green-400 via-blue-400 via-orange-400 to-red-400 rounded-full overflow-hidden">
-            <div
-              className="absolute top-0 w-1 h-full bg-foreground border-2 border-background dark:border-card transition-all duration-500"
-              style={{
-                left: `${Math.min((volatility.standardDeviation / 2) * 100, 100)}%`
-              }}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-3"
+        >
+          <div className="relative h-2 bg-gradient-to-r from-green-400 via-blue-400 via-orange-400 to-red-400 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ left: 0 }}
+              animate={{ left: `${Math.min((volatility.standardDeviation / 2) * 100, 100)}%` }}
+              transition={{ delay: 0.5, duration: 0.8, type: "spring" }}
+              className="absolute top-0 w-1 h-full bg-foreground border-2 border-background dark:border-card"
             />
           </div>
-          <div className="flex justify-between text-xs text-muted-foreground mt-2">
+          <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
             <span>0.0</span>
             <span>0.5</span>
             <span>1.0</span>
             <span>1.5</span>
             <span>2.0+</span>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

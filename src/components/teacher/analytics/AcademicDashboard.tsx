@@ -9,8 +9,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Loader2, RefreshCw, BookOpen, AlertCircle } from 'lucide-react';
+import { Loader2, RefreshCw, BookOpen, AlertCircle, GraduationCap } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
+import { motion } from 'framer-motion';
 import { canvasServiceEnhanced } from '../../../lib/canvas/canvasServiceEnhanced';
 import {
   calculateClassAverageGrade,
@@ -185,36 +186,47 @@ function AcademicDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header with Class Selector */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4">
+      {/* Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+      >
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Academic Analytics</h2>
-          <p className="text-sm text-muted-foreground">
-            Real-time insights into class performance and engagement
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+            <GraduationCap className="h-7 w-7 text-primary" />
+            Academic Analytics
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Real-time insights into class performance
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Refresh Button */}
-          <button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted disabled:opacity-50"
-          >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:border-primary/50 disabled:opacity-50 transition-all"
+        >
+          <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
+        </motion.button>
+      </motion.div>
 
-      {/* Class Selector */}
-      <div className="rounded-xl border border-border bg-card p-4">
-        <label className="mb-2 block text-sm font-semibold text-foreground">Select Class</label>
+      {/* Class Selector Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-5"
+      >
+        <label className="block text-sm font-medium text-foreground mb-2">Select Class</label>
         <select
           value={selectedClassId || ''}
           onChange={(e) => setSelectedClassId(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="w-full rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
         >
           {classes.map((cls) => (
             <option key={cls.id} value={cls.id}>
@@ -222,7 +234,7 @@ function AcademicDashboard() {
             </option>
           ))}
         </select>
-      </div>
+      </motion.div>
 
       {/* Error Message */}
       {error && selectedClassId && (
@@ -244,26 +256,63 @@ function AcademicDashboard() {
         </div>
       )}
 
-      {/* Analytics Grid */}
+      {/* Analytics Grid - Animated */}
       {!loading && selectedClassId && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Row 1: Grade Card + Distribution */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {averageGrade && <ClassGradeCard data={averageGrade} />}
-            {distribution && <GradeDistributionChart data={distribution} />}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {averageGrade && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <ClassGradeCard data={averageGrade} />
+              </motion.div>
+            )}
+            {distribution && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+              >
+                <GradeDistributionChart data={distribution} />
+              </motion.div>
+            )}
           </div>
 
           {/* Row 2: Submissions + Participation */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {submissions && <SubmissionTracker data={submissions} />}
-            {participation && <ParticipationReport data={participation} />}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {submissions && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <SubmissionTracker data={submissions} />
+              </motion.div>
+            )}
+            {participation && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+              >
+                <ParticipationReport data={participation} />
+              </motion.div>
+            )}
           </div>
 
           {/* Row 3: Mood-Performance Correlation (Full Width) */}
           {moodCorrelation && (
-            <div className="w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="w-full"
+            >
               <MoodPerformanceScatter data={moodCorrelation} />
-            </div>
+            </motion.div>
           )}
         </div>
       )}

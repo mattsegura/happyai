@@ -9,6 +9,7 @@
  * Phase 3: Student Search & Reports
  */
 
+import { motion } from 'framer-motion';
 import { TrendingUp, Info } from 'lucide-react';
 import type { StudentCorrelationData } from '../../../lib/students/studentDataService';
 
@@ -33,20 +34,30 @@ export function StudentCorrelationCard({ data }: StudentCorrelationCardProps) {
   const correlationColor = getCorrelationColor(data.correlationStrength);
 
   return (
-    <div className="rounded-2xl border-2 border-border bg-card p-6 shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+    >
       {/* Header */}
-      <div className="mb-6 flex items-center space-x-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 shadow-md">
-          <TrendingUp className="h-5 w-5 text-white" />
+      <div className="mb-3 flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+          <TrendingUp className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-foreground">Mood-to-Performance Correlation</h3>
-          <p className="text-sm text-muted-foreground">How sentiment impacts grades</p>
+          <h3 className="text-sm font-bold text-foreground">Mood-to-Performance Correlation</h3>
+          <p className="text-[10px] text-muted-foreground">How sentiment impacts grades</p>
         </div>
       </div>
 
       {/* Correlation Stats */}
-      <div className="mb-6 rounded-xl bg-gradient-to-br from-teal-50 to-cyan-50 p-4 dark:from-teal-950/30 dark:to-cyan-950/30">
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+        className="mb-4 rounded-lg bg-gradient-to-br from-teal-50 to-cyan-50 p-3 dark:from-teal-950/30 dark:to-cyan-950/30"
+      >
         <div className="mb-2 flex items-center justify-between">
           <p className="text-sm font-semibold text-muted-foreground">Correlation Strength</p>
           <span className={`rounded-full px-2 py-0.5 text-xs font-bold uppercase ${correlationColor}`}>
@@ -59,12 +70,12 @@ export function StudentCorrelationCard({ data }: StudentCorrelationCardProps) {
         <p className="mt-2 text-xs text-muted-foreground">
           Pearson correlation coefficient (-1.0 to +1.0)
         </p>
-      </div>
+      </motion.div>
 
       {/* Scatter Plot */}
       {data.scatterData.length > 0 && (
-        <div className="mb-6">
-          <h4 className="mb-3 text-sm font-bold text-foreground">Sentiment vs Grade</h4>
+        <div className="mb-4">
+          <h4 className="mb-2 text-sm font-bold text-foreground">Sentiment vs Grade</h4>
           <div className="relative h-64 rounded-lg border border-border bg-muted/30 p-4 dark:bg-muted/10">
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
               {/* Grid lines */}
@@ -132,7 +143,7 @@ export function StudentCorrelationCard({ data }: StudentCorrelationCardProps) {
       )}
 
       {data.scatterData.length === 0 && (
-        <div className="mb-6 rounded-lg border border-border bg-muted/30 p-8 text-center dark:bg-muted/10">
+        <div className="mb-4 rounded-lg border border-border bg-muted/30 p-8 text-center dark:bg-muted/10">
           <Info className="mx-auto h-8 w-8 text-muted-foreground" />
           <p className="mt-2 text-sm text-foreground">Insufficient data for correlation analysis</p>
           <p className="text-xs text-muted-foreground">Need at least 3 data points with matching dates</p>
@@ -147,6 +158,6 @@ export function StudentCorrelationCard({ data }: StudentCorrelationCardProps) {
         </div>
         <p className="text-xs text-blue-700 dark:text-blue-300">{data.insight}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }

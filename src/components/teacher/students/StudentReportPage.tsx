@@ -137,7 +137,7 @@ export function StudentReportPage({ studentId, classId, onBack }: StudentReportP
       </button>
 
       {/* Student Header */}
-      <div className="rounded-2xl border-2 border-border bg-gradient-to-br from-blue-50 to-cyan-50 p-6 shadow-lg dark:from-blue-950/30 dark:to-cyan-950/30">
+      <div className="rounded-xl border border-border/60 bg-gradient-to-br from-blue-50 to-cyan-50 p-6 shadow-md hover:shadow-lg transition-shadow duration-200 dark:from-blue-950/30 dark:to-cyan-950/30">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-4">
             {/* Avatar */}
@@ -182,7 +182,7 @@ export function StudentReportPage({ studentId, classId, onBack }: StudentReportP
       </div>
 
       {/* Comparison to Class Average */}
-      <div className="rounded-2xl border-2 border-border bg-card p-6 shadow-lg">
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-6 shadow-md hover:shadow-lg transition-shadow duration-200">
         <h3 className="mb-4 text-xl font-bold text-foreground">Comparison to Class Average</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Grade Percentile */}
@@ -257,7 +257,7 @@ export function StudentReportPage({ studentId, classId, onBack }: StudentReportP
       />
 
       {/* Generated At Footer */}
-      <div className="rounded-lg border border-border bg-muted/30 p-3 text-center dark:bg-muted/10">
+      <div className="rounded-xl border border-border/60 bg-muted/30 p-3 text-center dark:bg-muted/10">
         <p className="text-xs text-muted-foreground">
           Report generated: {new Date(data.generatedAt).toLocaleString()}
         </p>

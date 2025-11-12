@@ -7,6 +7,7 @@ import { VolatilityCard } from './VolatilityCard';
 import { AlertDashboard } from './AlertDashboard';
 import { RecoveryRateCard } from './RecoveryRateCard';
 import { PositiveRatioCard } from './PositiveRatioCard';
+import { motion } from 'framer-motion';
 
 interface SentimentDashboardProps {
   selectedClass?: {
@@ -68,52 +69,65 @@ function SentimentDashboard({
   const displayTimeline = timelineData.length > 0 ? timelineData : mockTimelineData;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
-            <Heart className="w-7 h-7 text-white" />
+    <div className="space-y-4">
+      {/* Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+            <Heart className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Wellbeing Analytics</h1>
-            <p className="text-muted-foreground">Advanced sentiment monitoring and insights</p>
+            <h1 className="text-2xl font-bold text-foreground">Wellbeing Analytics</h1>
+            <p className="text-sm text-muted-foreground">Sentiment monitoring and insights</p>
           </div>
         </div>
 
-        <div className="flex bg-muted dark:bg-muted/50 rounded-lg p-1">
-          <button
+        {/* View Toggle - Pill Style */}
+        <div className="flex rounded-full border border-border bg-card p-1">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setView('overview')}
-            className={`px-6 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               view === 'overview'
-                ? 'bg-background dark:bg-card text-purple-600 shadow-md'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-primary'
             }`}
           >
             Overview
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setView('details')}
-            className={`px-6 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               view === 'details'
-                ? 'bg-background dark:bg-card text-purple-600 shadow-md'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-primary'
             }`}
           >
-            Detailed Analytics
-          </button>
+            Details
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       {view === 'overview' ? (
-        <>
+        <div className="animate-in fade-in duration-300 space-y-4">
           {/* Current Sentiment Section */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-              <h2 className="text-xl font-bold text-foreground">Current Sentiment</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <h2 className="text-lg font-bold text-foreground">Current Sentiment</h2>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-1">
                 <ClassSentimentDial
                   className={currentClass.name}
@@ -126,30 +140,44 @@ function SentimentDashboard({
                 <ClassAverageSentimentChart />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Timeline Section */}
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-4">Sentiment Trends</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <h2 className="text-lg font-bold text-foreground mb-3">Sentiment Trends</h2>
             <ClassSentimentTimeline
               classes={displayClasses}
               data={displayTimeline}
             />
-          </div>
+          </motion.div>
 
           {/* Alerts & Recovery Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+          >
             <AlertDashboard
               classId={currentClass.id}
               className={currentClass.name}
             />
             <RecoveryRateCard />
-          </div>
-        </>
+          </motion.div>
+        </div>
       ) : (
-        <>
+        <div className="animate-in fade-in duration-300 space-y-4">
           {/* Detailed Analytics View */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+          >
             {/* Volatility Analysis */}
             <VolatilityCard
               classId={currentClass.id}
@@ -161,31 +189,52 @@ function SentimentDashboard({
               classId={currentClass.id}
               className={currentClass.name}
             />
-          </div>
+          </motion.div>
 
           {/* Full Alert Dashboard */}
-          <AlertDashboard
-            classId={currentClass.id}
-            className={currentClass.name}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <AlertDashboard
+              classId={currentClass.id}
+              className={currentClass.name}
+            />
+          </motion.div>
 
           {/* Recovery Rate */}
-          <RecoveryRateCard />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <RecoveryRateCard />
+          </motion.div>
 
           {/* Timeline with More Detail */}
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-4">Multi-Class Comparison</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <h2 className="text-lg font-bold text-foreground mb-3">Multi-Class Comparison</h2>
             <ClassSentimentTimeline
               classes={displayClasses}
               data={displayTimeline}
             />
-          </div>
-        </>
+          </motion.div>
+        </div>
       )}
 
-      {/* Info Panel */}
-      <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl border-2 border-purple-200 dark:border-purple-500/30">
-        <h3 className="font-bold text-foreground mb-2">About Wellbeing Analytics</h3>
+      {/* Info Panel - Matching Student Style */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm p-5"
+      >
+        <h3 className="text-base font-bold text-foreground mb-2">About Wellbeing Analytics</h3>
         <p className="text-sm text-muted-foreground mb-3">
           This dashboard provides comprehensive insights into your students' emotional health. Use these analytics to:
         </p>
@@ -196,12 +245,12 @@ function SentimentDashboard({
           <li>• Measure emotional stability and recovery rates</li>
           <li>• Maintain a positive classroom climate</li>
         </ul>
-        <div className="mt-4 p-3 bg-background/50 dark:bg-card/50 rounded-lg">
+        <div className="mt-3 p-3 bg-card/50 backdrop-blur-sm rounded-lg border border-border/30">
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Tip:</span> Use the "Log Intervention" feature when reaching out to at-risk students to track recovery rates and identify what works best.
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

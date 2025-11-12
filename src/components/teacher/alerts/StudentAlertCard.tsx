@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import {
   Brain,
   GraduationCap,
@@ -101,19 +102,23 @@ export function StudentAlertCard({ student, onViewDetails }: StudentAlertCardPro
   const concerns = getConcernPreview();
 
   return (
-    <div
-      className={`rounded-xl border-2 ${severity.borderColor} ${severity.bgColor} p-4 transition-all hover:shadow-lg ${severity.animate}`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.2 }}
+      className={`rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4 ${severity.animate}`}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             {/* Avatar placeholder */}
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-white font-semibold text-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 text-foreground font-semibold text-sm">
               {student.studentName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h3 className="font-semibold text-foreground">{student.studentName}</h3>
+              <h3 className="text-sm font-bold text-foreground">{student.studentName}</h3>
               <p className="text-xs text-muted-foreground">{student.className}</p>
             </div>
           </div>
@@ -130,17 +135,21 @@ export function StudentAlertCard({ student, onViewDetails }: StudentAlertCardPro
       {/* Risk Type Badges */}
       <div className="flex gap-2 mb-3">
         {showEmotionalBadge && (
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800">
-            <Brain className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-            <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200/50 dark:border-purple-800/50">
+            <div className="w-4 h-4 rounded flex items-center justify-center bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-800/40 dark:to-purple-900/40">
+              <Brain className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+            </div>
+            <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">
               Emotional
             </span>
           </div>
         )}
         {showAcademicBadge && (
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800">
-            <GraduationCap className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-            <span className="text-xs font-medium text-amber-700 dark:text-amber-300">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/50">
+            <div className="w-4 h-4 rounded flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-800/40 dark:to-amber-900/40">
+              <GraduationCap className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+            </div>
+            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">
               Academic
             </span>
           </div>
@@ -148,30 +157,32 @@ export function StudentAlertCard({ student, onViewDetails }: StudentAlertCardPro
       </div>
 
       {/* Days at Risk */}
-      <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground">
-        <Clock className="h-4 w-4" />
-        <span>At risk for {formatDaysAtRisk()}</span>
+      <div className="flex items-center gap-2 mb-3 px-2 py-1 rounded-lg bg-muted/50">
+        <div className="w-4 h-4 rounded flex items-center justify-center bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/20">
+          <Clock className="h-3 w-3 text-muted-foreground" />
+        </div>
+        <span className="text-xs font-medium text-muted-foreground">At risk for {formatDaysAtRisk()}</span>
       </div>
 
       {/* Concerns Preview */}
-      <div className="space-y-1 mb-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+      <div className="space-y-2 mb-4">
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">
           Concerns:
         </p>
         {concerns.length > 0 ? (
-          <ul className="space-y-1">
+          <ul className="space-y-1.5">
             {concerns.map((concern, index) => (
               <li
                 key={index}
-                className="text-xs text-foreground flex items-start gap-1"
+                className="text-xs text-foreground flex items-start gap-2 pl-1"
               >
-                <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0 text-muted-foreground" />
-                <span>{concern}</span>
+                <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0 text-rose-500 dark:text-rose-400" />
+                <span className="font-medium">{concern}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-xs text-muted-foreground italic">No specific concerns listed</p>
+          <p className="text-xs text-muted-foreground italic pl-1">No specific concerns listed</p>
         )}
       </div>
 
@@ -179,23 +190,23 @@ export function StudentAlertCard({ student, onViewDetails }: StudentAlertCardPro
       <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => onViewDetails(student)}
-          className="px-3 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition"
+          className="px-3 py-2 rounded-lg border border-border/60 bg-card text-foreground text-xs font-bold hover:bg-muted hover:shadow-sm transition-all duration-200"
         >
           View Details
         </button>
         <button
           onClick={() => onViewDetails(student)}
-          className="px-3 py-2 rounded-lg bg-primary-600 text-white text-xs font-semibold hover:bg-primary-700 transition flex items-center justify-center gap-1"
+          className="px-3 py-2 rounded-lg bg-gradient-to-r from-primary to-primary-600 text-white text-xs font-bold hover:from-primary-600 hover:to-primary-700 hover:shadow-md transition-all duration-200 flex items-center justify-center gap-1.5"
         >
-          <MessageSquare className="h-3 w-3" />
+          <MessageSquare className="h-3.5 w-3.5" />
           Reach Out
         </button>
       </div>
 
       {/* Last Intervention Indicator */}
       {student.interventionCount > 0 && (
-        <div className="mt-3 pt-3 border-t border-border">
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-3 pt-3 border-t border-border/40">
+          <p className="text-xs text-muted-foreground font-medium">
             {student.interventionCount} previous intervention{student.interventionCount > 1 ? 's' : ''}
             {student.lastIntervention && (
               <> • Last: {new Date(student.lastIntervention).toLocaleDateString()}</>
@@ -203,6 +214,6 @@ export function StudentAlertCard({ student, onViewDetails }: StudentAlertCardPro
           </p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

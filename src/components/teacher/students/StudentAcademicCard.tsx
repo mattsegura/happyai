@@ -10,6 +10,7 @@
  * Phase 3: Student Search & Reports
  */
 
+import { motion } from 'framer-motion';
 import { GraduationCap, TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle2 } from 'lucide-react';
 import type { StudentAcademicData } from '../../../lib/students/studentDataService';
 
@@ -38,20 +39,30 @@ export function StudentAcademicCard({ data }: StudentAcademicCardProps) {
   };
 
   return (
-    <div className="rounded-2xl border-2 border-border bg-card p-6 shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+    >
       {/* Header */}
-      <div className="mb-6 flex items-center space-x-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
-          <GraduationCap className="h-5 w-5 text-white" />
+      <div className="mb-3 flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+          <GraduationCap className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-foreground">Academic Overview</h3>
-          <p className="text-sm text-muted-foreground">Current performance and trends</p>
+          <h3 className="text-sm font-bold text-foreground">Academic Overview</h3>
+          <p className="text-[10px] text-muted-foreground">Current performance and trends</p>
         </div>
       </div>
 
       {/* Current Grade */}
-      <div className="mb-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 p-4 dark:from-blue-950/30 dark:to-indigo-950/30">
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+        className="mb-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-3 dark:from-blue-950/30 dark:to-indigo-950/30"
+      >
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-muted-foreground">Current Grade</p>
@@ -67,10 +78,10 @@ export function StudentAcademicCard({ data }: StudentAcademicCardProps) {
             <span className="text-sm font-semibold capitalize text-muted-foreground">{data.trend}</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Assignments Grid */}
-      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3">
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3">
         <div className="rounded-lg bg-muted p-3 dark:bg-muted/50">
           <p className="text-xs text-muted-foreground">Missing</p>
           <p
@@ -108,8 +119,8 @@ export function StudentAcademicCard({ data }: StudentAcademicCardProps) {
       </div>
 
       {/* Assignment Type Breakdown */}
-      <div className="mb-6">
-        <h4 className="mb-3 text-sm font-bold text-foreground">Performance by Type</h4>
+      <div className="mb-4">
+        <h4 className="mb-2 text-sm font-bold text-foreground">Performance by Type</h4>
         <div className="space-y-3">
           {Object.entries(data.assignmentBreakdown).map(([type, stats]) => {
             if (stats.count === 0) return null;
@@ -182,6 +193,6 @@ export function StudentAcademicCard({ data }: StudentAcademicCardProps) {
       <p className="mt-4 text-xs text-muted-foreground">
         Last updated: {new Date(data.lastUpdated).toLocaleString()}
       </p>
-    </div>
+    </motion.div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Beaker, Plus, MessageSquare, Clock, Video, Edit, Trash2, Calendar, Users, ExternalLink, BookTemplate, CheckCircle, BarChart3 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // TODO: Fetch from Supabase
 const mockTeacherClasses: any[] = [];
@@ -52,80 +53,107 @@ function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapi
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-400 dark:to-blue-400 bg-clip-text text-transparent flex items-center">
-          <Beaker className="w-7 h-7 mr-2 text-cyan-600 dark:text-cyan-400" />
-          Hapi Lab
+      {/* Header - Matching Student Lab Style */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-foreground">
+          <Beaker className="h-5 w-5 text-primary" />
+          Hapi lab
         </h2>
-      </div>
+      </motion.div>
 
-      <div className="flex space-x-2 bg-card rounded-xl p-2 shadow-md">
-        <button
-          onClick={() => setActiveTab('pulses')}
-          className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
-            activeTab === 'pulses'
-              ? 'bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white shadow-md'
-              : 'text-muted-foreground hover:bg-muted'
-          }`}
-        >
-          <MessageSquare className="w-5 h-5" />
-          <span>Class Pulses</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('office-hours')}
-          className={`flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 ${
-            activeTab === 'office-hours'
-              ? 'bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white shadow-md'
-              : 'text-muted-foreground hover:bg-muted'
-          }`}
-        >
-          <Video className="w-5 h-5" />
-          <span>Office Hours</span>
-        </button>
-      </div>
+      {/* Tab Navigation - Matching Student Pill Style */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex overflow-x-auto rounded-full border border-border bg-card p-1 text-sm font-semibold"
+      >
+        {[
+          { id: 'pulses', label: 'Class Pulses', icon: MessageSquare },
+          { id: 'office-hours', label: 'Office Hours', icon: Video },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as Tab)}
+              className={`mr-1 flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 last:mr-0 transition ${
+                isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-primary'
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </motion.div>
 
       {activeTab === 'pulses' && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-foreground">Your Class Pulses</h3>
-            <div className="flex space-x-3">
-              <button
+        <div className="animate-in fade-in duration-300 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+          >
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Your Class Pulses</h3>
+              <p className="text-sm text-muted-foreground">Create and manage pulse checks</p>
+            </div>
+            <div className="flex gap-2">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowTemplateLibrary(true)}
-                className="px-6 py-3 bg-card border-2 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 font-semibold rounded-xl shadow-md hover:shadow-lg hover:border-blue-400 dark:hover:border-blue-600 transform hover:scale-105 active:scale-95 transition-all duration-300 flex items-center space-x-2"
+                className="px-4 py-2 bg-card border border-border text-foreground font-medium rounded-lg shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-200 flex items-center gap-2"
               >
-                <BookTemplate className="w-5 h-5" />
+                <BookTemplate className="h-4 w-4" />
                 <span>Templates</span>
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   setSelectedTemplate(undefined);
                   setShowNewPulseModal(true);
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 flex items-center space-x-2"
+                className="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="h-4 w-4" />
                 <span>Create Pulse</span>
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
 
           {teacherPulses.length === 0 ? (
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-3xl p-12 border-2 border-blue-200 dark:border-blue-800 shadow-lg text-center">
-              <MessageSquare className="w-16 h-16 text-blue-400 dark:text-blue-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-foreground mb-2">No Class Pulses Yet</h3>
-              <p className="text-muted-foreground mb-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm p-12 text-center"
+            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 mx-auto mb-4">
+                <MessageSquare className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">No Class Pulses Yet</h3>
+              <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
                 Create your first pulse to check in with your students!
               </p>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowNewPulseModal(true)}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                className="px-6 py-2.5 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
               >
                 Create Your First Pulse
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           ) : (
             <div className="space-y-4">
-              {teacherPulses.map(pulse => {
+              {teacherPulses.map((pulse, index) => {
                 const cls = mockTeacherClasses.find(c => c.id === pulse.class_id);
                 const roster = mockClassRosters[pulse.class_id] || [];
                 const statistics = calculatePulseStatistics(pulse.class_id, [pulse], roster);
@@ -134,95 +162,117 @@ function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapi
                 const isHighlighted = highlightPulseId === pulse.id;
 
                 return (
-                  <div
+                  <motion.div
                     key={pulse.id}
                     id={`pulse-${pulse.id}`}
-                    className={`bg-card rounded-2xl p-6 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                      isHighlighted ? 'border-blue-400 dark:border-blue-600 ring-4 ring-blue-200 dark:ring-blue-800' : 'border-blue-100 dark:border-blue-800'
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`rounded-xl border bg-card/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden ${
+                      isHighlighted ? 'border-primary ring-2 ring-primary/20' : 'border-border/60'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-semibold">
-                            {cls?.name}
-                          </span>
-                          {pulse.is_active && (
-                            <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-semibold">
-                              Active
+                    {/* Gradient Top Border */}
+                    <div className="h-1 bg-gradient-to-r from-primary to-accent" />
+
+                    <div className="p-5">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            <span className="px-2.5 py-1 bg-primary/10 dark:bg-primary/20 text-primary rounded-full text-xs font-semibold">
+                              {cls?.name}
                             </span>
-                          )}
-                          {timeRemaining.hours <= 0 && (
-                            <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-semibold">
-                              Expired
-                            </span>
-                          )}
-                        </div>
-                        <h4 className="text-lg font-bold text-foreground mb-2">{pulse.question}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Type: <span className="font-semibold">{getQuestionTypeLabel(pulse.question_type)}</span>
-                        </p>
-                        {pulse.answer_choices && (
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {pulse.answer_choices.map((choice: string, idx: number) => (
-                              <span key={idx} className="px-2 py-1 bg-muted text-foreground rounded text-xs">
-                                {choice}
+                            {pulse.is_active && (
+                              <span className="px-2.5 py-1 bg-green-500/10 dark:bg-green-500/20 text-green-700 dark:text-green-400 rounded-full text-xs font-semibold flex items-center gap-1">
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                                Active
                               </span>
-                            ))}
+                            )}
+                            {timeRemaining.hours <= 0 && (
+                              <span className="px-2.5 py-1 bg-muted text-muted-foreground rounded-full text-xs font-semibold">
+                                Expired
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-2 ml-4">
-                        <button className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-all duration-300">
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-lg transition-all duration-300">
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-xl p-4 mb-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-semibold text-foreground">Response Rate</span>
-                        <span className={`text-2xl font-bold ${
-                          statistics.responseRate >= 70 ? 'text-green-600 dark:text-green-400' :
-                          statistics.responseRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-orange-600 dark:text-orange-400'
-                        }`}>
-                          {statistics.responseRate}%
-                        </span>
-                      </div>
-
-                      <div className="w-full bg-card rounded-full h-3 overflow-hidden mb-3 shadow-inner">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            statistics.responseRate >= 70
-                              ? 'bg-gradient-to-r from-green-400 to-emerald-500 dark:from-green-600 dark:to-emerald-700'
-                              : statistics.responseRate >= 50
-                              ? 'bg-gradient-to-r from-yellow-400 to-amber-500 dark:from-yellow-600 dark:to-amber-700'
-                              : 'bg-gradient-to-r from-orange-400 to-red-500 dark:from-orange-600 dark:to-red-700'
-                          }`}
-                          style={{ width: `${statistics.responseRate}%` }}
-                        ></div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
-                          <div>
-                            <div className="text-xs text-muted-foreground">Responded</div>
-                            <div className="text-lg font-bold text-green-600 dark:text-green-400">{statistics.responded}</div>
-                          </div>
+                          <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2">{pulse.question}</h4>
+                          <p className="text-xs text-muted-foreground">
+                            {getQuestionTypeLabel(pulse.question_type)}
+                          </p>
+                          {pulse.answer_choices && (
+                            <div className="flex flex-wrap gap-1.5 mt-3">
+                              {pulse.answer_choices.map((choice: string, idx: number) => (
+                                <span key={idx} className="px-2 py-0.5 bg-muted/50 text-foreground rounded text-xs">
+                                  {choice}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                          <div>
-                            <div className="text-xs text-muted-foreground">Missing</div>
-                            <div className="text-lg font-bold text-orange-600 dark:text-orange-400">{statistics.missing}</div>
-                          </div>
+                        <div className="flex items-center gap-1.5 ml-4">
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/20 dark:hover:bg-primary/30 rounded-lg transition-all duration-200"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 dark:hover:bg-rose-500/30 rounded-lg transition-all duration-200"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </motion.button>
                         </div>
                       </div>
-                    </div>
+
+                      <div className="bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-lg p-4 mb-4 border border-border/30">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-medium text-foreground">Response Rate</span>
+                          <span className={`text-xl font-bold ${
+                            statistics.responseRate >= 70 ? 'text-green-600 dark:text-green-400' :
+                            statistics.responseRate >= 50 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'
+                          }`}>
+                            {statistics.responseRate}%
+                          </span>
+                        </div>
+
+                        <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden mb-3">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${statistics.responseRate}%` }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className={`h-full rounded-full ${
+                              statistics.responseRate >= 70
+                                ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                                : statistics.responseRate >= 50
+                                ? 'bg-gradient-to-r from-amber-500 to-orange-500'
+                                : 'bg-gradient-to-r from-rose-500 to-orange-500'
+                            }`}
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 dark:bg-green-500/20">
+                              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                            </div>
+                            <div>
+                              <div className="text-xs text-muted-foreground">Responded</div>
+                              <div className="text-base font-bold text-foreground">{statistics.responded}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500/10 dark:bg-orange-500/20">
+                              <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                            </div>
+                            <div>
+                              <div className="text-xs text-muted-foreground">Missing</div>
+                              <div className="text-base font-bold text-foreground">{statistics.missing}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
                     {pulse.answer_choices && statistics.topAnswers[pulse.id] && (
                       <div className="mb-4">
@@ -270,23 +320,19 @@ function TeacherHapiLab({ initialTab = 'pulses', highlightPulseId }: TeacherHapi
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
-                      <div className="flex items-center space-x-1 text-orange-600 dark:text-orange-400">
-                        <Clock className="w-4 h-4" />
-                        <span className="text-sm font-semibold">
-                          {timeRemaining.text}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-4 text-sm">
-                        <span className="text-muted-foreground">
-                          Responses: <span className="font-bold text-foreground">{statistics.responded}/{statistics.totalStudents}</span>
-                        </span>
-                        <button className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300">
-                          View Individual Responses →
+                      <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                        <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-sm font-medium">
+                            {timeRemaining.text}
+                          </span>
+                        </div>
+                        <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                          View Responses →
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>

@@ -11,6 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, BarChart2, PieChart, MessageSquare } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../../lib/supabase';
 import { getThemeLabel, getSentimentInfo } from '../../../lib/safebox/safeboxModerator';
 import type { SafeBoxTheme } from '../../../lib/safebox/safeboxModerator';
@@ -114,12 +115,12 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-card rounded-xl p-6 shadow-md border border-border">
-              <div className="h-4 bg-muted rounded w-1/2 mb-4"></div>
-              <div className="h-8 bg-muted rounded w-1/3"></div>
+      <div className="space-y-4 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4">
+              <div className="h-3 bg-muted rounded w-1/2 mb-3"></div>
+              <div className="h-6 bg-muted rounded w-1/3"></div>
             </div>
           ))}
         </div>
@@ -128,18 +129,18 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
   }
 
   if (!stats) {
-    return <div>Failed to load metrics</div>;
+    return <div className="text-xs text-muted-foreground">Failed to load metrics</div>;
   }
 
   const totalMessages =
     timeRange === 'week' ? stats.totalThisWeek : timeRange === 'month' ? stats.totalThisMonth : stats.totalAllTime;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Time Range Selector */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold text-foreground">SafeBox Analytics</h3>
-        <div className="flex space-x-2 bg-card rounded-lg p-2 shadow-md border border-border">
+        <h3 className="text-sm font-bold text-foreground">SafeBox Analytics</h3>
+        <div className="flex gap-2 bg-card rounded-lg p-1.5 shadow-sm border border-border/60">
           {[
             { id: 'week', label: 'Week' },
             { id: 'month', label: 'Month' },
@@ -148,9 +149,9 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
             <button
               key={option.id}
               onClick={() => setTimeRange(option.id as typeof timeRange)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
                 timeRange === option.id
-                  ? 'bg-indigo-500 text-white'
+                  ? 'bg-gradient-to-br from-primary to-accent text-white shadow-md'
                   : 'text-muted-foreground hover:bg-muted'
               }`}
             >
@@ -161,56 +162,86 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-50 dark:from-blue-950/30 to-cyan-50 dark:to-cyan-950/30 rounded-xl p-6 shadow-md border-2 border-blue-200 dark:border-blue-800">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100">Total Messages</h4>
-            <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <h4 className="text-xs font-bold text-foreground">Total Messages</h4>
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 flex items-center justify-center">
+              <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{totalMessages}</p>
-          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+          <p className="text-2xl font-bold text-foreground">{totalMessages}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">
             {timeRange === 'week' ? 'This week' : timeRange === 'month' ? 'This month' : 'All time'}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-purple-50 dark:from-purple-950/30 to-pink-50 dark:to-pink-950/30 rounded-xl p-6 shadow-md border-2 border-purple-200 dark:border-purple-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-100">This Week</h4>
-            <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <h4 className="text-xs font-bold text-foreground">This Week</h4>
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.totalThisWeek}</p>
-          <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">Past 7 days</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{stats.totalThisWeek}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">Past 7 days</p>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-green-50 dark:from-green-950/30 to-emerald-50 dark:to-emerald-950/30 rounded-xl p-6 shadow-md border-2 border-green-200 dark:border-green-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-green-900 dark:text-green-100">This Month</h4>
-            <BarChart2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <h4 className="text-xs font-bold text-foreground">This Month</h4>
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20 flex items-center justify-center">
+              <BarChart2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.totalThisMonth}</p>
-          <p className="text-xs text-green-700 dark:text-green-300 mt-1">Past 30 days</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{stats.totalThisMonth}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">Past 30 days</p>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-red-50 dark:from-red-950/30 to-orange-50 dark:to-orange-950/30 rounded-xl p-6 shadow-md border-2 border-red-200 dark:border-red-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-red-900 dark:text-red-100">Urgent</h4>
-            <PieChart className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <h4 className="text-xs font-bold text-foreground">Urgent</h4>
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 dark:from-red-500/20 dark:to-orange-500/20 flex items-center justify-center">
+              <PieChart className="w-4 h-4 text-red-600 dark:text-red-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.urgentCount}</p>
-          <p className="text-xs text-red-700 dark:text-red-300 mt-1">Safety concerns</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{stats.urgentCount}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">Safety concerns</p>
+        </motion.div>
       </div>
 
       {/* Sentiment Breakdown */}
-      <div className="bg-card rounded-xl p-6 shadow-md border border-border">
-        <h4 className="text-lg font-bold text-foreground mb-4 flex items-center space-x-2">
-          <PieChart className="w-5 h-5 text-indigo-500" />
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
+        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+            <PieChart className="w-4 h-4 text-primary" />
+          </div>
           <span>Sentiment Breakdown</span>
         </h4>
         {stats.sentimentBreakdown.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">No sentiment data available</p>
+          <p className="text-xs text-muted-foreground text-center py-6">No sentiment data available</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {stats.sentimentBreakdown.map(({ sentiment, count }) => {
               const info = getSentimentInfo(sentiment);
               const percentage = (count / totalMessages) * 100;
@@ -218,14 +249,14 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
               return (
                 <div key={sentiment}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-foreground">{info.label}</span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs font-bold text-foreground">{info.label}</span>
+                    <span className="text-xs text-muted-foreground">
                       {count} ({percentage.toFixed(0)}%)
                     </span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-3">
+                  <div className="w-full bg-muted rounded-full h-2">
                     <div
-                      className={`h-3 rounded-full transition-all duration-500 ${
+                      className={`h-2 rounded-full transition-all duration-500 ${
                         info.color === 'green'
                           ? 'bg-green-500'
                           : info.color === 'red'
@@ -243,15 +274,17 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
       </div>
 
       {/* Theme Breakdown */}
-      <div className="bg-card rounded-xl p-6 shadow-md border border-border">
-        <h4 className="text-lg font-bold text-foreground mb-4 flex items-center space-x-2">
-          <BarChart2 className="w-5 h-5 text-indigo-500" />
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
+        <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+            <BarChart2 className="w-4 h-4 text-primary" />
+          </div>
           <span>Common Themes</span>
         </h4>
         {stats.themeBreakdown.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">No theme data available</p>
+          <p className="text-xs text-muted-foreground text-center py-6">No theme data available</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {stats.themeBreakdown.map(({ theme, count }) => {
               const maxCount = stats.themeBreakdown[0]?.count || 1;
               const percentage = (count / maxCount) * 100;
@@ -259,12 +292,12 @@ export function SafeBoxMetrics({ classId }: SafeBoxMetricsProps) {
               return (
                 <div key={theme}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-foreground">{getThemeLabel(theme)}</span>
-                    <span className="text-sm text-muted-foreground">{count} mentions</span>
+                    <span className="text-xs font-bold text-foreground">{getThemeLabel(theme)}</span>
+                    <span className="text-xs text-muted-foreground">{count} mentions</span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-3">
+                  <div className="w-full bg-muted rounded-full h-2">
                     <div
-                      className="h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500"
+                      className="h-2 rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>

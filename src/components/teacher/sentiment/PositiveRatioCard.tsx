@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PieChart, Smile, Frown } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { calculatePositiveSentimentRatio, PositiveSentimentRatioResult } from '../../../lib/analytics/sentimentAnalytics';
 
 interface PositiveRatioCardProps {
@@ -75,17 +76,25 @@ export function PositiveRatioCard({ classId, className }: PositiveRatioCardProps
 
   if (loading) {
     return (
-      <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg animate-pulse">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md p-4 animate-pulse"
+      >
         <div className="h-96 bg-muted rounded-lg" />
-      </div>
+      </motion.div>
     );
   }
 
   if (!ratio) {
     return (
-      <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg">
-        <p className="text-muted-foreground text-center">No ratio data available</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <p className="text-muted-foreground text-center text-[10px]">No ratio data available</p>
+      </motion.div>
     );
   }
 
@@ -95,25 +104,30 @@ export function PositiveRatioCard({ classId, className }: PositiveRatioCardProps
   const positiveDash = (positiveAngle / 360) * circumference;
 
   return (
-    <div className={`bg-gradient-to-br ${getLevelBg(ratio.level)} rounded-2xl p-6 border-2 border-border shadow-lg relative overflow-hidden`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4 relative overflow-hidden"
+    >
       {/* Background decoration */}
       <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${getLevelColor(ratio.level)} opacity-10 blur-3xl rounded-full`} />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 relative z-10">
-        <div className="flex items-center space-x-3">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-md ${getLevelBg(ratio.level)}`}>
-            <PieChart className={`w-6 h-6 ${getLevelTextColor(ratio.level)}`} />
+      <div className="flex items-center justify-between mb-3 relative z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+            <PieChart className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Positive Sentiment Ratio</h3>
-            <p className="text-sm text-muted-foreground">{className}</p>
+            <h3 className="text-sm font-bold text-foreground">Positive Sentiment Ratio</h3>
+            <p className="text-[10px] text-muted-foreground">{className}</p>
           </div>
         </div>
       </div>
 
       {/* Period Selector */}
-      <div className="flex bg-background/50 dark:bg-card/50 rounded-lg p-1 mb-6 relative z-10">
+      <div className="flex bg-background/50 dark:bg-card/50 rounded-lg p-1 mb-3 relative z-10">
         <button
           onClick={() => setPeriod('week')}
           className={`flex-1 px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
@@ -149,11 +163,16 @@ export function PositiveRatioCard({ classId, className }: PositiveRatioCardProps
       {/* Main Content */}
       <div className="relative z-10">
         {/* Large Ratio Display */}
-        <div className="text-center mb-6">
-          <div className={`text-6xl font-bold ${getLevelTextColor(ratio.level)} mb-2`}>
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-center mb-3"
+        >
+          <div className={`text-5xl font-bold ${getLevelTextColor(ratio.level)} mb-2`}>
             {ratio.ratioString}
           </div>
-          <div className={`inline-block px-4 py-2 rounded-full font-semibold text-sm ${getLevelBg(ratio.level)} ${getLevelTextColor(ratio.level)} border-2 ${
+          <div className={`inline-block px-3 py-1 rounded-full font-semibold text-[10px] ${getLevelBg(ratio.level)} ${getLevelTextColor(ratio.level)} border ${
             ratio.level === 'excellent' ? 'border-teal-200 dark:border-teal-500/30' :
             ratio.level === 'healthy' ? 'border-green-200 dark:border-green-500/30' :
             ratio.level === 'moderate' ? 'border-yellow-200 dark:border-yellow-500/30' :
@@ -161,10 +180,10 @@ export function PositiveRatioCard({ classId, className }: PositiveRatioCardProps
           }`}>
             {ratio.level.charAt(0).toUpperCase() + ratio.level.slice(1)}
           </div>
-        </div>
+        </motion.div>
 
         {/* Pie Chart */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-3">
           <div className="relative w-48 h-48">
             <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
               {/* Background circle */}
@@ -213,56 +232,71 @@ export function PositiveRatioCard({ classId, className }: PositiveRatioCardProps
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 bg-green-50 dark:bg-green-500/10 rounded-xl border border-green-200 dark:border-green-500/30">
-            <div className="flex items-center gap-2 mb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-2 gap-3 mb-3"
+        >
+          <div className="p-3 bg-green-50 dark:bg-green-500/10 rounded-xl border border-green-200 dark:border-green-500/30">
+            <div className="flex items-center gap-2 mb-1">
               <Smile className="w-4 h-4 text-green-600 dark:text-green-400" />
-              <span className="text-xs text-muted-foreground uppercase tracking-wide">Positive (4-6)</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Positive (4-6)</span>
             </div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{ratio.positiveCount}</div>
-            <div className="text-xs text-muted-foreground">{ratio.positivePercentage.toFixed(1)}% of total</div>
+            <div className="text-xl font-bold text-green-600 dark:text-green-400">{ratio.positiveCount}</div>
+            <div className="text-[10px] text-muted-foreground">{ratio.positivePercentage.toFixed(1)}% of total</div>
           </div>
 
-          <div className="p-4 bg-orange-50 dark:bg-orange-500/10 rounded-xl border border-orange-200 dark:border-orange-500/30">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="p-3 bg-orange-50 dark:bg-orange-500/10 rounded-xl border border-orange-200 dark:border-orange-500/30">
+            <div className="flex items-center gap-2 mb-1">
               <Frown className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-              <span className="text-xs text-muted-foreground uppercase tracking-wide">Negative (1-3)</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Negative (1-3)</span>
             </div>
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{ratio.negativeCount}</div>
-            <div className="text-xs text-muted-foreground">{ratio.negativePercentage.toFixed(1)}% of total</div>
+            <div className="text-xl font-bold text-orange-600 dark:text-orange-400">{ratio.negativeCount}</div>
+            <div className="text-[10px] text-muted-foreground">{ratio.negativePercentage.toFixed(1)}% of total</div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Interpretation */}
-        <div className="p-4 bg-background/50 dark:bg-card/50 rounded-xl border border-border">
-          <h4 className="font-semibold text-foreground mb-2">What this means</h4>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="p-4 bg-background/50 dark:bg-card/50 rounded-xl border border-border"
+        >
+          <h4 className="text-sm font-bold text-foreground mb-2">What this means</h4>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
             {ratio.level === 'excellent' && (
-              <>Exceptional emotional health! Your class has an outstanding positive-to-negative sentiment ratio. Students are thriving. 🎉</>
+              <>Exceptional emotional health! Your class has an outstanding positive-to-negative sentiment ratio. Students are thriving.</>
             )}
             {ratio.level === 'healthy' && (
-              <>Great job! Your class maintains a healthy balance with more positive than negative sentiments. This is the recommended target. ✅</>
+              <>Great job! Your class maintains a healthy balance with more positive than negative sentiments. This is the recommended target.</>
             )}
             {ratio.level === 'moderate' && (
-              <>Your class shows moderate sentiment balance. Consider strategies to boost positive emotions and address concerns. 📊</>
+              <>Your class shows moderate sentiment balance. Consider strategies to boost positive emotions and address concerns.</>
             )}
             {ratio.level === 'concerning' && (
-              <>Low positive-to-negative ratio detected. Students may need additional support and engagement. Consider interventions. ⚠️</>
+              <>Low positive-to-negative ratio detected. Students may need additional support and engagement. Consider interventions.</>
             )}
           </p>
-        </div>
+        </motion.div>
 
         {/* Reference Guide */}
-        <div className="mt-4 p-3 bg-background/50 dark:bg-card/50 rounded-lg border border-border">
-          <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ratio Targets</h5>
-          <div className="space-y-1 text-xs text-muted-foreground">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-3 p-3 bg-background/50 dark:bg-card/50 rounded-lg border border-border"
+        >
+          <h5 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ratio Targets</h5>
+          <div className="space-y-1 text-[10px] text-muted-foreground">
             <div>• <span className="text-teal-600 dark:text-teal-400 font-semibold">≥4:1</span> = Excellent</div>
             <div>• <span className="text-green-600 dark:text-green-400 font-semibold">≥3:1</span> = Healthy (Target)</div>
             <div>• <span className="text-yellow-600 dark:text-yellow-400 font-semibold">1.5-3:1</span> = Moderate</div>
             <div>• <span className="text-orange-600 dark:text-orange-400 font-semibold">&lt;1.5:1</span> = Concerning</div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

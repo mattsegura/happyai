@@ -9,10 +9,11 @@
  */
 
 import { useState, useEffect } from 'react';
-import { FileText, TrendingUp, User, Calendar, Download, RefreshCw, Sparkles, Clock, AlertCircle } from 'lucide-react';
+import { FileText, TrendingUp, User, Calendar, Download, RefreshCw, Sparkles, Clock, AlertCircle, BarChart3 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { generateWeeklySummary, formatWeekRange, getWeekRange, type WeeklySummary } from '../../lib/ai/weeklyEchoGenerator';
 import { generateStudentBrief, type StudentBrief } from '../../lib/ai/studentBriefGenerator';
+import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 type ReportTab = 'weekly' | 'students' | 'custom' | 'archive';
@@ -93,22 +94,28 @@ function ReportsHub() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            AI Reports Hub
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            AI-generated insights, summaries, and student briefs
-          </p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      {/* Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+          <BarChart3 className="h-7 w-7 text-primary" />
+          AI Reports Hub
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          AI-generated insights, summaries, and student briefs
+        </p>
+      </motion.div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-border">
+      {/* Tabs - Pill Style */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex overflow-x-auto rounded-full border border-border bg-card p-1 text-sm font-semibold"
+      >
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -116,19 +123,16 @@ function ReportsHub() {
             <button
               key={tab.id}
               onClick={() => setCurrentTab(tab.id as ReportTab)}
-              className={cn(
-                'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2',
-                isActive
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              )}
+              className={`mr-1 flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 last:mr-0 transition ${
+                isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-primary'
+              }`}
             >
               <Icon className="h-4 w-4" />
-              {tab.label}
+              <span className="hidden sm:inline">{tab.label}</span>
             </button>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Error Display */}
       {error && (

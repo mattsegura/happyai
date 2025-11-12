@@ -9,6 +9,7 @@
  * - Actionable insights
  */
 
+import { motion } from 'framer-motion';
 import { TrendingUp, Activity, Info } from 'lucide-react';
 import {
   ScatterChart,
@@ -100,46 +101,61 @@ export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
   };
 
   return (
-    <div className={`rounded-2xl border-2 bg-gradient-to-br p-6 shadow-sm ${config.bg} ${config.border}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+    >
       {/* Header */}
-      <div className="mb-4 flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-${config.color}-500 shadow-md`}>
-            <Activity className="h-5 w-5 text-white" />
+      <div className="mb-3 flex items-start justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+            <Activity className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-muted-foreground">Mood ↔ Performance</h3>
-            <p className="text-lg font-bold text-foreground line-clamp-1">{data.className}</p>
+            <h3 className="text-[10px] text-muted-foreground">Mood ↔ Performance</h3>
+            <p className="text-sm font-bold text-foreground line-clamp-1">{data.className}</p>
           </div>
         </div>
 
         {/* Correlation Badge */}
-        <div className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${config.badge}`}>
-          <TrendingUp className="h-3.5 w-3.5" />
+        <div className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${config.badge}`}>
+          <TrendingUp className="h-3 w-3" />
           <span>r = {data.correlation.toFixed(3)}</span>
         </div>
       </div>
 
       {/* Correlation Strength Indicator */}
-      <div className="mb-4 rounded-xl border border-border/60 bg-card p-3">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="mb-3 rounded-lg border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 p-3"
+      >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-muted-foreground">Correlation Strength</p>
-            <p className="text-lg font-bold text-foreground capitalize">{data.correlationStrength}</p>
+            <p className="text-[10px] font-bold text-muted-foreground">Correlation Strength</p>
+            <p className="text-sm font-bold text-foreground capitalize">{data.correlationStrength}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">Pearson Coefficient</p>
-            <p className={`text-lg font-bold ${config.badge.split(' ')[1]}`}>
+            <p className="text-[10px] text-muted-foreground">Pearson Coefficient</p>
+            <p className={`text-sm font-bold ${config.badge.split(' ')[1]}`}>
               {data.correlation.toFixed(3)}
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scatter Plot */}
-      <div className="h-80 rounded-xl border border-border/60 bg-card p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="h-72 rounded-lg border border-border/60 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-950/10 dark:to-pink-950/10 p-3"
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <ScatterChart margin={{ top: 10, right: 20, bottom: 40, left: 40 }}>
+          <ScatterChart margin={{ top: 10, right: 15, bottom: 35, left: 35 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} />
 
             <XAxis
@@ -147,13 +163,13 @@ export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
               dataKey="sentiment"
               domain={[0.5, 6.5]}
               ticks={[1, 2, 3, 4, 5, 6]}
-              tick={{ fill: 'currentColor', opacity: 0.7 }}
+              tick={{ fill: 'currentColor', opacity: 0.7, fontSize: 10 }}
               tickLine={false}
             >
               <Label
                 value="Student Sentiment (1-6 Scale)"
                 position="bottom"
-                style={{ fill: 'currentColor', opacity: 0.7, fontSize: 12 }}
+                style={{ fill: 'currentColor', opacity: 0.7, fontSize: 10 }}
               />
             </XAxis>
 
@@ -161,14 +177,14 @@ export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
               type="number"
               dataKey="grade"
               domain={[0, 100]}
-              tick={{ fill: 'currentColor', opacity: 0.7 }}
+              tick={{ fill: 'currentColor', opacity: 0.7, fontSize: 10 }}
               tickLine={false}
             >
               <Label
                 value="Grade %"
                 angle={-90}
                 position="left"
-                style={{ fill: 'currentColor', opacity: 0.7, fontSize: 12 }}
+                style={{ fill: 'currentColor', opacity: 0.7, fontSize: 10 }}
               />
             </YAxis>
 
@@ -180,7 +196,7 @@ export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
               stroke="currentColor"
               strokeDasharray="3 3"
               opacity={0.3}
-              label={{ value: 'Passing', position: 'right', style: { fill: 'currentColor', opacity: 0.5, fontSize: 10 } }}
+              label={{ value: 'Passing', position: 'right', style: { fill: 'currentColor', opacity: 0.5, fontSize: 9 } }}
             />
 
             {/* Regression Line */}
@@ -203,30 +219,35 @@ export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
             />
           </ScatterChart>
         </ResponsiveContainer>
-      </div>
+      </motion.div>
 
       {/* Insights */}
       {data.insights && data.insights.length > 0 && (
-        <div className="mt-4 rounded-xl border border-border/60 bg-card p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <Info className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">Key Insights</h4>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+          className="mt-3 rounded-lg border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 p-3"
+        >
+          <div className="mb-2 flex items-center gap-1.5">
+            <Info className="h-3.5 w-3.5 text-primary" />
+            <h4 className="text-xs font-bold text-foreground">Key Insights</h4>
           </div>
-          <ul className="space-y-2 text-xs text-muted-foreground">
+          <ul className="space-y-1.5 text-[10px] text-muted-foreground">
             {data.insights.map((insight, index) => (
-              <li key={index} className="flex items-start gap-2">
+              <li key={index} className="flex items-start gap-1.5">
                 <span className="text-primary">•</span>
                 <span>{insight}</span>
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       )}
 
       {/* Interpretation Guide */}
-      <div className="mt-4 rounded-lg border border-border/60 bg-card/50 p-3">
-        <h5 className="mb-2 text-xs font-semibold text-muted-foreground">How to Interpret</h5>
-        <ul className="space-y-1 text-[11px] text-muted-foreground">
+      <div className="mt-3 rounded-lg border border-border/60 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-950/10 dark:to-pink-950/10 p-2.5">
+        <h5 className="mb-1.5 text-[10px] font-bold text-muted-foreground">How to Interpret</h5>
+        <ul className="space-y-1 text-[10px] text-muted-foreground">
           <li className="flex items-start gap-1">
             <span>•</span>
             <span>Each dot represents one student's average sentiment vs. grade</span>
@@ -251,14 +272,14 @@ export function MoodPerformanceScatter({ data }: MoodPerformanceScatterProps) {
       </div>
 
       {/* Footer */}
-      <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-3">
-        <p className="text-xs text-muted-foreground">
+      <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-2">
+        <p className="text-[10px] text-muted-foreground">
           {data.scatterData.length} students • {data.timeframe === 'month' ? 'Monthly' : 'Semester'} data
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[10px] text-muted-foreground">
           Updated {new Date(data.lastUpdated).toLocaleDateString()}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

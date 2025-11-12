@@ -10,6 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import { MessageCircle, Send, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../../contexts/AuthContext';
 
@@ -94,22 +95,22 @@ export function SafeBoxResponse({ classId, className }: SafeBoxResponseProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
-        <h3 className="text-xl font-bold text-foreground mb-1">Respond to Feedback</h3>
-        <p className="text-sm text-muted-foreground">{className}</p>
+        <h3 className="text-sm font-bold text-foreground mb-1">Respond to Feedback</h3>
+        <p className="text-xs text-muted-foreground">{className}</p>
       </div>
 
       {/* New Response Form */}
-      <div className="bg-gradient-to-br from-indigo-50 dark:from-indigo-950/30 to-purple-50 dark:to-purple-950/30 rounded-xl p-6 shadow-md border-2 border-indigo-200 dark:border-indigo-800">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
-            <MessageCircle className="w-5 h-5 text-white" />
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+            <MessageCircle className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h4 className="font-bold text-foreground">Post Class-Wide Response</h4>
-            <p className="text-xs text-muted-foreground">
+            <h4 className="text-sm font-bold text-foreground">Post Class-Wide Response</h4>
+            <p className="text-[10px] text-muted-foreground">
               Students will see this as "Teacher Response" (not linked to individual messages)
             </p>
           </div>
@@ -122,11 +123,11 @@ export function SafeBoxResponse({ classId, className }: SafeBoxResponseProps) {
             placeholder="Thank you for your feedback. I've heard your concerns about... and I'm planning to..."
             rows={6}
             maxLength={maxChars}
-            className="w-full px-4 py-3 bg-card border-2 border-indigo-200 dark:border-indigo-700 rounded-xl focus:outline-none focus:border-indigo-400 transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
+            className="w-full px-3 py-2 text-sm bg-background border border-border/60 rounded-lg focus:outline-none focus:border-primary transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
             disabled={submitting}
           />
           <div className="flex items-center justify-between mt-2">
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[10px] text-muted-foreground">
               {characterCount < minChars && (
                 <span className="text-orange-600 dark:text-orange-400">
                   Minimum {minChars} characters ({minChars - characterCount} more needed)
@@ -141,7 +142,7 @@ export function SafeBoxResponse({ classId, className }: SafeBoxResponseProps) {
                 </span>
               )}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[10px] text-muted-foreground">
               {characterCount}/{maxChars}
             </div>
           </div>
@@ -150,21 +151,21 @@ export function SafeBoxResponse({ classId, className }: SafeBoxResponseProps) {
         <button
           onClick={handleSubmit}
           disabled={!isValid || submitting}
-          className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          className="w-full py-2.5 bg-gradient-to-br from-primary to-accent text-white text-sm font-bold rounded-lg shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {submitting ? (
-            <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Posting...</span>
             </div>
           ) : success ? (
             <>
-              <CheckCircle className="w-5 h-5" />
+              <CheckCircle className="w-4 h-4" />
               <span>Posted!</span>
             </>
           ) : (
             <>
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4" />
               <span>Post Response</span>
             </>
           )}
@@ -173,38 +174,43 @@ export function SafeBoxResponse({ classId, className }: SafeBoxResponseProps) {
 
       {/* Previous Responses */}
       <div>
-        <h4 className="text-lg font-bold text-foreground mb-4">Your Previous Responses</h4>
+        <h4 className="text-sm font-bold text-foreground mb-3">Your Previous Responses</h4>
         {loading ? (
           <div className="space-y-3">
             {[1, 2].map((i) => (
-              <div key={i} className="bg-card rounded-xl p-4 shadow-md animate-pulse border border-border">
-                <div className="h-4 bg-muted rounded w-1/4 mb-2"></div>
-                <div className="h-6 bg-muted rounded w-3/4"></div>
+              <div key={i} className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-4 animate-pulse">
+                <div className="h-3 bg-muted rounded w-1/4 mb-2"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
               </div>
             ))}
           </div>
         ) : responses.length === 0 ? (
-          <div className="bg-card rounded-xl p-8 shadow-md border border-border text-center">
-            <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <p className="text-muted-foreground">You haven't posted any responses yet.</p>
+          <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm p-6 text-center">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center mx-auto mb-3">
+              <MessageCircle className="w-5 h-5 text-muted-foreground opacity-50" />
+            </div>
+            <p className="text-xs text-muted-foreground">You haven't posted any responses yet.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {responses.map((response) => (
-              <div
+            {responses.map((response, idx) => (
+              <motion.div
                 key={response.id}
-                className="bg-card rounded-xl p-4 shadow-md border border-border hover:shadow-lg transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1, duration: 0.3 }}
+                className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-200 p-4"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                  <span className="text-[10px] font-bold text-primary">
                     Teacher Response
                   </span>
-                  <span className="text-xs text-muted-foreground">{formatTime(response.posted_at)}</span>
+                  <span className="text-[10px] text-muted-foreground">{formatTime(response.posted_at)}</span>
                 </div>
-                <p className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">
                   {response.response_text}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

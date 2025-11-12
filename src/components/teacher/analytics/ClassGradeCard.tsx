@@ -8,6 +8,7 @@
  * - Student count
  */
 
+import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, Users } from 'lucide-react';
 import type { ClassAverageGrade } from '../../../lib/analytics/academicAnalytics';
 
@@ -82,44 +83,52 @@ export function ClassGradeCard({ data, onClick }: ClassGradeCardProps) {
   const colors = getGradeColor(data.averagePercentage);
 
   return (
-    <div
-      className={`relative overflow-hidden rounded-2xl border-2 bg-gradient-to-br p-6 shadow-sm transition-all duration-200 ${colors.bg} ${colors.border} ${
-        onClick ? 'cursor-pointer hover:shadow-md hover:scale-[1.02]' : ''
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`relative overflow-hidden rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-200 p-4 ${
+        onClick ? 'cursor-pointer' : ''
       }`}
       onClick={onClick}
     >
       {/* Header */}
-      <div className="mb-4 flex items-start justify-between">
+      <div className="mb-3 flex items-start justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-muted-foreground">Class Average</h3>
-          <p className="text-lg font-bold text-foreground line-clamp-1">{data.className}</p>
+          <h3 className="text-[10px] text-muted-foreground">Class Average</h3>
+          <p className="text-sm font-bold text-foreground line-clamp-1">{data.className}</p>
         </div>
-        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.icon} shadow-md`}>
-          <TrendingUp className="h-5 w-5 text-white" />
+        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${colors.bg} flex items-center justify-center`}>
+          <TrendingUp className="w-4 h-4 text-primary" />
         </div>
       </div>
 
       {/* Grade Display */}
-      <div className="mb-4 flex items-baseline gap-2">
-        <span className={`text-4xl font-bold ${colors.text}`}>
+      <motion.div
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="mb-3 flex items-baseline gap-2"
+      >
+        <span className={`text-3xl font-bold ${colors.text}`}>
           {data.averagePercentage.toFixed(1)}%
         </span>
-        <span className={`text-2xl font-semibold ${colors.text}`}>
+        <span className={`text-xl font-semibold ${colors.text}`}>
           {data.letterGrade}
         </span>
-      </div>
+      </motion.div>
 
       {/* Metrics Row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         {/* Student Count */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Users className="h-4 w-4" />
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Users className="h-3.5 w-3.5" />
           <span>{data.studentCount} students</span>
         </div>
 
         {/* Trend Badge */}
         <div
-          className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${getTrendColor()}`}
+          className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${getTrendColor()}`}
         >
           {getTrendIcon()}
           <span>{getTrendLabel()}</span>
@@ -127,11 +136,11 @@ export function ClassGradeCard({ data, onClick }: ClassGradeCardProps) {
       </div>
 
       {/* Last Updated */}
-      <div className="mt-3 border-t border-border/40 pt-3">
-        <p className="text-xs text-muted-foreground">
+      <div className="mt-3 border-t border-border/50 pt-2">
+        <p className="text-[10px] text-muted-foreground">
           Updated {new Date(data.lastUpdated).toLocaleDateString()}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -20,7 +20,7 @@ import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationBell } from '../common/NotificationBell';
 import { cn } from '../../lib/utils';
 
-const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg';
+const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-blur-md shadow-lg';
 
 // Loading component for lazy-loaded views
 function ViewLoading() {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertCircle, TrendingUp } from 'lucide-react';
+import { AlertCircle, TrendingUp, Heart, Users, Target, Activity, Sparkles } from 'lucide-react';
 import { ClassSentimentDial } from './ClassSentimentDial';
 import { ClassAverageSentimentChart } from './ClassAverageSentimentChart';
 import { ClassPulseSummary } from './ClassPulseSummary';
@@ -7,6 +7,8 @@ import { calculatePulseStatistics, getActivePulses } from '../../lib/pulseUtils'
 import { useAuth } from '../../contexts/AuthContext';
 import { getAtRiskCounts } from '../../lib/alerts/atRiskDetection';
 import { MOCK_STUDENT_IDS, MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
+import { motion } from 'framer-motion';
+import { cn } from '../../lib/utils';
 
 // TODO: Fetch from Supabase - Using mock data for now
 const mockTeacherClasses: any[] = [
@@ -203,112 +205,221 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
     };
   };
 
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  });
+
   return (
-    <div className="space-y-5 sm:space-y-8">
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Class Overview</h2>
-        <p className="text-sm sm:text-base text-muted-foreground">Real-time sentiment snapshot from today's pulse checks</p>
-      </div>
+    <div className="space-y-4">
+      {/* Compact Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+          Good morning, Teacher! 👋
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">{currentDate}</p>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {mockTeacherClasses.map(cls => {
-          const sentiment = getClassSentiment(cls.id);
-
-          return (
-            <ClassSentimentDial
-              key={cls.id}
-              className={cls.name}
-              studentCount={sentiment.studentCount}
-              averageSentiment={sentiment.avg}
-              topEmotions={sentiment.topEmotions}
-            />
-          );
-        })}
-      </div>
-
-      <ClassAverageSentimentChart />
-
-      <div>
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <h3 className="text-lg sm:text-xl font-bold text-foreground">Class Pulse Questionnaires</h3>
-          {onNavigateToLab && (
-            <button
-              onClick={() => onNavigateToLab()}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
-            >
-              View All in Hapi Lab →
-            </button>
-          )}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {mockTeacherClasses.map(cls => {
-            const pulseData = getClassPulseData(cls.id);
-
-            return (
-              <ClassPulseSummary
-                key={cls.id}
-                className={cls.name}
-                totalStudents={pulseData.totalStudents}
-                responded={pulseData.responded}
-                missing={pulseData.missing}
-                activePulses={pulseData.activePulses}
-                topAnswers={pulseData.topAnswers}
-                onViewDetails={onNavigateToLab}
-              />
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Care Alerts Summary Card */}
-      {!isLoadingAlerts && alertCounts.total > 0 && (
-        <div className="rounded-2xl border-2 border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 p-6 shadow-lg">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-600 text-white shadow-lg">
-                <AlertCircle className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">Care Alerts Active</h3>
-                <p className="text-sm text-muted-foreground">Students requiring attention</p>
-              </div>
+      {/* Main Dashboard Grid - Optimized Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left Column - Class Sentiment */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-5"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
+              <Heart className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-foreground">Class Sentiment Today</h2>
+              <p className="text-xs text-muted-foreground">Real-time emotional wellness</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
-              <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.total}</p>
-              <p className="text-xs text-muted-foreground mt-1">Total Alerts</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
-              <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.critical}</p>
-              <p className="text-xs text-muted-foreground mt-1">Critical</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
-              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{alertCounts.emotional}</p>
-              <p className="text-xs text-muted-foreground mt-1">Emotional</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
-              <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{alertCounts.academic}</p>
-              <p className="text-xs text-muted-foreground mt-1">Academic</p>
-            </div>
+          <div className="grid grid-cols-1 gap-3">
+            {mockTeacherClasses.map((cls, index) => {
+              const sentiment = getClassSentiment(cls.id);
+              return (
+                <motion.div
+                  key={cls.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
+                >
+                  <ClassSentimentDial
+                    className={cls.name}
+                    studentCount={sentiment.studentCount}
+                    averageSentiment={sentiment.avg}
+                    topEmotions={sentiment.topEmotions}
+                  />
+                </motion.div>
+              );
+            })}
           </div>
+        </motion.div>
 
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              // This will trigger the parent to change view to 'alerts'
-              // For now, just show a message
-              window.alert('Navigate to Care Alerts dashboard to view all alerts');
-            }}
-            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition shadow-md"
+        {/* Right Column - Pulse Checks & Stats */}
+        <div className="space-y-4">
+          {/* Quick Stats Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-5"
           >
-            <TrendingUp className="h-5 w-5" />
-            View All Care Alerts
-          </a>
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3">Quick Stats</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border border-blue-200/50 dark:border-blue-800/50">
+                <Users className="h-4 w-4 text-blue-600 dark:text-blue-400 mb-1" />
+                <p className="text-2xl font-bold text-foreground">{mockTeacherClasses.length}</p>
+                <p className="text-xs text-muted-foreground">Classes</p>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border border-purple-200/50 dark:border-purple-800/50">
+                <Activity className="h-4 w-4 text-purple-600 dark:text-purple-400 mb-1" />
+                <p className="text-2xl font-bold text-foreground">
+                  {mockTeacherClasses.reduce((sum, cls) => sum + (mockClassRosters[cls.id]?.length || 0), 0)}
+                </p>
+                <p className="text-xs text-muted-foreground">Students</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Active Pulse Checks */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-5"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
+                  <Target className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-foreground">Active Pulses</h2>
+                  <p className="text-xs text-muted-foreground">Engagement overview</p>
+                </div>
+              </div>
+              {onNavigateToLab && (
+                <button
+                  onClick={() => onNavigateToLab()}
+                  className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors duration-200 flex items-center gap-1"
+                >
+                  View All
+                  <TrendingUp className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              {mockTeacherClasses.map((cls, index) => {
+                const pulseData = getClassPulseData(cls.id);
+                return (
+                  <motion.div
+                    key={cls.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + index * 0.05 }}
+                  >
+                    <ClassPulseSummary
+                      className={cls.name}
+                      totalStudents={pulseData.totalStudents}
+                      responded={pulseData.responded}
+                      missing={pulseData.missing}
+                      activePulses={pulseData.activePulses}
+                      topAnswers={pulseData.topAnswers}
+                      onViewDetails={onNavigateToLab}
+                    />
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
-      )}
+      </div>
+
+      {/* Bottom Row - Chart and Alerts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Average Sentiment Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <ClassAverageSentimentChart />
+        </motion.div>
+
+        {/* Care Alerts & Tips Column */}
+        <div className="space-y-4">
+          {/* Care Alerts Card - Styled like Student Notifications */}
+          {!isLoadingAlerts && alertCounts.total > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="rounded-xl border border-rose-200/60 dark:border-rose-800/60 bg-gradient-to-br from-rose-50/50 to-orange-50/50 dark:from-rose-950/20 dark:to-orange-950/20 backdrop-blur-sm shadow-lg p-5"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-500/10 dark:bg-rose-500/20">
+                  <AlertCircle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-foreground">Care Alerts</h3>
+                  <p className="text-xs text-muted-foreground">Students need attention</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="text-center p-3 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
+                  <p className="text-2xl font-bold bg-gradient-to-br from-rose-600 to-orange-600 bg-clip-text text-transparent">
+                    {alertCounts.total}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
+                  <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.critical}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Critical</p>
+                </div>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.alert('Navigate to Care Alerts dashboard to view all alerts');
+                }}
+                className="w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-rose-500 to-orange-500 text-white text-sm font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                <AlertCircle className="h-4 w-4" />
+                View All Alerts
+              </button>
+            </motion.div>
+          )}
+
+          {/* Wellness Tip Card - Matching Student Style */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm shadow-lg p-5"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <h3 className="text-sm font-semibold text-foreground">Teacher Tip</h3>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Students with consistent check-ins show 40% better emotional resilience. Encourage daily participation!
+            </p>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

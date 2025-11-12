@@ -19,7 +19,7 @@ export function PulsePreview({
   expiresIn,
 }: PulsePreviewProps) {
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
       <div className="bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-950/40 dark:to-cyan-950/40 rounded-2xl p-6 border-2 border-blue-300 dark:border-blue-700 shadow-lg">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">

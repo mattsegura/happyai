@@ -26,15 +26,15 @@ export function PulseMetadataForm({
   onAllowAnonymousChange,
 }: PulseMetadataFormProps) {
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="space-y-5">
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
-          Select Class <span className="text-red-500 dark:text-red-400">*</span>
+        <label className="block text-sm font-medium text-foreground mb-2">
+          Select Class <span className="text-rose-500">*</span>
         </label>
         <select
           value={selectedClassId}
           onChange={(e) => onClassChange(e.target.value)}
-          className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 text-foreground"
+          className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-foreground"
         >
           <option value="">Choose a class...</option>
           {classes.map((cls) => (
@@ -46,43 +46,43 @@ export function PulseMetadataForm({
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
-          Pulse Title <span className="text-red-500 dark:text-red-400">*</span>
+        <label className="block text-sm font-medium text-foreground mb-2">
+          Pulse Title <span className="text-rose-500">*</span>
         </label>
         <input
           type="text"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="e.g., Week 5 Understanding Check"
-          className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 text-foreground placeholder:text-muted-foreground"
+          className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-foreground placeholder:text-muted-foreground"
           maxLength={100}
         />
-        <p className="text-xs text-muted-foreground mt-1 text-right">{title.length}/100</p>
+        <p className="text-xs text-muted-foreground mt-1.5 text-right">{title.length}/100</p>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           Description (Optional)
         </label>
         <textarea
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
           placeholder="Add any context or instructions for students..."
-          rows={4}
-          className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 text-foreground placeholder:text-muted-foreground resize-none"
+          rows={3}
+          className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-foreground placeholder:text-muted-foreground resize-none"
           maxLength={500}
         />
-        <p className="text-xs text-muted-foreground mt-1 text-right">{description.length}/500</p>
+        <p className="text-xs text-muted-foreground mt-1.5 text-right">{description.length}/500</p>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
-          Expires In <span className="text-red-500 dark:text-red-400">*</span>
+        <label className="block text-sm font-medium text-foreground mb-2">
+          Expires In <span className="text-rose-500">*</span>
         </label>
         <select
           value={expiresIn}
           onChange={(e) => onExpiresInChange(e.target.value)}
-          className="w-full px-4 py-3 bg-muted/30 dark:bg-muted/20 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300 text-foreground"
+          className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-foreground"
         >
           <option value="6">6 hours</option>
           <option value="12">12 hours</option>
@@ -92,36 +92,36 @@ export function PulseMetadataForm({
           <option value="168">1 week</option>
           <option value="336">2 weeks</option>
         </select>
-        <p className="text-xs text-muted-foreground mt-1">Students will have this much time to complete the pulse</p>
+        <p className="text-xs text-muted-foreground mt-1.5">Students will have this much time to complete the pulse</p>
       </div>
 
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-2 border-purple-200 dark:border-purple-800 rounded-xl p-5">
-        <div className="flex items-start space-x-3">
+      <div className="rounded-lg bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/50 p-4">
+        <div className="flex items-start gap-3">
           <input
             type="checkbox"
             id="anonymousToggle"
             checked={allowAnonymous}
             onChange={(e) => onAllowAnonymousChange?.(e.target.checked)}
-            className="w-5 h-5 mt-0.5 rounded border-2 border-purple-300 dark:border-purple-600 text-purple-600 dark:text-purple-500 focus:ring-2 focus:ring-purple-400 dark:focus:ring-purple-600 cursor-pointer"
+            className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/50 cursor-pointer"
           />
           <div className="flex-1">
-            <label htmlFor="anonymousToggle" className="font-semibold text-purple-900 dark:text-purple-200 cursor-pointer block mb-1">
+            <label htmlFor="anonymousToggle" className="font-medium text-foreground text-sm cursor-pointer block mb-1">
               Allow Anonymous Responses
             </label>
-            <p className="text-sm text-purple-800 dark:text-purple-300">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               When enabled, students can choose to submit their responses anonymously. Their names will be hidden from you and other students, helping them feel more comfortable sharing honest feedback.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-blue-50 dark:bg-blue-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4">
-        <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">Tips for Creating Great Pulses</h4>
-        <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
-          <li>• Keep titles clear and specific</li>
-          <li>• Use descriptions to provide context or instructions</li>
-          <li>• Consider your students' schedules when setting expiration times</li>
-          <li>• Mix different question types to keep engagement high</li>
+      <div className="rounded-lg bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 p-4">
+        <h4 className="font-semibold text-foreground text-sm mb-2.5">Tips for Creating Great Pulses</h4>
+        <ul className="text-xs text-muted-foreground space-y-1.5">
+          <li className="flex gap-2"><span className="text-primary">•</span><span>Keep titles clear and specific</span></li>
+          <li className="flex gap-2"><span className="text-primary">•</span><span>Use descriptions to provide context or instructions</span></li>
+          <li className="flex gap-2"><span className="text-primary">•</span><span>Consider your students' schedules when setting expiration times</span></li>
+          <li className="flex gap-2"><span className="text-primary">•</span><span>Mix different question types to keep engagement high</span></li>
         </ul>
       </div>
     </div>

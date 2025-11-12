@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   BarChart,
   Bar,
@@ -167,21 +168,21 @@ export function AssignmentBalanceReport({
 
   if (loading) {
     return (
-      <Card className="p-6">
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md p-4">
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
-      </Card>
+      </div>
     );
   }
 
   if (!metrics) {
     return (
-      <Card className="p-6">
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md p-4">
         <div className="text-center py-12 text-muted-foreground">
           No assignment data available
         </div>
-      </Card>
+      </div>
     );
   }
 
@@ -189,74 +190,110 @@ export function AssignmentBalanceReport({
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Assignments</p>
-              <p className="text-2xl font-bold">{metrics.totalAssignments}</p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-primary" />
             </div>
-            <Calendar className="h-8 w-8 text-primary opacity-50" />
           </div>
-        </Card>
+          <p className="text-[10px] text-muted-foreground mb-1">Total Assignments</p>
+          <p className="text-2xl font-bold text-foreground">{metrics.totalAssignments}</p>
+        </motion.div>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Avg Per Week</p>
-              <p className="text-2xl font-bold">{metrics.averagePerWeek.toFixed(1)}</p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-primary" />
             </div>
-            <TrendingUp className="h-8 w-8 text-primary opacity-50" />
           </div>
-        </Card>
+          <p className="text-[10px] text-muted-foreground mb-1">Avg Per Week</p>
+          <p className="text-2xl font-bold text-foreground">{metrics.averagePerWeek.toFixed(1)}</p>
+        </motion.div>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Busiest Week</p>
-              <p className="text-2xl font-bold">{metrics.busiestWeek.assignmentCount}</p>
-              <p className="text-xs text-muted-foreground">
-                {metrics.busiestWeek.totalHours.toFixed(1)}h workload
-              </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/10 to-red-500/10 dark:from-orange-500/20 dark:to-red-500/20 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-orange-500" />
             </div>
-            <AlertTriangle className="h-8 w-8 text-orange-500 opacity-50" />
           </div>
-        </Card>
+          <p className="text-[10px] text-muted-foreground mb-1">Busiest Week</p>
+          <p className="text-2xl font-bold text-foreground">{metrics.busiestWeek.assignmentCount}</p>
+          <p className="text-[10px] text-muted-foreground">
+            {metrics.busiestWeek.totalHours.toFixed(1)}h workload
+          </p>
+        </motion.div>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Distribution</p>
-              <p className="text-2xl font-bold">{metrics.standardDeviation.toFixed(1)}</p>
-              <p className="text-xs text-muted-foreground">
-                {metrics.standardDeviation <= 1.5 ? 'Balanced' : 'Variable'}
-              </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <AlertCircle className="w-4 h-4 text-primary" />
             </div>
-            <AlertCircle className="h-8 w-8 text-primary opacity-50" />
           </div>
-        </Card>
+          <p className="text-[10px] text-muted-foreground mb-1">Distribution</p>
+          <p className="text-2xl font-bold text-foreground">{metrics.standardDeviation.toFixed(1)}</p>
+          <p className="text-[10px] text-muted-foreground">
+            {metrics.standardDeviation <= 1.5 ? 'Balanced' : 'Variable'}
+          </p>
+        </motion.div>
       </div>
 
       {/* Assignment Distribution by Type */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Assignment Types</h3>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <h3 className="text-sm font-bold text-foreground mb-4">Assignment Types</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {(Object.keys(metrics.distributionByType) as Array<keyof typeof metrics.distributionByType>).map((type) => (
-            <div key={type} className="text-center">
+          {(Object.keys(metrics.distributionByType) as Array<keyof typeof metrics.distributionByType>).map((type, index) => (
+            <motion.div
+              key={type}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
+              className="text-center"
+            >
               <div
-                className="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg"
+                className="w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg shadow-md"
                 style={{ backgroundColor: assignmentTypeColors[type] }}
               >
                 {metrics.distributionByType[type]}
               </div>
-              <p className="text-sm font-medium">{assignmentTypeLabels[type]}</p>
-            </div>
+              <p className="text-[10px] font-medium text-foreground">{assignmentTypeLabels[type]}</p>
+            </motion.div>
           ))}
         </div>
-      </Card>
+      </motion.div>
 
       {/* Weekly Distribution Chart */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Semester Timeline - Weekly Distribution</h3>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.6 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <h3 className="text-sm font-bold text-foreground mb-4">Semester Timeline - Weekly Distribution</h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={weeklyData} margin={{ top: 20, right: 30, bottom: 80, left: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -316,28 +353,36 @@ export function AssignmentBalanceReport({
             <Bar dataKey="discussion" stackId="a" fill={assignmentTypeColors.discussion} name="Discussion" />
           </BarChart>
         </ResponsiveContainer>
-      </Card>
+      </motion.div>
 
       {/* Workload Density Heat Map */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Workload Density - Weekly View</h3>
-        <div className="flex flex-wrap gap-2">
-          {weeklyData.map((week) => (
-            <div
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.7 }}
+        className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <h3 className="text-sm font-bold text-foreground mb-4">Workload Density - Weekly View</h3>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {weeklyData.map((week, index) => (
+            <motion.div
               key={week.week}
-              className="flex flex-col items-center p-3 rounded-lg border"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.8 + index * 0.05 }}
+              className="flex flex-col items-center p-3 rounded-lg border shadow-md"
               style={{
                 backgroundColor: getStressColor(week.total),
-                opacity: 0.8,
+                opacity: 0.9,
               }}
             >
-              <span className="text-xs font-medium text-white">{week.weekLabel}</span>
+              <span className="text-[10px] font-medium text-white">{week.weekLabel}</span>
               <span className="text-lg font-bold text-white">{week.total}</span>
-              <span className="text-xs text-white">{week.totalHours.toFixed(1)}h</span>
-            </div>
+              <span className="text-[10px] text-white">{week.totalHours.toFixed(1)}h</span>
+            </motion.div>
           ))}
         </div>
-        <div className="mt-4 flex items-center gap-4 text-sm">
+        <div className="mt-4 flex items-center gap-4 text-[10px] text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: '#10B981' }}></div>
             <span>Low (0-3)</span>
@@ -355,22 +400,30 @@ export function AssignmentBalanceReport({
             <span>Extreme (8+)</span>
           </div>
         </div>
-      </Card>
+      </motion.div>
 
       {/* Recommendations */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">📋 Recommendations</h3>
-        <div className="space-y-3">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.8 }}
+        className="rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+      >
+        <h3 className="text-sm font-bold text-foreground mb-4">Recommendations</h3>
+        <div className="space-y-2">
           {getRecommendations().map((rec, index) => (
-            <div
+            <motion.div
               key={index}
-              className="p-3 rounded-lg bg-muted/50 text-sm"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.9 + index * 0.1 }}
+              className="p-3 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-primary/20 text-[10px] text-foreground"
             >
               {rec}
-            </div>
+            </motion.div>
           ))}
         </div>
-      </Card>
+      </motion.div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, Calendar, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { getStaticClassWeekData, getStaticClassMonthData, getStaticClassCustomData } from '../../lib/staticAnalyticsData';
 
 // TODO: Fetch from Supabase
@@ -80,45 +81,45 @@ export function ClassAverageSentimentChart() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-3xl p-6 border-2 border-blue-200 dark:border-blue-500/30 shadow-lg">
-      <div className="flex items-center justify-between mb-6">
+    <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
-            <TrendingUp className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 rounded-lg flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Class Sentiment Journey</h3>
-            <p className="text-xs text-muted-foreground">Track class emotional wellness over time</p>
+            <h3 className="text-sm font-bold text-foreground">Class Sentiment Journey</h3>
+            <p className="text-[10px] text-muted-foreground">Track emotional wellness over time</p>
           </div>
         </div>
 
-        <div className="flex bg-muted dark:bg-gray-700 rounded-lg p-1">
+        <div className="flex bg-muted/50 dark:bg-muted rounded-lg p-0.5">
           <button
             onClick={() => setTimeRange('week')}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
               timeRange === 'week'
-                ? 'bg-background text-blue-600 shadow-md dark:bg-white dark:text-blue-600'
-                : 'text-muted-foreground hover:text-foreground dark:text-gray-300 dark:hover:text-white'
+                ? 'bg-background text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Week
           </button>
           <button
             onClick={() => setTimeRange('month')}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
               timeRange === 'month'
-                ? 'bg-background text-blue-600 shadow-md dark:bg-white dark:text-blue-600'
-                : 'text-muted-foreground hover:text-foreground dark:text-gray-300 dark:hover:text-white'
+                ? 'bg-background text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Month
           </button>
           <button
             onClick={() => setShowCustomPicker(true)}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all duration-200 ${
               timeRange === 'custom'
-                ? 'bg-background text-blue-600 shadow-md dark:bg-white dark:text-blue-600'
-                : 'text-muted-foreground hover:text-foreground dark:text-gray-300 dark:hover:text-white'
+                ? 'bg-background text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Custom
@@ -126,15 +127,15 @@ export function ClassAverageSentimentChart() {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-3 flex flex-wrap gap-1.5">
         {mockTeacherClasses.map(cls => (
           <button
             key={cls.id}
             onClick={() => setSelectedClassId(cls.id)}
-            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
               selectedClassId === cls.id
-                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white'
+                ? 'bg-gradient-to-r from-primary to-accent text-white shadow-sm'
+                : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
             {cls.name}
@@ -142,48 +143,50 @@ export function ClassAverageSentimentChart() {
         ))}
       </div>
 
-      <div className="mb-4 flex items-center space-x-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-          <span className="text-sm text-muted-foreground">
+      <div className="mb-3 flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+          <span className="text-xs text-muted-foreground">
             Avg: <span className="font-bold text-foreground">{average.toFixed(1)}/6.0</span>
           </span>
         </div>
-        <div className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-          trend === 'up' ? 'bg-green-900/50 text-green-400 dark:bg-green-500/20 dark:text-green-400' : 'bg-orange-900/50 text-orange-400 dark:bg-orange-500/20 dark:text-orange-400'
+        <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
+          trend === 'up' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'
         }`}>
-          <TrendingUp className={`w-4 h-4 ${trend === 'down' ? 'rotate-180' : ''}`} />
-          <span className="text-xs font-semibold">{trend === 'up' ? 'Improving' : 'Declining'}</span>
+          <TrendingUp className={`w-3 h-3 ${trend === 'down' ? 'rotate-180' : ''}`} />
+          <span className="text-[10px] font-semibold">{trend === 'up' ? 'Improving' : 'Declining'}</span>
         </div>
       </div>
 
-      <div className="relative h-48 mb-2 ml-8">
-        <div className="absolute inset-0 flex items-end justify-between gap-1">
+      <div className="relative h-40 mb-2 ml-6">
+        <div className="absolute inset-0 flex items-end justify-between gap-0.5">
           {currentData.map((point, index) => {
-            const heightPixels = ((point.avgSentiment - minValue) / (maxValue - minValue)) * 192;
+            const heightPixels = ((point.avgSentiment - minValue) / (maxValue - minValue)) * 160;
 
             return (
               <div key={index} className="flex-1 group relative" style={{ height: '100%' }}>
                 <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center">
-                  <div
-                    className="w-full rounded-t-lg transition-all duration-500 cursor-pointer hover:opacity-80"
+                  <motion.div
+                    className="w-full rounded-t-md cursor-pointer hover:opacity-80 transition-opacity"
                     style={{
-                      height: `${heightPixels}px`,
                       backgroundColor: getBlueShade(point.avgSentiment, isDark),
-                      minHeight: '12px'
+                      minHeight: '8px'
                     }}
+                    initial={{ height: 0 }}
+                    animate={{ height: `${heightPixels}px` }}
+                    transition={{ duration: 0.6, delay: index * 0.05, ease: "easeOut" }}
                   >
-                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none">
-                      Avg: {point.avgSentiment.toFixed(1)}/6
+                    <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-gray-800 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none">
+                      {point.avgSentiment.toFixed(1)}/6
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div className="absolute -left-7 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground">
+        <div className="absolute -left-5 top-0 bottom-0 flex flex-col justify-between text-[10px] text-muted-foreground">
           <span>6</span>
           <span>5</span>
           <span>4</span>
@@ -193,7 +196,7 @@ export function ClassAverageSentimentChart() {
         </div>
       </div>
 
-      <div className="flex justify-between text-xs text-muted-foreground mt-2">
+      <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
         {currentData.map((point, index) => {
           const label = getDateLabel(point.date, index);
           if (timeRange === 'week' || label) {
@@ -207,46 +210,51 @@ export function ClassAverageSentimentChart() {
         })}
       </div>
 
-      <div className="mt-4 pt-4 border-t border-border">
-        <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-          <Calendar className="w-4 h-4" />
+      <div className="mt-3 pt-3 border-t border-border/50">
+        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <Calendar className="w-3 h-3" />
           <span>Last updated: Today</span>
         </div>
       </div>
 
       {showCustomPicker && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-6 rounded-t-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div
+            className="bg-card rounded-xl shadow-2xl w-full max-w-md border border-border"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="bg-gradient-to-r from-primary to-accent p-4 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">Custom Date Range</h3>
-                  <p className="text-sm text-white/80">Select your preferred time period</p>
+                  <h3 className="text-base font-bold text-white">Custom Date Range</h3>
+                  <p className="text-xs text-white/80">Select your preferred time period</p>
                 </div>
                 <button
                   onClick={() => setShowCustomPicker(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all duration-200"
+                  className="p-1.5 hover:bg-white/20 rounded-lg transition-all duration-200"
                 >
-                  <X className="w-5 h-5 text-white" />
+                  <X className="w-4 h-4 text-white" />
                 </button>
               </div>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-3">
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
                   Start Date
                 </label>
                 <input
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 focus:bg-background transition-all duration-300 text-foreground"
+                  className="w-full px-3 py-2 bg-muted/30 border border-border rounded-lg focus:outline-none focus:border-primary focus:bg-background transition-all duration-200 text-sm text-foreground"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
                   End Date
                 </label>
                 <input
@@ -254,27 +262,27 @@ export function ClassAverageSentimentChart() {
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
                   min={customStartDate}
-                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 focus:bg-background transition-all duration-300 text-foreground"
+                  className="w-full px-3 py-2 bg-muted/30 border border-border rounded-lg focus:outline-none focus:border-primary focus:bg-background transition-all duration-200 text-sm text-foreground"
                 />
               </div>
             </div>
 
-            <div className="border-t border-border p-6 flex justify-end space-x-3">
+            <div className="border-t border-border/50 p-4 flex justify-end gap-2">
               <button
                 onClick={() => setShowCustomPicker(false)}
-                className="px-6 py-3 bg-muted text-muted-foreground rounded-xl font-semibold hover:bg-muted/80 transition-all duration-300"
+                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg text-sm font-semibold hover:bg-muted/80 transition-all duration-200"
               >
                 Cancel
               </button>
               <button
                 onClick={applyCustomRange}
                 disabled={!customStartDate || !customEndDate}
-                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-bold hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
+                className="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-sm font-bold hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:transform-none"
               >
                 Apply Range
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>

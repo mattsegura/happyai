@@ -6,9 +6,10 @@
  */
 
 import { useState } from 'react';
-import { Heart, Info } from 'lucide-react';
+import { Heart, Info, Sparkles } from 'lucide-react';
 import { HapiMomentsOversight } from './moments/HapiMomentsOversight';
 import { TeacherMomentsMetrics } from './moments/TeacherMomentsMetrics';
+import { motion } from 'framer-motion';
 
 function HapiMomentsView() {
   // For demo/mock purposes, using a sample class
@@ -19,41 +20,60 @@ function HapiMomentsView() {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header with Info */}
-      <div className="bg-gradient-to-r from-pink-50 dark:from-pink-950/30 to-rose-50 dark:to-rose-950/30 rounded-xl p-6 border-2 border-pink-200 dark:border-pink-800">
+    <div className="space-y-4">
+      {/* Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+          <Sparkles className="h-7 w-7 text-primary" />
+          Hapi Moments
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Monitor your class's culture of positivity
+        </p>
+      </motion.div>
+
+      {/* Info Card - Updated Styling */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-xl border border-border/60 bg-gradient-to-br from-pink-50/50 to-rose-50/50 dark:from-pink-950/20 dark:to-rose-950/20 backdrop-blur-sm p-5"
+      >
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Heart className="w-6 h-6 text-white" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex-shrink-0">
+            <Heart className="h-6 w-6 text-white" />
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
-              Hapi Moments Oversight
-              <Info className="w-5 h-5 text-pink-500" />
-            </h2>
+            <div className="flex items-center gap-2 mb-2">
+              <h2 className="text-base font-bold text-foreground">Class Oversight</h2>
+              <Info className="h-4 w-4 text-primary" />
+            </div>
             <p className="text-sm text-muted-foreground mb-3">
-              Monitor your class's culture of positivity and recognition. Track how students (and you) spread kindness through Hapi Moments.
+              Track how students spread kindness through Hapi Moments.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-              <div className="bg-card rounded-lg p-3 border border-border">
+              <div className="bg-card/50 backdrop-blur-sm rounded-lg p-3 border border-border/50">
                 <p className="font-semibold text-foreground mb-1">👀 Full Visibility</p>
-                <p className="text-muted-foreground">See all moments shared within your class</p>
+                <p className="text-muted-foreground">See all class moments</p>
               </div>
-              <div className="bg-card rounded-lg p-3 border border-border">
-                <p className="font-semibold text-foreground mb-1">📊 Culture Analytics</p>
-                <p className="text-muted-foreground">Track participation and identify trends</p>
+              <div className="bg-card/50 backdrop-blur-sm rounded-lg p-3 border border-border/50">
+                <p className="font-semibold text-foreground mb-1">📊 Analytics</p>
+                <p className="text-muted-foreground">Track participation</p>
               </div>
-              <div className="bg-card rounded-lg p-3 border border-border">
-                <p className="font-semibold text-foreground mb-1">💡 Encouragement Tools</p>
-                <p className="text-muted-foreground">Nudge students who need engagement</p>
+              <div className="bg-card/50 backdrop-blur-sm rounded-lg p-3 border border-border/50">
+                <p className="font-semibold text-foreground mb-1">💡 Tools</p>
+                <p className="text-muted-foreground">Encourage engagement</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column: Class Oversight */}
         <div>
           <HapiMomentsOversight classId={selectedClass.id} className={selectedClass.name} />

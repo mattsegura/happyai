@@ -12,6 +12,7 @@
  * Phase 3: Student Search & Reports
  */
 
+import { motion } from 'framer-motion';
 import { Target, MessageCircle, Heart, Calendar } from 'lucide-react';
 import type { StudentEngagementData } from '../../../lib/students/studentDataService';
 
@@ -30,20 +31,30 @@ export function StudentEngagementCard({ data }: StudentEngagementCardProps) {
   const engagementLevel = getEngagementLevel(data.overallEngagement);
 
   return (
-    <div className="rounded-2xl border-2 border-border bg-card p-6 shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+    >
       {/* Header */}
-      <div className="mb-6 flex items-center space-x-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 shadow-md">
-          <Target className="h-5 w-5 text-white" />
+      <div className="mb-3 flex items-center gap-2">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+          <Target className="w-4 h-4 text-primary" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-foreground">Engagement Metrics</h3>
-          <p className="text-sm text-muted-foreground">Participation and activity tracking</p>
+          <h3 className="text-sm font-bold text-foreground">Engagement Metrics</h3>
+          <p className="text-[10px] text-muted-foreground">Participation and activity tracking</p>
         </div>
       </div>
 
       {/* Overall Engagement Score */}
-      <div className="mb-6 rounded-xl bg-gradient-to-br from-purple-50 to-indigo-50 p-4 dark:from-purple-950/30 dark:to-indigo-950/30">
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+        className="mb-4 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 p-3 dark:from-purple-950/30 dark:to-indigo-950/30"
+      >
         <div className="mb-2 flex items-center justify-between">
           <p className="text-sm font-semibold text-muted-foreground">Overall Engagement</p>
           <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${engagementLevel.color}`}>
@@ -63,10 +74,10 @@ export function StudentEngagementCard({ data }: StudentEngagementCardProps) {
             style={{ width: `${data.overallEngagement}%` }}
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Engagement Breakdown */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Morning Pulse Rate */}
         <div>
           <div className="mb-2 flex items-center justify-between">
@@ -130,7 +141,7 @@ export function StudentEngagementCard({ data }: StudentEngagementCardProps) {
       </div>
 
       {/* Hapi Moments */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-lg border border-pink-200 bg-pink-50 p-3 dark:border-pink-500/30 dark:bg-pink-900/20">
           <div className="flex items-center space-x-2">
             <Heart className="h-4 w-4 text-pink-600 dark:text-pink-400" />
@@ -157,6 +168,6 @@ export function StudentEngagementCard({ data }: StudentEngagementCardProps) {
           <p className="text-sm font-semibold text-foreground">{new Date(data.lastCanvasLogin).toLocaleString()}</p>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

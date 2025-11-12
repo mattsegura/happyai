@@ -14,6 +14,7 @@
 
 import { useState, useEffect } from 'react';
 import { Heart, Search, Filter, TrendingUp, Users, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface HapiMoment {
   id: string;
@@ -177,66 +178,94 @@ export function HapiMomentsOversight({ classId, className }: HapiMomentsOversigh
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-pink-50 dark:from-pink-950/30 to-rose-50 dark:to-rose-950/30 rounded-xl p-6 shadow-md border-2 border-pink-200 dark:border-pink-800">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-pink-900 dark:text-pink-100">Total Moments</h4>
-            <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+            <h4 className="text-sm font-bold text-foreground">Total Moments</h4>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <Heart className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-pink-600 dark:text-pink-400">{totalMoments}</p>
-          <p className="text-xs text-pink-700 dark:text-pink-300 mt-1">All time</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{totalMoments}</p>
+          <p className="text-xs text-muted-foreground mt-1">All time</p>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-purple-50 dark:from-purple-950/30 to-indigo-50 dark:to-indigo-950/30 rounded-xl p-6 shadow-md border-2 border-purple-200 dark:border-purple-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-purple-900 dark:text-purple-100">Avg Per Student</h4>
-            <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <h4 className="text-sm font-bold text-foreground">Avg Per Student</h4>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{avgPerStudent.toFixed(1)}</p>
-          <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">Moments per student</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{avgPerStudent.toFixed(1)}</p>
+          <p className="text-xs text-muted-foreground mt-1">Moments per student</p>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-blue-50 dark:from-blue-950/30 to-cyan-50 dark:to-cyan-950/30 rounded-xl p-6 shadow-md border-2 border-blue-200 dark:border-blue-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100">Top Senders</h4>
-            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <h4 className="text-sm font-bold text-foreground">Top Senders</h4>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{topSenders.length}</p>
-          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">Active contributors</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{topSenders.length}</p>
+          <p className="text-xs text-muted-foreground mt-1">Active contributors</p>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-orange-50 dark:from-orange-950/30 to-yellow-50 dark:to-yellow-950/30 rounded-xl p-6 shadow-md border-2 border-orange-200 dark:border-orange-800">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+        >
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-orange-900 dark:text-orange-100">No Activity</h4>
-            <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <h4 className="text-sm font-bold text-foreground">No Activity</h4>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 flex items-center justify-center">
+              <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+            </div>
           </div>
-          <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{studentsWithNoActivity.length}</p>
-          <p className="text-xs text-orange-700 dark:text-orange-300 mt-1">Need encouragement</p>
-        </div>
+          <p className="text-2xl font-bold text-foreground">{studentsWithNoActivity.length}</p>
+          <p className="text-xs text-muted-foreground mt-1">Need encouragement</p>
+        </motion.div>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-card rounded-xl p-4 shadow-md border border-border">
+      <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
         <div className="flex items-center space-x-3">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search messages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-background border-2 border-border rounded-lg focus:outline-none focus:border-pink-400 transition-all duration-300 text-foreground"
+              className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:border-pink-400 transition-all duration-300 text-foreground text-sm"
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-4 py-2 rounded-lg font-semibold flex items-center space-x-2 transition-all duration-300 ${
+            className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition-all duration-300 ${
               showFilters
                 ? 'bg-pink-500 text-white'
-                : 'bg-background border-2 border-border text-foreground hover:bg-muted'
+                : 'bg-background border border-border text-foreground hover:bg-muted'
             }`}
           >
-            <Filter className="w-5 h-5" />
+            <Filter className="w-4 h-4" />
             <span>Filters</span>
           </button>
         </div>
@@ -294,18 +323,18 @@ export function HapiMomentsOversight({ classId, className }: HapiMomentsOversigh
 
       {/* Top Senders */}
       {topSenders.length > 0 && (
-        <div className="bg-card rounded-xl p-6 shadow-md border border-border">
-          <h4 className="text-lg font-bold text-foreground mb-4">Top Contributors</h4>
-          <div className="space-y-3">
+        <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
+          <h4 className="text-sm font-bold text-foreground mb-3">Top Contributors</h4>
+          <div className="space-y-2">
             {topSenders.map((student, index) => (
               <div key={student.id} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  <div className="w-7 h-7 bg-gradient-to-br from-pink-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
                     {index + 1}
                   </div>
-                  <span className="font-semibold text-foreground">{student.name}</span>
+                  <span className="text-sm font-semibold text-foreground">{student.name}</span>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-xs text-muted-foreground">
                   {student.sent_count} sent · {student.received_count} received
                 </div>
               </div>
@@ -316,18 +345,18 @@ export function HapiMomentsOversight({ classId, className }: HapiMomentsOversigh
 
       {/* Encouragement Suggestions */}
       {studentsWithNoActivity.length > 0 && (
-        <div className="bg-yellow-50 dark:bg-yellow-950/30 rounded-xl p-6 border-2 border-yellow-200 dark:border-yellow-800">
-          <h4 className="text-lg font-bold text-yellow-900 dark:text-yellow-100 mb-2">
-            💡 Encouragement Suggestions
+        <div className="bg-yellow-50 dark:bg-yellow-950/30 rounded-xl p-4 border border-yellow-200 dark:border-yellow-800 shadow-md">
+          <h4 className="text-sm font-bold text-yellow-900 dark:text-yellow-100 mb-2">
+            Encouragement Suggestions
           </h4>
-          <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-3">
+          <p className="text-xs text-yellow-800 dark:text-yellow-200 mb-3">
             These students haven't sent or received moments yet:
           </p>
           <div className="flex flex-wrap gap-2">
             {studentsWithNoActivity.slice(0, 5).map((student) => (
               <span
                 key={student.id}
-                className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 rounded-full text-sm font-semibold"
+                className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-100 rounded-full text-xs font-semibold"
               >
                 {student.name}
               </span>
@@ -338,40 +367,43 @@ export function HapiMomentsOversight({ classId, className }: HapiMomentsOversigh
 
       {/* Moments Feed */}
       <div>
-        <h4 className="text-lg font-bold text-foreground mb-4">
+        <h4 className="text-sm font-bold text-foreground mb-3">
           All Moments ({filteredMoments.length})
         </h4>
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-card rounded-xl p-6 shadow-md animate-pulse border border-border">
-                <div className="h-4 bg-muted rounded w-1/4 mb-4"></div>
-                <div className="h-6 bg-muted rounded w-3/4"></div>
+              <div key={i} className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md p-4 animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/4 mb-3"></div>
+                <div className="h-5 bg-muted rounded w-3/4"></div>
               </div>
             ))}
           </div>
         ) : filteredMoments.length === 0 ? (
-          <div className="bg-gradient-to-br from-pink-50 dark:from-pink-950/30 to-rose-50 dark:to-rose-950/30 rounded-2xl p-12 border-2 border-pink-200 dark:border-pink-800 text-center">
-            <Heart className="w-16 h-16 text-pink-400 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-foreground mb-2">No Moments Yet</h3>
-            <p className="text-muted-foreground">
+          <div className="bg-gradient-to-br from-pink-50 dark:from-pink-950/30 to-rose-50 dark:to-rose-950/30 rounded-xl p-8 border border-pink-200 dark:border-pink-800 text-center shadow-md">
+            <Heart className="w-12 h-12 text-pink-400 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-foreground mb-2">No Moments Yet</h3>
+            <p className="text-sm text-muted-foreground">
               Encourage students to send positive moments to their classmates!
             </p>
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredMoments.map((moment) => (
-              <div
+            {filteredMoments.map((moment, index) => (
+              <motion.div
                 key={moment.id}
-                className="bg-gradient-to-br from-pink-50 dark:from-pink-950/30 to-rose-50 dark:to-rose-950/30 rounded-xl p-6 shadow-md border-2 border-pink-200 dark:border-pink-800 hover:shadow-lg transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-gradient-to-br from-pink-50 dark:from-pink-950/30 to-rose-50 dark:to-rose-950/30 rounded-xl p-4 shadow-md border border-pink-200 dark:border-pink-800 hover:shadow-lg transition-all duration-200"
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                    <div className="w-7 h-7 bg-pink-500 rounded-full flex items-center justify-center">
                       <Heart className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">
+                      <p className="text-sm font-semibold text-foreground">
                         {moment.sender.full_name}
                         <span className="text-muted-foreground font-normal"> → </span>
                         {moment.recipient.full_name}
@@ -380,8 +412,8 @@ export function HapiMomentsOversight({ classId, className }: HapiMomentsOversigh
                   </div>
                   <span className="text-xs text-muted-foreground">{formatTime(moment.created_at)}</span>
                 </div>
-                <p className="text-foreground leading-relaxed">{moment.message}</p>
-              </div>
+                <p className="text-sm text-foreground leading-relaxed">{moment.message}</p>
+              </motion.div>
             ))}
           </div>
         )}

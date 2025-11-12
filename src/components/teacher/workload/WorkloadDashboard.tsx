@@ -16,8 +16,8 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { Card } from '../../ui/card';
 import { AssignmentBalanceReport } from './AssignmentBalanceReport';
 import { StressCalendar } from './StressCalendar';
-import { BarChart3, Calendar, Info } from 'lucide-react';
-import { cn } from '../../../lib/utils';
+import { BarChart3, Calendar, Info, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type TabType = 'balance' | 'stress';
 
@@ -71,94 +71,112 @@ function WorkloadDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Workload Management</h1>
-        <p className="text-muted-foreground">
-          Balance assignments across the semester and avoid scheduling conflicts
+    <div className="space-y-4">
+      {/* Header - Matching Student View */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+          <Activity className="h-7 w-7 text-primary" />
+          Workload Management
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Balance assignments and avoid scheduling conflicts
         </p>
-      </div>
+      </motion.div>
 
-      {/* Info Card */}
-      <Card className="p-4 bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800">
+      {/* Info Card - Updated Styling */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-xl border border-border/60 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 backdrop-blur-sm p-5"
+      >
         <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-900 dark:text-blue-100">
-            <p className="font-medium mb-1">Optimize Student Workload</p>
-            <p>
-              Use the <strong>Assignment Balance Report</strong> to distribute your assignments evenly across the semester.
-              Use the <strong>AI Stress Calendar</strong> to see when students have heavy workload from other classes
-              and avoid scheduling conflicts.
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 flex-shrink-0">
+            <Info className="h-5 w-5 text-primary" />
+          </div>
+          <div className="text-sm text-foreground">
+            <p className="font-semibold mb-2">Optimize Student Workload</p>
+            <p className="text-muted-foreground">
+              Use the <strong>Assignment Balance Report</strong> to distribute assignments evenly.
+              Use the <strong>AI Stress Calendar</strong> to see when students have heavy workload from other classes.
             </p>
           </div>
         </div>
-      </Card>
+      </motion.div>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-2 border-b">
-        <button
-          onClick={() => setActiveTab('balance')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 font-medium transition-colors border-b-2 -mb-px',
-            activeTab === 'balance'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          )}
+      {/* Tab Navigation - Pill Style */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex overflow-x-auto rounded-full border border-border bg-card p-1 text-sm font-semibold"
+      >
+        {[
+          { id: 'balance', label: 'Assignment Balance', icon: BarChart3 },
+          { id: 'stress', label: 'Stress Calendar', icon: Calendar },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as TabType)}
+              className={`mr-1 flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 last:mr-0 transition ${
+                isActive ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-primary'
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </motion.div>
+
+      {/* Tab Content - Animated */}
+      {activeTab === 'balance' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="animate-in fade-in duration-300"
         >
-          <BarChart3 className="h-5 w-5" />
-          Assignment Balance Report
-        </button>
-        <button
-          onClick={() => setActiveTab('stress')}
-          className={cn(
-            'flex items-center gap-2 px-4 py-3 font-medium transition-colors border-b-2 -mb-px',
-            activeTab === 'stress'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          )}
+          <div className="mb-4 rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-5">
+            <h2 className="text-base font-bold text-foreground mb-2">Assignment Distribution Analysis</h2>
+            <p className="text-sm text-muted-foreground">
+              View how your assignments are distributed across the semester. Aim for balanced workload
+              to maintain consistent student engagement.
+            </p>
+          </div>
+          <AssignmentBalanceReport
+            teacherId={user.id}
+            semesterStart={semesterStart}
+            semesterEnd={semesterEnd}
+          />
+        </motion.div>
+      )}
+
+      {activeTab === 'stress' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="animate-in fade-in duration-300"
         >
-          <Calendar className="h-5 w-5" />
-          AI Stress Calendar
-        </button>
-      </div>
-
-      {/* Tab Content */}
-      <div className="mt-6">
-        {activeTab === 'balance' && (
-          <div>
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Assignment Distribution Analysis</h2>
-              <p className="text-muted-foreground">
-                View how your assignments are distributed across the semester. Aim for balanced workload
-                to maintain consistent student engagement and avoid overwhelming students during peak weeks.
-              </p>
-            </div>
-            <AssignmentBalanceReport
-              teacherId={user.id}
-              semesterStart={semesterStart}
-              semesterEnd={semesterEnd}
-            />
+          <div className="mb-4 rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-5">
+            <h2 className="text-base font-bold text-foreground mb-2">Cross-Class Workload Visibility</h2>
+            <p className="text-sm text-muted-foreground">
+              See when your students have assignments and exams in their other classes.
+              This helps you avoid scheduling major assessments on days when students are already overloaded.
+            </p>
           </div>
-        )}
-
-        {activeTab === 'stress' && (
-          <div>
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Cross-Class Workload Visibility</h2>
-              <p className="text-muted-foreground">
-                See when your students have assignments and exams in their other classes.
-                This helps you avoid scheduling major assessments on days when students are already overloaded.
-              </p>
-            </div>
-            <StressCalendar
-              teacherId={user.id}
-              semesterStart={semesterStart}
-              semesterEnd={semesterEnd}
-            />
-          </div>
-        )}
-      </div>
+          <StressCalendar
+            teacherId={user.id}
+            semesterStart={semesterStart}
+            semesterEnd={semesterEnd}
+          />
+        </motion.div>
+      )}
 
       {/* Best Practices */}
       <Card className="p-6 bg-muted/30">
