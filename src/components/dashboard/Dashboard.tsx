@@ -906,46 +906,39 @@ export function Dashboard() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/95 backdrop-blur-lg pb-safe">
         <div className="grid grid-cols-5 gap-1 p-2">
           {/* Home */}
-          {topNavItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname.includes(item.path);
-            return (
-              <button
-                key={item.id}
-                onClick={() => navigate(item.path)}
-                className={cn(
-                  'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
-                  'min-h-[64px]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-                  isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground active:bg-muted'
-                )}
-                aria-label={`Navigate to ${item.label}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <Icon className="h-5 w-5 flex-shrink-0" />
-                <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
-              </button>
-            );
-          })}
-          
-          {/* Analytics */}
           <button
-            onClick={() => navigate('/dashboard/analytics')}
+            onClick={() => navigate('/dashboard/overview')}
             className={cn(
               'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
               'min-h-[64px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-              location.pathname.includes('/analytics')
+              location.pathname.includes('/overview')
                 ? 'bg-primary/10 text-primary'
                 : 'text-muted-foreground active:bg-muted'
             )}
-            aria-label="Navigate to Analytics"
-            aria-current={location.pathname.includes('/analytics') ? 'page' : undefined}
+            aria-label="Navigate to Home"
+            aria-current={location.pathname.includes('/overview') ? 'page' : undefined}
           >
-            <TrendingUp className="h-5 w-5 flex-shrink-0" />
-            <span className="text-[10px] font-medium leading-tight text-center">Analytics</span>
+            <Home className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Home</span>
+          </button>
+          
+          {/* Smart Calendar */}
+          <button
+            onClick={() => navigate('/dashboard/planner')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/planner')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Smart Calendar"
+            aria-current={location.pathname.includes('/planner') ? 'page' : undefined}
+          >
+            <Calendar className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Calendar</span>
           </button>
           
           {/* AI Chat */}
@@ -963,33 +956,44 @@ export function Dashboard() {
             aria-current={location.pathname.includes('/ai-chat') ? 'page' : undefined}
           >
             <MessageCircle className="h-5 w-5 flex-shrink-0" />
-            <span className="text-[10px] font-medium leading-tight text-center">AI Chat</span>
+            <span className="text-[10px] font-medium leading-tight text-center">Chats</span>
           </button>
           
-          {/* Smart Calendar & Assignment Assistant */}
-          {bottomNavItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname.includes(item.path);
-            return (
-              <button
-                key={item.id}
-                onClick={() => navigate(item.path)}
-                className={cn(
-                  'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
-                  'min-h-[64px]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-                  isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground active:bg-muted'
-                )}
-                aria-label={`Navigate to ${item.label}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <Icon className="h-5 w-5 flex-shrink-0" />
-                <span className="text-[10px] font-medium leading-tight text-center">{item.label}</span>
-              </button>
-            );
-          })}
+          {/* Assignment Assistant */}
+          <button
+            onClick={() => navigate('/dashboard/assignments')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/assignments')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Assignment Assistant"
+            aria-current={location.pathname.includes('/assignments') ? 'page' : undefined}
+          >
+            <Target className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Assignments</span>
+          </button>
+          
+          {/* Study Planner */}
+          <button
+            onClick={() => navigate('/dashboard/study-buddy')}
+            className={cn(
+              'flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-lg transition-all touch-manipulation active:scale-95',
+              'min-h-[64px]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              location.pathname.includes('/study-buddy')
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground active:bg-muted'
+            )}
+            aria-label="Navigate to Study Planner"
+            aria-current={location.pathname.includes('/study-buddy') ? 'page' : undefined}
+          >
+            <BookOpen className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">Study</span>
+          </button>
         </div>
       </nav>
 
