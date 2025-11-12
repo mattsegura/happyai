@@ -7,6 +7,7 @@ import {
 import { cn } from '@/lib/utils';
 import { validateFile, categorizeFile, formatFileSize, FileCategory, processFile } from '@/lib/ai/fileProcessor';
 import { isPrivateModeEnabled, enablePrivateMode, disablePrivateMode } from '@/lib/chat/conversationManager';
+import { DeepSearchModal } from './DeepSearchModal';
 import { PrivateModeModal } from './PrivateModeModal';
 import { ContextSelectionModal, SelectedContext } from './ContextSelectionModal';
 
@@ -53,6 +54,7 @@ export function MultiModalInput({
   const [showPrivateModal, setShowPrivateModal] = useState(false);
   const [pendingPrivateMode, setPendingPrivateMode] = useState<'enable' | 'disable' | null>(null);
   const [showContextModal, setShowContextModal] = useState(false);
+  const [showDeepSearchModal, setShowDeepSearchModal] = useState(false);
   const [currentContext, setCurrentContext] = useState<SelectedContext>(
     selectedContext || { documents: [], classes: [], studyPlans: [] }
   );
@@ -438,17 +440,11 @@ export function MultiModalInput({
             
             {!hideDeepSearch && (
               <button
-                onClick={() => {
-                  if (onToggleDeepSearch) {
-                    onToggleDeepSearch();
-                  } else {
-                    setDeepSearchEnabled(!deepSearchEnabled);
-                  }
-                }}
+                onClick={() => setShowDeepSearchModal(true)}
                 disabled={disabled || isProcessing}
                 className={cn(
                   "p-2 rounded-lg transition-all disabled:opacity-50",
-                  currentDeepSearch
+                  deepSearchEnabled
                     ? "bg-blue-100 text-blue-600"
                     : "hover:bg-white/50 text-muted-foreground"
                 )}
@@ -499,6 +495,19 @@ export function MultiModalInput({
         onClose={() => setShowContextModal(false)}
         onConfirm={handleContextConfirm}
         currentSelection={currentContext}
+      />
+
+      {/* Deep Search Modal */}
+      <DeepSearchModal
+        isOpen={showDeepSearchModal}
+        onClose={() => setShowDeepSearchModal(false)}
+        initialQuery={inputValue}
+        onSelectResult={(result) => {
+          // When a result is selected, add it to the chat context
+          setDeepSearchEnabled(true);
+          setInputValue(`[Search result: ${result.title}] ${inputValue}`);
+          setShowDeepSearchModal(false);
+        }}
       />
     </div>
   );

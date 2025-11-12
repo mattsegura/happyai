@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { NotificationsCard } from './NotificationsCard';
 import { DailySentimentCheckIn } from './DailySentimentCheckIn';
 import { AssignmentDetailModal } from '../student/AssignmentDetailModal';
+import { GPACalculatorModal } from '../student/GPACalculatorModal';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Assignment } from '@/lib/types/assignment';
@@ -22,6 +23,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
   });
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+  const [showGPACalculator, setShowGPACalculator] = useState(false);
 
   const handleSentimentComplete = () => {
     localStorage.setItem('lastSentimentCheckIn', new Date().toDateString());
@@ -334,26 +336,38 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
             animate={{ opacity: 1, x: 0 }}
             className="grid grid-cols-2 gap-3"
           >
-            <div className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+            <button
+              onClick={() => navigate('/dashboard/analytics')}
+              className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 hover:shadow-md hover:scale-105 transition-all cursor-pointer text-left"
+            >
               <BookOpen className="h-4 w-4 text-blue-600 dark:text-blue-400 mb-2" />
               <p className="text-2xl font-bold text-foreground">5</p>
               <p className="text-xs text-muted-foreground">Classes</p>
-            </div>
-            <div className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+            </button>
+            <button
+              onClick={() => navigate('/dashboard/planner')}
+              className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 hover:shadow-md hover:scale-105 transition-all cursor-pointer text-left"
+            >
               <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400 mb-2" />
               <p className="text-2xl font-bold text-foreground">3</p>
               <p className="text-xs text-muted-foreground">Due Soon</p>
-            </div>
-            <div className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20">
+            </button>
+            <button
+              onClick={() => setShowGPACalculator(true)}
+              className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 hover:shadow-md hover:scale-105 transition-all cursor-pointer text-left"
+            >
               <GraduationCap className="h-4 w-4 text-emerald-600 dark:text-emerald-400 mb-2" />
               <p className="text-2xl font-bold text-foreground">3.72</p>
-              <p className="text-xs text-muted-foreground">Current GPA</p>
-            </div>
-            <div className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20">
+              <p className="text-xs text-muted-foreground">GPA Calculator</p>
+            </button>
+            <button
+              onClick={() => navigate('/dashboard/analytics')}
+              className="p-3 rounded-xl border border-border/60 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 hover:shadow-md hover:scale-105 transition-all cursor-pointer text-left"
+            >
               <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400 mb-2" />
               <p className="text-2xl font-bold text-foreground">7</p>
               <p className="text-xs text-muted-foreground">Day Streak</p>
-            </div>
+            </button>
           </motion.div>
 
           {/* Notifications Card - Right Side */}
@@ -384,6 +398,12 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
         isOpen={showAssignmentModal}
         assignment={selectedAssignment}
         onClose={() => setShowAssignmentModal(false)}
+      />
+
+      {/* GPA Calculator Modal */}
+      <GPACalculatorModal
+        isOpen={showGPACalculator}
+        onClose={() => setShowGPACalculator(false)}
       />
     </div>
   );
