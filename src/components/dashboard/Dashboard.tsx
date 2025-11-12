@@ -95,32 +95,38 @@ export function Dashboard() {
     { id: 'coach', path: '/dashboard/ai-chat/coach', icon: Heart, label: 'Wellbeing Coach', description: 'Emotional support & balance' },
   ];
 
-  // Study Buddy sub-items - Core study generation tools only
-  // Removed: Live Lecture (moved to main nav), Transcribe (integrated into Lecture Capture),
-  // Study Groups (renamed to Share Sync, elevated), File Library (elevated)
-  const studyHubItems = [
-    { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards', description: 'AI-generated from your materials' },
-    { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes', description: 'Practice tests & questions' },
-    { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize', description: 'Notes, PDFs, slides' },
-    { id: 'audio-recaps', path: '/dashboard/audio-recaps', icon: Volume2, label: 'Audio Recaps', description: 'Listen to summaries' },
-    { id: 'image-analysis', path: '/dashboard/image-analysis', icon: ImageIcon, label: 'Image Analysis', description: 'Diagrams & visual materials' },
-  ];
-
-  // Updated navigation structure - Reorganized per new plan
-  // Order: Home, Analytics, AI Chat, Smart Calendar, Lecture Capture, Assignment Assistant, Study Buddy, Content Library, Share Sync
-  const topNavItems = [
-    { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
+  // Study Planner (formerly Study Buddy)
+  // Study tools - Now standalone navigation items (no longer sub-items)
+  const studyToolItems = [
+    { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards' },
+    { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes' },
+    { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize' },
+    { id: 'audio-recaps', path: '/dashboard/audio-recaps', icon: Volume2, label: 'Audio Recap' },
+    { id: 'image-analysis', path: '/dashboard/image-analysis', icon: ImageIcon, label: 'Image Analysis' },
   ] as const;
 
-  const bottomNavItems = [
+  // Navigation structure with dividers
+  // Section 1: Home, Analytics, Smart Calendar
+  const section1Items = [
+    { id: 'overview', path: '/dashboard/overview', icon: Home, label: 'Home' },
+    { id: 'analytics', path: '/dashboard/analytics', icon: TrendingUp, label: 'Analytics' },
     { id: 'planner', path: '/dashboard/planner', icon: Calendar, label: 'Smart Calendar' },
+  ] as const;
+
+  // Section 2: Chats, Lecture Capture, Assignment Assistant, Study Planner
+  const section2Items = [
+    { id: 'ai-chat', path: '/dashboard/ai-chat', icon: MessageCircle, label: 'Chats' },
     { id: 'lecture-capture', path: '/dashboard/lecture-capture', icon: Video, label: 'Lecture Capture' },
     { id: 'assignments', path: '/dashboard/assignments', icon: Target, label: 'Assignment Assistant' },
+    { id: 'study-buddy', path: '/dashboard/study-buddy', icon: BookOpen, label: 'Study Planner' },
   ] as const;
-  
-  // New elevated features
-  const libraryAndSyncItems = [
-    { id: 'file-library', path: '/dashboard/file-library', icon: FolderOpen, label: 'Content Library' },
+
+  // Section 3: Study Tools (Flashcards, Quizzes, etc.)
+  const section3Items = studyToolItems;
+
+  // Section 4: File Library, Share Sync
+  const section4Items = [
+    { id: 'file-library', path: '/dashboard/file-library', icon: FolderOpen, label: 'File Library' },
     { id: 'share-sync', path: '/dashboard/share-sync', icon: Users, label: 'Share Sync' },
   ] as const;
 
@@ -240,9 +246,9 @@ export function Dashboard() {
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
-          {/* Home */}
-          {topNavItems.map((item) => {
+        <nav className="mt-10 flex-1 space-y-2 px-3 text-sm font-medium text-muted-foreground overflow-y-auto">
+          {/* Section 1: Home, Analytics, Smart Calendar */}
+          {section1Items.map((item) => {
             const Icon = item.icon;
             const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
@@ -266,143 +272,80 @@ export function Dashboard() {
             );
           })}
 
-          {/* Analytics - Direct Link */}
-          {!sidebarCollapsed && (
-            <NavLink
-              to="/dashboard/analytics"
-              className={({ isActive }) =>
-                cn(
-                  'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
-                  isActive || location.pathname.includes('/analytics')
-                    ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                )
-              }
-            >
-              <TrendingUp className="h-5 w-5" />
-              <span className="flex-1 text-left">Analytics</span>
-            </NavLink>
-          )}
-          {sidebarCollapsed && (
-            <NavLink
-              to="/dashboard/analytics"
-              className={({ isActive }) =>
-                cn(
-                  'flex w-full items-center justify-center px-0 py-3 rounded-xl transition-all duration-200',
-                  isActive || location.pathname.includes('/analytics')
-                    ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                )
-              }
-              aria-label="Analytics"
-            >
-              <TrendingUp className="h-5 w-5" />
-            </NavLink>
-          )}
+          {/* Divider */}
+          <div className="h-px bg-border/50 my-3" />
 
-          {/* AI Chat - Expandable Section with Tutor & Coach */}
-          {!sidebarCollapsed && (
-            <div className="space-y-1">
-              <div className="relative">
-                <NavLink
-                  to="/dashboard/ai-chat"
-                  className={({ isActive }) =>
-                    cn(
-                      'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
-                      isActive || aiChatExpanded || location.pathname.includes('/ai-chat/')
-                        ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                        : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                    )
-                  }
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  <span className="flex-1 text-left">AI Chat</span>
-                </NavLink>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setAiChatExpanded(!aiChatExpanded);
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-primary/20 rounded transition-colors"
-                >
-                  {aiChatExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-
-              {/* AI Chat Sub-items */}
-              {aiChatExpanded && (
-                <div className="ml-4 space-y-1 border-l-2 border-primary/30 pl-2">
-                  {aiChatItems.map((subItem) => {
-                    const SubIcon = subItem.icon;
-                    return (
-                      <NavLink
-                        key={subItem.id}
-                        to={subItem.path}
-                        className={({ isActive }) =>
-                          cn(
-                            'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
-                            isActive
-                              ? 'bg-primary/20 text-primary font-semibold'
-                              : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                          )
-                        }
-                      >
-                        <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium">{subItem.label}</div>
-                          <div className="text-xs text-muted-foreground">{subItem.description}</div>
-                        </div>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-          {sidebarCollapsed && (
-            <NavLink
-              to="/dashboard/ai-chat"
-              className={({ isActive }) =>
-                cn(
-                  'flex w-full items-center justify-center px-0 py-3 rounded-xl transition-all duration-200',
-                  isActive || location.pathname.includes('/ai-chat/')
-                    ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                )
-              }
-              aria-label="AI Chat"
-            >
-              <MessageCircle className="h-5 w-5" />
-            </NavLink>
-          )}
-
-          {/* Smart Calendar & Assignment Assistant */}
-          {bottomNavItems.map((item) => {
+          {/* Section 2: Chats, Lecture Capture, Assignment Assistant, Study Planner */}
+          {section2Items.map((item) => {
             const Icon = item.icon;
-            if (!sidebarCollapsed) {
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            
+            // Special handling for AI Chat with sub-items
+            if (item.id === 'ai-chat' && !sidebarCollapsed) {
               return (
-                <NavLink
-                  key={item.id}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
-                      isActive
-                        ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                        : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                    )
-                  }
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </NavLink>
+                <div key={item.id} className="space-y-1">
+                  <div className="relative">
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+                          isActive || aiChatExpanded || location.pathname.includes('/ai-chat/')
+                            ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
+                            : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                        )
+                      }
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="flex-1 text-left">{item.label}</span>
+                    </NavLink>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setAiChatExpanded(!aiChatExpanded);
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-primary/20 rounded transition-colors"
+                    >
+                      {aiChatExpanded ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* AI Chat Sub-items */}
+                  {aiChatExpanded && (
+                    <div className="ml-4 space-y-1 border-l-2 border-primary/30 pl-2">
+                      {aiChatItems.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <NavLink
+                            key={subItem.id}
+                            to={subItem.path}
+                            className={({ isActive }) =>
+                              cn(
+                                'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
+                                isActive
+                                  ? 'bg-primary/20 text-primary font-semibold'
+                                  : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                              )
+                            }
+                          >
+                            <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium">{subItem.label}</div>
+                              <div className="text-xs text-muted-foreground">{subItem.description}</div>
+                            </div>
+                          </NavLink>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
-            } else {
+            } else if (item.id === 'ai-chat' && sidebarCollapsed) {
               return (
                 <NavLink
                   key={item.id}
@@ -410,7 +353,7 @@ export function Dashboard() {
                   className={({ isActive }) =>
                     cn(
                       'flex w-full items-center justify-center px-0 py-3 rounded-xl transition-all duration-200',
-                      isActive
+                      isActive || location.pathname.includes('/ai-chat/')
                         ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
                         : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
                     )
@@ -421,91 +364,34 @@ export function Dashboard() {
                 </NavLink>
               );
             }
+
+            // Regular items
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    isActive
+                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
+                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
+                    spacingClasses
+                  )
+                }
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </NavLink>
+            );
           })}
 
-          {/* Study Buddy - Expandable Section with Main Page */}
-          {!sidebarCollapsed && (
-            <div className="space-y-1">
-              <div className="relative">
-                <NavLink
-                  to="/dashboard/study-buddy"
-                  className={({ isActive }) =>
-                    cn(
-                      'flex w-full items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
-                      isActive || studyHubExpanded || location.pathname.includes('/flashcards') || location.pathname.includes('/quizzes') || location.pathname.includes('/summarize') || location.pathname.includes('/transcribe') || location.pathname.includes('/audio-recaps') || location.pathname.includes('/image-analysis')
-                        ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                        : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                    )
-                  }
-                >
-                  <Brain className="h-5 w-5" />
-                  <span className="flex-1 text-left">Study Buddy</span>
-                </NavLink>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setStudyHubExpanded(!studyHubExpanded);
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-primary/20 rounded transition-colors"
-                >
-                  {studyHubExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
+          {/* Divider */}
+          <div className="h-px bg-border/50 my-3" />
 
-              {/* Study Tools Sub-items */}
-              {studyHubExpanded && (
-                <div className="ml-4 space-y-1 border-l-2 border-primary/30 pl-2">
-                  {studyHubItems.map((subItem) => {
-                    const SubIcon = subItem.icon;
-                    return (
-                      <NavLink
-                        key={subItem.id}
-                        to={subItem.path}
-                        className={({ isActive }) =>
-                          cn(
-                            'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
-                            isActive
-                              ? 'bg-primary/20 text-primary font-semibold'
-                              : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                          )
-                        }
-                      >
-                        <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium">{subItem.label}</div>
-                          <div className="text-xs text-muted-foreground">{subItem.description}</div>
-                        </div>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-          {sidebarCollapsed && (
-            <NavLink
-              to="/dashboard/study-buddy"
-              className={({ isActive }) =>
-                cn(
-                  'flex w-full items-center justify-center px-0 py-3 rounded-xl transition-all duration-200',
-                  isActive || location.pathname.includes('/study-buddy') || location.pathname.includes('/flashcards') || location.pathname.includes('/quizzes') || location.pathname.includes('/summarize') || location.pathname.includes('/transcribe') || location.pathname.includes('/audio-recaps') || location.pathname.includes('/image-analysis')
-                    ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                )
-              }
-              aria-label="Study Buddy"
-            >
-              <Brain className="h-5 w-5" />
-            </NavLink>
-          )}
-
-          {/* Content Library & Share Sync - Elevated Features */}
-          {libraryAndSyncItems.map((item) => {
+          {/* Section 3: Study Tools */}
+          {section3Items.map((item) => {
             const Icon = item.icon;
             const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
             return (
@@ -524,7 +410,35 @@ export function Dashboard() {
                 aria-label={item.label}
               >
                 <Icon className="h-5 w-5" />
-                {!sidebarCollapsed && <span className="flex-1 text-left">{item.label}</span>}
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </NavLink>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="h-px bg-border/50 my-3" />
+
+          {/* Section 4: File Library & Share Sync */}
+          {section4Items.map((item) => {
+            const Icon = item.icon;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            return (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) =>
+                  cn(
+                    'flex w-full items-center rounded-xl py-3 transition-all duration-200',
+                    isActive
+                      ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
+                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
+                    spacingClasses
+                  )
+                }
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
               </NavLink>
             );
           })}
@@ -617,7 +531,7 @@ export function Dashboard() {
                 location.pathname.match(/assignments\/[^/]+$/) && !location.pathname.includes('essay-help') ? 'Assignment Workspace' :
                 location.pathname.includes('study-buddy/create') ? 'Create Study Plan' :
                 location.pathname.match(/study-buddy\/[^/]+$/) ? 'Study Plan Workspace' :
-                location.pathname.includes('study-buddy') && !location.pathname.includes('study-buddy/') ? 'Study Buddy' :
+                location.pathname.includes('study-buddy') && !location.pathname.includes('study-buddy/') ? 'Study Planner' :
                 location.pathname.includes('file-library') ? 'File Library' :
                 location.pathname.includes('profile') ? 'Profile' :
                 location.pathname.includes('wellbeing') ? 'Wellbeing' :
@@ -632,7 +546,7 @@ export function Dashboard() {
                 location.pathname.includes('planner') ? 'Time management & study planning' :
                 location.pathname.includes('assignments/essay-help') ? 'AI-powered writing assistance' :
                 location.pathname.includes('assignments') && !location.pathname.includes('assignments/') ? 'Complete essays, projects & assignments' :
-                location.pathname.includes('study-buddy') ? 'AI-powered learning & study plans' :
+                location.pathname.includes('study-buddy') ? 'Create & manage your study plans' :
                 location.pathname.includes('file-library') ? 'All your files & generated tools' :
                 location.pathname.includes('profile') ? 'Manage your account settings' :
                 location.pathname.includes('wellbeing') ? 'Mood tracking & mental health' :
@@ -646,7 +560,7 @@ export function Dashboard() {
                 location.pathname.includes('analytics') ? TrendingUp :
                 location.pathname.includes('planner') ? Calendar :
                 location.pathname.includes('assignments') ? Target :
-                location.pathname.includes('study-buddy') ? Brain :
+                location.pathname.includes('study-buddy') ? BookOpen :
                 location.pathname.includes('file-library') ? FolderOpen :
                 location.pathname.includes('profile') ? User :
                 location.pathname.includes('wellbeing') ? Heart :
@@ -670,7 +584,7 @@ export function Dashboard() {
                   { label: 'Completed', value: 12, color: 'green', icon: Award },
                 ] :
                 location.pathname.includes('study-buddy') && !location.pathname.includes('study-buddy/') ? [
-                  { label: 'Active Plans', value: 2, color: 'primary', icon: Brain },
+                  { label: 'Active Plans', value: 2, color: 'primary', icon: BookOpen },
                   { label: 'Progress', value: '65%', color: 'purple', icon: Zap },
                 ] :
                 []
