@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { ClassSentimentDial } from './ClassSentimentDial';
 import { ClassAverageSentimentChart } from './ClassAverageSentimentChart';
 import { ClassPulseSummary } from './ClassPulseSummary';
@@ -205,67 +206,92 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
 
   return (
     <div className="space-y-5 sm:space-y-8">
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">Class Overview</h2>
         <p className="text-sm sm:text-base text-muted-foreground">Real-time sentiment snapshot from today's pulse checks</p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {mockTeacherClasses.map(cls => {
+        {mockTeacherClasses.map((cls, idx) => {
           const sentiment = getClassSentiment(cls.id);
 
           return (
-            <ClassSentimentDial
+            <motion.div
               key={cls.id}
-              className={cls.name}
-              studentCount={sentiment.studentCount}
-              averageSentiment={sentiment.avg}
-              topEmotions={sentiment.topEmotions}
-            />
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+            >
+              <ClassSentimentDial
+                className={cls.name}
+                studentCount={sentiment.studentCount}
+                averageSentiment={sentiment.avg}
+                topEmotions={sentiment.topEmotions}
+              />
+            </motion.div>
           );
         })}
       </div>
 
       <ClassAverageSentimentChart />
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <h3 className="text-lg sm:text-xl font-bold text-foreground">Class Pulse Questionnaires</h3>
           {onNavigateToLab && (
             <button
               onClick={() => onNavigateToLab()}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
+              className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors duration-300"
             >
               View All in Hapi Lab →
             </button>
           )}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          {mockTeacherClasses.map(cls => {
+          {mockTeacherClasses.map((cls, idx) => {
             const pulseData = getClassPulseData(cls.id);
 
             return (
-              <ClassPulseSummary
+              <motion.div
                 key={cls.id}
-                className={cls.name}
-                totalStudents={pulseData.totalStudents}
-                responded={pulseData.responded}
-                missing={pulseData.missing}
-                activePulses={pulseData.activePulses}
-                topAnswers={pulseData.topAnswers}
-                onViewDetails={onNavigateToLab}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.4 + idx * 0.1 }}
+              >
+                <ClassPulseSummary
+                  className={cls.name}
+                  totalStudents={pulseData.totalStudents}
+                  responded={pulseData.responded}
+                  missing={pulseData.missing}
+                  activePulses={pulseData.activePulses}
+                  topAnswers={pulseData.topAnswers}
+                  onViewDetails={onNavigateToLab}
+                />
+              </motion.div>
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
       {/* Care Alerts Summary Card */}
       {!isLoadingAlerts && alertCounts.total > 0 && (
-        <div className="rounded-2xl border-2 border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 p-6 shadow-lg">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.7 }}
+          className="rounded-2xl border border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-900/20 dark:to-orange-900/20 p-6 shadow-lg backdrop-blur-sm"
+        >
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-600 text-white shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-orange-500 text-white shadow-lg">
                 <AlertCircle className="h-6 w-6" />
               </div>
               <div>
@@ -276,25 +302,41 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+            <motion.div 
+              className="text-center p-3 rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.total}</p>
               <p className="text-xs text-muted-foreground mt-1">Total Alerts</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+            </motion.div>
+            <motion.div 
+              className="text-center p-3 rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{alertCounts.critical}</p>
               <p className="text-xs text-muted-foreground mt-1">Critical</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+            </motion.div>
+            <motion.div 
+              className="text-center p-3 rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{alertCounts.emotional}</p>
               <p className="text-xs text-muted-foreground mt-1">Emotional</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-white/50 dark:bg-black/20">
+            </motion.div>
+            <motion.div 
+              className="text-center p-3 rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{alertCounts.academic}</p>
               <p className="text-xs text-muted-foreground mt-1">Academic</p>
-            </div>
+            </motion.div>
           </div>
 
-          <a
+          <motion.a
             href="#"
             onClick={(e) => {
               e.preventDefault();
@@ -302,12 +344,14 @@ export function TeacherHomeView({ onNavigateToLab }: TeacherHomeViewProps = {}) 
               // For now, just show a message
               window.alert('Navigate to Care Alerts dashboard to view all alerts');
             }}
-            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition shadow-md"
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 text-white font-semibold hover:shadow-lg transition-all"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             <TrendingUp className="h-5 w-5" />
             View All Care Alerts
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       )}
     </div>
   );

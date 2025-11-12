@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { useContent } from '../../contexts/ContentContext';
 import { processYouTubeUrl, isYouTubeUrl } from '../../lib/integrations/youtube';
+import { UniversalUploader, UploadedItem } from './UniversalUploader';
 
 type TranscriptLine = {
   id: string;
@@ -92,6 +93,37 @@ export function LectureCapture() {
       setConnectionStatus('connected');
       setIsRecording(true);
       setLiveTranscript(mockTranscript);
+    }, 2000);
+  };
+
+  const handleUniversalUpload = (items: UploadedItem[]) => {
+    setProcessingUpload(true);
+    
+    items.forEach((item) => {
+      if (item.type === 'file' && item.file) {
+        // Handle file upload
+        setUploadedFile(item.file);
+        
+        // Add to content library
+        addContent({
+          id: `lecture-${Date.now()}`,
+          type: item.file.type.startsWith('video') ? 'video' : 'audio',
+          source: 'upload',
+          title: item.name,
+          metadata: { size: item.size || 0, mimeType: item.mimeType || '' }
+        });
+      } else if (item.type === 'link' && item.url) {
+        // Handle YouTube link
+        if (isYouTubeUrl(item.url)) {
+          processYouTubeVideo(item.url);
+        }
+      }
+    });
+
+    // Simulate processing
+    setTimeout(() => {
+      setUploadTranscript(mockTranscript);
+      setProcessingUpload(false);
     }, 2000);
   };
 
@@ -397,76 +429,15 @@ export function LectureCapture() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-6 overflow-y-auto space-y-6">
-            {/* Drag & Drop Zone */}
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className={cn(
-                'border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all',
-                isDragging
-                  ? 'border-purple-500 bg-purple-100 dark:bg-purple-900/30'
-                  : 'border-purple-300 dark:border-purple-700 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20'
-              )}
-            >
-              <Upload className="w-12 h-12 mx-auto mb-4 text-purple-600 dark:text-purple-400" />
-              <h3 className="text-lg font-semibold mb-2">Drop files here</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                or click to browse
-              </p>
-              <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-                <span className="px-2 py-1 bg-white/50 dark:bg-gray-900/50 rounded">MP3</span>
-                <span className="px-2 py-1 bg-white/50 dark:bg-gray-900/50 rounded">MP4</span>
-                <span className="px-2 py-1 bg-white/50 dark:bg-gray-900/50 rounded">WAV</span>
-                <span className="px-2 py-1 bg-white/50 dark:bg-gray-900/50 rounded">M4A</span>
-              </div>
-            </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="audio/*,video/*"
-              onChange={handleFileUpload}
-              className="hidden"
+          <div className="flex-1 p-6 overflow-y-auto">
+            <UniversalUploader
+              allowedTypes={['video/*', 'audio/*']}
+              onUpload={handleUniversalUpload}
+              showLinkInput={true}
+              showCameraCapture={false}
+              context="lecture"
+              compact={true}
             />
-
-            {/* OR Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-purple-200 dark:border-purple-700"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 dark:from-purple-950/40 dark:via-pink-950/40 dark:to-purple-900/40 text-muted-foreground font-medium">
-                  OR
-                </span>
-              </div>
-            </div>
-
-            {/* YouTube URL */}
-            <div>
-              <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                <Youtube className="w-4 h-4 text-red-600" />
-                YouTube Video URL
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  placeholder="https://youtube.com/watch?v=..."
-                  className="flex-1 px-4 py-3 rounded-xl border-2 border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-900 focus:border-purple-500 focus:outline-none"
-                />
-                <Button
-                  onClick={handleYoutubeSubmit}
-                  disabled={!youtubeUrl || processingUpload}
-                  className="px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl"
-                >
-                  <Link className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
 
             {/* Upload Status */}
             {processingUpload && (

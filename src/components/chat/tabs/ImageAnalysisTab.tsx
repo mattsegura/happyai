@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Upload, Image as ImageIcon, Loader } from 'lucide-react';
-import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
 import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
 import { imageAnalysisHistory } from '../../../lib/mockData/toolHistory';
 
@@ -36,9 +35,6 @@ export function ImageAnalysisTab() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1 p-6">
-        {/* File Upload Section - Persistent across all Study Buddy pages */}
-        <StudyBuddyFileUpload />
-        
         <div className="mb-6">
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <ImageIcon className="w-6 h-6 text-violet-600" />

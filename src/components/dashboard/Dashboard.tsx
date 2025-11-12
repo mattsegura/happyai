@@ -41,6 +41,7 @@ const LectureCapture = lazy(() => import('../student/LectureCapture').then(m => 
 
 // Lazy load AI Study Hub tab components
 const ChatTab = lazy(() => import('../chat/tabs/ChatTab').then(m => ({ default: m.ChatTab })));
+const NotesTab = lazy(() => import('../chat/tabs/NotesTab').then(m => ({ default: m.NotesTab })));
 const FlashcardsTab = lazy(() => import('../chat/tabs/FlashcardsTab').then(m => ({ default: m.FlashcardsTab })));
 const QuizzesTab = lazy(() => import('../chat/tabs/QuizzesTab').then(m => ({ default: m.QuizzesTab })));
 const SummarizationTab = lazy(() => import('../chat/tabs/SummarizationTab').then(m => ({ default: m.SummarizationTab })));
@@ -98,6 +99,7 @@ export function Dashboard() {
   // Study Planner (formerly Study Buddy)
   // Study tools - Now standalone navigation items (no longer sub-items)
   const studyToolItems = [
+    { id: 'notes', path: '/dashboard/notes', icon: FileText, label: 'Notes' },
     { id: 'flashcards', path: '/dashboard/flashcards', icon: Brain, label: 'Flashcards' },
     { id: 'quizzes', path: '/dashboard/quizzes', icon: Sparkles, label: 'Quizzes' },
     { id: 'summarize', path: '/dashboard/summarize', icon: FileText, label: 'Summarize' },
@@ -702,6 +704,14 @@ export function Dashboard() {
                   element={
                     <div className={cn(SURFACE_BASE, 'p-0 h-full')}>
                       <FileLibrary />
+                    </div>
+                  }
+                />
+                <Route
+                  path="notes"
+                  element={
+                    <div className="p-0 h-full">
+                      <NotesTab />
                     </div>
                   }
                 />

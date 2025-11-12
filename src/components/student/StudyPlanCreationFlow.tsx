@@ -8,6 +8,7 @@ import {
 import { useStudyPlans } from '@/contexts/StudyPlanContext';
 import { StudyPlan, StudyPreferences } from '@/lib/types/studyPlan';
 import { cn } from '@/lib/utils';
+import { UniversalUploader, UploadedItem } from './UniversalUploader';
 
 const mockCourses = [
   { id: '1', name: 'Calculus II', code: 'MATH 201', color: '#3b82f6' },
@@ -587,31 +588,36 @@ function DifficultyStep({ topics, difficultyRatings, setDifficultyRatings, onNex
 }
 
 function MaterialsStep({ uploadedFiles, onFileUpload, onNext }: any) {
+  const handleUpload = (items: UploadedItem[]) => {
+    // Convert UploadedItems to Files for compatibility
+    const files = items
+      .filter(item => item.file)
+      .map(item => item.file as File);
+    
+    // Create a synthetic event to match the existing handler
+    const syntheticEvent = {
+      target: {
+        files: files
+      }
+    } as any;
+    
+    onFileUpload(syntheticEvent);
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold mb-2">Upload Study Materials</h2>
-        <p className="text-muted-foreground mb-6">Add lecture notes, textbooks, or study guides (optional)</p>
+        <p className="text-muted-foreground mb-6">Add lecture notes, textbooks, study guides, or links (optional)</p>
       </div>
 
-      <label className="flex items-center justify-center w-full p-8 border-2 border-dashed border-border rounded-lg hover:border-primary transition-colors cursor-pointer">
-        <input
-          type="file"
-          onChange={onFileUpload}
-          className="hidden"
-          multiple
-          accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
-        />
-        <div className="text-center">
-          <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm font-medium mb-1">
-            {uploadedFiles.length > 0 
-              ? `${uploadedFiles.length} file(s) selected`
-              : 'Click to upload or drag files here'}
-          </p>
-          <p className="text-xs text-muted-foreground">PDF, DOCX, TXT, or images</p>
-        </div>
-      </label>
+      <UniversalUploader
+        onUpload={handleUpload}
+        showLinkInput={true}
+        showCameraCapture={true}
+        context="study-plan"
+        compact={true}
+      />
 
       {uploadedFiles.length > 0 && (
         <div className="space-y-2">

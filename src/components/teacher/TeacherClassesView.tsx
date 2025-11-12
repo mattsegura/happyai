@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Users, Search, Plus, Hash, UserCheck, UserX, ChevronLeft, Clock, Copy } from 'lucide-react';
 import { MOCK_STUDENT_IDS, MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
 
@@ -196,17 +197,21 @@ function TeacherClassesView() {
           </button>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-2xl p-6 border-2 border-blue-300 dark:border-blue-800 shadow-lg">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl p-6 border border-emerald-300 dark:border-emerald-800 shadow-lg backdrop-blur-sm"
+        >
           <h2 className="text-2xl font-bold text-foreground mb-2">{selectedClass.name}</h2>
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 bg-white/70 dark:bg-black/30 px-4 py-2 rounded-lg">
-              <Hash className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div className="flex items-center space-x-2 bg-white/70 dark:bg-black/30 px-4 py-2 rounded-lg backdrop-blur-sm">
+              <Hash className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               <span className="font-mono font-semibold text-foreground">{selectedClass.code}</span>
               <button
                 onClick={() => copyToClipboard(selectedClass.code)}
-                className="ml-2 p-1 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded transition-colors"
+                className="ml-2 p-1 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors"
               >
-                <Copy className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Copy className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </button>
             </div>
             <span className="text-sm text-foreground">
@@ -214,9 +219,14 @@ function TeacherClassesView() {
               {roster.length} students
             </span>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-card/90 backdrop-blur-sm rounded-2xl p-6 border border-border/60 shadow-lg"
+        >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-bold text-foreground">Student Roster</h3>
             <div className="relative">
@@ -226,7 +236,7 @@ function TeacherClassesView() {
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-muted border-2 border-border rounded-lg focus:outline-none focus:border-blue-400 dark:focus:border-blue-600 transition-all duration-300"
+                className="pl-10 pr-4 py-2 bg-muted border-2 border-border rounded-lg focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-600 transition-all duration-300"
               />
             </div>
           </div>
@@ -313,19 +323,23 @@ function TeacherClassesView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent flex items-center">
-          <Users className="w-7 h-7 mr-2 text-green-600 dark:text-green-400" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent flex items-center">
+          <Users className="w-7 h-7 mr-2 text-emerald-600 dark:text-emerald-400" />
           Your Classes
         </h2>
         <button
           onClick={() => setShowNewClassModal(true)}
-          className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 flex items-center space-x-2"
+          className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 flex items-center space-x-2"
         >
           <Plus className="w-5 h-5" />
           <span>New Class</span>
         </button>
-      </div>
+      </motion.div>
 
       {classRequests.length > 0 && (
         <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 rounded-2xl p-6 border-2 border-yellow-300 dark:border-yellow-800 shadow-lg">
@@ -369,16 +383,19 @@ function TeacherClassesView() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockTeacherClasses.map(cls => {
+        {mockTeacherClasses.map((cls, idx) => {
           const roster = mockClassRosters[cls.id] || [];
           return (
-            <div
+            <motion.div
               key={cls.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
               onClick={() => setSelectedClass({ id: cls.id, name: cls.name, code: cls.class_code })}
-              className="bg-card rounded-2xl p-6 border-2 border-green-100 dark:border-green-800 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+              className="bg-card/90 backdrop-blur-sm rounded-2xl p-6 border border-emerald-200/60 dark:border-emerald-800/60 shadow-lg hover:shadow-xl hover:border-emerald-400 dark:hover:border-emerald-600 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer"
             >
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 dark:from-green-600 dark:to-emerald-700 rounded-xl flex items-center justify-center shadow-md">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -392,9 +409,9 @@ function TeacherClassesView() {
                   <Hash className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm font-mono font-semibold text-foreground">{cls.class_code}</span>
                 </div>
-                <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">View Details →</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">View Details →</span>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>
@@ -409,7 +426,7 @@ function TeacherClassesView() {
                 <input
                   type="text"
                   placeholder="e.g., Biology 101"
-                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-green-400 dark:focus:border-green-600 transition-all duration-300"
+                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-600 transition-all duration-300"
                 />
               </div>
               <div>
@@ -417,7 +434,7 @@ function TeacherClassesView() {
                 <textarea
                   placeholder="Brief description of the class"
                   rows={3}
-                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-green-400 dark:focus:border-green-600 transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-600 transition-all duration-300 resize-none"
                 />
               </div>
               <div className="flex space-x-3 pt-4">
@@ -427,7 +444,7 @@ function TeacherClassesView() {
                 >
                   Cancel
                 </button>
-                <button className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                <button className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
                   Create Class
                 </button>
               </div>

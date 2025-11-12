@@ -336,3 +336,51 @@ export const formatDuration = (seconds: number): string => {
   return `${minutes} min`;
 };
 
+// Note History
+export const noteHistory: ToolHistoryItem[] = [
+  {
+    id: 'note-hist-1',
+    title: 'Calculus II - Integration Techniques',
+    className: 'MATH 251',
+    classColor: '#f59e0b',
+    studyPlanTitle: 'Calculus II Study Plan',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    size: '1.2 KB'
+  },
+  {
+    id: 'note-hist-2',
+    title: 'Biology - Cell Structure Notes',
+    className: 'BIO 101',
+    classColor: '#ef4444',
+    studyPlanTitle: 'Biology Midterm Prep',
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    size: '2.5 KB'
+  },
+  {
+    id: 'note-hist-3',
+    title: 'English Lit - Modernist Themes',
+    className: 'ENG 201',
+    classColor: '#a855f7',
+    studyPlanTitle: 'English Lit Essay Prep',
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    size: '1.8 KB'
+  },
+  {
+    id: 'note-hist-4',
+    title: 'Chemistry - Stoichiometry Quick Reference',
+    className: 'CHEM 102',
+    classColor: '#10b981',
+    studyPlanTitle: 'Chemistry Study Plan',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    size: '1.5 KB'
+  },
+  {
+    id: 'note-hist-5',
+    title: 'Physics - Newton\'s Laws',
+    className: 'PHYS 101',
+    classColor: '#8b5cf6',
+    studyPlanTitle: 'Physics Study Plan',
+    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    size: '1.1 KB'
+  }
+];

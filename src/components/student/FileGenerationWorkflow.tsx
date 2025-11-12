@@ -12,7 +12,7 @@ import { useStudyPlans } from '@/contexts/StudyPlanContext';
 import { FileLibraryItem } from '@/lib/types/studyPlan';
 
 type GenerationType = 'assignment' | 'study-plan' | 'tools';
-type ToolType = 'flashcards' | 'quiz' | 'summary' | 'transcription' | 'audio-recap' | 'image-analysis';
+type ToolType = 'notes' | 'flashcards' | 'quiz' | 'summary' | 'transcription' | 'audio-recap' | 'image-analysis';
 type LinkType = 'new' | 'existing';
 
 interface FileGenerationWorkflowProps {
@@ -110,6 +110,7 @@ export function FileGenerationWorkflow({ isOpen, onClose, file }: FileGeneration
   if (!isOpen || !file) return null;
 
   const availableTools = [
+    { id: 'notes', name: 'Notes', icon: FileText, color: 'indigo' },
     { id: 'flashcards', name: 'Flashcards', icon: Brain, color: 'violet' },
     { id: 'quiz', name: 'Quiz', icon: FileQuestion, color: 'blue' },
     { id: 'summary', name: 'Summary', icon: FileText, color: 'green' },

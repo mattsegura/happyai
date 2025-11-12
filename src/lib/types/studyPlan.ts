@@ -96,6 +96,11 @@ export interface Flashcard {
   lastReviewed?: string;
   confidenceLevel: 1 | 2 | 3 | 4 | 5;
   createdAt: string;
+  
+  // Spaced Repetition fields
+  nextReview?: string; // ISO date string for next review
+  interval?: number; // days between reviews
+  easeFactor?: number; // SM-2 ease factor (1.3-2.5)
 }
 
 export interface Quiz {

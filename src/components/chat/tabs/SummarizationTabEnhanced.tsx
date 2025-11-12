@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FileText, Loader, Languages, Wand2, ArrowRight, Brain, Sparkles, Volume2 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
+import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
 import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
 import { summaryHistory } from '../../../lib/mockData/toolHistory';
 
@@ -9,7 +10,7 @@ type ViewMode = 'notes' | 'source' | 'side-by-side';
 type Tone = 'academic' | 'casual' | 'technical';
 type Length = 'concise' | 'standard' | 'detailed';
 
-export function SummarizationTab() {
+export function SummarizationTabEnhanced() {
   const [summary, setSummary] = useState('');
   const [sourceName, setSourceName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -81,6 +82,9 @@ export function SummarizationTab() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1 p-6">
+        {/* File Upload Section */}
+        <StudyBuddyFileUpload />
+        
         {/* Header */}
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
@@ -123,15 +127,9 @@ export function SummarizationTab() {
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground mb-6">
-                Upload materials to File Library to generate AI-powered summaries
+              <p className="text-sm text-muted-foreground">
+                Upload a file using the upload section above to generate an AI-powered summary
               </p>
-              <button
-                onClick={() => window.location.href = '/dashboard/file-library'}
-                className="px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-              >
-                Go to File Library
-              </button>
             </div>
           </div>
         ) : (

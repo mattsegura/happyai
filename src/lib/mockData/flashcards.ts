@@ -16,7 +16,11 @@ export const mockFlashcards: Flashcard[] = [
     reviewCount: 5,
     correctStreak: 3,
     confidenceLevel: 4,
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    lastReviewed: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    nextReview: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // Due yesterday (overdue)
+    interval: 3,
+    easeFactor: 2.1
   },
   {
     id: 'bio-2',
@@ -119,7 +123,11 @@ export const mockFlashcards: Flashcard[] = [
     reviewCount: 3,
     correctStreak: 1,
     confidenceLevel: 3,
-    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()
+    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+    lastReviewed: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    nextReview: new Date(Date.now()).toISOString(), // Due today
+    interval: 1,
+    easeFactor: 1.7
   },
 
   // History Set - World War II
@@ -190,7 +198,11 @@ export const mockFlashcards: Flashcard[] = [
     reviewCount: 3,
     correctStreak: 1,
     confidenceLevel: 2,
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    lastReviewed: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    nextReview: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // Due in 2 days
+    interval: 5,
+    easeFactor: 1.8
   },
   {
     id: 'chem-2',
@@ -320,5 +332,20 @@ export const getMasteredFlashcards = (): Flashcard[] => {
   return mockFlashcards.filter(card => 
     card.masteryScore >= 90 && card.correctStreak >= 4
   );
+};
+
+// Get flashcards due for review (Spaced Repetition)
+export const getFlashcardsDueForReview = (): Flashcard[] => {
+  const now = new Date();
+  return mockFlashcards.filter(card => {
+    if (!card.nextReview) return true; // Never reviewed
+    const dueDate = new Date(card.nextReview);
+    return now >= dueDate;
+  }).sort((a, b) => {
+    // Prioritize older due dates
+    const aDate = a.nextReview ? new Date(a.nextReview).getTime() : 0;
+    const bDate = b.nextReview ? new Date(b.nextReview).getTime() : 0;
+    return aDate - bDate;
+  });
 };
 

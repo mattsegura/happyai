@@ -47,9 +47,9 @@ export function ClassPulseSummary({
   };
 
   return (
-    <div className="bg-card rounded-2xl p-6 border-2 border-border shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="bg-card/90 backdrop-blur-sm rounded-2xl p-6 border border-border/60 shadow-lg hover:shadow-xl transition-all duration-300">
       <div className="flex items-center space-x-2 mb-4">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
           <MessageSquare className="w-5 h-5 text-white" />
         </div>
         <div>
@@ -61,7 +61,7 @@ export function ClassPulseSummary({
       </div>
 
       <div className="space-y-4">
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-500/10 dark:to-cyan-500/10 rounded-xl p-4">
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-500/10 dark:to-teal-500/10 rounded-xl p-4 border border-emerald-200/50 dark:border-emerald-500/20">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold text-foreground">Response Rate</span>
             <span className={`text-2xl font-bold ${completionRate >= 70 ? 'text-green-600 dark:text-green-400' : completionRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-orange-600 dark:text-orange-400'}`}>
@@ -128,9 +128,9 @@ export function ClassPulseSummary({
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2 flex-1">
                               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                                idx === 0 ? 'bg-blue-500 text-white dark:bg-blue-400' :
-                                idx === 1 ? 'bg-blue-400 text-white dark:bg-blue-500' :
-                                'bg-blue-300 text-white dark:bg-blue-600'
+                                idx === 0 ? 'bg-emerald-500 text-white dark:bg-emerald-400' :
+                                idx === 1 ? 'bg-teal-500 text-white dark:bg-teal-400' :
+                                'bg-emerald-400 text-white dark:bg-teal-500'
                               }`}>
                                 {idx + 1}
                               </div>
@@ -139,7 +139,7 @@ export function ClassPulseSummary({
                             <div className="flex items-center space-x-2">
                               <div className="w-16 h-2 bg-muted dark:bg-muted/50 rounded-full overflow-hidden">
                                 <div
-                                  className="h-full bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full transition-all duration-500"
+                                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
                                   style={{ width: `${answer.percentage}%` }}
                                 ></div>
                               </div>
@@ -177,7 +177,7 @@ export function ClassPulseSummary({
       {onViewDetails && activePulses.length > 0 && (
         <button
           onClick={onViewDetails}
-          className="w-full mt-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold rounded-xl hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+          className="w-full mt-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
         >
           View Full Details in Hapi Lab
         </button>

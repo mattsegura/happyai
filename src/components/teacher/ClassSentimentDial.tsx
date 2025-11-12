@@ -25,13 +25,13 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
   const checkedInCount = Math.floor(studentCount * 0.7);
 
   return (
-    <div className="h-full rounded-2xl border border-border bg-card p-5 shadow-sm">
+    <div className="h-full rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm p-5 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-base font-semibold text-foreground">{className}</h3>
           <p className="text-xs text-muted-foreground">Real-time sentiment</p>
         </div>
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md">
           <Users className="h-4 w-4" />
         </div>
       </div>
@@ -102,17 +102,17 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
 
         {/* Most Popular Emotion Display */}
         {topEmotions.length > 0 && (
-          <div className="p-3 bg-gradient-to-r from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 rounded-lg border border-primary-200 dark:border-primary-500/30">
+          <div className="p-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-lg border border-emerald-200 dark:border-emerald-500/30">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
               Most students feel
             </p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-primary-600 dark:text-primary-400 capitalize">
+                <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 capitalize">
                   {topEmotions[0].emotion}
                 </span>
               </div>
-              <span className="text-sm font-bold text-primary-600 dark:text-primary-400">
+              <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                 {((topEmotions[0].count / checkedInCount) * 100).toFixed(0)}%
               </span>
             </div>
@@ -130,13 +130,13 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
             {topEmotions.slice(0, 3).map(({ emotion, count }) => (
               <div key={emotion} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-primary-400 dark:bg-primary-500" />
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                   <span className="text-xs font-medium capitalize text-foreground">{emotion}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-20 rounded-full bg-muted dark:bg-muted/50">
                     <div
-                      className="h-full rounded-full bg-primary-400 dark:bg-primary-500"
+                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
                       style={{ width: `${(count / checkedInCount) * 100}%` }}
                     ></div>
                   </div>

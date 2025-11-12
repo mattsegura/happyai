@@ -1,13 +1,14 @@
-import { BookOpen, Activity, Calendar, ChevronRight, Sparkles, GraduationCap, Clock, CheckCircle2, AlertCircle, TrendingUp, Target, Zap } from 'lucide-react';
+import { BookOpen, Activity, Calendar, ChevronRight, Sparkles, GraduationCap, Clock, CheckCircle2, AlertCircle, TrendingUp, Target, Zap, ChevronDown, ChevronUp, Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { designSystem } from '../../lib/design-system';
 import { useState } from 'react';
 import { NotificationsCard } from './NotificationsCard';
+import { TodaysPlanCard } from './TodaysPlanCard';
 import { DailySentimentCheckIn } from './DailySentimentCheckIn';
 import { AssignmentDetailModal } from '../student/AssignmentDetailModal';
 import { GPACalculatorModal } from '../student/GPACalculatorModal';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Assignment } from '@/lib/types/assignment';
 
 interface OverviewViewProps {
@@ -24,6 +25,7 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
   const [showGPACalculator, setShowGPACalculator] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleSentimentComplete = () => {
     localStorage.setItem('lastSentimentCheckIn', new Date().toDateString());
@@ -370,16 +372,65 @@ export function OverviewView({ onNavigate }: OverviewViewProps) {
             </button>
           </motion.div>
 
-          {/* Notifications Card - Right Side */}
+          {/* Today's Plan Card - Right Side */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <NotificationsCard />
+            <TodaysPlanCard />
           </motion.div>
         </div>
       </div>
+
+      {/* Notifications Section - Collapsible at Bottom */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-6"
+      >
+        <button
+          onClick={() => setShowNotifications(!showNotifications)}
+          className="w-full p-4 rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm hover:bg-card transition-all flex items-center justify-between group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500">
+              <Bell className="h-5 w-5 text-white" />
+            </div>
+            <div className="text-left">
+              <h3 className="font-bold text-foreground">Notifications</h3>
+              <p className="text-xs text-muted-foreground">Canvas updates & Hapi events</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
+              8 new
+            </span>
+            {showNotifications ? (
+              <ChevronUp className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            )}
+          </div>
+        </button>
+
+        <AnimatePresence>
+          {showNotifications && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3">
+                <NotificationsCard showHeader={false} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       {/* Sentiment Check-in Modal */}
       {showSentimentCheckIn && (
