@@ -292,7 +292,7 @@ export function Dashboard() {
                           'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
                           isActive || aiChatExpanded || location.pathname.includes('/ai-chat/')
                             ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                            : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                            : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300'
                         )
                       }
                     >
@@ -317,7 +317,7 @@ export function Dashboard() {
 
                   {/* AI Chat Sub-items */}
                   {aiChatExpanded && (
-                    <div className="ml-4 space-y-1 border-l-2 border-primary/30 pl-2">
+                    <div className="ml-4 space-y-1 border-l-2 border-purple-400/30 pl-2">
                       {aiChatItems.map((subItem) => {
                         const SubIcon = subItem.icon;
                         return (
@@ -328,15 +328,15 @@ export function Dashboard() {
                               cn(
                                 'flex w-full items-start gap-3 rounded-lg px-3 py-2 transition-all duration-200',
                                 isActive
-                                  ? 'bg-primary/20 text-primary font-semibold'
-                                  : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                                  ? 'bg-purple-500/20 text-purple-700 dark:text-purple-300 font-semibold'
+                                  : 'text-purple-600/80 dark:text-purple-400/80 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300'
                               )
                             }
                           >
                             <SubIcon className="h-4 w-4 mt-0.5 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium">{subItem.label}</div>
-                              <div className="text-xs text-muted-foreground">{subItem.description}</div>
+                              <div className="text-xs text-purple-500/60 dark:text-purple-400/60">{subItem.description}</div>
                             </div>
                           </NavLink>
                         );
@@ -355,7 +355,7 @@ export function Dashboard() {
                       'flex w-full items-center justify-center px-0 py-2 rounded-xl transition-all duration-200',
                       isActive || location.pathname.includes('/ai-chat/')
                         ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                        : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                        : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300'
                     )
                   }
                   aria-label={item.label}
@@ -375,7 +375,7 @@ export function Dashboard() {
                     'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
+                      : 'text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 hover:text-purple-700 dark:hover:text-purple-300',
                     spacingClasses
                   )
                 }
@@ -403,7 +403,7 @@ export function Dashboard() {
                     'flex w-full items-center rounded-xl py-2 transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md'
-                      : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
+                      : 'text-green-600 dark:text-green-400 hover:bg-green-500/10 hover:text-green-700 dark:hover:text-green-300',
                     spacingClasses
                   )
                 }
