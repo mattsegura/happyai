@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Sparkles, CheckCircle, XCircle, Settings, ChevronDown, ChevronUp, Eye, Clock, FileQuestion } from 'lucide-react';
 import { cn } from '../../../lib/utils';
+import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
 import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
 import { quizHistory } from '../../../lib/mockData/toolHistory';
 
@@ -17,7 +18,7 @@ type Question = {
   type?: 'mcq' | 'true-false'; // For test builder
 };
 
-export function QuizzesTab() {
+export function QuizzesTabEnhanced() {
   const [mode, setMode] = useState<QuizMode>('practice');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -150,6 +151,9 @@ export function QuizzesTab() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1 p-6">
+        {/* File Upload Section */}
+        <StudyBuddyFileUpload />
+      
         {/* Header with Mode Toggle */}
         <div className="mb-6">
           <div className="flex items-start justify-between">
@@ -285,6 +289,7 @@ export function QuizzesTab() {
         </div>
 
         {questions.length === 0 ? (
+          /* Empty State */
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center max-w-3xl">
               <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 flex items-center justify-center">
@@ -295,27 +300,21 @@ export function QuizzesTab() {
               </h3>
               <p className="text-sm text-muted-foreground mb-6">
                 {mode === 'practice'
-                  ? 'Upload study materials to File Library to generate AI-powered practice quizzes'
-                  : 'Upload study materials to File Library to create custom tests'
+                  ? 'Upload study materials using the file upload section above to generate AI-powered practice quizzes'
+                  : 'Configure your test settings above and upload study materials to create a custom test'
                 }
               </p>
-              <div className="flex gap-3 justify-center">
-                <button
-                  onClick={() => window.location.href = '/dashboard/file-library'}
-                  className="px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-                >
-                  Go to File Library
-                </button>
-                <button
-                  onClick={startMockQuiz}
-                  className="px-6 py-3 bg-muted hover:bg-muted/80 text-foreground rounded-xl font-semibold transition-colors"
-                >
-                  Try Demo Quiz
-                </button>
-              </div>
+              {/* Demo button */}
+              <button
+                onClick={startMockQuiz}
+                className="px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+              >
+                Try Demo Quiz
+              </button>
             </div>
           </div>
         ) : showResults ? (
+          /* Results with AI Explanations */}
           <div className="flex-1 flex items-center justify-center overflow-y-auto">
             <div className="text-center max-w-5xl w-full px-8 py-8">
               <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-purple-600 mb-4">
@@ -410,6 +409,7 @@ export function QuizzesTab() {
             </div>
           </div>
         ) : (
+          /* Quiz Questions with Review Sidebar */
           <div className="flex-1 flex gap-4">
             {/* Main Quiz Area */}
             <div className="flex-1 flex flex-col">

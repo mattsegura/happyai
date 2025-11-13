@@ -35,8 +35,20 @@ import {
   getStorageStats
 } from '../../lib/mockData/fileLibrary';
 import { FileGenerationWorkflow } from './FileGenerationWorkflow';
+import { UniversalUploader, UploadedItem } from './UniversalUploader';
+import { UploadActionPrompt } from './UploadActionPrompt';
+import { useNavigate } from 'react-router-dom';
+
+type DragItem = {
+  type: 'file' | 'folder';
+  id: string;
+  name: string;
+  classId?: string;
+  folderId?: string | null;
+};
 
 export function FileLibrary() {
+  const navigate = useNavigate();
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,6 +60,12 @@ export function FileLibrary() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadClassId, setUploadClassId] = useState<string | null>(null);
   const [uploadFolderId, setUploadFolderId] = useState<string | null>(null);
+  const [showUploadActionPrompt, setShowUploadActionPrompt] = useState(false);
+  const [uploadedItemForAction, setUploadedItemForAction] = useState<UploadedItem | null>(null);
+  
+  // Drag and Drop State
+  const [draggedItem, setDraggedItem] = useState<DragItem | null>(null);
+  const [dropTarget, setDropTarget] = useState<{ type: 'class' | 'folder' | 'root'; id: string } | null>(null);
 
   const classes = getUniqueClasses();
   const stats = getStorageStats();
@@ -244,6 +262,153 @@ export function FileLibrary() {
       ? getFilesInClassRoot(selectedClass).length 
       : 0;
 
+  const handleUpload = (items: UploadedItem[]) => {
+    // Show toast notification for successful upload
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    notification.textContent = `✓ ${items.length} ${items.length === 1 ? 'item' : 'items'} uploaded successfully`;
+    document.body.appendChild(notification);
+    setTimeout(() => document.body.removeChild(notification), 3000);
+
+    // Show action prompt for the first item
+    if (items.length > 0) {
+      setUploadedItemForAction(items[0]);
+      setShowUploadActionPrompt(true);
+    }
+  };
+
+  const handleUploadAction = (action: string) => {
+    setShowUploadActionPrompt(false);
+    
+    // Navigate to the appropriate tool
+    switch (action) {
+      case 'notes':
+        navigate('/dashboard/notes');
+        break;
+      case 'flashcards':
+        navigate('/dashboard/flashcards');
+        break;
+      case 'quiz':
+        navigate('/dashboard/quizzes');
+        break;
+      case 'summarize':
+        navigate('/dashboard/summarize');
+        break;
+      case 'audio':
+        navigate('/dashboard/audio-recap');
+        break;
+      case 'analyze':
+        navigate('/dashboard/image-analysis');
+        break;
+      case 'study-plan':
+        navigate('/dashboard/study-planner');
+        break;
+      case 'assignment':
+        navigate('/dashboard/assignment-assistant');
+        break;
+      default:
+        console.log('Action:', action);
+    }
+    
+    setUploadedItemForAction(null);
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (item: DragItem) => (e: React.DragEvent) => {
+    setDraggedItem(item);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', item.id);
+    
+    // Add a subtle visual effect
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.5';
+    }
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    setDraggedItem(null);
+    setDropTarget(null);
+    
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '1';
+    }
+  };
+
+  const handleDragOver = (targetType: 'class' | 'folder' | 'root', targetId: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedItem) return;
+    
+    // Prevent dropping on itself
+    if (draggedItem.type === 'folder' && targetType === 'folder' && draggedItem.id === targetId) {
+      return;
+    }
+    
+    setDropTarget({ type: targetType, id: targetId });
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDropTarget(null);
+  };
+
+  const handleDrop = (targetType: 'class' | 'folder' | 'root', targetId: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedItem) return;
+    
+    // Prevent dropping on itself
+    if (draggedItem.type === 'folder' && targetType === 'folder' && draggedItem.id === targetId) {
+      setDraggedItem(null);
+      setDropTarget(null);
+      return;
+    }
+    
+    // Perform the move
+    moveItem(draggedItem, targetType, targetId);
+    
+    setDraggedItem(null);
+    setDropTarget(null);
+  };
+
+  const moveItem = (item: DragItem, targetType: 'class' | 'folder' | 'root', targetId: string) => {
+    // In a real app, this would update the database
+    // For now, we'll show a notification
+    
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+    
+    let message = '';
+    
+    if (item.type === 'file') {
+      const targetFolder = folders.find(f => f.id === targetId);
+      const targetClass = classes.find(c => c.id === targetId);
+      
+      if (targetType === 'folder' && targetFolder) {
+        message = `📄 ${item.name} moved to ${targetFolder.name}`;
+      } else if (targetType === 'class' && targetClass) {
+        message = `📄 ${item.name} moved to ${targetClass.name}`;
+      } else if (targetType === 'root') {
+        const className = classes.find(c => c.id === targetId)?.name || 'class root';
+        message = `📄 ${item.name} moved to ${className} root`;
+      }
+    } else if (item.type === 'folder') {
+      const targetClass = classes.find(c => c.id === targetId);
+      if (targetClass) {
+        message = `📁 ${item.name} moved to ${targetClass.name}`;
+      }
+    }
+    
+    notification.textContent = `✓ ${message}`;
+    document.body.appendChild(notification);
+    setTimeout(() => document.body.removeChild(notification), 3000);
+    
+    console.log('Move:', { item, targetType, targetId });
+  };
+
   return (
     <div className="flex h-full overflow-hidden">
       {/* Left Sidebar - Classes */}
@@ -262,6 +427,8 @@ export function FileLibrary() {
             const classFileCount = getAllFilesInClass(classItem.id).length;
             const isSelected = selectedClass === classItem.id;
             
+            const isDropTarget = dropTarget?.type === 'class' && dropTarget.id === classItem.id;
+            
             return (
               <button
                 key={classItem.id}
@@ -270,11 +437,15 @@ export function FileLibrary() {
                   setSelectedFolder(null);
                   setSearchTerm('');
                 }}
+                onDragOver={handleDragOver('class', classItem.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop('class', classItem.id)}
                 className={cn(
                   'w-full text-left p-3 rounded-lg mb-2 transition-all',
                   isSelected
                     ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'hover:bg-muted'
+                    : 'hover:bg-muted',
+                  isDropTarget && 'ring-2 ring-primary ring-offset-2 bg-primary/10'
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -308,10 +479,47 @@ export function FileLibrary() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Upload Zone - Always visible */}
+        <div className="p-6 bg-gradient-to-br from-violet-50/50 via-purple-50/50 to-pink-50/50 dark:from-violet-950/20 dark:via-purple-950/20 dark:to-pink-950/20 border-b border-border">
+          <UniversalUploader
+            onUpload={handleUpload}
+            showLinkInput={true}
+            showCameraCapture={true}
+            context="library"
+          />
+          
+          {/* Quick Stats */}
+          <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="text-center p-4 rounded-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-border/50">
+              <FileText className="w-6 h-6 mx-auto text-blue-600 mb-2" />
+              <p className="text-2xl font-bold text-foreground">{stats?.filesByType?.documents || 0}</p>
+              <p className="text-xs text-muted-foreground">Documents</p>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-border/50">
+              <Image className="w-6 h-6 mx-auto text-green-600 mb-2" />
+              <p className="text-2xl font-bold text-foreground">{stats?.filesByType?.images || 0}</p>
+              <p className="text-xs text-muted-foreground">Images</p>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-border/50">
+              <Video className="w-6 h-6 mx-auto text-purple-600 mb-2" />
+              <p className="text-2xl font-bold text-foreground">{stats?.filesByType?.videos || 0}</p>
+              <p className="text-xs text-muted-foreground">Videos</p>
+            </div>
+          </div>
+        </div>
+
         {selectedClass ? (
           <>
             {/* Header with breadcrumbs */}
-            <div className="p-6 border-b border-border bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20">
+            <div 
+              className={cn(
+                "p-6 border-b border-border bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 transition-all",
+                !selectedFolder && dropTarget?.type === 'root' && "ring-2 ring-primary ring-inset bg-primary/10"
+              )}
+              onDragOver={!selectedFolder ? handleDragOver('root', selectedClass || '') : undefined}
+              onDragLeave={!selectedFolder ? handleDragLeave : undefined}
+              onDrop={!selectedFolder ? handleDrop('root', selectedClass || '') : undefined}
+            >
               <div className="flex items-center justify-between mb-4">
                 {/* Breadcrumb */}
                 <div className="flex items-center gap-2 text-sm">
@@ -326,6 +534,9 @@ export function FileLibrary() {
                     )}
                   >
                     {selectedClassName}
+                    {!selectedFolder && draggedItem && (
+                      <span className="ml-2 text-xs text-primary font-bold">(Drop here for root)</span>
+                    )}
                   </button>
                   {selectedFolder && selectedFolderData && (
                     <>
@@ -373,15 +584,35 @@ export function FileLibrary() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {folders.map((folder) => {
                       const folderFileCount = getFilesByFolder(folder.id).length;
+                      const isDropTarget = dropTarget?.type === 'folder' && dropTarget.id === folder.id;
+                      const isDragging = draggedItem?.type === 'folder' && draggedItem.id === folder.id;
+                      
                       return (
                         <motion.button
                           key={folder.id}
+                          draggable
+                          onDragStart={handleDragStart({
+                            type: 'folder',
+                            id: folder.id,
+                            name: folder.name,
+                            classId: folder.classId
+                          })}
+                          onDragEnd={handleDragEnd}
+                          onDragOver={handleDragOver('folder', folder.id)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop('folder', folder.id)}
                           onClick={() => setSelectedFolder(folder.id)}
-                          whileHover={{ scale: 1.02 }}
+                          whileHover={{ scale: isDragging ? 1 : 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="group p-4 rounded-xl border-2 border-border hover:border-primary/50 bg-card hover:shadow-lg transition-all text-left"
+                          className={cn(
+                            "group p-4 rounded-xl border-2 bg-card hover:shadow-lg transition-all text-left cursor-move",
+                            isDropTarget 
+                              ? 'border-primary ring-2 ring-primary ring-offset-2' 
+                              : 'border-border hover:border-primary/50',
+                            isDragging && 'opacity-50'
+                          )}
                           style={{
-                            borderColor: folder.color ? `${folder.color}40` : undefined
+                            borderColor: !isDropTarget && folder.color ? `${folder.color}40` : undefined
                           }}
                         >
                           <Folder 
@@ -421,12 +652,26 @@ export function FileLibrary() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                     {displayedFiles.map((file) => {
                       const Icon = getFileIcon(file.type);
+                      const isDragging = draggedItem?.type === 'file' && draggedItem.id === file.id;
+                      
                       return (
                         <motion.div
                           key={file.id}
+                          draggable
+                          onDragStart={handleDragStart({
+                            type: 'file',
+                            id: file.id,
+                            name: file.name,
+                            classId: file.classId,
+                            folderId: file.folderId
+                          })}
+                          onDragEnd={handleDragEnd}
                           initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          className="group relative bg-card border border-border/60 rounded-lg p-4 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer"
+                          animate={{ opacity: isDragging ? 0.5 : 1, scale: 1 }}
+                          className={cn(
+                            "group relative bg-card border border-border/60 rounded-lg p-4 hover:border-primary/50 hover:shadow-lg transition-all",
+                            isDragging ? 'cursor-grabbing' : 'cursor-grab'
+                          )}
                           onClick={() => handleOpenFile(file)}
                         >
                           {/* File Icon */}
@@ -739,6 +984,20 @@ export function FileLibrary() {
             onClose={() => {
               setShowWorkflow(false);
               setWorkflowFile(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Upload Action Prompt */}
+      <AnimatePresence>
+        {showUploadActionPrompt && uploadedItemForAction && (
+          <UploadActionPrompt
+            uploadedItem={uploadedItemForAction}
+            onAction={handleUploadAction}
+            onDismiss={() => {
+              setShowUploadActionPrompt(false);
+              setUploadedItemForAction(null);
             }}
           />
         )}

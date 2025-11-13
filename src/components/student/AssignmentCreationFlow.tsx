@@ -10,6 +10,7 @@ import { Assignment, UploadedFile } from '@/lib/types/assignment';
 import { parseInstructions, generateChecklist } from '@/lib/ai/instructionParser';
 import { extractTextFromFile, findMatchingAssignments } from '@/lib/ai/fileContextDetection';
 import { cn } from '@/lib/utils';
+import { UniversalUploader, UploadedItem } from './UniversalUploader';
 
 const mockCourses = [
   { id: '1', name: 'Calculus II', code: 'MATH 201', color: '#3b82f6' },
@@ -528,57 +529,66 @@ function DetailsStep({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <label className="block text-sm font-semibold mb-2">Instructions (Optional)</label>
-        <label className="flex items-center justify-center w-full p-8 border-2 border-dashed border-border rounded-xl hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group">
-          <input
-            type="file"
-            onChange={onInstructionUpload}
-            className="hidden"
-            accept=".pdf,.doc,.docx,.txt"
-          />
-          <div className="text-center">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <Upload className="w-10 h-10 text-muted-foreground group-hover:text-primary mx-auto mb-3 transition-colors" />
-            </motion.div>
-            <p className="text-sm font-medium group-hover:text-primary transition-colors">
-              {instructionFile ? `📄 ${instructionFile.name}` : 'Upload assignment instructions'}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">PDF, DOCX, or TXT</p>
+        <label className="block text-sm font-semibold mb-2">Upload Files (Optional)</label>
+        <p className="text-xs text-muted-foreground mb-3">Instructions, drafts, notes, research, or any supporting materials</p>
+        <UniversalUploader
+          onUpload={(items) => {
+            // Convert UploadedItems to Files for compatibility
+            const files = items
+              .filter(item => item.file)
+              .map(item => item.file as File);
+            
+            if (files.length > 0) {
+              // First file becomes instruction if no instruction file yet
+              if (!instructionFile && files[0]) {
+                const syntheticEvent = {
+                  target: {
+                    files: [files[0]]
+                  }
+                } as any;
+                onInstructionUpload(syntheticEvent);
+              }
+              
+              // Remaining files are supporting files
+              if (files.length > 1 || instructionFile) {
+                const supportingFilesToAdd = instructionFile ? files : files.slice(1);
+                if (supportingFilesToAdd.length > 0) {
+                  const syntheticEvent = {
+                    target: {
+                      files: supportingFilesToAdd
+                    }
+                  } as any;
+                  onSupportingUpload(syntheticEvent);
+                }
+              }
+            }
+          }}
+          showLinkInput={true}
+          showCameraCapture={true}
+          context="assignment"
+          compact={true}
+        />
+        {(instructionFile || supportingFiles.length > 0) && (
+          <div className="mt-4 space-y-2">
+            {instructionFile && (
+              <div className="flex items-center gap-2 p-2 bg-primary/10 rounded-lg">
+                <FileText className="w-4 h-4 text-primary" />
+                <span className="text-sm flex-1">Instructions: {instructionFile.name}</span>
+              </div>
+            )}
+            {supportingFiles.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">Supporting Materials:</p>
+                {supportingFiles.map((file: File, i: number) => (
+                  <div key={i} className="flex items-center gap-2 p-2 bg-accent/10 rounded-lg">
+                    <BookOpen className="w-4 h-4 text-accent" />
+                    <span className="text-sm flex-1">{file.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </label>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <label className="block text-sm font-semibold mb-2">Supporting Materials (Optional)</label>
-        <label className="flex items-center justify-center w-full p-8 border-2 border-dashed border-border rounded-xl hover:border-accent hover:bg-accent/5 transition-all cursor-pointer group">
-          <input
-            type="file"
-            onChange={onSupportingUpload}
-            className="hidden"
-            multiple
-          />
-          <div className="text-center">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <Upload className="w-10 h-10 text-muted-foreground group-hover:text-accent mx-auto mb-3 transition-colors" />
-            </motion.div>
-            <p className="text-sm font-medium group-hover:text-accent transition-colors">
-              {supportingFiles.length > 0 
-                ? `📁 ${supportingFiles.length} file(s) selected`
-                : 'Upload drafts, notes, or research'}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Any file type</p>
-          </div>
-        </label>
+        )}
       </motion.div>
 
       <motion.button

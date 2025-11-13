@@ -56,19 +56,47 @@ function CareAlertsDashboard({ classId }: CareAlertsDashboardProps) {
   }, [atRiskStudents, severityFilter, typeFilter, searchQuery, sortBy]);
 
   async function loadAtRiskStudents() {
-    if (!user) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
 
     setIsLoading(true);
     try {
-      const [students, alertCounts] = await Promise.all([
+      const dataPromise = Promise.all([
         detectAtRiskStudents(user.id, classId),
         getAtRiskCounts(user.id, classId),
       ]);
 
-      setAtRiskStudents(students);
-      setCounts(alertCounts);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Loading timeout')), 3000)
+      );
+
+      const [students, alertCounts] = await Promise.race([dataPromise, timeoutPromise]) as any;
+
+      setAtRiskStudents(students || []);
+      setCounts(alertCounts || {
+        total: 0,
+        critical: 0,
+        high: 0,
+        medium: 0,
+        emotional: 0,
+        academic: 0,
+        crossRisk: 0,
+      });
     } catch (error) {
       console.error('Error loading at-risk students:', error);
+      // Set empty data on error
+      setAtRiskStudents([]);
+      setCounts({
+        total: 0,
+        critical: 0,
+        high: 0,
+        medium: 0,
+        emotional: 0,
+        academic: 0,
+        crossRisk: 0,
+      });
     } finally {
       setIsLoading(false);
     }

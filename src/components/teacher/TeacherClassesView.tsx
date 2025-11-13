@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Users, Search, Plus, Hash, UserCheck, UserX, ChevronLeft, ChevronRight, Clock, Copy, Award, GraduationCap } from 'lucide-react';
-import { MOCK_STUDENT_IDS, MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
 import { motion } from 'framer-motion';
+import { Users, Search, Plus, Hash, UserCheck, UserX, ChevronLeft, ChevronRight, Clock, Copy } from 'lucide-react';
+import { MOCK_STUDENT_IDS, MOCK_CLASS_IDS } from '../../lib/mockStudentIds';
 import { cn } from '../../lib/utils';
 
 // TODO: Fetch from Supabase - Using mock data for now
@@ -198,17 +198,21 @@ function TeacherClassesView() {
           </button>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-xl p-4 border border-primary/20 shadow-md">
-          <h2 className="text-lg font-bold text-foreground mb-2">{selectedClass.name}</h2>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-white/70 dark:bg-black/30 px-3 py-1.5 rounded-lg">
-              <Hash className="w-4 h-4 text-primary" />
-              <span className="font-mono font-semibold text-foreground text-sm">{selectedClass.code}</span>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl p-6 border border-emerald-300 dark:border-emerald-800 shadow-lg backdrop-blur-sm"
+        >
+          <h2 className="text-2xl font-bold text-foreground mb-2">{selectedClass.name}</h2>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 bg-white/70 dark:bg-black/30 px-4 py-2 rounded-lg backdrop-blur-sm">
+              <Hash className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <span className="font-mono font-semibold text-foreground">{selectedClass.code}</span>
               <button
                 onClick={() => copyToClipboard(selectedClass.code)}
-                className="ml-1 p-1 hover:bg-primary/10 rounded transition-colors"
+                className="ml-2 p-1 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 rounded transition-colors"
               >
-                <Copy className="w-3.5 h-3.5 text-primary" />
+                <Copy className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </button>
             </div>
             <span className="text-xs text-foreground">
@@ -216,11 +220,16 @@ function TeacherClassesView() {
               {roster.length} students
             </span>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-foreground">Student Roster</h3>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-card/90 backdrop-blur-sm rounded-2xl p-6 border border-border/60 shadow-lg"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-foreground">Student Roster</h3>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
@@ -228,7 +237,7 @@ function TeacherClassesView() {
                 placeholder="Search students..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3 py-1.5 bg-muted border border-border rounded-lg text-sm focus:outline-none focus:border-primary transition-all duration-200"
+                className="pl-10 pr-4 py-2 bg-muted border-2 border-border rounded-lg focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-600 transition-all duration-300"
               />
             </div>
           </div>
@@ -304,7 +313,7 @@ function TeacherClassesView() {
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -314,29 +323,23 @@ function TeacherClassesView() {
   );
 
   return (
-    <div className="space-y-4">
-      {/* Header - Matching Student View */}
+    <div className="space-y-6">
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+        className="flex items-center justify-between"
       >
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
-            <GraduationCap className="h-7 w-7 text-primary" />
-            Your Classes
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your courses and students</p>
-        </div>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent flex items-center">
+          <Users className="w-7 h-7 mr-2 text-emerald-600 dark:text-emerald-400" />
+          Your Classes
+        </h2>
+        <button
           onClick={() => setShowNewClassModal(true)}
-          className="px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+          className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-300 flex items-center space-x-2"
         >
           <Plus className="h-5 w-5" />
           <span>New Class</span>
-        </motion.button>
+        </button>
       </motion.div>
 
       {/* Pending Join Requests - Styled like Student View */}
@@ -397,36 +400,25 @@ function TeacherClassesView() {
         </motion.div>
       )}
 
-      {/* Class Cards Grid - Styled like Student Classes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {mockTeacherClasses.map((cls, index) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {mockTeacherClasses.map((cls, idx) => {
           const roster = mockClassRosters[cls.id] || [];
           return (
             <motion.div
               key={cls.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
               onClick={() => setSelectedClass({ id: cls.id, name: cls.name, code: cls.class_code })}
-              className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer overflow-hidden group"
+              className="bg-card/90 backdrop-blur-sm rounded-2xl p-6 border border-emerald-200/60 dark:border-emerald-800/60 shadow-lg hover:shadow-xl hover:border-emerald-400 dark:hover:border-emerald-600 transform hover:scale-[1.02] transition-all duration-300 cursor-pointer"
             >
-              {/* Gradient Header */}
-              <div className="h-2 bg-gradient-to-r from-primary to-accent" />
-
-              <div className="p-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
-                    <GraduationCap className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-bold text-foreground truncate">{cls.name}</h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      {roster.length} student{roster.length !== 1 ? 's' : ''}
-                    </p>
-                  </div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">{cls.name}</h3>
+                  <p className="text-sm text-muted-foreground">{roster.length} students</p>
                 </div>
 
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{cls.description}</p>
@@ -441,6 +433,7 @@ function TeacherClassesView() {
                     <ChevronRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">View Details →</span>
               </div>
             </motion.div>
           );
@@ -469,7 +462,7 @@ function TeacherClassesView() {
                 <input
                   type="text"
                   placeholder="e.g., Biology 101"
-                  className="w-full px-4 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 text-foreground placeholder:text-muted-foreground"
+                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-600 transition-all duration-300"
                 />
               </div>
               <div>
@@ -477,7 +470,7 @@ function TeacherClassesView() {
                 <textarea
                   placeholder="Brief description of the class"
                   rows={3}
-                  className="w-full px-4 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 resize-none text-foreground placeholder:text-muted-foreground"
+                  className="w-full px-4 py-3 bg-muted border-2 border-border rounded-xl focus:outline-none focus:border-emerald-400 dark:focus:border-emerald-600 transition-all duration-300 resize-none"
                 />
               </div>
               <div className="flex gap-3 pt-2">
@@ -492,7 +485,7 @@ function TeacherClassesView() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
+                  className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300"
                 >
                   Create Class
                 </motion.button>

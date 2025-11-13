@@ -26,14 +26,14 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
   const checkedInCount = Math.floor(studentCount * 0.7);
 
   return (
-    <div className="h-full rounded-lg border border-border/60 bg-card/90 backdrop-blur-sm p-4 shadow-md hover:shadow-lg transition-shadow duration-200">
-      <div className="flex items-center justify-between mb-4">
+    <div className="h-full rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm p-5 shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-foreground">{className}</h3>
           <p className="text-xs text-muted-foreground">Real-time sentiment</p>
         </div>
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20">
-          <Users className="h-4 w-4 text-primary" />
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md">
+          <Users className="h-4 w-4" />
         </div>
       </div>
 
@@ -92,15 +92,17 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
 
         {/* Most Popular Emotion Display */}
         {topEmotions.length > 0 && (
-          <div className="p-2.5 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-lg border border-primary/20">
+          <div className="p-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-lg border border-emerald-200 dark:border-emerald-500/30">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
               Most students feel
             </p>
             <div className="flex items-center justify-between">
-              <span className="text-base font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent capitalize">
-                {topEmotions[0].emotion}
-              </span>
-              <span className="text-sm font-bold text-primary">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 capitalize">
+                  {topEmotions[0].emotion}
+                </span>
+              </div>
+              <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                 {((topEmotions[0].count / checkedInCount) * 100).toFixed(0)}%
               </span>
             </div>
@@ -111,19 +113,17 @@ export function ClassSentimentDial({ className, studentCount, averageSentiment, 
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Top emotions</p>
           <div className="space-y-1.5">
             {topEmotions.slice(0, 3).map(({ emotion, count }) => (
-              <div key={emotion} className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
-                  <span className="text-[11px] font-medium capitalize text-foreground truncate">{emotion}</span>
+              <div key={emotion} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+                  <span className="text-xs font-medium capitalize text-foreground">{emotion}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="h-1.5 w-16 rounded-full bg-muted/50">
-                    <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(count / checkedInCount) * 100}%` }}
-                      transition={{ duration: 0.8, ease: "easeOut" }}
-                    />
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-20 rounded-full bg-muted dark:bg-muted/50">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
+                      style={{ width: `${(count / checkedInCount) * 100}%` }}
+                    ></div>
                   </div>
                   <span className="w-5 text-right text-[10px] font-semibold text-muted-foreground">{count}</span>
                 </div>

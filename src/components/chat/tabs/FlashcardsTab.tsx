@@ -20,13 +20,12 @@ import {
 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { Flashcard } from '../../../lib/types/studyPlan';
-import { mockFlashcards, flashcardsByTopic, getFlashcardsNeedingReview, getMasteredFlashcards } from '../../../lib/mockData/flashcards';
-import { StudyBuddyFileUpload } from '../../student/StudyBuddyFileUpload';
+import { mockFlashcards, flashcardsByTopic, getFlashcardsNeedingReview, getMasteredFlashcards, getFlashcardsDueForReview } from '../../../lib/mockData/flashcards';
 import { ToolHistorySidebar } from '../../student/ToolHistorySidebar';
 import { flashcardSetHistory } from '../../../lib/mockData/toolHistory';
 
 type ViewMode = 'study' | 'grid';
-type FilterMode = 'all' | 'need-practice' | 'mastered';
+type FilterMode = 'all' | 'need-practice' | 'mastered' | 'due-review';
 
 export function FlashcardsTab() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>(mockFlashcards);
@@ -43,6 +42,7 @@ export function FlashcardsTab() {
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
   const masteredCount = flashcards.filter(c => c.masteryScore >= 90).length;
   const needsPracticeCount = flashcards.filter(c => c.masteryScore < 80).length;
+  const dueReviewCount = getFlashcardsDueForReview().length;
 
   // Apply filter
   useEffect(() => {
@@ -53,6 +53,9 @@ export function FlashcardsTab() {
         break;
       case 'mastered':
         filtered = getMasteredFlashcards();
+        break;
+      case 'due-review':
+        filtered = getFlashcardsDueForReview();
         break;
       default:
         filtered = mockFlashcards;
@@ -109,25 +112,33 @@ export function FlashcardsTab() {
   if (flashcards.length === 0) {
     return (
       <div className="flex flex-col h-full p-6">
-        <StudyBuddyFileUpload />
-        
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-3xl">
             <Brain className="w-16 h-16 mx-auto text-violet-600 dark:text-violet-400 mb-4" />
             <h3 className="text-xl font-bold text-foreground mb-2">
-              No Flashcards Found
+              {filterMode === 'all' ? 'No Flashcards Yet' : 'No Flashcards Found'}
             </h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-6">
               {filterMode === 'need-practice' && 'Great job! No cards need practice right now.'}
               {filterMode === 'mastered' && 'No cards mastered yet. Keep studying!'}
-              {filterMode === 'all' && 'Upload materials above to generate flashcards'}
+              {filterMode === 'due-review' && 'Excellent! All cards reviewed. Check back tomorrow.'}
+              {filterMode === 'all' && 'Upload study materials to File Library to generate your first flashcard set'}
             </p>
-            <button
-              onClick={() => setFilterMode('all')}
-              className="px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
-            >
-              Show All Cards
-            </button>
+            {filterMode === 'all' ? (
+              <button
+                onClick={() => window.location.href = '/dashboard/file-library'}
+                className="px-6 py-3 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+              >
+                Go to File Library
+              </button>
+            ) : (
+              <button
+                onClick={() => setFilterMode('all')}
+                className="px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+              >
+                Show All Cards
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -148,11 +159,6 @@ export function FlashcardsTab() {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1">
-        {/* File Upload Section */}
-        <div className="px-6 pt-6">
-          <StudyBuddyFileUpload />
-        </div>
-
       {/* Header with Stats and Controls */}
       <div className="px-6 py-4 border-b border-border/60">
         <div className="flex items-center justify-between mb-4">
@@ -174,8 +180,9 @@ export function FlashcardsTab() {
               className="px-3 py-2 rounded-lg bg-background border border-border text-sm font-medium"
             >
               <option value="all">All Cards ({mockFlashcards.length})</option>
-              <option value="need-practice">Need Practice ({getFlashcardsNeedingReview().length})</option>
-              <option value="mastered">Mastered ({getMasteredFlashcards().length})</option>
+              <option value="due-review">Due for Review ({dueReviewCount})</option>
+              <option value="need-practice">Need Practice ({needsPracticeCount})</option>
+              <option value="mastered">Mastered ({masteredCount})</option>
             </select>
 
             {/* View Mode Toggle */}
@@ -297,21 +304,74 @@ export function FlashcardsTab() {
                     style={{ backfaceVisibility: 'hidden' }}
                   >
                     <Sparkles className="w-8 h-8 text-violet-600 dark:text-violet-400 mb-4" />
-                    <h3 className="text-2xl font-bold text-center text-foreground mb-4">
-                      {currentCard.front}
-                    </h3>
-                    {currentCard.type === 'mcq' && currentCard.options && (
-                      <div className="w-full space-y-2 mt-4">
-                        {currentCard.options.map((option, idx) => (
-                          <div
-                            key={idx}
-                            className="p-3 bg-muted/30 rounded-lg text-center font-medium"
-                          >
-                            {String.fromCharCode(65 + idx)}. {option}
-                          </div>
-                        ))}
-                      </div>
+                    
+                    {/* Term-Definition or Cloze */}
+                    {(currentCard.type === 'term-definition' || currentCard.type === 'cloze') && (
+                      <h3 className="text-2xl font-bold text-center text-foreground mb-4">
+                        {currentCard.front}
+                      </h3>
                     )}
+                    
+                    {/* Multiple Choice */}
+                    {currentCard.type === 'mcq' && currentCard.options && (
+                      <>
+                        <h3 className="text-xl font-bold text-center text-foreground mb-6">
+                          {currentCard.front}
+                        </h3>
+                        <div className="w-full max-w-2xl space-y-2 mt-4">
+                          {currentCard.options.map((option, idx) => (
+                            <div
+                              key={idx}
+                              className="p-3 bg-muted/30 hover:bg-muted/50 rounded-lg text-left font-medium transition-colors border border-border/50"
+                            >
+                              <span className="font-bold text-violet-600 dark:text-violet-400 mr-3">
+                                {String.fromCharCode(65 + idx)}.
+                              </span>
+                              {option}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    
+                    {/* True/False */}
+                    {currentCard.type === 'true-false' && currentCard.options && (
+                      <>
+                        <h3 className="text-xl font-bold text-center text-foreground mb-6">
+                          {currentCard.front}
+                        </h3>
+                        <div className="flex gap-4 mt-4">
+                          {currentCard.options.map((option, idx) => (
+                            <div
+                              key={idx}
+                              className={cn(
+                                "px-8 py-4 rounded-xl font-bold text-lg transition-all border-2",
+                                option === 'True' 
+                                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-400'
+                                  : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-400'
+                              )}
+                            >
+                              {option}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    
+                    {/* Diagram (placeholder for future implementation) */}
+                    {currentCard.type === 'diagram' && currentCard.imageUrl && (
+                      <>
+                        <h3 className="text-xl font-bold text-center text-foreground mb-6">
+                          {currentCard.front}
+                        </h3>
+                        <div className="w-full max-w-2xl p-4 bg-muted/30 rounded-xl border-2 border-dashed border-border">
+                          <p className="text-sm text-muted-foreground text-center">
+                            📊 Diagram card type (image display coming soon)
+                          </p>
+                        </div>
+                      </>
+                    )}
+                    
                     <p className="text-sm text-muted-foreground mt-6">Click to flip</p>
                   </div>
 
@@ -327,13 +387,17 @@ export function FlashcardsTab() {
                     <h3 className="text-2xl font-bold text-center text-foreground mb-4">
                       {currentCard.back}
                     </h3>
-                    {currentCard.type === 'mcq' && currentCard.options && currentCard.correctOption !== undefined && (
-                      <div className="mt-4 p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                        <p className="text-sm font-semibold text-green-700 dark:text-green-400">
-                          Correct Answer: {String.fromCharCode(65 + currentCard.correctOption)}
+                    
+                    {/* Show correct answer for MCQ and True/False */}
+                    {(currentCard.type === 'mcq' || currentCard.type === 'true-false') && 
+                     currentCard.options && currentCard.correctOption !== undefined && (
+                      <div className="mt-4 p-4 bg-green-100 dark:bg-green-900/30 rounded-xl border-2 border-green-400">
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-400 text-center">
+                          ✓ Correct Answer: {currentCard.options[currentCard.correctOption]}
                         </p>
                       </div>
                     )}
+                    
                     <p className="text-sm text-muted-foreground mt-6">Click to flip back</p>
                   </div>
                 </motion.div>

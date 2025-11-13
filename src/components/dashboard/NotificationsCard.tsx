@@ -173,7 +173,11 @@ const formatTimestamp = (date: Date) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
-export function NotificationsCard() {
+interface NotificationsCardProps {
+  showHeader?: boolean;
+}
+
+export function NotificationsCard({ showHeader = true }: NotificationsCardProps) {
   const [notifications, setNotifications] = useState(mockNotifications);
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -195,6 +199,7 @@ export function NotificationsCard() {
       className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-4 md:p-5"
     >
       {/* Header */}
+      {showHeader && (
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -228,6 +233,7 @@ export function NotificationsCard() {
           </button>
         )}
       </div>
+      )}
 
       {/* Notifications List */}
       <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">

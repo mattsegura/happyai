@@ -48,10 +48,10 @@ export function ClassPulseSummary({
   };
 
   return (
-    <div className="rounded-xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 bg-gradient-to-br from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 rounded-lg flex items-center justify-center">
-          <MessageSquare className="w-4 h-4 text-primary" />
+    <div className="bg-card/90 backdrop-blur-sm rounded-2xl p-6 border border-border/60 shadow-lg hover:shadow-xl transition-all duration-300">
+      <div className="flex items-center space-x-2 mb-4">
+        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md">
+          <MessageSquare className="w-5 h-5 text-white" />
         </div>
         <div>
           <h3 className="text-sm font-bold text-foreground">{className}</h3>
@@ -61,11 +61,11 @@ export function ClassPulseSummary({
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-lg p-3 border border-primary/20">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-foreground">Response Rate</span>
-            <span className={`text-xl font-bold ${completionRate >= 70 ? 'text-green-600 dark:text-green-400' : completionRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-orange-600 dark:text-orange-400'}`}>
+      <div className="space-y-4">
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-500/10 dark:to-teal-500/10 rounded-xl p-4 border border-emerald-200/50 dark:border-emerald-500/20">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-foreground">Response Rate</span>
+            <span className={`text-2xl font-bold ${completionRate >= 70 ? 'text-green-600 dark:text-green-400' : completionRate >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-orange-600 dark:text-orange-400'}`}>
               {completionRate}%
             </span>
           </div>
@@ -127,26 +127,24 @@ export function ClassPulseSummary({
                   {answers.length > 0 ? (
                     <div className="space-y-1.5">
                       {answers.slice(0, 3).map((answer, idx) => (
-                        <div key={idx} className="space-y-0.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
-                                idx === 0 ? 'bg-primary text-white' :
-                                idx === 1 ? 'bg-primary/80 text-white' :
-                                'bg-primary/60 text-white'
+                        <div key={idx} className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2 flex-1">
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                                idx === 0 ? 'bg-emerald-500 text-white dark:bg-emerald-400' :
+                                idx === 1 ? 'bg-teal-500 text-white dark:bg-teal-400' :
+                                'bg-emerald-400 text-white dark:bg-teal-500'
                               }`}>
                                 {idx + 1}
                               </div>
                               <span className="text-xs text-foreground truncate">{answer.answer}</span>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-14 h-1.5 bg-muted/50 rounded-full overflow-hidden">
-                                <motion.div
-                                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${answer.percentage}%` }}
-                                  transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeOut" }}
-                                />
+                            <div className="flex items-center space-x-2">
+                              <div className="w-16 h-2 bg-muted dark:bg-muted/50 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                                  style={{ width: `${answer.percentage}%` }}
+                                ></div>
                               </div>
                               <span className="text-[10px] font-semibold text-muted-foreground w-8 text-right">
                                 {answer.percentage}%
@@ -182,7 +180,7 @@ export function ClassPulseSummary({
       {onViewDetails && activePulses.length > 0 && (
         <button
           onClick={onViewDetails}
-          className="w-full mt-3 py-2 bg-gradient-to-r from-primary to-accent text-white text-xs font-bold rounded-lg hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+          className="w-full mt-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
         >
           View Full Details in Hapi Lab
         </button>
