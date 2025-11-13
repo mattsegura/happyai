@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -98,9 +99,19 @@ export function TeacherEffectivenessView() {
   const departments = ['all', ...new Set(engagementScores.map((t) => t.department))];
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex items-start justify-between"
+      >
         <div>
           <h2 className="text-2xl font-bold text-foreground">Teacher Effectiveness Analytics</h2>
           <p className="text-sm text-muted-foreground">
@@ -130,7 +141,7 @@ export function TeacherEffectivenessView() {
             ))}
           </select>
         </div>
-      </div>
+      </motion.div>
 
       {/* Feature 27: Teacher Engagement Score */}
       <Card>
@@ -145,45 +156,74 @@ export function TeacherEffectivenessView() {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Overall stats */}
-          <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-lg border border-border/60 bg-muted/30 p-4"
+          >
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.25 }}
+                whileHover={{ y: -2 }}
+              >
                 <p className="text-xs text-muted-foreground">School-Wide Average</p>
                 <p className="text-3xl font-bold text-foreground">
                   {loading ? '...' : mockSchoolWideAvgEngagementScore.toFixed(1)}
                 </p>
-              </div>
-              <div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ y: -2 }}
+              >
                 <p className="text-xs text-muted-foreground">Highly Engaged</p>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {loading ? '...' : mockEngagementScoreDistribution['Highly Engaged']}
                 </p>
                 <p className="text-xs text-muted-foreground">(≥85)</p>
-              </div>
-              <div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.35 }}
+                whileHover={{ y: -2 }}
+              >
                 <p className="text-xs text-muted-foreground">Engaged</p>
                 <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {loading ? '...' : mockEngagementScoreDistribution['Engaged']}
                 </p>
                 <p className="text-xs text-muted-foreground">(70-84)</p>
-              </div>
-              <div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ y: -2 }}
+              >
                 <p className="text-xs text-muted-foreground">Needs Improvement</p>
                 <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {loading ? '...' : mockEngagementScoreDistribution['Moderately Engaged'] + mockEngagementScoreDistribution['Disengaged']}
                 </p>
                 <p className="text-xs text-muted-foreground">(&lt;70)</p>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Teacher ranking table */}
           <div>
             <h4 className="mb-3 text-sm font-semibold text-foreground">Teacher Rankings</h4>
             <div className="space-y-2">
               {filteredEngagementScores.map((teacher, idx) => (
-                <div
+                <motion.div
                   key={teacher.teacherId}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * idx }}
+                  whileHover={{ x: 4, scale: 1.01 }}
                   className={cn(
                     'rounded-lg border p-3',
                     teacher.scoreLabel === 'Highly Engaged'
@@ -251,7 +291,7 @@ export function TeacherEffectivenessView() {
                     <span>Avg Response: {teacher.avgResponseTimeHours.toFixed(1)}h</span>
                     <span>Logins: {teacher.dailyLogins}/5 days</span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -319,9 +359,13 @@ export function TeacherEffectivenessView() {
               Feedback Leaderboard
             </h4>
             <div className="space-y-2">
-              {filteredFeedbackStats.map((teacher) => (
-                <div
+              {filteredFeedbackStats.map((teacher, idx) => (
+                <motion.div
                   key={teacher.teacherId}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * idx }}
+                  whileHover={{ x: 4, scale: 1.01 }}
                   className="flex items-center justify-between rounded-lg border border-border/60 bg-background p-3"
                 >
                   <div className="flex-1">
@@ -356,7 +400,7 @@ export function TeacherEffectivenessView() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -514,6 +558,6 @@ export function TeacherEffectivenessView() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -58,9 +59,9 @@ export function OfficeHoursAnalyticsView() {
   const useMock = isEngagementMockEnabled();
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Office Hours Analytics</h2>
         <p className="text-sm text-muted-foreground">
           Track teacher office hours availability, student attendance, and capacity utilization
@@ -71,7 +72,7 @@ export function OfficeHoursAnalyticsView() {
             Using mock data (set VITE_USE_ENGAGEMENT_MOCK=false for real data)
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Feature 32: Office Hours Participation */}
       <Card>
@@ -87,7 +88,13 @@ export function OfficeHoursAnalyticsView() {
         <CardContent className="space-y-4">
           {/* Overview stats */}
           <div className="grid gap-4 sm:grid-cols-4">
-            <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="rounded-lg border border-border/60 bg-muted/30 p-4"
+            >
               <p className="text-xs text-muted-foreground">Teachers Offering</p>
               <p className="text-3xl font-bold text-foreground">
                 {loading ? '...' : `${officeHoursData?.percentTeachersOffering.toFixed(1)}%`}
@@ -100,9 +107,15 @@ export function OfficeHoursAnalyticsView() {
                 )}
                 <span className="text-xs text-muted-foreground">Target: 100%</span>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="rounded-lg border border-border/60 bg-muted/30 p-4"
+            >
               <p className="text-xs text-muted-foreground">Avg Hours/Teacher/Week</p>
               <p className="text-3xl font-bold text-foreground">
                 {loading ? '...' : officeHoursData?.avgHoursPerTeacherPerWeek.toFixed(1)}
@@ -115,9 +128,15 @@ export function OfficeHoursAnalyticsView() {
                 )}
                 <span className="text-xs text-muted-foreground">Target: ≥2h</span>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="rounded-lg border border-border/60 bg-muted/30 p-4"
+            >
               <p className="text-xs text-muted-foreground">Attendance Rate</p>
               <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                 {loading ? '...' : `${officeHoursData?.attendanceRate.toFixed(1)}%`}
@@ -125,9 +144,15 @@ export function OfficeHoursAnalyticsView() {
               <p className="mt-1 text-xs text-muted-foreground">
                 Students showing up vs booked
               </p>
-            </div>
+            </motion.div>
 
-            <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="rounded-lg border border-border/60 bg-muted/30 p-4"
+            >
               <p className="text-xs text-muted-foreground">Total Meetings</p>
               <p className="text-3xl font-bold text-foreground">
                 {loading ? '...' : officeHoursData?.totalMeetingsConducted.toLocaleString()}
@@ -136,7 +161,7 @@ export function OfficeHoursAnalyticsView() {
                 <TrendingUp className="h-3 w-3" />
                 <span className="text-xs font-semibold">+12% vs last week</span>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Department breakdown */}
@@ -352,6 +377,6 @@ export function OfficeHoursAnalyticsView() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

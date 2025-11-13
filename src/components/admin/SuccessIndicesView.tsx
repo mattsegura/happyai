@@ -1,12 +1,10 @@
 /**
- * Success Indices View - Phase 3 Admin Features
- *
- * Implements:
- * - Feature 11: Student Success Index
- * - Feature 12: Teacher Support Index
+ * Success Indices View
+ * Holistic metrics combining academic performance and emotional wellbeing
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { TrendingUp, Users, GraduationCap, Award, Download } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -27,17 +25,24 @@ export function SuccessIndicesView() {
   const [viewMode, setViewMode] = useState<ViewMode>('student-success');
 
   return (
-    <div className="space-y-6">
-      <div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Success Indices</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Holistic metrics combining academic performance and emotional wellbeing
         </p>
-      </div>
+      </motion.div>
 
       {/* View Tabs */}
-      <div className="flex space-x-2 border-b border-border">
-        <button
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="flex space-x-2 border-b border-border"
+      >
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setViewMode('student-success')}
           className={cn(
             'px-4 py-2 text-sm font-medium border-b-2 transition',
@@ -47,8 +52,10 @@ export function SuccessIndicesView() {
           )}
         >
           Student Success Index
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => setViewMode('teacher-support')}
           className={cn(
             'px-4 py-2 text-sm font-medium border-b-2 transition',
@@ -58,18 +65,25 @@ export function SuccessIndicesView() {
           )}
         >
           Teacher Support Index
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* Student Success View */}
       {viewMode === 'student-success' && (
         <div className="space-y-6">
           {/* Distribution */}
           <div className="grid gap-4 md:grid-cols-4">
-            {Object.entries(mockSuccessDistribution).filter(([key]) => key !== 'totalStudents').map(([category, count]) => {
+            {Object.entries(mockSuccessDistribution).filter(([key]) => key !== 'totalStudents').map(([category, count], index) => {
               const percentage = ((count / mockSuccessDistribution.totalStudents) * 100).toFixed(1);
               return (
-                <Card key={category} className={cn('border-2', category === 'thriving' ? 'border-green-200 dark:border-green-900/50' : category === 'stable' ? 'border-blue-200 dark:border-blue-900/50' : category === 'struggling' ? 'border-yellow-200 dark:border-yellow-900/50' : 'border-red-200 dark:border-red-900/50')}>
+                <motion.div
+                  key={category}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 + index * 0.05 }}
+                  whileHover={{ y: -4, scale: 1.02 }}
+                >
+                <Card className={cn('border-2', category === 'thriving' ? 'border-green-200 dark:border-green-900/50' : category === 'stable' ? 'border-blue-200 dark:border-blue-900/50' : category === 'struggling' ? 'border-yellow-200 dark:border-yellow-900/50' : 'border-red-200 dark:border-red-900/50')}>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm capitalize">{category.replace(/([A-Z])/g, ' $1').trim()}</CardTitle>
                   </CardHeader>
@@ -78,23 +92,40 @@ export function SuccessIndicesView() {
                     <p className="text-xs text-muted-foreground">{percentage}% of students</p>
                   </CardContent>
                 </Card>
+                </motion.div>
               );
             })}
           </div>
 
           {/* Student List */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>All Students by Success Score</CardTitle>
-              <button className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-muted">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium hover:bg-muted"
+              >
                 <Download className="h-4 w-4" />
                 Export
-              </button>
+              </motion.button>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockStudentSuccessScores.sort((a, b) => b.overallScore - a.overallScore).map((student) => (
-                  <div key={student.studentId} className="rounded-lg border border-border bg-card p-4">
+                {mockStudentSuccessScores.sort((a, b) => b.overallScore - a.overallScore).map((student, index) => (
+                  <motion.div
+                    key={student.studentId}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.45 + index * 0.03 }}
+                    whileHover={{ scale: 1.01, x: 2 }}
+                    className="rounded-lg border border-border bg-card p-4"
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="font-semibold text-foreground">{student.studentName}</h3>
@@ -121,11 +152,12 @@ export function SuccessIndicesView() {
                         <div className="text-xs">Sentiment: {student.avgSentiment.toFixed(1)}/6</div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </CardContent>
           </Card>
+          </motion.div>
         </div>
       )}
 
@@ -134,8 +166,15 @@ export function SuccessIndicesView() {
         <div className="space-y-6">
           {/* Distribution */}
           <div className="grid gap-4 md:grid-cols-4">
-            {Object.entries(mockTeacherSupportDistribution).map(([category, count]) => (
-              <Card key={category} className="border-2">
+            {Object.entries(mockTeacherSupportDistribution).map(([category, count], index) => (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 + index * 0.05 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+              >
+              <Card className="border-2">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm capitalize">{category.replace(/([A-Z])/g, ' $1').trim()}</CardTitle>
                 </CardHeader>
@@ -144,18 +183,31 @@ export function SuccessIndicesView() {
                   <p className="text-xs text-muted-foreground">teachers</p>
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
           </div>
 
           {/* Teacher List */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
           <Card>
             <CardHeader>
               <CardTitle>Teachers by Support Score</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockTeacherSupportScores.sort((a, b) => b.overallScore - a.overallScore).map((teacher) => (
-                  <div key={teacher.teacherId} className={cn('rounded-lg border-2 p-4', teacher.needsSupport ? 'border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20' : 'border-border bg-card')}>
+                {mockTeacherSupportScores.sort((a, b) => b.overallScore - a.overallScore).map((teacher, index) => (
+                  <motion.div
+                    key={teacher.teacherId}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.45 + index * 0.03 }}
+                    whileHover={{ scale: 1.01, x: 2 }}
+                    className={cn('rounded-lg border-2 p-4', teacher.needsSupport ? 'border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20' : 'border-border bg-card')}
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="font-semibold text-foreground">{teacher.teacherName}</h3>
@@ -194,13 +246,14 @@ export function SuccessIndicesView() {
                         </ul>
                       </div>
                     )}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </CardContent>
           </Card>
+          </motion.div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

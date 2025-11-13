@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -24,9 +25,9 @@ export function SettingsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Platform Settings</h2>
           <p className="text-sm text-muted-foreground">
@@ -39,9 +40,14 @@ export function SettingsView() {
             Settings saved
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Platform Announcements */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -67,16 +73,26 @@ export function SettingsView() {
             />
           </div>
           <div className="flex gap-3">
-            <Button className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600">
-              <Bell className="mr-2 h-4 w-4" />
-              Publish Announcement
-            </Button>
-            <Button variant="outline">Preview</Button>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600">
+                <Bell className="mr-2 h-4 w-4" />
+                Publish Announcement
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button variant="outline">Preview</Button>
+            </motion.div>
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Email Settings */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -110,8 +126,14 @@ export function SettingsView() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Feature Flags */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+      >
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -157,9 +179,13 @@ export function SettingsView() {
               description: 'Enable AI-powered emotional support chat',
               enabled: false,
             },
-          ].map((feature) => (
-            <div
+          ].map((feature, index) => (
+            <motion.div
               key={feature.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + index * 0.05 }}
+              whileHover={{ scale: 1.01, x: 2 }}
               className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 p-4"
             >
               <div className="flex-1">
@@ -179,12 +205,18 @@ export function SettingsView() {
                   )}
                 ></span>
               </button>
-            </div>
+            </motion.div>
           ))}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Security Settings */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+      >
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -228,8 +260,14 @@ export function SettingsView() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Database Settings */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65 }}
+      >
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -257,18 +295,28 @@ export function SettingsView() {
           </Button>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Save Button */}
-      <div className="flex justify-end gap-3">
-        <Button variant="outline">Reset to Defaults</Button>
-        <Button
-          className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
-          onClick={handleSaveSettings}
-        >
-          <Save className="mr-2 h-4 w-4" />
-          Save All Settings
-        </Button>
-      </div>
-    </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+        className="flex justify-end gap-3"
+      >
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button variant="outline">Reset to Defaults</Button>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
+            onClick={handleSaveSettings}
+          >
+            <Save className="mr-2 h-4 w-4" />
+            Save All Settings
+          </Button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }

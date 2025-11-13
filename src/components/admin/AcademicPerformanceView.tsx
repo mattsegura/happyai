@@ -1,4 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
+
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useAuth } from '../../contexts/AuthContext';
@@ -120,9 +122,19 @@ export function AcademicPerformanceView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex items-center justify-between"
+      >
         <div>
           <h2 className="text-2xl font-bold text-foreground">Academic Performance</h2>
           <p className="text-sm text-muted-foreground">
@@ -138,7 +150,7 @@ export function AcademicPerformanceView() {
           <Download className="h-4 w-4" />
           Export CSV
         </Button>
-      </div>
+      </motion.div>
 
       {/* Filters */}
       <Card>
@@ -184,6 +196,12 @@ export function AcademicPerformanceView() {
 
       {/* Feature 1: Average Grade Metric */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
         <Card>
           <CardContent className="p-6">
             <div className="flex items-start justify-between gap-4">
@@ -221,8 +239,15 @@ export function AcademicPerformanceView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
         {/* Feature 4: Assignment Submission Rate */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
         <Card>
           <CardContent className="p-6">
             <div className="flex items-start justify-between gap-4">
@@ -250,8 +275,15 @@ export function AcademicPerformanceView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
         {/* Feature 5: Late Submissions % */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
         <Card>
           <CardContent className="p-6">
             <div className="flex items-start justify-between gap-4">
@@ -279,8 +311,15 @@ export function AcademicPerformanceView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
         {/* Feature 5: Missing Submissions % */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
         <Card>
           <CardContent className="p-6">
             <div className="flex items-start justify-between gap-4">
@@ -316,9 +355,15 @@ export function AcademicPerformanceView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
       </div>
 
       {/* Feature 2: Grade Distribution Report */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Grade Distribution by Department</CardTitle>
@@ -332,8 +377,14 @@ export function AcademicPerformanceView() {
             </div>
           ) : gradeDistribution.length > 0 ? (
             <div className="space-y-4">
-              {gradeDistribution.map((dept) => (
-                <div key={dept.department} className="space-y-2">
+              {gradeDistribution.map((dept, index) => (
+                <motion.div
+                  key={dept.department}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.45 + index * 0.05 }}
+                  className="space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-foreground">{getDepartmentLabel(dept.department)}</h4>
@@ -349,7 +400,7 @@ export function AcademicPerformanceView() {
 
                   {/* Grade distribution bar */}
                   <div className="flex h-8 overflow-hidden rounded-lg">
-                    {Object.entries(dept.gradeDistribution).map(([grade, count]) => {
+                    {Object.entries(dept.gradeDistribution).map(([grade, count], barIndex) => {
                       const percentage = (count / dept.totalStudents) * 100;
                       if (percentage === 0) return null;
 
@@ -362,14 +413,16 @@ export function AcademicPerformanceView() {
                       };
 
                       return (
-                        <div
+                        <motion.div
                           key={grade}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${percentage}%` }}
+                          transition={{ duration: 0.8, delay: 0.5 + index * 0.1 + barIndex * 0.05 }}
                           className={cn('flex items-center justify-center text-xs font-semibold text-white', getGradeColor(grade))}
-                          style={{ width: `${percentage}%` }}
                           title={`${grade}: ${count} students (${percentage.toFixed(1)}%)`}
                         >
                           {percentage > 8 && grade}
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -385,7 +438,7 @@ export function AcademicPerformanceView() {
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           ) : (
@@ -393,8 +446,14 @@ export function AcademicPerformanceView() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Feature 4 & 5: Assignment Submission Heat Map */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Assignment Submissions by Department</CardTitle>
@@ -408,14 +467,18 @@ export function AcademicPerformanceView() {
             </div>
           ) : departmentSubmissions.length > 0 ? (
             <div className="space-y-3">
-              {departmentSubmissions.map((dept) => {
+              {departmentSubmissions.map((dept, index) => {
                 const isLateHigh = dept.lateRate > 20;
                 const isMissingHigh = dept.missingRate > 10;
                 const hasAlert = isLateHigh || isMissingHigh;
 
                 return (
-                  <div
+                  <motion.div
                     key={dept.department}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.55 + index * 0.05 }}
+                    whileHover={{ scale: 1.01, x: 4 }}
                     className={cn(
                       'rounded-lg border p-4',
                       hasAlert
@@ -461,7 +524,7 @@ export function AcademicPerformanceView() {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -470,8 +533,14 @@ export function AcademicPerformanceView() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Submission Rate Trend (Feature 4) */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Assignment Submission Rate Trend</CardTitle>
@@ -482,30 +551,46 @@ export function AcademicPerformanceView() {
           ) : (
             <div className="space-y-3">
               {mockSubmissionRateTrends.map((week, index) => (
-                <div key={week.week} className="flex items-center gap-3">
+                <motion.div
+                  key={week.week}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.65 + index * 0.05 }}
+                  className="flex items-center gap-3"
+                >
                   <span className="w-16 text-xs font-medium text-muted-foreground">{week.week}</span>
                   <div className="flex-1">
                     <div className="h-8 overflow-hidden rounded-lg bg-muted">
-                      <div
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${week.rate}%` }}
+                        transition={{ duration: 0.8, delay: 0.7 + index * 0.1 }}
                         className={cn(
-                          'flex h-full items-center justify-end px-3 text-xs font-semibold text-white transition-all',
+                          'flex h-full items-center justify-end px-3 text-xs font-semibold text-white',
                           week.rate >= 85 ? 'bg-green-500' : week.rate >= 75 ? 'bg-yellow-500' : 'bg-red-500'
                         )}
-                        style={{ width: `${week.rate}%` }}
                       >
                         {week.rate.toFixed(1)}%
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
                   {index === mockSubmissionRateTrends.length - 1 && (
-                    <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">Current</span>
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.5 }}
+                      className="text-xs font-semibold text-blue-600 dark:text-blue-400"
+                    >
+                      Current
+                    </motion.span>
                   )}
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

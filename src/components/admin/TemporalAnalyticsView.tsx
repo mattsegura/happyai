@@ -1,13 +1,10 @@
 /**
- * Temporal Analytics View - Phase 4, Week 1
- *
- * Features:
- * - Feature 21: Mood by Time of Semester
- * - Feature 22: Engagement Heatmap by Day
- * - Feature 8: Department Performance Trends
+ * Temporal Analytics View
+ * Mood trends, engagement patterns, and department performance over time
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import {
@@ -116,12 +113,12 @@ export function TemporalAnalyticsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Temporal Analytics</h2>
         <p className="text-sm text-muted-foreground">Time-based patterns in sentiment, engagement, and performance</p>
-      </div>
+      </motion.div>
 
       {/* Key Statistics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -155,7 +152,9 @@ export function TemporalAnalyticsView() {
             <p className="text-sm text-muted-foreground">Emotional patterns throughout the academic term with workload correlation</p>
           </div>
           <div className="flex gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedWeekRange('all')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedWeekRange === 'all'
@@ -164,8 +163,10 @@ export function TemporalAnalyticsView() {
               }`}
             >
               Full Semester
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedWeekRange('first-half')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedWeekRange === 'first-half'
@@ -174,8 +175,10 @@ export function TemporalAnalyticsView() {
               }`}
             >
               Weeks 1-8
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedWeekRange('second-half')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedWeekRange === 'second-half'
@@ -184,7 +187,7 @@ export function TemporalAnalyticsView() {
               }`}
             >
               Weeks 9-16
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -301,7 +304,7 @@ export function TemporalAnalyticsView() {
         </div>
       </div>
 
-      {/* Feature 8: Department Performance Trends */}
+      {/* Department Performance Trends */}
       <div className={SURFACE_BASE + ' p-6'}>
         <div className="mb-4 flex items-center justify-between">
           <div>
@@ -309,7 +312,9 @@ export function TemporalAnalyticsView() {
             <p className="text-sm text-muted-foreground">Academic and engagement trends by department</p>
           </div>
           <div className="flex gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedDepartmentFilter('all')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedDepartmentFilter === 'all'
@@ -318,8 +323,10 @@ export function TemporalAnalyticsView() {
               }`}
             >
               All
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedDepartmentFilter('improving')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedDepartmentFilter === 'improving'
@@ -328,8 +335,10 @@ export function TemporalAnalyticsView() {
               }`}
             >
               Improving
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedDepartmentFilter('stable')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedDepartmentFilter === 'stable'
@@ -338,8 +347,10 @@ export function TemporalAnalyticsView() {
               }`}
             >
               Stable
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedDepartmentFilter('declining')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 selectedDepartmentFilter === 'declining'
@@ -348,13 +359,20 @@ export function TemporalAnalyticsView() {
               }`}
             >
               Declining
-            </button>
+            </motion.button>
           </div>
         </div>
 
         <div className="space-y-3">
-          {departmentTrends.map((dept) => (
-            <div key={dept.department} className="rounded-lg border border-border bg-muted/20 p-4">
+          {departmentTrends.map((dept, index) => (
+            <motion.div
+              key={dept.department}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ scale: 1.01, x: 2 }}
+              className="rounded-lg border border-border bg-muted/20 p-4"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
@@ -411,10 +429,10 @@ export function TemporalAnalyticsView() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

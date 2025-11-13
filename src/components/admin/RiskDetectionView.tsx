@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
   AlertTriangle,
@@ -42,14 +43,14 @@ export function RiskDetectionView() {
   const disengagedSorted = getDisengagedStudentsSorted();
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Risk Detection & Early Warning</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Identify students at risk academically AND emotionally, with predictive analytics
         </p>
-      </div>
+      </motion.div>
 
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -612,6 +613,6 @@ export function RiskDetectionView() {
           </Card>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

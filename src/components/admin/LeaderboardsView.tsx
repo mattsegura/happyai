@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Award, TrendingUp, TrendingDown, Minus, Users, Heart, Trophy, Medal, Star } from 'lucide-react';
 import {
   mockEngagedTeacherRankings,
@@ -55,15 +56,20 @@ export function LeaderboardsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Leaderboards & Recognition</h2>
         <p className="text-sm text-muted-foreground">Celebrate excellence and identify best practices</p>
-      </div>
+      </motion.div>
 
       {/* Feature 50: Most Engaged Teachers */}
-      <div className={SURFACE_BASE + ' p-6'}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className={SURFACE_BASE + ' p-6'}
+      >
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Award className="h-5 w-5 text-purple-600 dark:text-purple-400" />
@@ -73,7 +79,9 @@ export function LeaderboardsView() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setTeacherFilter('all')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 teacherFilter === 'all'
@@ -82,8 +90,10 @@ export function LeaderboardsView() {
               }`}
             >
               All Teachers
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setTeacherFilter('improving')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 teacherFilter === 'improving'
@@ -92,13 +102,19 @@ export function LeaderboardsView() {
               }`}
             >
               Improving
-            </button>
+            </motion.button>
           </div>
         </div>
 
         {/* Teacher of the Month Spotlight */}
         {teacherOfMonth && (
-          <div className="mb-6 rounded-lg border-2 border-yellow-500/60 bg-gradient-to-br from-yellow-50 via-orange-50 to-yellow-50 p-5 dark:from-yellow-950/30 dark:via-orange-950/30 dark:to-yellow-950/30">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            whileHover={{ scale: 1.01, y: -2 }}
+            className="mb-6 rounded-lg border-2 border-yellow-500/60 bg-gradient-to-br from-yellow-50 via-orange-50 to-yellow-50 p-5 dark:from-yellow-950/30 dark:via-orange-950/30 dark:to-yellow-950/30"
+          >
             <div className="flex items-start gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg">
                 <Trophy className="h-8 w-8 text-white" />
@@ -139,14 +155,18 @@ export function LeaderboardsView() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Teacher Rankings */}
         <div className="space-y-3">
-          {filteredTeachers.map((teacher) => (
-            <div
+          {filteredTeachers.map((teacher, index) => (
+            <motion.div
               key={teacher.teacherId}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + index * 0.05 }}
+              whileHover={{ scale: 1.01, x: 2 }}
               className={`rounded-lg border p-4 ${
                 teacher.rank <= 3
                   ? 'border-purple-500/40 bg-purple-50/30 dark:bg-purple-950/20'
@@ -216,13 +236,18 @@ export function LeaderboardsView() {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Feature 51: Most Engaged Student Cohorts */}
-      <div className={SURFACE_BASE + ' p-6'}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className={SURFACE_BASE + ' p-6'}
+      >
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -232,7 +257,9 @@ export function LeaderboardsView() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setCohortTypeFilter('all')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 cohortTypeFilter === 'all'
@@ -241,8 +268,10 @@ export function LeaderboardsView() {
               }`}
             >
               All
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setCohortTypeFilter('class')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 cohortTypeFilter === 'class'
@@ -251,8 +280,10 @@ export function LeaderboardsView() {
               }`}
             >
               Classes
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setCohortTypeFilter('grade')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 cohortTypeFilter === 'grade'
@@ -261,8 +292,10 @@ export function LeaderboardsView() {
               }`}
             >
               Grades
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setCohortTypeFilter('department')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 cohortTypeFilter === 'department'
@@ -271,14 +304,18 @@ export function LeaderboardsView() {
               }`}
             >
               Departments
-            </button>
+            </motion.button>
           </div>
         </div>
 
         <div className="space-y-3">
-          {filteredCohorts.map((cohort) => (
-            <div
+          {filteredCohorts.map((cohort, index) => (
+            <motion.div
               key={cohort.cohortId}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25 + index * 0.05 }}
+              whileHover={{ scale: 1.01, x: 2 }}
               className={`rounded-lg border p-4 ${
                 cohort.rank === 1
                   ? 'border-yellow-500/60 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30'
@@ -353,13 +390,18 @@ export function LeaderboardsView() {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Feature 26: Department Wellbeing Leaderboard */}
-      <div className={SURFACE_BASE + ' p-6'}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className={SURFACE_BASE + ' p-6'}
+      >
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Heart className="h-5 w-5 text-pink-600 dark:text-pink-400" />
@@ -369,7 +411,9 @@ export function LeaderboardsView() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setDepartmentView('all')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 departmentView === 'all'
@@ -378,8 +422,10 @@ export function LeaderboardsView() {
               }`}
             >
               All
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setDepartmentView('top')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 departmentView === 'top'
@@ -388,8 +434,10 @@ export function LeaderboardsView() {
               }`}
             >
               Top 5
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setDepartmentView('bottom')}
               className={`rounded-lg px-3 py-1 text-xs font-semibold transition ${
                 departmentView === 'bottom'
@@ -398,14 +446,18 @@ export function LeaderboardsView() {
               }`}
             >
               Bottom 5
-            </button>
+            </motion.button>
           </div>
         </div>
 
         <div className="space-y-3">
-          {filteredDepartments.map((dept) => (
-            <div
+          {filteredDepartments.map((dept, index) => (
+            <motion.div
               key={dept.department}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + index * 0.05 }}
+              whileHover={{ scale: 1.01, x: 2 }}
               className={`rounded-lg border p-4 ${
                 dept.recognitionLevel === 'top5'
                   ? 'border-green-500/40 bg-green-50/30 dark:bg-green-950/20'
@@ -487,10 +539,10 @@ export function LeaderboardsView() {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

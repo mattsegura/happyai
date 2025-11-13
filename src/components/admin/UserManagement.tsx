@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import { ADMIN_CONFIG } from '../../lib/config';
 import { useAuth } from '../../contexts/AuthContext';
@@ -169,9 +170,19 @@ export function UserManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div>
           <h2 className="text-2xl font-bold text-foreground">User Management</h2>
           <p className="text-sm text-muted-foreground">
@@ -185,10 +196,15 @@ export function UserManagement() {
           <User className="mr-2 h-4 w-4" />
           Add User
         </Button>
-      </div>
+      </motion.div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="flex flex-col gap-3 sm:flex-row"
+      >
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -209,32 +225,56 @@ export function UserManagement() {
           <option value="teacher">Teachers</option>
           <option value="admin">Admins</option>
         </select>
-      </div>
+      </motion.div>
 
       {/* Stats Summary */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Total Users</p>
           <p className="text-2xl font-bold text-foreground">{users.length}</p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Students</p>
           <p className="text-2xl font-bold text-foreground">
             {users.filter((u) => u.role === 'student').length}
           </p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Teachers</p>
           <p className="text-2xl font-bold text-foreground">
             {users.filter((u) => u.role === 'teacher').length}
           </p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Admins</p>
           <p className="text-2xl font-bold text-foreground">
             {users.filter((u) => u.role === 'admin').length}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Users Table */}
@@ -271,11 +311,14 @@ export function UserManagement() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
-                {filteredUsers.map((user) => {
+                {filteredUsers.map((user, index) => {
                   const RoleIcon = getRoleIcon(user.role);
                   return (
-                    <tr
+                    <motion.tr
                       key={user.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + index * 0.05 }}
                       className="transition hover:bg-muted/30"
                     >
                       <td className="px-6 py-4">
@@ -341,7 +384,7 @@ export function UserManagement() {
                           </button>
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   );
                 })}
               </tbody>
@@ -447,6 +490,6 @@ export function UserManagement() {
           loading={disabling}
         />
       )}
-    </div>
+    </motion.div>
   );
 }

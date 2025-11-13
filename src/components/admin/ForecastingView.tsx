@@ -7,6 +7,7 @@
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Area, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle, Calendar, FileText, Download, Mail, Sparkles } from 'lucide-react';
 import {
@@ -72,12 +73,12 @@ export function ForecastingView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Forecasting & AI Reports</h2>
         <p className="text-sm text-muted-foreground">Predictive analytics and automated insights</p>
-      </div>
+      </motion.div>
 
       {/* Quick Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -462,6 +463,6 @@ export function ForecastingView() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

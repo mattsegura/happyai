@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { handleError, handleSuccess } from '../../lib/errorHandler';
@@ -180,9 +181,9 @@ export function UniversityManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">University Management</h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -196,7 +197,7 @@ export function UniversityManagement() {
           <Plus className="mr-2 h-4 w-4" />
           Add University
         </Button>
-      </div>
+      </motion.div>
 
       {/* Search */}
       <div className="relative">
@@ -216,8 +217,15 @@ export function UniversityManagement() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredUniversities.map((university) => (
-            <Card key={university.id} className={!university.is_active ? 'opacity-60' : ''}>
+          {filteredUniversities.map((university, index) => (
+            <motion.div
+              key={university.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 + index * 0.05 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+            >
+            <Card className={!university.is_active ? 'opacity-60' : ''}>
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
@@ -251,55 +259,68 @@ export function UniversityManagement() {
 
                 {/* Stats */}
                 <div className="mt-4 flex gap-4 border-t border-border/50 pt-4">
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 + index * 0.05 }}
+                  >
                     <div className="text-2xl font-bold text-foreground">
                       {university._count?.users || 0}
                     </div>
                     <div className="text-xs text-muted-foreground">Users</div>
-                  </div>
-                  <div>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.25 + index * 0.05 }}
+                  >
                     <div className="text-2xl font-bold text-foreground">
                       {university._count?.classes || 0}
                     </div>
                     <div className="text-xs text-muted-foreground">Classes</div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Actions */}
                 <div className="mt-4 flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setEditingUniversity(university);
-                      setShowModal(true);
-                    }}
-                    className="flex-1"
-                  >
-                    <Edit2 className="mr-1 h-3 w-3" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleToggleActive(university)}
-                    className="flex-1"
-                  >
-                    {university.is_active ? (
-                      <>
-                        <XCircle className="mr-1 h-3 w-3" />
-                        Deactivate
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="mr-1 h-3 w-3" />
-                        Activate
-                      </>
-                    )}
-                  </Button>
+                  <motion.div className="flex-1" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setEditingUniversity(university);
+                        setShowModal(true);
+                      }}
+                      className="w-full"
+                    >
+                      <Edit2 className="mr-1 h-3 w-3" />
+                      Edit
+                    </Button>
+                  </motion.div>
+                  <motion.div className="flex-1" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleToggleActive(university)}
+                      className="w-full"
+                    >
+                      {university.is_active ? (
+                        <>
+                          <XCircle className="mr-1 h-3 w-3" />
+                          Deactivate
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-1 h-3 w-3" />
+                          Activate
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           ))}
         </div>
       )}
@@ -328,7 +349,7 @@ export function UniversityManagement() {
           onSave={handleCreateOrUpdate}
         />
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -360,7 +381,20 @@ function UniversityModal({ university, onClose, onSave }: UniversityModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ type: "spring", duration: 0.3 }}
+        onClick={(e) => e.stopPropagation()}
+      >
       <Card className="w-full max-w-lg">
         <CardContent className="p-6">
           <h3 className="text-xl font-bold text-foreground">
@@ -433,6 +467,7 @@ function UniversityModal({ university, onClose, onSave }: UniversityModalProps) 
           </form>
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+
 import { supabase } from '../../lib/supabase';
 import { ADMIN_CONFIG } from '../../lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -273,9 +275,18 @@ export function SentimentMonitoring() {
   const useMock = isSentimentMockEnabled();
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
         <h2 className="text-2xl font-semibold text-foreground">Sentiment Monitoring</h2>
         <p className="text-sm text-muted-foreground">
           Platform-wide emotional wellness tracking
@@ -286,7 +297,7 @@ export function SentimentMonitoring() {
             Using mock data (set VITE_USE_SENTIMENT_MOCK=false for real data)
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Feature 3: Filters */}
       <Card>
@@ -347,8 +358,14 @@ export function SentimentMonitoring() {
 
       {/* Overview Stats */}
       <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-4 md:p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
+        <Card className="h-full hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 h-full flex flex-col">
             <div className="flex items-center gap-2 mb-3">
               <div className="rounded-xl bg-primary/10 p-2 shadow-sm">
                 <Activity className="h-4 w-4 text-primary" />
@@ -358,15 +375,24 @@ export function SentimentMonitoring() {
             {loading ? (
               <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
             ) : (
-              <h3 className="text-2xl md:text-3xl font-black text-foreground">
-                {stats.totalCheckIns.toLocaleString()}
-              </h3>
+              <div className="flex-1">
+                <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                  {stats.totalCheckIns.toLocaleString()}
+                </h3>
+              </div>
             )}
           </CardContent>
         </Card>
+        </motion.div>
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-4 md:p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
+        <Card className="h-full hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 h-full flex flex-col">
             <div className="flex items-center gap-2 mb-3">
               <div className={cn(
                 'rounded-xl p-2 shadow-sm',
@@ -383,7 +409,7 @@ export function SentimentMonitoring() {
             {loading ? (
               <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
             ) : (
-              <div>
+              <div className="flex-1">
                 <h3 className="text-2xl md:text-3xl font-black text-foreground">
                   {stats.averageSentiment}
                   <span className="ml-1 text-base md:text-lg text-muted-foreground">/6</span>
@@ -395,9 +421,16 @@ export function SentimentMonitoring() {
             )}
           </CardContent>
         </Card>
+        </motion.div>
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-4 md:p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.25 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
+        <Card className="h-full hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 h-full flex flex-col">
             <div className="flex items-center gap-2 mb-3">
               <div className="rounded-xl bg-orange-500/10 p-2 shadow-sm">
                 <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
@@ -407,7 +440,7 @@ export function SentimentMonitoring() {
             {loading ? (
               <div className="h-9 w-20 animate-pulse rounded bg-muted"></div>
             ) : (
-              <div>
+              <div className="flex-1">
                 <h3 className="text-2xl md:text-3xl font-black text-foreground">
                   {stats.alertCount}
                 </h3>
@@ -418,24 +451,34 @@ export function SentimentMonitoring() {
             )}
           </CardContent>
         </Card>
+        </motion.div>
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardContent className="p-4 md:p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+        >
+        <Card className="h-full hover:shadow-lg transition-shadow">
+          <CardContent className="p-4 md:p-6 h-full flex flex-col">
             <div className="flex items-center gap-2 mb-3">
               <div className="rounded-xl bg-accent/10 p-2 shadow-sm">
                 <Users className="h-4 w-4 text-accent" />
               </div>
             </div>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Status</p>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-              <h3 className="text-xl md:text-2xl font-black text-foreground">Active</h3>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <h3 className="text-xl md:text-2xl font-black text-foreground">Active</h3>
+              </div>
+              <p className="mt-1 text-xs font-medium text-muted-foreground">
+                Monitoring
+              </p>
             </div>
-            <p className="mt-1 text-xs font-medium text-muted-foreground">
-              Monitoring
-            </p>
           </CardContent>
         </Card>
+        </motion.div>
       </div>
 
       {/* Emotion Distribution */}
@@ -525,6 +568,6 @@ export function SentimentMonitoring() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

@@ -1,14 +1,10 @@
 /**
- * Comparative Analytics View - Phase 4, Week 2
- *
- * Features:
- * - Feature 6: Assignment Load Per Student
- * - Feature 52: Sentiment Growth Classes
- * - Feature 53: Class Size vs Sentiment
- * - Feature 25: Course Type Comparison
+ * Comparative Analytics View
+ * Cross-sectional analysis of workload, sentiment growth, class size, and course types
  */
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, BarChart, Bar, ScatterChart, Scatter, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { AlertTriangle, TrendingUp, Users, BookOpen, Award } from 'lucide-react';
 import {
@@ -41,12 +37,12 @@ export function ComparativeAnalyticsView() {
   }));
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Comparative Analytics</h2>
         <p className="text-sm text-muted-foreground">Cross-sectional analysis and performance comparisons</p>
-      </div>
+      </motion.div>
 
       {/* Feature 6: Assignment Load Per Student */}
       <div className={SURFACE_BASE + ' p-6'}>
@@ -396,6 +392,6 @@ export function ComparativeAnalyticsView() {
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

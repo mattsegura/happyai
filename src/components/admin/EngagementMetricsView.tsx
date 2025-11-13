@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -105,9 +106,18 @@ export function EngagementMetricsView() {
   const useMock = isEngagementMockEnabled();
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
         <h2 className="text-2xl font-bold text-foreground">Student Engagement Analytics</h2>
         <p className="text-sm text-muted-foreground">
           Track student participation, peer interaction, and platform activity
@@ -118,9 +128,14 @@ export function EngagementMetricsView() {
             Using mock data (set VITE_USE_ENGAGEMENT_MOCK=false for real data)
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Feature 35: Class Pulse Participation Rate */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
@@ -254,8 +269,14 @@ export function EngagementMetricsView() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Features 36-37: Peer Interaction Analytics */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
@@ -396,8 +417,14 @@ export function EngagementMetricsView() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Feature 38: Assignment Engagement Rate */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
@@ -503,8 +530,14 @@ export function EngagementMetricsView() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Feature 40: Login Activity Trends */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
@@ -623,6 +656,7 @@ export function EngagementMetricsView() {
           )}
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useAuth } from '../../contexts/AuthContext';
@@ -140,53 +141,70 @@ export function ReportsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Reports & Analytics</h2>
         <p className="text-sm text-muted-foreground">
           Generate and export platform reports
         </p>
-      </div>
+      </motion.div>
 
       {/* Quick Export Options */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Quick Export</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
-            <Button
-              variant="outline"
-              onClick={() => handleExportData('csv')}
-              disabled={generating !== null}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export as CSV
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleExportData('json')}
-              disabled={generating !== null}
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" />
-              Export as JSON
-            </Button>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="outline"
+                onClick={() => handleExportData('csv')}
+                disabled={generating !== null}
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export as CSV
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                variant="outline"
+                onClick={() => handleExportData('json')}
+                disabled={generating !== null}
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export as JSON
+              </Button>
+            </motion.div>
           </div>
           <p className="text-xs text-muted-foreground">
             Quick export generates a user activity report
           </p>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Report Types Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {reportTypes.map((report) => {
+        {reportTypes.map((report, index) => {
           const Icon = report.icon;
           return (
-            <Card key={report.id} className="transition hover:shadow-lg">
+            <motion.div
+              key={report.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + index * 0.05 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+            >
+            <Card className="transition hover:shadow-lg">
               <CardContent className="p-6">
                 <div className="mb-4 flex items-start justify-between">
                   <div className={`rounded-xl ${report.color} p-3`}>
@@ -221,11 +239,17 @@ export function ReportsView() {
                 </Button>
               </CardContent>
             </Card>
+            </motion.div>
           );
         })}
       </div>
 
       {/* Recent Reports */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Recent Reports</CardTitle>
@@ -252,8 +276,12 @@ export function ReportsView() {
                 size: '856 KB',
               },
             ].map((report, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.55 + idx * 0.05 }}
+                whileHover={{ scale: 1.01, x: 2 }}
                 className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 p-4"
               >
                 <div className="flex items-center gap-3">
@@ -270,13 +298,19 @@ export function ReportsView() {
                 <Button variant="outline" size="sm">
                   <Download className="h-4 w-4" />
                 </Button>
-              </div>
+              </motion.div>
             ))}
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Scheduled Reports */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+      >
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -310,6 +344,7 @@ export function ReportsView() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import { ADMIN_CONFIG } from '../../lib/config';
 import { handleError, handleSuccess } from '../../lib/errorHandler';
@@ -203,9 +204,19 @@ export function ClassManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div>
           <h2 className="text-2xl font-bold text-foreground">Class Management</h2>
           <p className="text-sm text-muted-foreground">
@@ -219,10 +230,15 @@ export function ClassManagement() {
           <Plus className="mr-2 h-4 w-4" />
           Create Class
         </Button>
-      </div>
+      </motion.div>
 
       {/* Search */}
-      <div className="relative">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="relative"
+      >
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
@@ -231,21 +247,39 @@ export function ClassManagement() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
         />
-      </div>
+      </motion.div>
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Total Classes</p>
           <p className="text-2xl font-bold text-foreground">{classes.length}</p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Total Students</p>
           <p className="text-2xl font-bold text-foreground">
             {classes.reduce((sum, cls) => sum + (cls.student_count || 0), 0)}
           </p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ y: -4, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4 cursor-default transition-shadow hover:shadow-lg"
+        >
           <p className="text-sm text-muted-foreground">Avg. Class Size</p>
           <p className="text-2xl font-bold text-foreground">
             {classes.length > 0
@@ -255,7 +289,7 @@ export function ClassManagement() {
                 )
               : 0}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Classes Grid */}
@@ -267,9 +301,16 @@ export function ClassManagement() {
         </div>
       ) : filteredClasses.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredClasses.map((cls) => (
-            <Card key={cls.id} className="transition hover:shadow-lg">
-              <CardContent className="p-6">
+          {filteredClasses.map((cls, index) => (
+            <motion.div
+              key={cls.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 + index * 0.05 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+            >
+            <Card className="transition hover:shadow-lg h-full flex flex-col">
+              <CardContent className="p-6 flex flex-col h-full">
                 <div className="mb-4 flex items-start justify-between">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-white">
                     <GraduationCap className="h-6 w-6" />
@@ -296,7 +337,7 @@ export function ClassManagement() {
 
                 <h3 className="mb-2 text-lg font-bold text-foreground">{cls.name}</h3>
 
-                <div className="mb-4 space-y-2">
+                <div className="mb-4 space-y-2 flex-1">
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
@@ -308,11 +349,17 @@ export function ClassManagement() {
                     </span>
                   </div>
 
-                  {cls.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {cls.description}
-                    </p>
-                  )}
+                  <div className="min-h-[40px]">
+                    {cls.description ? (
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {cls.description}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground/50 italic">
+                        Synced from Canvas LMS
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2 border-t border-border/60 pt-4">
@@ -357,6 +404,7 @@ export function ClassManagement() {
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           ))}
         </div>
       ) : (
@@ -458,6 +506,6 @@ export function ClassManagement() {
           loading={deleting}
         />
       )}
-    </div>
+    </motion.div>
   );
 }

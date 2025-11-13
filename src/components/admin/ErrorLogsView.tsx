@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -159,9 +160,9 @@ export function ErrorLogsView() {
   // };
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Error Logs</h2>
           <p className="text-sm text-muted-foreground">
@@ -179,7 +180,7 @@ export function ErrorLogsView() {
             Test Error Logging
           </Button>
         )} */}
-      </div>
+      </motion.div>
 
       {/* Search and Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">
@@ -207,30 +208,54 @@ export function ErrorLogsView() {
 
       {/* Stats Summary */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          whileHover={{ y: -2, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4"
+        >
           <p className="text-sm text-muted-foreground">Open Errors</p>
           <p className="text-2xl font-bold text-foreground">
             {errors.filter((e) => e.status === 'open').length}
           </p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ y: -2, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4"
+        >
           <p className="text-sm text-muted-foreground">Total Occurrences</p>
           <p className="text-2xl font-bold text-foreground">
             {errors.reduce((sum, e) => sum + e.occurrence_count, 0)}
           </p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          whileHover={{ y: -2, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4"
+        >
           <p className="text-sm text-muted-foreground">Affected Users</p>
           <p className="text-2xl font-bold text-foreground">
             {errors.reduce((sum, e) => sum + (e.affected_users_count || 0), 0)}
           </p>
-        </div>
-        <div className="rounded-lg border border-border/60 bg-background/50 p-4">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ y: -2, scale: 1.02 }}
+          className="rounded-lg border border-border/60 bg-background/50 p-4"
+        >
           <p className="text-sm text-muted-foreground">Resolved</p>
           <p className="text-2xl font-bold text-foreground">
             {errors.filter((e) => e.status === 'resolved').length}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Error List */}
@@ -242,9 +267,13 @@ export function ErrorLogsView() {
             ))}
           </div>
         ) : filteredErrors.length > 0 ? (
-          filteredErrors.map((error) => (
-            <div
+          filteredErrors.map((error, index) => (
+            <motion.div
               key={error.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35 + index * 0.05 }}
+              whileHover={{ scale: 1.01, x: 2 }}
               className="rounded-lg border border-border/60 bg-background p-4 transition hover:bg-muted/30"
             >
               <div className="flex items-start justify-between gap-4">
@@ -348,7 +377,7 @@ export function ErrorLogsView() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))
         ) : (
           <div className="flex flex-col items-center justify-center rounded-lg border border-border/60 bg-background py-12">
@@ -360,6 +389,6 @@ export function ErrorLogsView() {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

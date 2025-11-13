@@ -15,6 +15,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -164,9 +165,9 @@ export function PlatformHealthView() {
   const useMock = isPlatformHealthMockEnabled();
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <h2 className="text-2xl font-bold text-foreground">Platform Health & Integration Metrics</h2>
         <p className="text-sm text-muted-foreground">
           Monitor platform reliability, Canvas integration, and remaining PRD features
@@ -177,7 +178,7 @@ export function PlatformHealthView() {
             Using mock data (set VITE_USE_PLATFORM_HEALTH_MOCK=false for real data)
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Platform Integration Metrics Section */}
       <div className="space-y-4">
@@ -997,6 +998,6 @@ export function PlatformHealthView() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

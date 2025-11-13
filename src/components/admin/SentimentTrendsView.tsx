@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -82,16 +83,30 @@ export function SentimentTrendsView() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Header */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
         <h2 className="text-2xl font-bold text-foreground">Sentiment Trends & Analysis</h2>
         <p className="text-sm text-muted-foreground">
           Advanced emotional wellness analytics and patterns
         </p>
-      </div>
+      </motion.div>
 
       {/* Filters */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -124,14 +139,22 @@ export function SentimentTrendsView() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Feature 19: Positive/Negative Ratio */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="md:col-span-1">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ y: -4 }}
+          className="md:col-span-1"
+        >
+        <Card className="h-full">
           <CardHeader>
             <CardTitle className="text-base font-semibold">Sentiment Ratio</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-full">
             {loading ? (
               <div className="space-y-3">
                 <div className="h-24 animate-pulse rounded bg-muted"></div>
@@ -177,12 +200,20 @@ export function SentimentTrendsView() {
             )}
           </CardContent>
         </Card>
+        </motion.div>
 
-        <Card className="md:col-span-2">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.25 }}
+          whileHover={{ y: -4 }}
+          className="md:col-span-2"
+        >
+        <Card className="h-full">
           <CardHeader>
             <CardTitle className="text-base font-semibold">Ratio by Department</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-full">
             {loading ? (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
@@ -191,10 +222,16 @@ export function SentimentTrendsView() {
               </div>
             ) : (
               <div className="space-y-3">
-                {mockDepartmentSentimentRatio.slice(0, 6).map((dept) => {
+                {mockDepartmentSentimentRatio.slice(0, 6).map((dept, index) => {
                   const isHealthy = dept.ratio >= 3.0;
                   return (
-                    <div key={dept.department} className="flex items-center justify-between">
+                    <motion.div
+                      key={dept.department}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index }}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex-1">
                         <p className="font-medium text-foreground">{getDepartmentLabel(dept.department)}</p>
                         <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
@@ -211,16 +248,22 @@ export function SentimentTrendsView() {
                           {dept.ratio.toFixed(1)}:1
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
             )}
           </CardContent>
         </Card>
+        </motion.div>
       </div>
 
       {/* Feature 17: Sentiment by Grade Level/Course Type */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">
@@ -236,8 +279,14 @@ export function SentimentTrendsView() {
             </div>
           ) : viewMode === 'grade_level' ? (
             <div className="space-y-4">
-              {mockGradeLevelSentiment.map((grade) => (
-                <div key={grade.gradeLevel} className="space-y-2">
+              {mockGradeLevelSentiment.map((grade, index) => (
+                <motion.div
+                  key={grade.gradeLevel}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  className="space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-foreground">{grade.label}</h4>
@@ -251,18 +300,20 @@ export function SentimentTrendsView() {
                     </div>
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-muted">
-                    <div
+                    <motion.div
                       className={cn(
-                        'h-full rounded-full transition-all',
+                        'h-full rounded-full',
                         grade.avgSentiment >= 5 ? 'bg-green-500' :
                         grade.avgSentiment >= 4 ? 'bg-blue-500' :
                         grade.avgSentiment >= 3 ? 'bg-yellow-500' :
                         grade.avgSentiment >= 2 ? 'bg-orange-500' : 'bg-red-500'
                       )}
-                      style={{ width: `${(grade.avgSentiment / 6) * 100}%` }}
-                    ></div>
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(grade.avgSentiment / 6) * 100}%` }}
+                      transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
+                    />
                   </div>
-                </div>
+                </motion.div>
               ))}
 
               {/* Insights */}
@@ -282,8 +333,14 @@ export function SentimentTrendsView() {
             </div>
           ) : (
             <div className="space-y-4">
-              {mockDepartmentSentiment.map((dept) => (
-                <div key={dept.department} className="space-y-2">
+              {mockDepartmentSentiment.map((dept, index) => (
+                <motion.div
+                  key={dept.department}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  className="space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-foreground">{getDepartmentLabel(dept.department)}</h4>
@@ -297,18 +354,20 @@ export function SentimentTrendsView() {
                     </div>
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-muted">
-                    <div
+                    <motion.div
                       className={cn(
-                        'h-full rounded-full transition-all',
+                        'h-full rounded-full',
                         dept.avgSentiment >= 5 ? 'bg-green-500' :
                         dept.avgSentiment >= 4 ? 'bg-blue-500' :
                         dept.avgSentiment >= 3 ? 'bg-yellow-500' :
                         dept.avgSentiment >= 2 ? 'bg-orange-500' : 'bg-red-500'
                       )}
-                      style={{ width: `${(dept.avgSentiment / 6) * 100}%` }}
-                    ></div>
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(dept.avgSentiment / 6) * 100}%` }}
+                      transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
+                    />
                   </div>
-                </div>
+                </motion.div>
               ))}
 
               {/* Insights */}
@@ -329,8 +388,14 @@ export function SentimentTrendsView() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Feature 18: Emotional Stability (Standard Deviation) */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Emotional Stability by Class</CardTitle>
@@ -347,9 +412,13 @@ export function SentimentTrendsView() {
             </div>
           ) : (
             <div className="space-y-3">
-              {mockEmotionalStability.map((classData) => (
-                <div
+              {mockEmotionalStability.map((classData, index) => (
+                <motion.div
                   key={classData.className}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  whileHover={{ scale: 1.01, x: 4 }}
                   className="rounded-lg border border-border/60 bg-muted/30 p-4"
                 >
                   <div className="flex items-center justify-between">
@@ -376,7 +445,7 @@ export function SentimentTrendsView() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
 
               {/* Legend */}
@@ -409,6 +478,7 @@ export function SentimentTrendsView() {
           )}
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

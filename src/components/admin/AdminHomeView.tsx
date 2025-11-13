@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -50,40 +51,47 @@ interface StatCardProps {
 
 function StatCard({ title, value, change, icon: Icon, iconColor, loading }: StatCardProps) {
   return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardContent className="p-4 md:p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{title}</p>
-            <div className="flex items-baseline gap-2">
-              {loading ? (
-                <div className="h-8 w-20 animate-pulse rounded bg-muted"></div>
-              ) : (
-                <h3 className="text-2xl md:text-3xl font-black text-foreground">{value}</h3>
-              )}
-              {change !== undefined && !loading && (
-                <span
-                  className={cn(
-                    'flex items-center text-sm font-semibold',
-                    change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                  )}
-                >
-                  {change >= 0 ? (
-                    <ArrowUp className="mr-1 h-3 w-3" />
-                  ) : (
-                    <ArrowDown className="mr-1 h-3 w-3" />
-                  )}
-                  {Math.abs(change)}%
-                </span>
-              )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+    >
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardContent className="p-4 md:p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{title}</p>
+              <div className="flex items-baseline gap-2">
+                {loading ? (
+                  <div className="h-8 w-20 animate-pulse rounded bg-muted"></div>
+                ) : (
+                  <h3 className="text-2xl md:text-3xl font-black text-foreground">{value}</h3>
+                )}
+                {change !== undefined && !loading && (
+                  <span
+                    className={cn(
+                      'flex items-center text-sm font-semibold',
+                      change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                    )}
+                  >
+                    {change >= 0 ? (
+                      <ArrowUp className="mr-1 h-3 w-3" />
+                    ) : (
+                      <ArrowDown className="mr-1 h-3 w-3" />
+                    )}
+                    {Math.abs(change)}%
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className={cn('rounded-xl p-2 shadow-sm', iconColor)}>
+              <Icon className="h-5 w-5 text-white" />
             </div>
           </div>
-          <div className={cn('rounded-xl p-2 shadow-sm', iconColor)}>
-            <Icon className="h-5 w-5 text-white" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -296,7 +304,12 @@ export function AdminHomeView() {
   const wauChange = isEngagementMockEnabled() ? mockWeeklyActiveUsers.weekOverWeekChange : 0;
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Stats Grid */}
       <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
@@ -332,12 +345,17 @@ export function AdminHomeView() {
         />
       </div>
 
-      {/* Feature 28 & 34: Weekly Active Users + Pulse Completion */}
+      {/* Weekly Active Users + Pulse Completion */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
+        <Card className="h-full">
           <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Feature 28: Weekly Active Users (WAU)
+              Weekly Active Users (WAU)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -408,11 +426,17 @@ export function AdminHomeView() {
             )}
           </CardContent>
         </Card>
+        </motion.div>
 
-        <Card>
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+        >
+        <Card className="h-full">
           <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Feature 34: Daily Pulse Completion Rate
+              Daily Pulse Completion Rate
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -468,10 +492,16 @@ export function AdminHomeView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
       </div>
 
       {/* Secondary Stats */}
       <div className="grid gap-4 md:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground">User Distribution</CardTitle>
@@ -491,7 +521,13 @@ export function AdminHomeView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.25 }}
+        >
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground">Engagement Metrics</CardTitle>
@@ -511,7 +547,13 @@ export function AdminHomeView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium text-muted-foreground">System Status</CardTitle>
@@ -540,9 +582,15 @@ export function AdminHomeView() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
       </div>
 
       {/* Recent Activity */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.35 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Recent User Signups</CardTitle>
@@ -556,9 +604,12 @@ export function AdminHomeView() {
             </div>
           ) : recentActivity.length > 0 ? (
             <div className="space-y-3">
-              {recentActivity.map((user) => (
-                <div
+              {recentActivity.map((user, index) => (
+                <motion.div
                   key={user.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
                   className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 p-3"
                 >
                   <div className="flex items-center gap-3">
@@ -575,7 +626,7 @@ export function AdminHomeView() {
                   <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-950/30 dark:text-purple-400">
                     {user.role}
                   </span>
-                </div>
+                </motion.div>
               ))}
             </div>
           ) : (
@@ -586,45 +637,68 @@ export function AdminHomeView() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Quick Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+      >
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-semibold">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <button className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50">
+            <motion.button
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50"
+            >
               <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               <div>
                 <p className="text-sm font-semibold text-foreground">Add User</p>
                 <p className="text-xs text-muted-foreground">Create new account</p>
               </div>
-            </button>
-            <button className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50">
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50"
+            >
               <GraduationCap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               <div>
                 <p className="text-sm font-semibold text-foreground">Create Class</p>
                 <p className="text-xs text-muted-foreground">Set up new class</p>
               </div>
-            </button>
-            <button className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50">
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50"
+            >
               <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               <div>
                 <p className="text-sm font-semibold text-foreground">View Reports</p>
                 <p className="text-xs text-muted-foreground">Analytics & insights</p>
               </div>
-            </button>
-            <button className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50">
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 rounded-lg border border-border/60 bg-background p-3 text-left transition hover:border-purple-500/40 hover:bg-muted/50"
+            >
               <AlertCircle className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               <div>
                 <p className="text-sm font-semibold text-foreground">View Alerts</p>
                 <p className="text-xs text-muted-foreground">System notifications</p>
               </div>
-            </button>
+            </motion.button>
           </div>
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
