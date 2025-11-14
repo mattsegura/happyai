@@ -15,6 +15,8 @@ import { Home, User, Smile, GraduationCap, ChevronLeft, BookOpen, MessageCircle,
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationCenter } from '../notifications/NotificationCenter';
 import { SleekPageHeader } from './SleekPageHeader';
+import { FloatingUploadIndicator } from '../common/FloatingUploadIndicator';
+import { UploadProvider } from '../../contexts/UploadContext';
 import { cn } from '../../lib/utils';
 
 // Lazy load heavy components for better performance
@@ -221,7 +223,8 @@ export function Dashboard() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
+    <UploadProvider>
+      <div className="flex min-h-screen bg-gradient-to-br from-background via-primary/10 to-accent/10 dark:from-background dark:via-background dark:to-background">
       <aside
         onMouseEnter={handleSidebarMouseEnter}
         onMouseLeave={handleSidebarMouseLeave}
@@ -235,12 +238,16 @@ export function Dashboard() {
             sidebarCollapsed ? 'justify-center' : 'justify-start'
           )}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
-            <Smile className="h-6 w-6" />
-          </div>
+          <img 
+            src="/hapi-logo.jpg" 
+            alt="Hapi AI Logo" 
+            className={cn(
+              "object-contain transition-all duration-300",
+              sidebarCollapsed ? "h-10 w-10" : "h-12 w-auto"
+            )}
+          />
           {!sidebarCollapsed && (
             <div>
-              <p className="text-base font-semibold text-foreground">Hapi AI</p>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Student Companion
               </p>
@@ -468,7 +475,10 @@ export function Dashboard() {
 
               {/* Logout Button */}
               <button
-                onClick={() => signOut()}
+                onClick={async () => {
+                  await signOut();
+                  navigate('/login');
+                }}
                 className="flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
               >
                 <LogOut className="h-5 w-5" />
@@ -497,7 +507,10 @@ export function Dashboard() {
 
               {/* Logout Icon Only */}
               <button
-                onClick={() => signOut()}
+                onClick={async () => {
+                  await signOut();
+                  navigate('/login');
+                }}
                 className="flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
                 aria-label="Logout"
               >
@@ -1047,6 +1060,10 @@ export function Dashboard() {
           onComplete={handleHapiReferralComplete}
         />
       )}
+
+      {/* Floating Upload Indicator */}
+      <FloatingUploadIndicator />
     </div>
+    </UploadProvider>
   );
 }

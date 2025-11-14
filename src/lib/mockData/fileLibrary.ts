@@ -75,7 +75,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     folderId: 'folder-bio-notes', // In Notes folder
     studyPlanId: 'study-plan-bio-1',
     studyPlanTitle: 'Biology Midterm Prep',
@@ -98,7 +97,6 @@ export const mockFileLibrary: FileLibraryItem[] = [
     uploadedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     classId: 'bio101',
     className: 'BIO 101',
-    folderId: null,
     folderId: 'folder-bio-diagrams', // In Diagrams folder
     studyPlanId: 'study-plan-bio-1',
     studyPlanTitle: 'Biology Midterm Prep',

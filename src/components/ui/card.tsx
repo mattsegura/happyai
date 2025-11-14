@@ -68,6 +68,16 @@ const CardHeader = React.forwardRef<HTMLDivElement, SectionProps>(
 );
 CardHeader.displayName = 'CardHeader';
 
+const CardToolbar: React.FC<SectionProps> = ({
+  className,
+  children,
+  ...props
+}) => (
+  <div className={cn('flex items-center gap-2', className)} {...props}>
+    {children}
+  </div>
+);
+
 export interface CardTitleProps
   extends React.HTMLAttributes<HTMLHeadingElement> {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -117,4 +127,4 @@ const CardFooter: React.FC<SectionProps> = ({
   </div>
 );
 
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, cardVariants };
+export { Card, CardHeader, CardToolbar, CardTitle, CardDescription, CardContent, CardFooter, cardVariants };

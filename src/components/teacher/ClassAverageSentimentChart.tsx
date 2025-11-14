@@ -1,60 +1,22 @@
-import { useState, useEffect } from 'react';
-import { TrendingUp, Calendar, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardToolbar } from '../ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Badge } from '../ui/badge-2';
+import { ChartConfig, ChartContainer, ChartTooltip } from '../ui/line-charts-2';
+import { Area, CartesianGrid, ComposedChart, Line, XAxis, YAxis } from 'recharts';
 import { getStaticClassWeekData, getStaticClassMonthData, getStaticClassCustomData } from '../../lib/staticAnalyticsData';
-
-// TODO: Fetch from Supabase
-const mockTeacherClasses: any[] = [];
 
 type TimeRange = 'week' | 'month' | 'custom';
 
-function getBlueShade(value: number, isDark: boolean = false): string {
-  if (isDark) {
-    // Dark mode colors (brighter for contrast)
-    if (value >= 5) return '#60a5fa';
-    if (value >= 4.5) return '#3b82f6';
-    if (value >= 4) return '#2563eb';
-    if (value >= 3.5) return '#1d4ed8';
-    if (value >= 3) return '#1e40af';
-    if (value >= 2.5) return '#1e3a8a';
-    if (value >= 2) return '#172554';
-    return '#0f172a';
-  }
-  // Light mode colors
-  if (value >= 5) return '#1e3a8a';
-  if (value >= 4.5) return '#1e40af';
-  if (value >= 4) return '#2563eb';
-  if (value >= 3.5) return '#3b82f6';
-  if (value >= 3) return '#60a5fa';
-  if (value >= 2.5) return '#93c5fd';
-  if (value >= 2) return '#bfdbfe';
-  return '#dbeafe';
-}
+const PERIODS = {
+  week: { key: 'week' as TimeRange, label: 'Week' },
+  month: { key: 'month' as TimeRange, label: 'Month' },
+  custom: { key: 'custom' as TimeRange, label: '3 Months' },
+} as const;
 
 export function ClassAverageSentimentChart() {
-  const [selectedClassId, setSelectedClassId] = useState<string>(mockTeacherClasses[0]?.id || '');
   const [timeRange, setTimeRange] = useState<TimeRange>('week');
-  const [showCustomPicker, setShowCustomPicker] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
-  const [isDark, setIsDark] = useState(false);
-
-  // Detect dark mode
-  useEffect(() => {
-    const checkDarkMode = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    };
-    checkDarkMode();
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
-
-  const applyCustomRange = () => {
-    if (customStartDate && customEndDate) {
-      setTimeRange('custom');
-      setShowCustomPicker(false);
-    }
-  };
 
   const weekData = getStaticClassWeekData();
   const monthData = getStaticClassMonthData();
@@ -62,221 +24,219 @@ export function ClassAverageSentimentChart() {
 
   const currentData = timeRange === 'week' ? weekData : timeRange === 'month' ? monthData : customData;
 
+  // Transform data for Recharts
+  const chartData = useMemo(() => {
+    return currentData.map((point, index) => {
+      const date = new Date(point.date);
+      let dateLabel = '';
+      
+      if (timeRange === 'week') {
+        dateLabel = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+      } else {
+        dateLabel = `${date.getMonth() + 1}/${date.getDate()}`;
+      }
+
+      return {
+        date: dateLabel,
+        fullDate: point.date,
+        sentiment: point.avgSentiment,
+      };
+    });
+  }, [currentData, timeRange]);
+
+  // Calculate stats
   const average = currentData.reduce((sum, d) => sum + d.avgSentiment, 0) / currentData.length;
-  const trend = currentData[currentData.length - 1].avgSentiment > currentData[0].avgSentiment ? 'up' : 'down';
+  const lastValue = currentData[currentData.length - 1]?.avgSentiment || 0;
+  const firstValue = currentData[0]?.avgSentiment || 0;
+  const trend = lastValue > firstValue ? 'improving' : lastValue < firstValue ? 'declining' : 'stable';
+  const percentageChange = firstValue > 0 ? (((lastValue - firstValue) / firstValue) * 100) : 0;
 
-  const maxValue = 6;
-  const minValue = 1;
+  const chartConfig: ChartConfig = {
+    sentiment: {
+      label: 'Sentiment',
+      color: 'var(--color-blue-500, #3b82f6)',
+    },
+  };
 
-  const getDateLabel = (dateStr: string, index: number) => {
-    const date = new Date(dateStr);
-    if (timeRange === 'week') {
-      return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
-    } else if (timeRange === 'month') {
-      return index % 5 === 0 || index === currentData.length - 1 ? `${date.getMonth() + 1}/${date.getDate()}` : '';
-    } else {
-      return index % 15 === 0 || index === currentData.length - 1 ? `${date.getMonth() + 1}/${date.getDate()}` : '';
+  // Custom Tooltip
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="rounded-lg bg-background border border-border shadow-lg p-3">
+          <div className="text-xs font-medium text-muted-foreground mb-1">{payload[0].payload.fullDate}</div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs text-muted-foreground">Sentiment:</span>
+            <span className="text-sm font-semibold text-foreground">{payload[0].value?.toFixed(1)}/6</span>
+          </div>
+        </div>
+      );
     }
+    return null;
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-3xl p-6 border-2 border-blue-200 dark:border-blue-500/30 shadow-lg">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+    <Card className="border border-border shadow-sm">
+      <CardHeader className="border-0 min-h-auto pt-6 pb-4 flex-row items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Class Sentiment Journey</h3>
-            <p className="text-xs text-muted-foreground">Track class emotional wellness over time</p>
+            <CardTitle className="text-lg font-semibold">Class Sentiment</CardTitle>
+            <p className="text-sm text-muted-foreground">Track emotional wellness over time</p>
           </div>
         </div>
+        
+        <CardToolbar>
+          <Select value={timeRange} onValueChange={(value) => setTimeRange(value as TimeRange)}>
+            <SelectTrigger className="w-[140px] h-9">
+              <SelectValue placeholder="Select period" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {Object.values(PERIODS).map((period) => (
+                <SelectItem key={period.key} value={period.key}>
+                  {period.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </CardToolbar>
+      </CardHeader>
 
-        <div className="flex bg-muted dark:bg-gray-700 rounded-lg p-1">
-          <button
-            onClick={() => setTimeRange('week')}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-              timeRange === 'week'
-                ? 'bg-background text-blue-600 shadow-md dark:bg-white dark:text-blue-600'
-                : 'text-muted-foreground hover:text-foreground dark:text-gray-300 dark:hover:text-white'
-            }`}
-          >
-            Week
-          </button>
-          <button
-            onClick={() => setTimeRange('month')}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-              timeRange === 'month'
-                ? 'bg-background text-blue-600 shadow-md dark:bg-white dark:text-blue-600'
-                : 'text-muted-foreground hover:text-foreground dark:text-gray-300 dark:hover:text-white'
-            }`}
-          >
-            Month
-          </button>
-          <button
-            onClick={() => setShowCustomPicker(true)}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${
-              timeRange === 'custom'
-                ? 'bg-background text-blue-600 shadow-md dark:bg-white dark:text-blue-600'
-                : 'text-muted-foreground hover:text-foreground dark:text-gray-300 dark:hover:text-white'
-            }`}
-          >
-            Custom
-          </button>
-        </div>
-      </div>
-
-      <div className="mb-4 flex flex-wrap gap-2">
-        {mockTeacherClasses.map(cls => (
-          <button
-            key={cls.id}
-            onClick={() => setSelectedClassId(cls.id)}
-            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-              selectedClassId === cls.id
-                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white'
-            }`}
-          >
-            {cls.name}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-4 flex items-center space-x-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-          <span className="text-sm text-muted-foreground">
-            Avg: <span className="font-bold text-foreground">{average.toFixed(1)}/6.0</span>
-          </span>
-        </div>
-        <div className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-          trend === 'up' ? 'bg-green-900/50 text-green-400 dark:bg-green-500/20 dark:text-green-400' : 'bg-orange-900/50 text-orange-400 dark:bg-orange-500/20 dark:text-orange-400'
-        }`}>
-          <TrendingUp className={`w-4 h-4 ${trend === 'down' ? 'rotate-180' : ''}`} />
-          <span className="text-xs font-semibold">{trend === 'up' ? 'Improving' : 'Declining'}</span>
-        </div>
-      </div>
-
-      <div className="relative h-48 mb-2 ml-8">
-        <div className="absolute inset-0 flex items-end justify-between gap-1">
-          {currentData.map((point, index) => {
-            const heightPixels = ((point.avgSentiment - minValue) / (maxValue - minValue)) * 192;
-
-            return (
-              <div key={index} className="flex-1 group relative" style={{ height: '100%' }}>
-                <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center">
-                  <div
-                    className="w-full rounded-t-lg transition-all duration-500 cursor-pointer hover:opacity-80"
-                    style={{
-                      height: `${heightPixels}px`,
-                      backgroundColor: getBlueShade(point.avgSentiment, isDark),
-                      minHeight: '12px'
-                    }}
-                  >
-                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none">
-                      Avg: {point.avgSentiment.toFixed(1)}/6
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="absolute -left-7 top-0 bottom-0 flex flex-col justify-between text-xs text-muted-foreground">
-          <span>6</span>
-          <span>5</span>
-          <span>4</span>
-          <span>3</span>
-          <span>2</span>
-          <span>1</span>
-        </div>
-      </div>
-
-      <div className="flex justify-between text-xs text-muted-foreground mt-2">
-        {currentData.map((point, index) => {
-          const label = getDateLabel(point.date, index);
-          if (timeRange === 'week' || label) {
-            return (
-              <span key={index} className="flex-1 text-center">
-                {label}
-              </span>
-            );
-          }
-          return <span key={index} className="flex-1"></span>;
-        })}
-      </div>
-
-      <div className="mt-4 pt-4 border-t border-border">
-        <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-          <Calendar className="w-4 h-4" />
-          <span>Last updated: Today</span>
-        </div>
-      </div>
-
-      {showCustomPicker && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-6 rounded-t-2xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1">Custom Date Range</h3>
-                  <p className="text-sm text-white/80">Select your preferred time period</p>
-                </div>
-                <button
-                  onClick={() => setShowCustomPicker(false)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-all duration-200"
-                >
-                  <X className="w-5 h-5 text-white" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={customStartDate}
-                  onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 focus:bg-background transition-all duration-300 text-foreground"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  min={customStartDate}
-                  className="w-full px-4 py-3 bg-muted/30 border-2 border-border rounded-xl focus:outline-none focus:border-blue-400 focus:bg-background transition-all duration-300 text-foreground"
-                />
-              </div>
-            </div>
-
-            <div className="border-t border-border p-6 flex justify-end space-x-3">
-              <button
-                onClick={() => setShowCustomPicker(false)}
-                className="px-6 py-3 bg-muted text-muted-foreground rounded-xl font-semibold hover:bg-muted/80 transition-all duration-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={applyCustomRange}
-                disabled={!customStartDate || !customEndDate}
-                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl font-bold hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:transform-none"
-              >
-                Apply Range
-              </button>
-            </div>
+      <CardContent className="px-0">
+        {/* Stats Section */}
+        <div className="px-5 mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="text-3xl font-bold text-foreground">{average.toFixed(1)}/6</div>
+            <Badge 
+              variant={trend === 'improving' ? 'success' : trend === 'declining' ? 'warning' : 'secondary'} 
+              appearance="light"
+              size="md"
+            >
+              <TrendingUp className={cn("size-3", trend === 'declining' && 'rotate-180')} />
+              {Math.abs(percentageChange).toFixed(1)}%
+            </Badge>
           </div>
+          <p className="text-xs text-muted-foreground">
+            {trend === 'improving' ? 'Class mood is improving' : 
+             trend === 'declining' ? 'Class mood needs attention' : 
+             'Class mood is stable'}
+          </p>
         </div>
-      )}
-    </div>
+
+        {/* Chart */}
+        <div className="relative">
+          <ChartContainer
+            config={chartConfig}
+            className="h-[240px] w-full ps-1.5 pe-2.5 overflow-visible [&_.recharts-curve.recharts-tooltip-cursor]:stroke-initial"
+          >
+            <ComposedChart
+              data={chartData}
+              margin={{
+                top: 20,
+                right: 20,
+                left: 0,
+                bottom: 20,
+              }}
+              style={{ overflow: 'visible' }}
+            >
+              {/* Gradient */}
+              <defs>
+                <linearGradient id="sentimentGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={chartConfig.sentiment.color} stopOpacity={0.15} />
+                  <stop offset="100%" stopColor={chartConfig.sentiment.color} stopOpacity={0} />
+                </linearGradient>
+                <filter id="dotShadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="1" dy="1" stdDeviation="2" floodColor="rgba(0,0,0,0.3)" />
+                </filter>
+              </defs>
+
+              <CartesianGrid
+                strokeDasharray="4 12"
+                stroke="var(--border)"
+                strokeOpacity={0.5}
+                horizontal={true}
+                vertical={false}
+              />
+
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12 }}
+                tickMargin={12}
+                dy={10}
+              />
+
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12 }}
+                domain={[1, 6]}
+                ticks={[1, 2, 3, 4, 5, 6]}
+                tickMargin={12}
+              />
+
+              <ChartTooltip
+                content={<CustomTooltip />}
+                cursor={{
+                  stroke: chartConfig.sentiment.color,
+                  strokeWidth: 1,
+                  strokeDasharray: 'none',
+                }}
+              />
+
+              {/* Gradient area */}
+              <Area
+                type="linear"
+                dataKey="sentiment"
+                stroke="transparent"
+                fill="url(#sentimentGradient)"
+                strokeWidth={0}
+                dot={false}
+              />
+
+              {/* Main sentiment line */}
+              <Line
+                type="linear"
+                dataKey="sentiment"
+                stroke={chartConfig.sentiment.color}
+                strokeWidth={3}
+                dot={(props) => {
+                  const { cx, cy, index } = props;
+                  // Show dot at the last point
+                  if (index === chartData.length - 1) {
+                    return (
+                      <circle
+                        key={`dot-${cx}-${cy}`}
+                        cx={cx}
+                        cy={cy}
+                        r={6}
+                        fill={chartConfig.sentiment.color}
+                        stroke="white"
+                        strokeWidth={2}
+                        filter="url(#dotShadow)"
+                      />
+                    );
+                  }
+                  return <g key={`dot-${cx}-${cy}`} />;
+                }}
+                activeDot={{
+                  r: 6,
+                  fill: chartConfig.sentiment.color,
+                  stroke: 'white',
+                  strokeWidth: 2,
+                  filter: 'url(#dotShadow)',
+                }}
+              />
+            </ComposedChart>
+          </ChartContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
+}
+
+function cn(...inputs: any[]) {
+  return inputs.filter(Boolean).join(' ');
 }

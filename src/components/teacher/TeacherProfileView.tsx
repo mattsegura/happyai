@@ -1,5 +1,5 @@
 import { useAuth } from '../../contexts/AuthContext';
-import { User, Mail, Calendar, Users, MessageSquare, TrendingUp, LogOut } from 'lucide-react';
+import { User, Mail, Calendar, Users, MessageSquare, TrendingUp } from 'lucide-react';
 import { CanvasSetup } from './CanvasSetup';
 import { CanvasSyncStatus } from './CanvasSyncStatus';
 
@@ -9,7 +9,7 @@ const mockClassRosters: any = {};
 const mockOfficeHours: any[] = [];
 
 function TeacherProfileView() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
 
   if (!profile) {
     return (
@@ -171,17 +171,6 @@ function TeacherProfileView() {
             );
           })}
         </div>
-      </div>
-
-      <div className="bg-card rounded-3xl p-8 shadow-lg">
-        <h3 className="text-xl font-bold text-foreground mb-4">Account Settings</h3>
-        <button
-          onClick={signOut}
-          className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-2"
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Logout</span>
-        </button>
       </div>
     </div>
   );

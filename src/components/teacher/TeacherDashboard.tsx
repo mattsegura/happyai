@@ -4,18 +4,17 @@ import { useAuth } from '../../contexts/AuthContext';
 import { TeacherHomeView } from './TeacherHomeView';
 
 // Code splitting: Lazy load major dashboard components (using default imports)
-const TeacherClassesView = lazy(() => import('./TeacherClassesView'));
+const ClassesManagementView = lazy(() => import('./ClassesManagementView'));
 const TeacherHapiLab = lazy(() => import('./TeacherHapiLab'));
 const TeacherProfileView = lazy(() => import('./TeacherProfileView'));
 const AcademicDashboard = lazy(() => import('./analytics/AcademicDashboard'));
-const TeacherStudentsView = lazy(() => import('./TeacherStudentsView'));
 const SentimentDashboard = lazy(() => import('./sentiment/SentimentDashboard'));
 const CareAlertsDashboard = lazy(() => import('./alerts/CareAlertsDashboard'));
 const WorkloadDashboard = lazy(() => import('./workload/WorkloadDashboard'));
 const SafeBoxView = lazy(() => import('./SafeBoxView'));
 const HapiMomentsView = lazy(() => import('./HapiMomentsView'));
 const ReportsHub = lazy(() => import('./ReportsHub'));
-import { Home, Users, Beaker, User, GraduationCap, Smile, ChevronLeft, UserSearch, Heart, AlertCircle, BarChart3, Shield, Sparkles, FileText } from 'lucide-react';
+import { Home, Users, Beaker, User, GraduationCap, Smile, ChevronLeft, UserSearch, Heart, AlertCircle, BarChart3, Shield, Sparkles, FileText, LogOut } from 'lucide-react';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NotificationBell } from '../common/NotificationBell';
 import { cn } from '../../lib/utils';
@@ -35,7 +34,7 @@ function ViewLoading() {
 }
 
 export function TeacherDashboard() {
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [labState, setLabState] = useState<{ tab?: 'pulses' | 'office-hours'; pulseId?: string }>({});
@@ -58,19 +57,24 @@ export function TeacherDashboard() {
     navigate(`/teacher/${view === 'home' ? '' : view}`);
   };
 
-  const navigationItems = [
+  // Reorganized navigation structure with sections
+  const section1Items = [
     { id: 'home', icon: Home, label: 'Overview' },
     { id: 'classes', icon: Users, label: 'Classes' },
     { id: 'academics', icon: GraduationCap, label: 'Academics' },
+    { id: 'workload', icon: BarChart3, label: 'Workload' },
+  ] as const;
+
+  const section2Items = [
+    { id: 'reports', icon: FileText, label: 'AI Reports' },
+  ] as const;
+
+  const section3Items = [
     { id: 'wellbeing', icon: Heart, label: 'Wellbeing' },
     { id: 'alerts', icon: AlertCircle, label: 'Care Alerts' },
-    { id: 'students', icon: UserSearch, label: 'Students' },
-    { id: 'workload', icon: BarChart3, label: 'Workload' },
-    { id: 'reports', icon: FileText, label: 'AI Reports' },
     { id: 'safebox', icon: Shield, label: 'SafeBox' },
     { id: 'moments', icon: Sparkles, label: 'Hapi Moments' },
     { id: 'lab', icon: Beaker, label: 'Hapi Lab' },
-    { id: 'profile', icon: User, label: 'Profile' },
   ] as const;
 
   // Sidebar hover behavior
@@ -103,12 +107,16 @@ export function TeacherDashboard() {
             sidebarCollapsed ? 'justify-center' : 'justify-start'
           )}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg">
-            <Smile className="h-5 w-5" />
-          </div>
+          <img 
+            src="/hapi-logo.jpg" 
+            alt="Hapi AI Logo" 
+            className={cn(
+              "object-contain transition-all duration-300",
+              sidebarCollapsed ? "h-10 w-10" : "h-12 w-auto"
+            )}
+          />
           {!sidebarCollapsed && (
             <div>
-              <p className="text-sm font-semibold text-foreground">Hapi AI</p>
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Teacher Portal
               </p>
@@ -116,8 +124,63 @@ export function TeacherDashboard() {
           )}
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
-          {navigationItems.map((item) => {
+        <nav className="mt-8 flex-1 space-y-1 px-3 text-sm font-medium text-muted-foreground">
+          {/* Section 1: Core Pages */}
+          {section1Items.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentView === item.id;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigate(item.id)}
+                className={cn(
+                  'flex w-full items-center rounded-xl py-2 transition-all duration-200 relative',
+                  isActive
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-l-4 border-emerald-500'
+                    : 'hover:bg-emerald-500/5 hover:text-foreground border-l-4 border-transparent',
+                  spacingClasses
+                )}
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </button>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="my-3 h-px bg-border" />
+
+          {/* Section 2: AI Assistant */}
+          {section2Items.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentView === item.id;
+            const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigate(item.id)}
+                className={cn(
+                  'flex w-full items-center rounded-xl py-2 transition-all duration-200 relative',
+                  isActive
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-l-4 border-emerald-500'
+                    : 'hover:bg-emerald-500/5 hover:text-foreground border-l-4 border-transparent',
+                  spacingClasses
+                )}
+                aria-label={item.label}
+              >
+                <Icon className="h-5 w-5" />
+                {!sidebarCollapsed && <span>{item.label}</span>}
+              </button>
+            );
+          })}
+
+          {/* Divider */}
+          <div className="my-3 h-px bg-border" />
+
+          {/* Section 3: Wellbeing */}
+          {section3Items.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
             const spacingClasses = sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-4';
@@ -141,22 +204,72 @@ export function TeacherDashboard() {
           })}
         </nav>
 
-        <div className="space-y-3 px-4 pb-6">
-          <ThemeToggle />
-          <button
-            onClick={() => {
-              if (sidebarCloseTimerRef.current) {
-                clearTimeout(sidebarCloseTimerRef.current);
-                sidebarCloseTimerRef.current = null;
-              }
-              setSidebarCollapsed((prev) => !prev);
-            }}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/60 bg-background/80 px-3 py-2 text-xs font-semibold text-muted-foreground shadow-sm transition hover:border-emerald-500/40 hover:text-emerald-600 dark:hover:text-emerald-400"
-            aria-label={sidebarCollapsed ? 'Expand navigation' : 'Collapse navigation'}
-          >
-            <ChevronLeft className={`h-4 w-4 transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
-            {!sidebarCollapsed && <span>Collapse</span>}
-          </button>
+        {/* Bottom Section - Profile, Logout & Theme Toggle */}
+        <div className="mt-auto border-t border-border/40 pt-2 space-y-1 px-3 pb-4">
+          {!sidebarCollapsed && (
+            <>
+              {/* Profile Button */}
+              <button
+                onClick={() => handleNavigate('profile')}
+                className={cn(
+                  'flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200',
+                  currentView === 'profile'
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border-l-4 border-emerald-500'
+                    : 'text-muted-foreground hover:bg-emerald-500/5 hover:text-foreground'
+                )}
+              >
+                <User className="h-5 w-5" />
+                <span className="text-sm font-medium">Profile</span>
+              </button>
+
+              {/* Logout Button */}
+              <button
+                onClick={async () => {
+                  await signOut();
+                  navigate('/login');
+                }}
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+              >
+                <LogOut className="h-5 w-5" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </>
+          )}
+
+          {sidebarCollapsed && (
+            <>
+              {/* Profile Icon Only */}
+              <button
+                onClick={() => handleNavigate('profile')}
+                className={cn(
+                  'flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200',
+                  currentView === 'profile'
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border-l-4 border-emerald-500'
+                    : 'text-muted-foreground hover:bg-emerald-500/5 hover:text-foreground'
+                )}
+                aria-label="Profile"
+              >
+                <User className="h-5 w-5" />
+              </button>
+
+              {/* Logout Icon Only */}
+              <button
+                onClick={async () => {
+                  await signOut();
+                  navigate('/login');
+                }}
+                className="flex w-full items-center justify-center rounded-xl px-0 py-2 transition-all duration-200 text-muted-foreground hover:bg-red-500/10 hover:text-red-500"
+                aria-label="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
+            </>
+          )}
+
+          {/* Theme Toggle - Always visible */}
+          <div className="flex items-center justify-center pt-2">
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 
@@ -187,7 +300,7 @@ export function TeacherDashboard() {
             </div>
               <div className="md:hidden">
                 <div className="flex items-center gap-2 overflow-x-auto">
-                  {navigationItems.map((item) => {
+                  {[...section1Items, ...section2Items, ...section3Items].map((item) => {
                     const Icon = item.icon;
                     const isActive = currentView === item.id;
                     return (
@@ -206,6 +319,19 @@ export function TeacherDashboard() {
                       </button>
                     );
                   })}
+                  {/* Profile button in mobile nav */}
+                  <button
+                    onClick={() => handleNavigate('profile')}
+                    className={cn(
+                      'flex items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold transition',
+                      currentView === 'profile'
+                        ? 'bg-emerald-500 text-white shadow'
+                        : 'bg-muted text-muted-foreground hover:bg-emerald-500/10 hover:text-foreground'
+                    )}
+                  >
+                    <User className="h-4 w-4" />
+                    Profile
+                  </button>
                 </div>
               </div>
           </header>
@@ -219,7 +345,7 @@ export function TeacherDashboard() {
               <Route path="classes" element={
                 <Suspense fallback={<ViewLoading />}>
                   <div className={cn(SURFACE_BASE, 'p-5')}>
-                    <TeacherClassesView />
+                    <ClassesManagementView />
                   </div>
                 </Suspense>
               } />
@@ -236,14 +362,6 @@ export function TeacherDashboard() {
                 <Suspense fallback={<ViewLoading />}>
                   <div className={cn(SURFACE_BASE, 'p-5')}>
                     <SentimentDashboard />
-                  </div>
-                </Suspense>
-              } />
-
-              <Route path="students" element={
-                <Suspense fallback={<ViewLoading />}>
-                  <div className={cn(SURFACE_BASE, 'p-5')}>
-                    <TeacherStudentsView />
                   </div>
                 </Suspense>
               } />

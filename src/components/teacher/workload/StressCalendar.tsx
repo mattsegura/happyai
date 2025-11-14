@@ -83,9 +83,8 @@ export function StressCalendar({
   }, [teacherId, semesterStart, semesterEnd]);
 
   useEffect(() => {
-    if (teacherAssignments.length > 0 || crossClassAssignments.length > 0) {
-      generateCalendar();
-    }
+    // Always generate calendar, even with no assignments
+    generateCalendar();
   }, [currentDate, teacherAssignments, crossClassAssignments]);
 
   useEffect(() => {
@@ -315,10 +314,10 @@ export function StressCalendar({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-6"
+      className="rounded-xl border border-border bg-background shadow-sm p-6"
     >
       {/* Legend */}
-      <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200/50 dark:border-emerald-500/20">
+      <div className="mb-6 p-4 rounded-lg bg-muted/30 border border-border">
         <div className="flex flex-wrap gap-6 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm"></div>
@@ -347,33 +346,40 @@ export function StressCalendar({
       <div className="grid grid-cols-7 gap-2">
         {/* Day headers */}
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <div key={day} className="text-center font-bold text-sm py-3 text-muted-foreground">
+          <div key={day} className="text-center font-semibold text-sm py-2 text-muted-foreground">
             {day}
           </div>
         ))}
 
         {/* Calendar days */}
-        {calendarDays.map((day, idx) => (
+        {calendarDays.length === 0 ? (
+          <div className="col-span-7 text-center py-12 text-muted-foreground">
+            <p>No calendar data available. Try refreshing the page.</p>
+          </div>
+        ) : (
+          calendarDays.map((day, idx) => (
           <motion.button
             key={day.dateStr}
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.01 }}
+            transition={{ delay: idx * 0.005 }}
             onClick={() => setSelectedDay(day)}
             className={cn(
-              'relative p-3 rounded-xl border-2 transition-all hover:shadow-md min-h-[100px]',
-              !day.isCurrentMonth && 'opacity-40',
-              day.isToday && 'ring-2 ring-emerald-500 ring-offset-2',
-              selectedDay?.dateStr === day.dateStr ? 'bg-emerald-500/10 border-emerald-500' : 'border-border/60 hover:border-emerald-400',
-              day.totalAssignments > 0 && getStressBorderColor(day.stressLevel)
+              'relative p-2 rounded-lg border bg-background transition-all hover:border-primary hover:bg-muted/50 min-h-[80px] text-left',
+              !day.isCurrentMonth && 'opacity-40 bg-muted/20',
+              day.isToday && 'ring-2 ring-primary bg-primary/5',
+              selectedDay?.dateStr === day.dateStr && 'border-primary bg-primary/10',
+              day.totalAssignments === 0 ? 'border-border' : 'border-border'
             )}
           >
-            <div className="text-sm font-bold mb-2 flex justify-between items-start">
-              <span className={day.isToday ? 'text-emerald-600 dark:text-emerald-400' : ''}>
+            <div className="text-sm font-semibold mb-1 flex justify-between items-start">
+              <span className={cn(
+                day.isToday && 'bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center'
+              )}>
                 {day.date.getDate()}
               </span>
               {day.hasConflict && (
-                <AlertTriangle className="h-4 w-4 text-red-500 fill-current" />
+                <AlertTriangle className="h-4 w-4 text-red-500" />
               )}
             </div>
 
@@ -381,30 +387,27 @@ export function StressCalendar({
               <>
                 <div
                   className={cn(
-                    'w-full h-2 rounded-full mb-2 shadow-sm',
+                    'w-full h-1.5 rounded-full mb-2',
                     getStressColor(day.stressLevel)
                   )}
                 ></div>
-                <div className="text-xs space-y-1">
+                <div className="text-xs space-y-0.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-medium">Total:</span>
-                    <span className="font-bold">{day.totalAssignments}</span>
+                    <span className="text-muted-foreground">Total:</span>
+                    <span className="font-semibold">{day.totalAssignments}</span>
                   </div>
                   {day.totalExams > 0 && (
-                    <div className="flex items-center justify-between text-red-600 dark:text-red-400">
-                      <span className="font-medium">Exams:</span>
-                      <span className="font-bold">{day.totalExams}</span>
+                    <div className="flex items-center justify-between text-destructive">
+                      <span>Exams:</span>
+                      <span className="font-semibold">{day.totalExams}</span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="font-medium">Hours:</span>
-                    <span className="font-bold">{day.totalHours.toFixed(1)}</span>
-                  </div>
                 </div>
               </>
             )}
           </motion.button>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Selected Day Details */}
@@ -412,7 +415,7 @@ export function StressCalendar({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-6 p-6 rounded-2xl bg-gradient-to-br from-background to-muted/30 border-2 border-border/60 shadow-lg"
+          className="mt-6 p-6 rounded-xl bg-background border border-border shadow-sm"
         >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -548,7 +551,7 @@ export function StressCalendar({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-6"
+      className="rounded-xl border border-border bg-background shadow-sm p-6"
     >
       <div className="text-center text-muted-foreground py-12">
         <CalendarIcon className="h-16 w-16 mx-auto mb-4 opacity-50" />
@@ -575,7 +578,7 @@ export function StressCalendar({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="rounded-2xl border-2 border-border/60 bg-card/90 backdrop-blur-sm shadow-lg p-6 hover:shadow-xl transition-all"
+            className="rounded-xl border border-border bg-background shadow-sm p-6 hover:shadow-md transition-all"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
@@ -667,65 +670,67 @@ export function StressCalendar({
     <div className="flex gap-6 h-full">
       {/* Calendar Section */}
       <div className="flex-1 space-y-4 min-w-0">
-        {/* Controls Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-xl border border-emerald-200/60 dark:border-emerald-800/60 shadow-md backdrop-blur-sm">
+        {/* Controls Bar - Matching Student Calendar Style */}
+        <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-background rounded-xl border border-border shadow-sm">
           {/* Navigation */}
           <div className="flex items-center gap-3">
             <button
               onClick={handleToday}
-              className="px-4 py-2 border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg transition-colors font-semibold text-sm text-emerald-700 dark:text-emerald-300"
+              className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors font-medium text-sm"
             >
               Today
             </button>
             <div className="flex items-center gap-2">
               <button
                 onClick={previousPeriod}
-                className="p-2 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={nextPeriod}
-                className="p-2 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
-            <h2 className="text-lg font-bold min-w-[220px]">{getPeriodLabel()}</h2>
+            <h2 className="text-lg font-bold min-w-[200px]">{getPeriodLabel()}</h2>
           </div>
 
-          {/* View toggles */}
-          <div className="flex items-center bg-muted/50 rounded-lg p-1 shadow-inner">
-            <button
-              onClick={() => setView('month')}
-              className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-md transition-all text-sm font-semibold',
-                view === 'month' ? 'bg-emerald-500 text-white shadow-lg' : 'hover:bg-background/50'
-              )}
-            >
-              <LayoutGrid className="w-4 h-4" />
-              Month
-            </button>
-            <button
-              onClick={() => setView('week')}
-              className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-md transition-all text-sm font-semibold',
-                view === 'week' ? 'bg-emerald-500 text-white shadow-lg' : 'hover:bg-background/50'
-              )}
-            >
-              <Columns className="w-4 h-4" />
-              Week
-            </button>
-            <button
-              onClick={() => setView('agenda')}
-              className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-md transition-all text-sm font-semibold',
-                view === 'agenda' ? 'bg-emerald-500 text-white shadow-lg' : 'hover:bg-background/50'
-              )}
-            >
-              <LayoutList className="w-4 h-4" />
-              Agenda
-            </button>
+          {/* View toggles - Matching Student Calendar Style */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center bg-muted/30 rounded-lg p-1">
+              <button
+                onClick={() => setView('month')}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-sm font-medium',
+                  view === 'month' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                )}
+              >
+                <LayoutGrid className="w-4 h-4" />
+                Month
+              </button>
+              <button
+                onClick={() => setView('week')}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-sm font-medium',
+                  view === 'week' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                )}
+              >
+                <Columns className="w-4 h-4" />
+                Week
+              </button>
+              <button
+                onClick={() => setView('agenda')}
+                className={cn(
+                  'flex items-center gap-2 px-3 py-2 rounded-md transition-colors text-sm font-medium',
+                  view === 'agenda' ? 'bg-background shadow-sm' : 'hover:bg-background/50'
+                )}
+              >
+                <LayoutList className="w-4 h-4" />
+                Agenda
+              </button>
+            </div>
           </div>
         </div>
 
@@ -741,17 +746,17 @@ export function StressCalendar({
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="w-96 flex flex-col rounded-2xl border border-border/60 bg-card/90 backdrop-blur-sm shadow-xl overflow-hidden"
+        className="w-96 flex flex-col rounded-xl border border-border bg-background shadow-lg overflow-hidden"
       >
         {/* Chat Header */}
-        <div className="p-5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+        <div className="p-5 bg-gradient-to-r from-primary/90 to-primary text-primary-foreground">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+            <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
               <Sparkles className="h-6 w-6" />
             </div>
             <div>
               <h3 className="font-bold text-lg">AI Workload Assistant</h3>
-              <p className="text-xs text-emerald-100">Optimize scheduling & reduce stress</p>
+              <p className="text-xs opacity-90">Optimize scheduling & reduce stress</p>
             </div>
           </div>
         </div>
@@ -769,29 +774,29 @@ export function StressCalendar({
               )}
             >
               {message.role === 'assistant' && (
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-md">
-                  <Sparkles className="h-4 w-4 text-white" />
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+                  <Sparkles className="h-4 w-4 text-primary-foreground" />
                 </div>
               )}
               <div
                 className={cn(
-                  'max-w-[75%] rounded-2xl p-4 shadow-md',
+                  'max-w-[75%] rounded-xl p-3 shadow-sm',
                   message.role === 'user'
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-background border border-border/60'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-background border border-border'
                 )}
               >
                 <p className="text-sm leading-relaxed">{message.content}</p>
                 <p className={cn(
                   'text-xs mt-2',
-                  message.role === 'user' ? 'text-emerald-100' : 'text-muted-foreground'
+                  message.role === 'user' ? 'opacity-80' : 'text-muted-foreground'
                 )}>
                   {message.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                 </p>
               </div>
               {message.role === 'user' && (
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-md">
-                  <MessageSquare className="h-4 w-4 text-white" />
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+                  <MessageSquare className="h-4 w-4 text-primary-foreground" />
                 </div>
               )}
             </motion.div>
@@ -800,7 +805,7 @@ export function StressCalendar({
         </div>
 
         {/* Chat Input */}
-        <div className="p-4 border-t border-border/60 bg-background/80 backdrop-blur-sm">
+        <div className="p-4 border-t border-border bg-background">
           <div className="flex gap-2">
             <input
               type="text"
@@ -808,12 +813,12 @@ export function StressCalendar({
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Ask about workload optimization..."
-              className="flex-1 px-4 py-3 rounded-xl border border-border/60 bg-background focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 transition-all outline-none text-sm"
+              className="flex-1 px-4 py-2.5 rounded-lg border border-border bg-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-sm"
             />
             <button
               onClick={handleSendMessage}
               disabled={!chatInput.trim()}
-              className="px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="h-5 w-5" />
             </button>

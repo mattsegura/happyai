@@ -195,6 +195,7 @@ export function SafeBoxSubmission({ classId, className, onSubmitted }: SafeBoxSu
           <li>• Be respectful and constructive</li>
           <li>• AI moderation keeps content appropriate</li>
           <li>• You cannot edit or delete after submitting</li>
+          <li>• This is one-way communication (no replies expected)</li>
           <li>• Urgent safety concerns are flagged for immediate attention</li>
         </ul>
       </div>

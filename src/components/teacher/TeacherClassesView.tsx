@@ -312,7 +312,7 @@ function TeacherClassesView() {
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }

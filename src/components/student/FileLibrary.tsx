@@ -38,6 +38,8 @@ import { FileGenerationWorkflow } from './FileGenerationWorkflow';
 import { UniversalUploader, UploadedItem } from './UniversalUploader';
 import { UploadActionPrompt } from './UploadActionPrompt';
 import { useNavigate } from 'react-router-dom';
+import { useUpload } from '../../contexts/UploadContext';
+import { simulateFileUpload } from '../../lib/uploadHelpers';
 
 type DragItem = {
   type: 'file' | 'folder';
@@ -49,6 +51,7 @@ type DragItem = {
 
 export function FileLibrary() {
   const navigate = useNavigate();
+  const { addUpload, updateProgress, completeUpload, failUpload } = useUpload();
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -262,13 +265,27 @@ export function FileLibrary() {
       ? getFilesInClassRoot(selectedClass).length 
       : 0;
 
-  const handleUpload = (items: UploadedItem[]) => {
-    // Show toast notification for successful upload
-    const notification = document.createElement('div');
-    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
-    notification.textContent = `✓ ${items.length} ${items.length === 1 ? 'item' : 'items'} uploaded successfully`;
-    document.body.appendChild(notification);
-    setTimeout(() => document.body.removeChild(notification), 3000);
+  const handleUpload = async (items: UploadedItem[]) => {
+    // Process each uploaded item
+    for (const item of items) {
+      if (item.type === 'file' && item.file) {
+        // Add to upload context
+        const uploadId = addUpload(item.file);
+        
+        // Simulate upload with progress tracking
+        await simulateFileUpload(item.file, {
+          onProgress: (progress) => {
+            updateProgress(uploadId, progress);
+          },
+          onComplete: () => {
+            completeUpload(uploadId);
+          },
+          onError: (error) => {
+            failUpload(uploadId, error);
+          },
+        });
+      }
+    }
 
     // Show action prompt for the first item
     if (items.length > 0) {

@@ -1,9 +1,9 @@
 import { useAuth } from '../../contexts/AuthContext';
-import { User, Award, Flame, Mail, Calendar, TrendingUp, LogOut } from 'lucide-react';
+import { User, Award, Flame, Mail, Calendar, TrendingUp } from 'lucide-react';
 import { NotificationPreferences } from '../notifications/NotificationPreferences';
 
 export function ProfileView() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
 
   if (!profile) {
     return (
@@ -112,16 +112,6 @@ export function ProfileView() {
 
       {/* Notification Preferences */}
       <NotificationPreferences />
-
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-foreground">Account settings</h3>
-        <button
-          onClick={signOut}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground transition hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 dark:hover:text-rose-400"
-        >
-          <LogOut className="h-4 w-4" /> Sign out
-        </button>
-      </div>
     </div>
   );
 }

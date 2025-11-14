@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { AdminHomeView } from './AdminHomeView';
 import { UserManagement } from './UserManagement';
@@ -55,6 +56,7 @@ const SURFACE_BASE = 'rounded-2xl border border-border/60 bg-card/90 backdrop-bl
 
 export function AdminDashboard() {
   const { profile, university, role, signOut } = useAuth();
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<View>('home');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -98,12 +100,16 @@ export function AdminDashboard() {
             sidebarCollapsed ? 'justify-center' : 'justify-start'
           )}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg">
-            <Shield className="h-5 w-5" />
-          </div>
+          <img 
+            src="/hapi-logo.jpg" 
+            alt="Hapi AI Logo" 
+            className={cn(
+              "object-contain transition-all duration-300",
+              sidebarCollapsed ? "h-10 w-10" : "h-12 w-auto"
+            )}
+          />
           {!sidebarCollapsed && (
             <div>
-              <p className="text-sm font-semibold text-foreground">Hapi AI</p>
               <p className="text-[11px] font-semibold uppercase tracking-wide text-purple-600 dark:text-purple-400">
                 Admin Console
               </p>
@@ -139,7 +145,10 @@ export function AdminDashboard() {
         <div className="space-y-3 px-4 pb-6">
           <ThemeToggle />
           <button
-            onClick={signOut}
+            onClick={async () => {
+              await signOut();
+              navigate('/login');
+            }}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-50/50 px-3 py-2 text-xs font-semibold text-red-600 shadow-sm transition hover:border-red-500/50 hover:bg-red-100 dark:bg-red-950/20 dark:text-red-400 dark:hover:bg-red-950/40"
             aria-label="Sign out"
           >
